@@ -34,9 +34,6 @@
 (show-paren-mode t)
 (setq show-paren-style 'mixed)
 
-;; transpose-frame
-(require 'transpose-frame)
-
 ;; ----- keybind ----- ;;
 
 (define-key global-map (kbd "C-z") 'undo)
@@ -47,6 +44,9 @@
 
 (package-initialize)
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+
+;; transpose-frame
+(require 'transpose-frame)
 
 ;; auto-complete
 (require 'auto-complete-config)
@@ -60,12 +60,17 @@
 (require 'neotree)
 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
 
+;; move-text
+(require 'move-text)
+
+;; smooth-scroll
+(require 'smooth-scroll)
+
 ;; ----- Lisp ----- ;;
 
 ;; slime
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 (setq inferior-lisp-program "sbcl")
-
 
 ;; ac-slime
 (require 'ac-slime)
@@ -83,3 +88,7 @@
   #'(define-key paredit-mode-map (kbd "C-c f") 'paredit-forward-slurp-sexp))
 (eval-after-load "paredit"
   #'(define-key paredit-mode-map (kbd "C-c b") 'paredit-forward-barf-sexp))
+
+;; rainbow-delimiters
+(require 'rainbow-delimiters)
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
