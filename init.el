@@ -34,6 +34,9 @@
 (show-paren-mode t)
 (setq show-paren-style 'mixed)
 
+;; tab
+(setq-default tab-width 4 indent-tabs-mode nil)
+
 ;; ----- keybind ----- ;;
 
 (define-key global-map (kbd "C-z") 'undo)
