@@ -86,6 +86,10 @@
   :config
   (editorconfig-mode 1))
 
+;; flycheck
+(use-package flycheck)
+(global-flycheck-mode)
+
 ;; ----- Lisp ----- ;;
 
 ;; slime
