@@ -1,5 +1,8 @@
 ;; ----- initialize ------ ;;
 
+(require 'cask)
+(cask-initialize)
+
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/site-lisp"))
 
 ;; ----- theme ----- ;;
@@ -35,13 +38,16 @@
 (setq show-paren-style 'mixed)
 
 ;; tab
-(setq-default tab-width 4 indent-tabs-mode nil)
+(setq-default tab-widtph 4 indent-tabs-mode nil)
+
+;; pair
+(electric-pair-mode 1)
 
 ;; ----- keybind ----- ;;
 
-(define-key global-map (kbd "C-z") 'undo)
-(define-key global-map (kbd "C-m") 'set-mark-command)
-
+(progn
+  (bind-key "C-z" 'undo)
+  (bind-key "C-m" 'set-mark-command))
 
 ;; ----- package ----- ;;
 
@@ -49,25 +55,27 @@
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
 ;; transpose-frame
-(require 'transpose-frame)
+(use-package transpose-frame)
 
 ;; auto-complete
-(require 'auto-complete-config)
+(use-package auto-complete)
+(use-package auto-complete-config)
+(global-auto-complete-mode t)
 (ac-config-default)
 
 ;; drill-instructor
-(require 'drill-instructor)
+(use-package drill-instructor)
 (setq drill-instructor-global t)
 
 ;; neotree
-(require 'neotree)
+(use-package neotree)
 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
 
 ;; move-text
-(require 'move-text)
+(use-package move-text)
 
 ;; smooth-scroll
-(require 'smooth-scroll)
+(use-package smooth-scroll)
 
 ;; ----- Lisp ----- ;;
 
@@ -76,12 +84,12 @@
 (setq inferior-lisp-program "sbcl")
 
 ;; ac-slime
-(require 'ac-slime)
+(use-package ac-slime)
 (add-hook 'slime-mode-hook 'set-up-slime-ac)
 (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
 
 ;; paredit
-(require 'paredit)
+(use-package paredit)
 (autoload 'enable-paredit-mode "paredit" t)
 (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
 (add-hook 'lisp-mode-hook 'enable-paredit-mode)
@@ -93,5 +101,28 @@
   #'(define-key paredit-mode-map (kbd "C-c b") 'paredit-forward-barf-sexp))
 
 ;; rainbow-delimiters
-(require 'rainbow-delimiters)
+(use-package rainbow-delimiters)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+
+;; ----- Mode ----- ;;
+
+;; lisp
+(add-to-list 'auto-mode-alist '("Cask" . lisp-mode))
+
+;; web
+(use-package web-mode)
+(add-to-list 'auto-mode-alist '("\\.html?$" . web-mode))
+(add-hook 'web-mode-hook 'web-mode-hook)
+
+;; go
+(autoload 'go-mode "go-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.go$" . go-mode))
+
+;; terraform
+(autoload 'terraform-mode "terraform-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.tf$" . terraform-mode))
+
+;; markdown
+(autoload 'markdown-mode "markdown-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
