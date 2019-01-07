@@ -147,3 +147,7 @@
 ;; json
 (autoload 'json-mode "json-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
+
+;; dockerfile
+(autoload 'dockerfile-mode "dockerfile-mode" nil t)
+(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))

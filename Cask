@@ -56,3 +56,4 @@
 (depends-on "markdown-mode")
 (depends-on "yaml-mode")
 (depends-on "json-mode")
+(depends-on "dockerfile-mode")
