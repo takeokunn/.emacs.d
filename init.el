@@ -77,6 +77,15 @@
 ;; smooth-scroll
 (use-package smooth-scroll)
 
+;; highlight-indentation
+(use-package highlight-indentation)
+
+;; editorconfig
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
+
 ;; ----- Lisp ----- ;;
 
 ;; slime
@@ -126,3 +135,11 @@
 (autoload 'markdown-mode "markdown-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
+
+;; yaml
+(autoload 'yaml-mode "yaml-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
+
+;; json
+(autoload 'json-mode "json-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.json$" . json-mode))

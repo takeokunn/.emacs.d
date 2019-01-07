@@ -13,6 +13,7 @@
 (depends-on "prodigy")
 (depends-on "yasnippet")
 (depends-on "smartparens")
+(depends-on "editorconfig")
 (depends-on "smooth-scroll")
 (depends-on "exec-path-from-shell")
 
@@ -28,6 +29,7 @@
 (depends-on "neotree")
 (depends-on "projectile")
 (depends-on "idle-highlight-mode")
+(depends-on "highlight-indentation")
 
 ;; checker
 (depends-on "flycheck")
@@ -52,3 +54,5 @@
 (depends-on "go-mode")
 (depends-on "terraform-mode")
 (depends-on "markdown-mode")
+(depends-on "yaml-mode")
+(depends-on "json-mode")
