@@ -46,8 +46,8 @@
 ;; ----- keybind ----- ;;
 
 (progn
-  (bind-key "C-z" 'undo)
-  (bind-key "C-m" 'set-mark-command))
+    (bind-key "C-z" 'undo)
+    (bind-key "C-m" 'set-mark-command))
 
 ;; ----- package ----- ;;
 
@@ -88,7 +88,6 @@
 
 ;; flycheck
 (use-package flycheck)
-(global-flycheck-mode)
 
 ;; ----- Lisp ----- ;;
 
@@ -151,3 +150,7 @@
 ;; dockerfile
 (autoload 'dockerfile-mode "dockerfile-mode" nil t)
 (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+
+;; fish
+(autoload 'fish-mode "fish-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.fish$" . fish-mode))

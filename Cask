@@ -57,3 +57,4 @@
 (depends-on "yaml-mode")
 (depends-on "json-mode")
 (depends-on "dockerfile-mode")
+(depends-on "fish-mode")
