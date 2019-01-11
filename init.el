@@ -47,7 +47,10 @@
 
 (progn
     (bind-key "C-z" 'undo)
-    (bind-key "C-m" 'set-mark-command))
+    (bind-key "C-m" 'set-mark-command)
+    (bind-key "C-x C-o" (lambda ()
+                            (interactive)
+                            (other-window -1))))
 
 ;; ----- package ----- ;;
 
