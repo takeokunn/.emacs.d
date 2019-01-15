@@ -47,6 +47,8 @@
 
 (progn
     (bind-key "C-z" 'undo)
+    (bind-key "C-h" 'delete-backward-char)
+    (bind-key "C-?" 'help-command)
     (bind-key "C-m" 'set-mark-command)
     (bind-key "C-x C-o" (lambda ()
                             (interactive)
