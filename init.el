@@ -1,4 +1,4 @@
-;; ----- initialize ------ ;;
+;; ----- initialize ------ ;;
 
 (require 'cask)
 (cask-initialize)
@@ -8,6 +8,7 @@
 ;; ----- theme ----- ;;
 
 (load-theme 'tango-dark)
+(set-cursor-color "#000000")
 
 ;; ----- config ------ ;;
 
@@ -50,7 +51,7 @@
     (bind-key "C-h" 'delete-backward-char)
     (bind-key "C-?" 'help-command)
     (bind-key "C-m" 'set-mark-command)
-    (bind-key "C-p" 'neotree-toggle)
+    (bind-key "C-q" 'neotree-toggle)
     (bind-key "C-x C-o" (lambda ()
                             (interactive)
                             (other-window -1))))
