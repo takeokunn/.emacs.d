@@ -1,4 +1,4 @@
-;; ----- initialize ------ ;;
+;; ----- initialize ------ ;;
 
 (require 'cask)
 (cask-initialize)
@@ -50,6 +50,7 @@
     (bind-key "C-h" 'delete-backward-char)
     (bind-key "C-?" 'help-command)
     (bind-key "C-m" 'set-mark-command)
+    (bind-key "C-p" 'neotree-toggle)
     (bind-key "C-x C-o" (lambda ()
                             (interactive)
                             (other-window -1))))
@@ -75,6 +76,7 @@
 ;; neotree
 (use-package neotree)
 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+(setq-default neo-show-hidden-files t)
 
 ;; move-text
 (use-package move-text)
