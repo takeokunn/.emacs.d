@@ -47,6 +47,7 @@
 ;; awesome
 (depends-on "dash")
 (depends-on "htmlize")
+(depends-on "emms")
 
 ;; mode
 (depends-on "web-mode")
@@ -58,3 +59,4 @@
 (depends-on "json-mode")
 (depends-on "dockerfile-mode")
 (depends-on "fish-mode")
+(depends-on "php-mode")

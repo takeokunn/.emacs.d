@@ -97,6 +97,15 @@
 ;; flycheck
 (use-package flycheck)
 
+;; emms
+(require 'emms-setup)
+(require 'emms-i18n)
+(emms-standard)
+(emms-default-players)
+(setq emms-repeat-playlist t)
+(setq emms-player-list '(emms-player-mplayer))
+(setq emms-source-file-default-directory "~/emms/")
+
 ;; ----- Lisp ----- ;;
 
 ;; slime
@@ -162,3 +171,7 @@
 ;; fish
 (autoload 'fish-mode "fish-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.fish$" . fish-mode))
+
+;; php
+(autoload 'php-mode "php-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
