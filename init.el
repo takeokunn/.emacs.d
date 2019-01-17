@@ -94,8 +94,19 @@
   :config
   (editorconfig-mode 1))
 
+;; highlight-indentation
+(use-package highlight-indentation)
+(set-face-background 'highlight-indentation-face "#555555")
+(set-face-background 'highlight-indentation-current-column-face "#555555")
+(add-hook 'yaml-mode-hook 'highlight-indentation-mode)
+(add-hook 'yaml-mode-hook 'highlight-indentation-current-column-mode)
+
 ;; flycheck
 (use-package flycheck)
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
+(use-package flymake-yaml)
+(add-hook 'yaml-mode-hook 'flymake-yaml-load)
 
 ;; emms
 (require 'emms-setup)
@@ -105,6 +116,9 @@
 (setq emms-repeat-playlist t)
 (setq emms-player-list '(emms-player-mplayer))
 (setq emms-source-file-default-directory "~/emms/")
+
+;; multi term
+(use-package multi-term)
 
 ;; ----- Lisp ----- ;;
 

@@ -16,6 +16,8 @@
 (depends-on "editorconfig")
 (depends-on "smooth-scroll")
 (depends-on "exec-path-from-shell")
+(depends-on "multi-term")
+(depends-on "highlight-indentation")
 
 ;; key
 (depends-on "bind-key")
@@ -34,6 +36,7 @@
 ;; checker
 (depends-on "flycheck")
 (depends-on "flycheck-cask")
+(depends-on "flymake-yaml")
 
 ;; lisp
 (depends-on "paredit")
