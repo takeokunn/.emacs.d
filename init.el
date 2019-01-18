@@ -189,3 +189,7 @@
 ;; php
 (autoload 'php-mode "php-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+
+;; dhall
+(autoload 'dhall-mode "dhall-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.dhall$" . dhall-mode))

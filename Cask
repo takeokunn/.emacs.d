@@ -63,3 +63,4 @@
 (depends-on "dockerfile-mode")
 (depends-on "fish-mode")
 (depends-on "php-mode")
+(depends-on "dhall-mode")
