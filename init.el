@@ -46,7 +46,15 @@
 
 ;; ----- keybind ----- ;;
 
+(defun beginning-of-line-or-intendation ()
+    "move to beginning of line, or indentation"
+    (interactive)
+    (if (bolp)
+        (back-to-indentation)
+        (beginning-of-line)))
+
 (progn
+    (bind-key "C-a" 'beginning-of-line-or-intendation)
     (bind-key "C-z" 'undo)
     (bind-key "C-h" 'delete-backward-char)
     (bind-key "C-?" 'help-command)
@@ -119,6 +127,14 @@
 
 ;; multi term
 (use-package multi-term)
+(setq multi-term-program shell-file-name)
+(add-hook 'term-mode-hook
+    '(lambda ()
+         (define-key term-raw-map (kbd "C-h") 'term-send-backspace)
+         (define-key term-raw-map (kbd "C-p") 'term-send-up)
+         (define-key term-raw-map (kbd "C-n") 'term-send-down)
+         (define-key term-raw-map (kbd "C-f") 'term-send-forward-word)
+         (define-key term-raw-map (kbd "C-b") 'term-send-backward-word)))
 
 ;; ----- Lisp ----- ;;
 
