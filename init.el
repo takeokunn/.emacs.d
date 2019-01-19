@@ -44,6 +44,9 @@
 ;; pair
 (electric-pair-mode 1)
 
+;; window size
+(setq window-min-height 10)
+
 ;; ----- keybind ----- ;;
 
 (defun beginning-of-line-or-intendation ()
