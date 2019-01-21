@@ -64,3 +64,4 @@
 (depends-on "fish-mode")
 (depends-on "php-mode")
 (depends-on "dhall-mode")
+(depends-on "js2-mode")

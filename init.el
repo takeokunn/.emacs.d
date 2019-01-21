@@ -27,6 +27,7 @@
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 (setq auto-save-list-file-prefix nil)
+(setq create-lockfiles nil)
 
 ;; delete a line with C-k
 (setq kill-whole-line t)
@@ -193,3 +194,7 @@
 ;; dhall
 (autoload 'dhall-mode "dhall-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.dhall$" . dhall-mode))
+
+;; javascript
+(autoload 'js2-mode "js2-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
