@@ -48,6 +48,9 @@
 ;; window size
 (setq window-min-height 10)
 
+;; system time locale
+(setq system-time-locale "C")
+
 ;; ----- keybind ----- ;;
 
 (defun beginning-of-line-or-intendation ()
@@ -64,6 +67,9 @@
     (bind-key "C-?" 'help-command)
     (bind-key "C-m" 'set-mark-command)
     (bind-key "C-q" 'neotree-toggle)
+    (bind-key "C-x j" 'open-junk-file)
+    (bind-key "C-c c" 'org-capture)
+    (bind-key "C-c a" 'org-agenda)
     (bind-key "C-x C-o" (lambda ()
                             (interactive)
                             (other-window -1))))
@@ -121,13 +127,13 @@
 (add-hook 'yaml-mode-hook 'flymake-yaml-load)
 
 ;; emms
-(require 'emms-setup)
-(require 'emms-i18n)
+(use-package emms-setup)
+(use-package emms-i18n)
 (emms-standard)
 (emms-default-players)
 (setq emms-repeat-playlist t)
 (setq emms-player-list '(emms-player-mplayer))
-(setq emms-source-file-default-directory "~/emms/")
+(setq emms-source-file-default-directory "~/emacs/emms/")
 
 ;; multi term
 (use-package multi-term)
@@ -139,6 +145,10 @@
          (define-key term-raw-map (kbd "C-n") 'term-send-down)
          (define-key term-raw-map (kbd "C-f") 'term-send-forward-word)
          (define-key term-raw-map (kbd "C-b") 'term-send-backward-word)))
+
+;; open junk file
+(use-package open-junk-file)
+(setq open-junk-file-format "~/emacs/junk/%Y-%m%d-%H%M%S.")
 
 ;; ----- Lisp ----- ;;
 
@@ -213,7 +223,24 @@
 ;; dhall
 (autoload 'dhall-mode "dhall-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.dhall$" . dhall-mode))
+(setq dhall-use-header-line nil)
 
 ;; javascript
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+
+;; org mode
+(setq org-agenda-todo-ignore-with-date t)
+(setq org-directory "~/emacs/org")
+(setq org-agenda-files '("~/emacs/org/todo.org"))
+(setq org-capture-templates
+    '(("t" "New TODO" entry
+          (file+headline "~/emacs/org/todo.org" "予定")
+          "* TODO %?\n\n")
+         ("m" "Memo" entry
+             (file+headline "~/emacs/memo.org" "メモ")
+             "* %U%?\n%i\n%a")))
+(setq org-agenda-custom-commands
+    '(("a" "Agenda and TODO"
+          ((agenda "")
+              (alltodo "")))))

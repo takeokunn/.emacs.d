@@ -18,6 +18,7 @@
 (depends-on "exec-path-from-shell")
 (depends-on "multi-term")
 (depends-on "highlight-indentation")
+(depends-on "open-junk-file")
 
 ;; key
 (depends-on "bind-key")
