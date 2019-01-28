@@ -74,7 +74,9 @@
     (bind-key "C-x j" 'open-junk-file)
     (bind-key "C-c c" 'org-capture)
     (bind-key "C-c a" 'org-agenda)
-    (bind-key "C-x C-o" 'back-other-window))
+    (bind-key "C-x C-o" 'back-other-window)
+    (bind-key "C-s" 'phi-search)
+    (bind-key "C-r" 'phi-search-backward))
 
 (define-key isearch-mode-map "\C-h" 'isearch-delete-char)
 
@@ -177,7 +179,7 @@
 (eval-after-load "paredit"
   #'(define-key paredit-mode-map (kbd "C-c b") 'paredit-forward-barf-sexp))
 
-;; rainbow-delimiters
+;; rainbow-dpelimiters
 (use-package rainbow-delimiters)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 

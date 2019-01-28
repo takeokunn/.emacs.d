@@ -19,6 +19,7 @@
 (depends-on "multi-term")
 (depends-on "highlight-indentation")
 (depends-on "open-junk-file")
+(depends-on "phi-search")
 
 ;; key
 (depends-on "bind-key")
