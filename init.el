@@ -60,6 +60,10 @@
         (back-to-indentation)
         (beginning-of-line)))
 
+(defun back-other-window ()
+  (interactive)
+  (other-window -1))
+
 (progn
     (bind-key "C-a" 'beginning-of-line-or-intendation)
     (bind-key "C-z" 'undo)
@@ -70,9 +74,9 @@
     (bind-key "C-x j" 'open-junk-file)
     (bind-key "C-c c" 'org-capture)
     (bind-key "C-c a" 'org-agenda)
-    (bind-key "C-x C-o" (lambda ()
-                            (interactive)
-                            (other-window -1))))
+    (bind-key "C-x C-o" 'back-other-window))
+
+(define-key isearch-mode-map "\C-h" 'isearch-delete-char)
 
 ;; ----- package ----- ;;
 
@@ -244,3 +248,4 @@
     '(("a" "Agenda and TODO"
           ((agenda "")
               (alltodo "")))))
+(put 'set-goal-column 'disabled nil)
