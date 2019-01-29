@@ -51,35 +51,6 @@
 ;; system time locale
 (setq system-time-locale "C")
 
-;; ----- keybind ----- ;;
-
-(defun beginning-of-line-or-intendation ()
-    "move to beginning of line, or indentation"
-    (interactive)
-    (if (bolp)
-        (back-to-indentation)
-        (beginning-of-line)))
-
-(defun back-other-window ()
-  (interactive)
-  (other-window -1))
-
-(progn
-    (bind-key "C-a" 'beginning-of-line-or-intendation)
-    (bind-key "C-z" 'undo)
-    (bind-key "C-h" 'delete-backward-char)
-    (bind-key "C-?" 'help-command)
-    (bind-key "C-m" 'set-mark-command)
-    (bind-key "C-q" 'neotree-toggle)
-    (bind-key "C-x j" 'open-junk-file)
-    (bind-key "C-c c" 'org-capture)
-    (bind-key "C-c a" 'org-agenda)
-    (bind-key "C-x C-o" 'back-other-window)
-    (bind-key "C-s" 'phi-search)
-    (bind-key "C-r" 'phi-search-backward))
-
-(define-key isearch-mode-map "\C-h" 'isearch-delete-char)
-
 ;; ----- package ----- ;;
 
 (package-initialize)
@@ -156,6 +127,68 @@
 (use-package open-junk-file)
 (setq open-junk-file-format "~/emacs/junk/%Y-%m%d-%H%M%S.")
 
+;; multiple-cursors
+(use-package smartrep)
+(use-package multiple-cursors)
+
+(declare-function smartrep-define-key "smartrep")
+
+(global-unset-key "\C-t")
+(smartrep-define-key global-map "C-t"
+    '(("n" . 'mc/mark-next-like-this)
+         ("p" . 'mc/mark-previous-like-this)
+         ("m" . 'mc/mark-more-like-this-extended)
+         ("u" . 'mc/unmark-next-like-this)
+         ("U" . 'mc/unmark-previous-like-this)
+         ("s" . 'mc/skip-to-next-like-this)
+         ("S" . 'mc/skip-to-previous-like-this)
+         ("*" . 'mc/mark-all-like-this)
+         ("d" . 'mc/mark-all-like-this-dwim)
+         ("i" . 'mc/insert-numbers)
+         ("o" . 'mc/sort-regions)
+         ("O" . 'mc/reverse-regions)))
+
+;; phi-search
+(use-package phi-search)
+
+;; yasnippet
+(use-package yasnippet)
+(setq yas-snippet-dirs
+    '("~/.emacs.d/snippets"))
+(yas-global-mode 1)
+
+;; ----- keybind ----- ;;
+
+(defun beginning-of-line-or-intendation ()
+    "move to beginning of line, or indentation"
+    (interactive)
+    (if (bolp)
+        (back-to-indentation)
+        (beginning-of-line)))
+
+(defun back-other-window ()
+  (interactive)
+  (other-window -1))
+
+(progn
+    (bind-key "C-a" 'beginning-of-line-or-intendation)
+    (bind-key "C-z" 'undo)
+    (bind-key "C-h" 'delete-backward-char)
+    (bind-key "C-?" 'help-command)
+    (bind-key "C-m" 'set-mark-command)
+    (bind-key "C-q" 'neotree-toggle)
+    (bind-key "C-x j" 'open-junk-file)
+    (bind-key "C-c c" 'org-capture)
+    (bind-key "C-c a" 'org-agenda)
+    (bind-key "C-x C-o" 'back-other-window)
+    (bind-key "C-S-c C-S-c" 'mc/edit-lines)
+    (bind-key "C-M-c" 'mc/edit-lines)
+    (bind-key "C-M-r" 'mc/mark-all-in-region)
+    (bind-key "C-s" 'phi-search)
+    (bind-key "C-r" 'phi-search-backward))
+
+(define-key isearch-mode-map "\C-h" 'isearch-delete-char)
+
 ;; ----- Lisp ----- ;;
 
 ;; slime
@@ -192,6 +225,8 @@
 (use-package web-mode)
 (add-to-list 'auto-mode-alist '("\\.html?$" . web-mode))
 (add-hook 'web-mode-hook 'web-mode-hook)
+(setq web-mode-auto-close-style t)
+(setq web-mode-tag-auto-close-style t)
 
 ;; go
 (autoload 'go-mode "go-mode" nil t)

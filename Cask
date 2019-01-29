@@ -19,7 +19,6 @@
 (depends-on "multi-term")
 (depends-on "highlight-indentation")
 (depends-on "open-junk-file")
-(depends-on "phi-search")
 
 ;; key
 (depends-on "bind-key")
@@ -27,6 +26,8 @@
 (depends-on "drag-stuff")
 (depends-on "expand-region")
 (depends-on "multiple-cursors")
+(depends-on "smartrep")
+(depends-on "phi-search")
 
 ;; file/directory
 (depends-on "f")
