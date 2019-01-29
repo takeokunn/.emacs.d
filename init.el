@@ -51,6 +51,9 @@
 ;; system time locale
 (setq system-time-locale "C")
 
+;; ruby encoding magic comment
+(setq ruby-insert-encoding-magic-comment nil)
+
 ;; ----- package ----- ;;
 
 (package-initialize)
