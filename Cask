@@ -12,6 +12,7 @@
 (depends-on "magit")
 (depends-on "prodigy")
 (depends-on "yasnippet")
+(depends-on "yasnippet-snippets")
 (depends-on "smartparens")
 (depends-on "editorconfig")
 (depends-on "smooth-scroll")
