@@ -195,7 +195,8 @@
     (bind-key "C-M-c" 'mc/edit-lines)
     (bind-key "C-M-r" 'mc/mark-all-in-region)
     (bind-key "C-s" 'phi-search)
-    (bind-key "C-r" 'phi-search-backward))
+    (bind-key "C-r" 'phi-search-backward)
+    (bind-key "M-/" 'comment-or-uncomment-region))
 
 (define-key isearch-mode-map "\C-h" 'isearch-delete-char)
 
@@ -283,6 +284,9 @@
 ;; vimrc
 (autoload 'vimrc-mode "vimrc-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.vim\\(rc\\)?\\'" . vimrc-mode))
+
+;; ruby
+(add-to-list 'auto-mode-alist '("Schemafile" . ruby-mode))
 
 ;; org mode
 (setq org-agenda-todo-ignore-with-date t)
