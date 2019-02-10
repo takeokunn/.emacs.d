@@ -72,7 +72,7 @@
 
 ;; open junk file
 (use-package open-junk-file)
-(setq open-junk-file-format "~/emacs/junk/%Y-%m%d-%H%M%S.")
+(setq open-junk-file-format "~/.emacs.d/.junk/%Y-%m%d-%H%M%S.")
 
 ;; multiple-cursors
 (use-package smartrep)
