@@ -52,6 +52,9 @@
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
+;; ruby
+(add-to-list 'auto-mode-alist '("Schemafile" . ruby-mode))
+
 ;; org mode
 (setq org-agenda-todo-ignore-with-date t)
 (setq org-directory "~/emacs/org")
