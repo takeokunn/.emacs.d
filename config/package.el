@@ -110,3 +110,6 @@
               ("C-x i g" . yas-reload-all)))
 (use-package yasnippet-snippets)
 (yas-global-mode 1)
+
+;; inf-ruby
+(use-package inf-ruby)

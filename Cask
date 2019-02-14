@@ -20,6 +20,7 @@
 (depends-on "multi-term")
 (depends-on "highlight-indentation")
 (depends-on "open-junk-file")
+(depends-on "inf-ruby")
 
 ;; key
 (depends-on "bind-key")
