@@ -72,3 +72,8 @@
           ((agenda "")
               (alltodo "")))))
 (put 'set-goal-column 'disabled nil)
+
+;; nyan mode
+(use-package nyan-mode)
+(nyan-mode)
+(nyan-start-animation)
