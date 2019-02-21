@@ -71,3 +71,4 @@
 (depends-on "dhall-mode")
 (depends-on "js2-mode")
 (depends-on "vimrc-mode")
+(depends-on "typescript-mode")
