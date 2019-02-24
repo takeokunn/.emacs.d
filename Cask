@@ -24,6 +24,7 @@
 (depends-on "inf-ruby")
 (depends-on "recentf")
 (depends-on "recentf-ext")
+(depends-on "dumb-jump")
 
 ;; key
 (depends-on "bind-key")

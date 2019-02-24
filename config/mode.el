@@ -82,3 +82,8 @@
 (use-package nyan-mode)
 (nyan-mode)
 (nyan-start-animation)
+
+;; dump jump mode
+(use-package dumb-jump)
+(setq dumb-jump-mode t)
+(setq dumb-jump-selector 'ivy)
