@@ -118,3 +118,11 @@
 
 ;; find-file-in-project
 (use-package find-file-in-project)
+
+;; recentf
+(use-package recentf)
+(setq recentf-max-saved-items 2000)
+(setq recentf-auto-cleanup 'never)
+(setq recentf-save-file "~/.emacs.d/.recentf")
+(setq recentf-exclude '(".recentf"))
+(recentf-mode 1)

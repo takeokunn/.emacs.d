@@ -22,6 +22,8 @@
 (depends-on "open-junk-file")
 (depends-on "counsel")
 (depends-on "inf-ruby")
+(depends-on "recentf")
+(depends-on "recentf-ext")
 
 ;; key
 (depends-on "bind-key")
