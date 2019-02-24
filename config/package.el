@@ -112,3 +112,6 @@
 (use-package counsel)
 (ivy-mode 1)
 (counsel-mode 1)
+
+;; inf-ruby
+(use-package inf-ruby)

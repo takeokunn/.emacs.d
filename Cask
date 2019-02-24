@@ -21,6 +21,7 @@
 (depends-on "highlight-indentation")
 (depends-on "open-junk-file")
 (depends-on "counsel")
+(depends-on "inf-ruby")
 
 ;; key
 (depends-on "bind-key")
@@ -71,3 +72,4 @@
 (depends-on "dhall-mode")
 (depends-on "js2-mode")
 (depends-on "vimrc-mode")
+(depends-on "typescript-mode")

@@ -6,6 +6,7 @@
 ;; web
 (use-package web-mode)
 (add-to-list 'auto-mode-alist '("\\.html?$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb?$" . web-mode))
 (add-hook 'web-mode-hook 'web-mode-hook)
 (setq web-mode-auto-close-style t)
 (setq web-mode-tag-auto-close-style t)
@@ -53,7 +54,12 @@
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
 ;; ruby
+(add-hook 'ruby-mode-hook 'flycheck-mode)
 (add-to-list 'auto-mode-alist '("Schemafile" . ruby-mode))
+
+;; typescript
+(autoload 'typescript-mode "typescript-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
 
 ;; org mode
 (setq org-agenda-todo-ignore-with-date t)
@@ -71,3 +77,8 @@
           ((agenda "")
               (alltodo "")))))
 (put 'set-goal-column 'disabled nil)
+
+;; nyan mode
+(use-package nyan-mode)
+(nyan-mode)
+(nyan-start-animation)
