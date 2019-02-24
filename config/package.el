@@ -95,9 +95,6 @@
          ("o" . 'mc/sort-regions)
          ("O" . 'mc/reverse-regions)))
 
-;; phi-search
-(use-package phi-search)
-
 ;; yasnippet
 (use-package yasnippet
   :ensure t
@@ -110,3 +107,8 @@
               ("C-x i g" . yas-reload-all)))
 (use-package yasnippet-snippets)
 (yas-global-mode 1)
+
+;; counsel
+(use-package counsel)
+(ivy-mode 1)
+(counsel-mode 1)

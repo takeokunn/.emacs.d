@@ -24,9 +24,6 @@
     (bind-key "C-x C-o" 'back-other-window)
     (bind-key "C-S-c C-S-c" 'mc/edit-lines)
     (bind-key "C-M-c" 'mc/edit-lines)
-    (bind-key "C-M-r" 'mc/mark-all-in-region)
-    (bind-key "C-s" 'phi-search)
-    (bind-key "C-r" 'phi-search-backward)
-    (bind-key "C-/" 'comment-or-uncomment-region))
+    (bind-key "C-M-r" 'mc/mark-all-in-region))
 
 (define-key isearch-mode-map "\C-h" 'isearch-delete-char)

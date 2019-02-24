@@ -20,6 +20,7 @@
 (depends-on "multi-term")
 (depends-on "highlight-indentation")
 (depends-on "open-junk-file")
+(depends-on "counsel")
 
 ;; key
 (depends-on "bind-key")
@@ -28,7 +29,7 @@
 (depends-on "expand-region")
 (depends-on "multiple-cursors")
 (depends-on "smartrep")
-(depends-on "phi-search")
+(depends-on "company")
 
 ;; file/directory
 (depends-on "f")
