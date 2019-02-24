@@ -12,10 +12,6 @@
 (global-auto-complete-mode t)
 (ac-config-default)
 
-;; drill-instructor
-(use-package drill-instructor)
-(setq drill-instructor-global t)
-
 ;; neotree
 (use-package neotree)
 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
@@ -70,8 +66,6 @@
 ;; multiple-cursors
 (use-package smartrep)
 (use-package multiple-cursors)
-
-(declare-function smartrep-define-key "smartrep")
 
 ;; yasnippet
 (use-package yasnippet

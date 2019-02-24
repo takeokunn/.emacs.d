@@ -11,6 +11,8 @@
   (interactive)
   (other-window -1))
 
+(keyboard-translate ?\C-h ?\C-?)
+
 (progn
     (bind-key "C-a" 'beginning-of-line-or-intendation)
     (bind-key "C-z" 'undo)
