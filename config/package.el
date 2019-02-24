@@ -115,3 +115,6 @@
 
 ;; inf-ruby
 (use-package inf-ruby)
+
+;; find-file-in-project
+(use-package find-file-in-project)

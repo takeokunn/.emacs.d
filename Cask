@@ -38,6 +38,7 @@
 (depends-on "projectile")
 (depends-on "idle-highlight-mode")
 (depends-on "highlight-indentation")
+(depends-on "find-file-in-project")
 
 ;; checker
 (depends-on "flycheck")

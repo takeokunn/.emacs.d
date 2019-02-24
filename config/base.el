@@ -1,3 +1,5 @@
+;; ----- base ----- ;;
+
 ;; ----- theme ----- ;;
 
 (load-theme 'tango-dark)
