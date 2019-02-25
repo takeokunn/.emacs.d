@@ -65,6 +65,10 @@
 (autoload 'slim-mode "slim-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.slim$" . slim-mode))
 
+;; coffee
+(autoload 'coffee-mode "coffee-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
+
 ;; org mode
 (setq org-agenda-todo-ignore-with-date t)
 (setq org-directory "~/emacs/org")
