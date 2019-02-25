@@ -77,3 +77,4 @@
 (depends-on "js2-mode")
 (depends-on "vimrc-mode")
 (depends-on "typescript-mode")
+(depends-on "slim-mode")
