@@ -23,7 +23,8 @@
     (bind-key "C-M-c" 'mc/edit-lines)
     (bind-key "C-M-r" 'mc/mark-all-in-region)
     (bind-key "C-x C-r" 'recentf-open-files)
-    (bind-key "C-x o" 'switch-window))
+    (bind-key "C-x o" 'switch-window)
+    (bind-key "C-x C-o" 'switch-window))
 
 ;; for multi term
 (add-hook 'term-mode-hook
