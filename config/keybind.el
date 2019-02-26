@@ -7,10 +7,6 @@
         (back-to-indentation)
         (beginning-of-line)))
 
-(defun back-other-window ()
-  (interactive)
-  (other-window -1))
-
 (keyboard-translate ?\C-h ?\C-?)
 
 (progn
@@ -23,11 +19,11 @@
     (bind-key "C-x j" 'open-junk-file)
     (bind-key "C-c c" 'org-capture)
     (bind-key "C-c a" 'org-agenda)
-    (bind-key "C-x C-o" 'back-other-window)
     (bind-key "C-S-c C-S-c" 'mc/edit-lines)
     (bind-key "C-M-c" 'mc/edit-lines)
     (bind-key "C-M-r" 'mc/mark-all-in-region)
-    (bind-key "C-x C-r" 'recentf-open-files))
+    (bind-key "C-x C-r" 'recentf-open-files)
+    (bind-key "C-x o" 'switch-window))
 
 ;; for multi term
 (add-hook 'term-mode-hook

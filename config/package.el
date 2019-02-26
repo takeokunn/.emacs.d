@@ -98,3 +98,7 @@
 (setq recentf-save-file "~/.emacs.d/.recentf")
 (setq recentf-exclude '(".recentf"))
 (recentf-mode 1)
+
+;; swithc window
+(use-package switch-window)
+(setq switch-window-shortcut-style 'qwerty)
