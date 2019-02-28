@@ -2,6 +2,7 @@
 
 ;; lisp
 (add-to-list 'auto-mode-alist '("Cask" . lisp-mode))
+(add-to-list 'auto-mode-alist '("\\.lemrc?$" . lisp-mode))
 
 ;; web
 (use-package web-mode)
@@ -68,6 +69,10 @@
 ;; coffee
 (autoload 'coffee-mode "coffee-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
+
+;; nginx
+(autoload 'nginx-mode "nginx-mode" nil t)
+(add-to-list 'auto-mode-alist '("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
 
 ;; org mode
 (setq org-agenda-todo-ignore-with-date t)

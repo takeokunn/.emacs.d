@@ -81,3 +81,4 @@
 (depends-on "typescript-mode")
 (depends-on "slim-mode")
 (depends-on "coffee-mode")
+(depends-on "nginx-mode")
