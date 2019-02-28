@@ -26,6 +26,7 @@
 (depends-on "recentf-ext")
 (depends-on "dumb-jump")
 (depends-on "switch-window")
+(depends-on "magit")
 
 ;; key
 (depends-on "bind-key")

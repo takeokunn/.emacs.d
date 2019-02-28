@@ -102,3 +102,6 @@
 ;; swithc window
 (use-package switch-window)
 (setq switch-window-shortcut-style 'qwerty)
+
+;; magit
+(use-package magit)
