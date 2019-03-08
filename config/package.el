@@ -41,7 +41,7 @@
 
 ;; flycheck
 (use-package flycheck)
-(add-hook 'after-init-hook #'global-flycheck-mode)
+; (add-hook 'after-init-hook #'global-flycheck-mode)
 
 (use-package flymake-yaml)
 (add-hook 'yaml-mode-hook 'flymake-yaml-load)

@@ -1,6 +1,9 @@
 ;; ----- initialize ------ ;;
 
-(require 'cask)
+(if (eq system-type 'darwin)
+    (require 'cask)
+    (require 'cask "~/.cask/cask.el"))
+
 (cask-initialize)
 
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/site-lisp"))

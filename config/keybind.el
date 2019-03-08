@@ -26,7 +26,8 @@
     (bind-key "C-x o" 'switch-window)
     (bind-key "C-x C-o" 'switch-window)
     (bind-key "C-x m" 'magit-status)
-    (bind-key "C-c l" 'magit-blame))
+    (bind-key "C-c l" 'magit-blame)
+    (bind-key "C-x C-z" 'save-buffers-kill-emacs))
 
 ;; for multi term
 (add-hook 'term-mode-hook
