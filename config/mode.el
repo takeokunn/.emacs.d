@@ -74,6 +74,10 @@
 (autoload 'nginx-mode "nginx-mode" nil t)
 (add-to-list 'auto-mode-alist '("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
 
+;; ssh-config
+(autoload 'ssh-config-mode "ssh-config-mode" nil t)
+(add-to-list 'auto-mode-alist '("/path-to-your-ssh/config\\'" . ssh-config-mode))
+
 ;; org mode
 (setq org-agenda-todo-ignore-with-date t)
 (setq org-directory "~/emacs/org")

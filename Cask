@@ -82,3 +82,4 @@
 (depends-on "slim-mode")
 (depends-on "coffee-mode")
 (depends-on "nginx-mode")
+(depends-on "ssh-config-mode")
