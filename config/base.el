@@ -1,11 +1,8 @@
 ;; ----- base ----- ;;
 
-;; ----- theme ----- ;;
-
-(load-theme 'tango-dark)
+;; theme
+(load-theme 'sanityinc-tomorrow-night)
 (set-cursor-color "#000000")
-
-;; ----- config ------ ;;
 
 ;; initial view
 (setq inhibit-startup-message t)

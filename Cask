@@ -27,6 +27,8 @@
 (depends-on "dumb-jump")
 (depends-on "switch-window")
 (depends-on "magit")
+(depends-on "doom-themes")
+(depends-on "color-theme-sanityinc-tomorrow")
 
 ;; key
 (depends-on "bind-key")
