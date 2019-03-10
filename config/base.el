@@ -1,8 +1,7 @@
 ;; ----- base ----- ;;
 
 ;; theme
-(load-theme 'sanityinc-tomorrow-night)
-(set-cursor-color "#000000")
+(load-theme 'sanityinc-tomorrow-night t)
 
 ;; initial view
 (setq inhibit-startup-message t)

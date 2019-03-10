@@ -25,10 +25,11 @@
 (depends-on "recentf")
 (depends-on "recentf-ext")
 (depends-on "dumb-jump")
-(depends-on "switch-window")
+(depends-on "ace-window")
 (depends-on "magit")
 (depends-on "doom-themes")
 (depends-on "color-theme-sanityinc-tomorrow")
+(depends-on "doom-modeline")
 
 ;; key
 (depends-on "bind-key")
