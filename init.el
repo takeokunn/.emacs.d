@@ -13,4 +13,5 @@
 (load "~/.emacs.d/config/lisp.el")
 (load "~/.emacs.d/config/mode.el")
 (load "~/.emacs.d/config/keybind.el")
+
 (put 'narrow-to-region 'disabled nil)

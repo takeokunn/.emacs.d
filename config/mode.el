@@ -8,7 +8,6 @@
 (use-package web-mode)
 (add-to-list 'auto-mode-alist '("\\.html?$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.erb?$" . web-mode))
-(add-hook 'web-mode-hook 'web-mode-hook)
 (setq web-mode-auto-close-style t)
 (setq web-mode-tag-auto-close-style t)
 
@@ -78,6 +77,21 @@
 (autoload 'ssh-config-mode "ssh-config-mode" nil t)
 (add-to-list 'auto-mode-alist '("/path-to-your-ssh/config\\'" . ssh-config-mode))
 
+;; emmet
+(use-package emmet-mode)
+(autoload 'emmet-mode "emmet-mode" nil t)
+(add-hook 'web-mode-hook 'emmet-mode)
+
+;; nyan mode
+(use-package nyan-mode)
+(nyan-mode)
+(nyan-start-animation)
+
+;; dump jump mode
+(use-package dumb-jump)
+(setq dumb-jump-mode t)
+(setq dumb-jump-selector 'ivy)
+
 ;; org mode
 (setq org-agenda-todo-ignore-with-date t)
 (setq org-directory "~/emacs/org")
@@ -94,13 +108,3 @@
           ((agenda "")
               (alltodo "")))))
 (put 'set-goal-column 'disabled nil)
-
-;; nyan mode
-(use-package nyan-mode)
-(nyan-mode)
-(nyan-start-animation)
-
-;; dump jump mode
-(use-package dumb-jump)
-(setq dumb-jump-mode t)
-(setq dumb-jump-selector 'ivy)

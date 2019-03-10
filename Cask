@@ -83,3 +83,4 @@
 (depends-on "coffee-mode")
 (depends-on "nginx-mode")
 (depends-on "ssh-config-mode")
+(depends-on "emmet-mode")

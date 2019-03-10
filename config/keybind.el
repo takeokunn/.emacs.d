@@ -29,14 +29,16 @@
     (bind-key "C-c l" 'magit-blame)
     (bind-key "C-x C-z" 'save-buffers-kill-emacs))
 
-;; for multi term
-(add-hook 'term-mode-hook
-    '(lambda ()
-         (define-key term-raw-map (kbd "C-h") 'term-send-backspace)
-         (define-key term-raw-map (kbd "C-p") 'term-send-up)
-         (define-key term-raw-map (kbd "C-n") 'term-send-down)
-         (define-key term-raw-map (kbd "C-f") 'term-send-forward-word)
-         (define-key term-raw-map (kbd "C-b") 'term-send-backward-word)))
+;; for term-mode
+(define-key term-raw-map (kbd "C-h") 'term-send-backspace)
+(define-key term-raw-map (kbd "C-p") 'term-send-up)
+(define-key term-raw-map (kbd "C-n") 'term-send-down)
+(define-key term-raw-map (kbd "C-f") 'term-send-forward-word)
+(define-key term-raw-map (kbd "C-b") 'term-send-backward-word)
+
+;; for emmet-mode
+(define-key emmet-mode-keymap (kbd "C-j") nil)
+(define-key emmet-mode-keymap (kbd "C-x i") 'emmet-expand-line)
 
 ;; for multi-cursor
 (global-unset-key "\C-t")
@@ -54,7 +56,7 @@
          ("o" . 'mc/sort-regions)
          ("O" . 'mc/reverse-regions)))
 
-;; yasnippet
+;; for yasnippet
 (smartrep-define-key global-map "C-x"
     '(("C-i" . 'yas-insert-snippet)
          ("C-n" . 'yas-new-snippet)
