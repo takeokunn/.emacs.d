@@ -3,6 +3,8 @@
 ;; lisp
 (add-to-list 'auto-mode-alist '("Cask" . lisp-mode))
 (add-to-list 'auto-mode-alist '("\\.lemrc?$" . lisp-mode))
+(add-to-list 'auto-mode-alist '("\\.clj?$" . lisp-mode))
+(add-to-list 'auto-mode-alist '("\\.cljs?$" . lisp-mode))
 
 ;; web
 (use-package web-mode)

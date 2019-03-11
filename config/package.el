@@ -39,10 +39,7 @@
 (add-hook 'yaml-mode-hook 'highlight-indentation-mode)
 (add-hook 'yaml-mode-hook 'highlight-indentation-current-column-mode)
 
-;; flycheck
-(use-package flycheck)
-; (add-hook 'after-init-hook #'global-flycheck-mode)
-
+;; flymake
 (use-package flymake-yaml)
 (add-hook 'yaml-mode-hook 'flymake-yaml-load)
 

@@ -49,8 +49,6 @@
 (depends-on "find-file-in-project")
 
 ;; checker
-(depends-on "flycheck")
-(depends-on "flycheck-cask")
 (depends-on "flymake-yaml")
 
 ;; lisp
