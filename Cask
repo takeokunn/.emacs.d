@@ -30,6 +30,9 @@
 (depends-on "doom-themes")
 (depends-on "color-theme-sanityinc-tomorrow")
 (depends-on "doom-modeline")
+(depends-on "ivy-rich")
+(depends-on "all-the-icons")
+(depends-on "all-the-icons-dired")
 
 ;; key
 (depends-on "bind-key")

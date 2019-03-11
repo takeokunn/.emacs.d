@@ -28,9 +28,9 @@
 
 ;; editorconfig
 (use-package editorconfig
-  :ensure t
-  :config
-  (editorconfig-mode 1))
+    :ensure t
+    :config
+    (editorconfig-mode 1))
 
 ;; highlight-indentation
 (use-package highlight-indentation)
@@ -93,6 +93,10 @@
 
 ;; magit
 (use-package magit)
+
+;; ivy-rich
+(use-package ivy-rich)
+(ivy-rich-mode 1)
 
 ;; doom themes
 (use-package doom-themes

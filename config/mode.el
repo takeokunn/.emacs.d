@@ -88,6 +88,7 @@
 (use-package nyan-mode)
 (nyan-mode)
 (nyan-start-animation)
+(setq nyan-wavy-trail t)
 
 ;; dump jump mode
 (use-package dumb-jump)
