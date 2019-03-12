@@ -173,3 +173,12 @@ what file icon to use."
 ;; ace-window
 (use-package ace-window)
 (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+
+;; company
+(use-package company)
+(global-company-mode)
+
+;; dump jump mode
+(use-package dumb-jump)
+(setq dumb-jump-mode t)
+(setq dumb-jump-selector 'ivy)

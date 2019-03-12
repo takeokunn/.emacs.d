@@ -63,3 +63,20 @@
          ("C-v" . 'yas-visit-snippet-file)
          ("C-l" . 'yas-describe-tables)
          ("C-g" . 'yas-reload-all)))
+
+;; for lsp
+(defun ladicle/toggle-lsp-ui-doc ()
+    (interactive)
+    (if lsp-ui-doc-mode
+        (progn
+            (lsp-ui-doc-mode -1)
+            (lsp-ui-doc--hide-frame))
+        (lsp-ui-doc-mode 1)))
+
+(define-key lsp-mode-map (kbd "C-c r") 'lsp-rename)
+(define-key lsp-mode-map (kbd "C-c C-r") 'lsp-ui-peek-find-references)
+(define-key lsp-mode-map (kbd "C-c C-j") 'lsp-ui-peek-find-definitions)
+(define-key lsp-mode-map (kbd "C-c i") 'lsp-ui-peek-find-implementation)
+(define-key lsp-mode-map (kbd "C-c m") 'lsp-ui-menu)
+(define-key lsp-mode-map (kbd "C-c s") 'lsp-ui-sideline-mode)
+(define-key lsp-mode-map (kbd "C-c d") 'ladicle/toggle-lsp-ui-doc)

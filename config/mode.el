@@ -90,11 +90,6 @@
 (nyan-start-animation)
 (setq nyan-wavy-trail t)
 
-;; dump jump mode
-(use-package dumb-jump)
-(setq dumb-jump-mode t)
-(setq dumb-jump-selector 'ivy)
-
 ;; org mode
 (setq org-agenda-todo-ignore-with-date t)
 (setq org-directory "~/emacs/org")

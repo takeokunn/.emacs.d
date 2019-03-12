@@ -42,6 +42,7 @@
 (depends-on "multiple-cursors")
 (depends-on "smartrep")
 (depends-on "company")
+(depends-on "company-lsp")
 
 ;; file/directory
 (depends-on "f")
@@ -67,6 +68,10 @@
 (depends-on "dash")
 (depends-on "htmlize")
 (depends-on "emms")
+
+;; lsp
+(depends-on "lsp-mode")
+(depends-on "lsp-ui")
 
 ;; mode
 (depends-on "web-mode")
