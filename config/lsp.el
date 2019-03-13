@@ -15,6 +15,7 @@
 
 ;; hook
 (add-hook 'go-mode-hook #'lsp)
+(add-hook 'js2-mode-hook #'lsp)
 
 ;; func
 (defun lsp-mode-init ()
