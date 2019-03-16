@@ -3,8 +3,6 @@
 ;; lisp
 (add-to-list 'auto-mode-alist '("Cask" . lisp-mode))
 (add-to-list 'auto-mode-alist '("\\.lemrc?$" . lisp-mode))
-(add-to-list 'auto-mode-alist '("\\.clj?$" . lisp-mode))
-(add-to-list 'auto-mode-alist '("\\.cljs?$" . lisp-mode))
 
 ;; web
 (use-package web-mode)
@@ -78,6 +76,12 @@
 ;; ssh-config
 (autoload 'ssh-config-mode "ssh-config-mode" nil t)
 (add-to-list 'auto-mode-alist '("/path-to-your-ssh/config\\'" . ssh-config-mode))
+
+;; clojure
+(autoload 'clojure-mode "clojure-mode" nil t)
+(autoload 'clojure-mode "clojurescript-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
+(add-to-list 'auto-mode-alist '("\\.cljs$" . clojurescript-mode))
 
 ;; emmet
 (use-package emmet-mode)
