@@ -8,8 +8,3 @@
 $ make install
 $ make update
 ```
-
-
-## LICENSE
-
-GPL v3
