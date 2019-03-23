@@ -69,6 +69,10 @@
 (autoload 'coffee-mode "coffee-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
 
+;; scala
+(autoload 'scala-mode "scala-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
+
 ;; nginx
 (autoload 'nginx-mode "nginx-mode" nil t)
 (add-to-list 'auto-mode-alist '("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))

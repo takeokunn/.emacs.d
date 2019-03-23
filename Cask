@@ -94,3 +94,4 @@
 (depends-on "ssh-config-mode")
 (depends-on "clojure-mode")
 (depends-on "emmet-mode")
+(depends-on "scala-mode")
