@@ -12,19 +12,12 @@
 (setq lsp-auto-guess-root t)
 (setq lsp-document-sync-method 'incremental)
 (setq lsp-response-timeout 5)
+(setq lsp-ui-sideline-enable nil)
 
 ;; hook
 (add-hook 'go-mode-hook #'lsp)
 (add-hook 'js2-mode-hook #'lsp)
 (add-hook 'web-mode-hook #'lsp)
-
-;; func
-(defun lsp-mode-init ()
-    (lsp)
-    (global-set-key (kbd "M-*") 'xref-pop-marker-stack)
-    (global-set-key (kbd "M-.") 'xref-find-definitions)
-    (global-set-key (kbd "M-/") 'xref-find-references))
-
 
 ;;;;;;;;;;;;;;
 ;;  lsp-ui  ;;

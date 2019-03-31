@@ -65,6 +65,12 @@
          ("C-g" . 'yas-reload-all)))
 
 ;; for lsp
+(defun lsp-mode-init ()
+    (lsp)
+    (global-set-key (kbd "M-*") 'xref-pop-marker-stack)
+    (global-set-key (kbd "M-.") 'xref-find-definitions)
+    (global-set-key (kbd "M-/") 'xref-find-references))
+
 (defun ladicle/toggle-lsp-ui-doc ()
     (interactive)
     (if lsp-ui-doc-mode
@@ -80,3 +86,7 @@
 (define-key lsp-mode-map (kbd "C-c m") 'lsp-ui-menu)
 (define-key lsp-mode-map (kbd "C-c s") 'lsp-ui-sideline-mode)
 (define-key lsp-mode-map (kbd "C-c d") 'ladicle/toggle-lsp-ui-doc)
+
+;; markdown
+(define-key markdown-mode-map (kbd "C-j") nil)
+(define-key markdown-mode-map (kbd "C-m") nil)
