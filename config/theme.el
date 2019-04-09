@@ -1,30 +1,13 @@
 ;; ----- base ----- ;;
 
-(load-theme 'sanityinc-tomorrow-night t)
-
 (put 'narrow-to-region 'disabled nil)
-(custom-set-variables
-    ;; custom-set-variables was added by Custom.
-    ;; If you edit it by hand, you could mess it up, so be careful.
-    ;; Your init file should contain only one such instance.
-    ;; If there is more than one, they won't work right.
-    '(custom-safe-themes
-         (quote
-             ("06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default)))
-    '(doom-themes-enable-bold t)
-    '(doom-themes-enable-italic t))
 
-(custom-set-faces
-    ;; custom-set-faces was added by Custom.
-    ;; If you edit it by hand, you could mess it up, so be careful.
-    ;; Your init file should contain only one such instance.
-    ;; If there is more than one, they won't work right.
-    '(doom-modeline-bar ((t (:background "#6272a4")))))
 
 ;; neotree
 (use-package neotree)
-; (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
 (setq-default neo-show-hidden-files t)
+
+
 (defun neo-buffer--insert-fold-symbol (name &optional file-name)
     "Custom overriding function for the fold symbol.
 `NAME' decides what fold icon to use, while `FILE-NAME' decides
@@ -74,7 +57,7 @@ what file icon to use."
     :custom-face
     (doom-modeline-bar ((t (:background "#6272a4"))))
     :config
-    (load-theme 'doom-tomorrow-night t)
+    (load-theme 'tango-dark t)
     (doom-themes-neotree-config)
     (doom-themes-org-config))
 
