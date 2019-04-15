@@ -18,6 +18,7 @@
 (add-hook 'go-mode-hook #'lsp)
 (add-hook 'js2-mode-hook #'lsp)
 (add-hook 'web-mode-hook #'lsp)
+(add-hook 'ruby-mode-hook #'lsp)
 
 ;;;;;;;;;;;;;;
 ;;  lsp-ui  ;;
@@ -43,3 +44,11 @@
 ;; config
 (setq company-lsp-async t)
 (setq company-lsp-cache-candidates t)
+
+
+;;;;;;;;;;;;;;;;;
+;;  dap-mode   ;;
+;;;;;;;;;;;;;;;;;
+(use-package dap-ruby)
+(dap-mode 1)
+(dap-ui-mode 1)

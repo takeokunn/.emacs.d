@@ -19,3 +19,4 @@ Should install `language server`.
 * css
 * golang
 * javascript
+* ruby

@@ -95,3 +95,4 @@
 (depends-on "clojure-mode")
 (depends-on "emmet-mode")
 (depends-on "scala-mode")
+(depends-on "dap-mode")

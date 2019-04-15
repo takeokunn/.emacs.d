@@ -2,7 +2,6 @@
 
 (put 'narrow-to-region 'disabled nil)
 
-
 ;; neotree
 (use-package neotree)
 (setq-default neo-show-hidden-files t)
