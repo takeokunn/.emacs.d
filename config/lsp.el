@@ -42,13 +42,15 @@
 (use-package company-lsp)
 
 ;; config
+(push company-lsp company-backends)
 (setq company-lsp-async t)
 (setq company-lsp-cache-candidates t)
-
 
 ;;;;;;;;;;;;;;;;;
 ;;  dap-mode   ;;
 ;;;;;;;;;;;;;;;;;
 (use-package dap-ruby)
+
+;; config
 (dap-mode 1)
 (dap-ui-mode 1)

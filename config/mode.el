@@ -54,7 +54,6 @@
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
 ;; ruby
-(add-hook 'ruby-mode-hook 'flycheck-mode)
 (add-to-list 'auto-mode-alist '("Schemafile" . ruby-mode))
 
 ;; typescript
