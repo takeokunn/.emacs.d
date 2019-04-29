@@ -26,10 +26,9 @@
     (bind-key "C-x o" 'ace-window)
     (bind-key "C-x C-o" 'ace-window)
     (bind-key "C-x m" 'magit-status)
-    (bind-key "C-c l" 'magit-blame)
-    (bind-key "C-x C-z" 'save-buffers-kill-emacs))
+    (bind-key "C-c l" 'magit-blame))
 
-;; for term-mode
+
 (define-key term-raw-map (kbd "C-h") 'term-send-backspace)
 (define-key term-raw-map (kbd "C-p") 'term-send-up)
 (define-key term-raw-map (kbd "C-n") 'term-send-down)
