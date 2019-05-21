@@ -30,6 +30,7 @@
 (depends-on "multiple-cursors")
 
 ;; file/directory
+(depends-on "neotree")
 (depends-on "find-file-in-project")
 
 ;; lisp
