@@ -1,4 +1,4 @@
-;; ----- base ----- ;;
+;; ----- Base ----- ;;
 
 ;; initial view
 (setq inhibit-startup-message t)

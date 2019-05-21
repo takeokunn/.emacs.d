@@ -1,16 +1,14 @@
-;; ----- keybind ----- ;;
+;; ----- Keybind ----- ;;
 
-(defun beginning-of-line-or-intendation ()
+(defun beginning-of-intendation ()
     "move to beginning of line, or indentation"
     (interactive)
-    (if (bolp)
-        (back-to-indentation)
-        (beginning-of-line)))
+    (back-to-indentation))
 
 (keyboard-translate ?\C-h ?\C-?)
 
 (progn
-    (bind-key "C-a" 'beginning-of-line-or-intendation)
+    (bind-key "C-a" 'beginning-of-intendation)
     (bind-key "C-z" 'undo)
     (bind-key "C-h" 'delete-backward-char)
     (bind-key "C-?" 'help-command)
@@ -19,9 +17,6 @@
     (bind-key "C-x j" 'open-junk-file)
     (bind-key "C-c c" 'org-capture)
     (bind-key "C-c a" 'org-agenda)
-    (bind-key "C-S-c C-S-c" 'mc/edit-lines)
-    (bind-key "C-M-c" 'mc/edit-lines)
-    (bind-key "C-M-r" 'mc/mark-all-in-region)
     (bind-key "C-x C-r" 'recentf-open-files)
     (bind-key "C-x o" 'ace-window)
     (bind-key "C-x C-o" 'ace-window)

@@ -1,4 +1,4 @@
-;; ----- org ----- ;;
+;; ----- Org ----- ;;
 
 (setq org-agenda-todo-ignore-with-date t)
 (setq org-directory "~/emacs/org")

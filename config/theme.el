@@ -1,4 +1,4 @@
-;; ----- base ----- ;;
+;; ----- Theme ----- ;;
 
 (put 'narrow-to-region 'disabled nil)
 
