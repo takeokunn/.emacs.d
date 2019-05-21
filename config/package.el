@@ -3,6 +3,19 @@
 (package-initialize)
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
+;; hl-line
+(use-package hl-line)
+(set-face-background 'hl-line "#444642")
+(set-face-attribute 'hl-line nil :inherit nil)
+(defvar global-hl-line-timer-exclude-modes '(todotxt-mode))
+(defun global-hl-line-timer-function ()
+    (unless (memq major-mode global-hl-line-timer-exclude-modes)
+        (global-hl-line-unhighlight-all)
+        (let ((global-hl-line-mode t))
+            (global-hl-line-highlight))))
+(setq global-hl-line-timer
+    (run-with-idle-timer 0.03 t 'global-hl-line-timer-function))
+
 ;; auto-complete
 (use-package auto-complete)
 (use-package auto-complete-config)

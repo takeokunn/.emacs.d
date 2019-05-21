@@ -3,7 +3,10 @@
 (put 'narrow-to-region 'disabled nil)
 
 ;; neotree
-(use-package neotree)
+
+(use-package neotree
+    :custom
+    (neo-theme 'nerd2))
 (setq-default neo-show-hidden-files t)
 
 (defun neo-buffer--insert-fold-symbol (name &optional file-name)
@@ -46,6 +49,11 @@
             'keymap neotree-file-button-keymap)
         (neo-buffer--node-list-set nil node)
         (neo-buffer--newline-and-begin)))
+
+(add-hook 'neotree-mode-hook
+    (lambda ()
+        (with-current-buffer " *NeoTree*"
+            (setq-local linum-mode nil))))
 
 ;; doom themes
 (use-package doom-themes

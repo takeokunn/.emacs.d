@@ -22,6 +22,7 @@
 (depends-on "ivy-rich")
 (depends-on "all-the-icons")
 (depends-on "all-the-icons-dired")
+(depends-on "hl-line")
 
 ;; key
 (depends-on "bind-key")

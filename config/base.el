@@ -10,6 +10,7 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (global-linum-mode t)
+(toggle-scroll-bar -1)
 
 ;; auto generate file
 (setq make-backup-files nil)
