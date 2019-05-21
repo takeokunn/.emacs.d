@@ -28,7 +28,7 @@
     (bind-key "C-x m" 'magit-status)
     (bind-key "C-c l" 'magit-blame))
 
-
+;; for term
 (define-key term-raw-map (kbd "C-h") 'term-send-backspace)
 (define-key term-raw-map (kbd "C-p") 'term-send-up)
 (define-key term-raw-map (kbd "C-n") 'term-send-down)
@@ -54,14 +54,6 @@
          ("i" . 'mc/insert-numbers)
          ("o" . 'mc/sort-regions)
          ("O" . 'mc/reverse-regions)))
-
-;; for yasnippet
-(smartrep-define-key global-map "C-x"
-    '(("C-i" . 'yas-insert-snippet)
-         ("C-n" . 'yas-new-snippet)
-         ("C-v" . 'yas-visit-snippet-file)
-         ("C-l" . 'yas-describe-tables)
-         ("C-g" . 'yas-reload-all)))
 
 ;; for lsp
 (defun lsp-mode-init ()

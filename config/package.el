@@ -3,9 +3,6 @@
 (package-initialize)
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
-;; transpose-frame
-(use-package transpose-frame)
-
 ;; auto-complete
 (use-package auto-complete)
 (use-package auto-complete-config)
@@ -16,31 +13,11 @@
 (use-package all-the-icons)
 (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
 
-;; move-text
-(use-package move-text)
-
-;; smooth-scroll
-(use-package smooth-scroll)
-
-;; highlight-indentation
-(use-package highlight-indentation)
-
 ;; editorconfig
 (use-package editorconfig
     :ensure t
     :config
     (editorconfig-mode 1))
-
-;; highlight-indentation
-(use-package highlight-indentation)
-(set-face-background 'highlight-indentation-face "#555555")
-(set-face-background 'highlight-indentation-current-column-face "#555555")
-(add-hook 'yaml-mode-hook 'highlight-indentation-mode)
-(add-hook 'yaml-mode-hook 'highlight-indentation-current-column-mode)
-
-;; flymake
-(use-package flymake-yaml)
-(add-hook 'yaml-mode-hook 'flymake-yaml-load)
 
 ;; emms
 (use-package emms-setup)
@@ -51,7 +28,7 @@
 (setq emms-player-list '(emms-player-mplayer))
 (setq emms-source-file-default-directory "~/emacs/emms/")
 
-;; multi term
+;; multi-term
 (use-package multi-term)
 (setq multi-term-program shell-file-name)
 
@@ -75,9 +52,6 @@
 (use-package counsel)
 (ivy-mode 1)
 (counsel-mode 1)
-
-;; inf-ruby
-(use-package inf-ruby)
 
 ;; find-file-in-project
 (use-package find-file-in-project)

@@ -17,9 +17,9 @@
 (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
 (add-hook 'scheme-mode-hook 'enable-paredit-mode)
 (eval-after-load "paredit"
-  #'(define-key paredit-mode-map (kbd "C-c f") 'paredit-forward-slurp-sexp))
+    #'(define-key paredit-mode-map (kbd "C-c f") 'paredit-forward-slurp-sexp))
 (eval-after-load "paredit"
-  #'(define-key paredit-mode-map (kbd "C-c b") 'paredit-forward-barf-sexp))
+    #'(define-key paredit-mode-map (kbd "C-c b") 'paredit-forward-barf-sexp))
 
 ;; rainbow-dpelimiters
 (use-package rainbow-delimiters)
