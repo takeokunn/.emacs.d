@@ -1,8 +1,4 @@
-;; ----- initialize ------ ;;
-
-(if (eq system-type 'darwin)
-    (require 'cask)
-    (require 'cask "~/.cask/cask.el"))
+(require 'cask "~/.cask/cask.el")
 
 (cask-initialize)
 
