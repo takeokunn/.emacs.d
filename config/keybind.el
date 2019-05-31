@@ -15,6 +15,7 @@
     (bind-key "C-m" 'set-mark-command)
     (bind-key "C-q" 'neotree-toggle)
     (bind-key "C-x j" 'open-junk-file)
+    (bind-key "C-c i" 'find-function)
     (bind-key "C-c c" 'org-capture)
     (bind-key "C-c a" 'org-agenda)
     (bind-key "C-x C-r" 'recentf-open-files)

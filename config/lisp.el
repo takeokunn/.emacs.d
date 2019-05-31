@@ -24,3 +24,9 @@
 ;; rainbow-dpelimiters
 (use-package rainbow-delimiters)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+
+;;
+(dolist (hook '(emacs-lisp-mode-hook
+                   lisp-interaction-mode-hook
+                   ielm-mode-hook))
+    (add-hook hook 'elisp-slime-nav-mode))

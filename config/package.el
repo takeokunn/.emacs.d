@@ -96,3 +96,8 @@
 (use-package dumb-jump)
 (setq dumb-jump-mode t)
 (setq dumb-jump-selector 'ivy)
+
+;; rg
+(use-package rg
+    :hook ((rg-mode . wgrep-rg-setup)))
+(rg-enable-default-bindings)

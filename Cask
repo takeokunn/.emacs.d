@@ -14,29 +14,31 @@
 (depends-on "multi-term")
 (depends-on "open-junk-file")
 (depends-on "counsel")
-(depends-on "recentf")
-(depends-on "ace-window")
 (depends-on "magit")
-(depends-on "doom-themes")
-(depends-on "doom-modeline")
 (depends-on "ivy-rich")
-(depends-on "all-the-icons")
-(depends-on "all-the-icons-dired")
-(depends-on "hl-line")
+(depends-on "rg")
 
 ;; key
 (depends-on "bind-key")
 (depends-on "smartrep")
 (depends-on "multiple-cursors")
 
-;; file/directory
+;; file/directory/theme
 (depends-on "neotree")
 (depends-on "find-file-in-project")
+(depends-on "doom-themes")
+(depends-on "doom-modeline")
+(depends-on "recentf")
+(depends-on "ace-window")
+(depends-on "all-the-icons")
+(depends-on "all-the-icons-dired")
+(depends-on "hl-line")
 
 ;; lisp
 (depends-on "paredit")
 (depends-on "ac-slime")
 (depends-on "rainbow-delimiters")
+(depends-on "elisp-slime-nav")
 
 ;; awesome
 (depends-on "emms")

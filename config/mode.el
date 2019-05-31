@@ -96,3 +96,6 @@
 (nyan-mode)
 (nyan-start-animation)
 (setq nyan-wavy-trail t)
+
+;; elc
+(add-to-list 'auto-mode-alist '("\\.elc\\'" . fundamental-mode))
