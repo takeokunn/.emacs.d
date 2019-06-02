@@ -21,6 +21,7 @@
 (depends-on "goto-addr")
 (depends-on "nameless")
 (depends-on "swoop")
+(depends-on "whitespace")
 
 ;; key
 (depends-on "bind-key")

@@ -83,4 +83,5 @@
 (define-key markdown-mode-map (kbd "C-j") nil)
 (define-key markdown-mode-map (kbd "C-m") nil)
 
-;; pdf
+;; whitespace
+(global-set-key (kbd "C-x w") 'global-whitespace-mode)
