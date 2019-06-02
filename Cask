@@ -20,6 +20,7 @@
 (depends-on "git-gutter")
 (depends-on "goto-addr")
 (depends-on "nameless")
+(depends-on "swoop")
 
 ;; key
 (depends-on "bind-key")

@@ -110,3 +110,6 @@
 (use-package goto-addr
   :hook ((prog-mode . goto-address-prog-mode)
          (text-mode . goto-address-mode)))
+
+;; swoop
+(use-package swoop)
