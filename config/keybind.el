@@ -5,6 +5,11 @@
     (interactive)
     (back-to-indentation))
 
+(defun my/ido-recentf ()
+    (interactive)
+    (find-file (ido-completing-read "Find recent file: " recentf-list)))
+
+
 (keyboard-translate ?\C-h ?\C-?)
 
 (progn
@@ -18,7 +23,7 @@
     (bind-key "C-c i" 'find-function)
     (bind-key "C-c c" 'org-capture)
     (bind-key "C-c a" 'org-agenda)
-    (bind-key "C-x C-r" 'recentf-open-files)
+    (bind-key "C-x C-r" 'counsel-recentf)
     (bind-key "C-x o" 'ace-window)
     (bind-key "C-x C-o" 'ace-window)
     (bind-key "C-x m" 'magit-status)
