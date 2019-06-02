@@ -17,6 +17,9 @@
 (depends-on "magit")
 (depends-on "ivy-rich")
 (depends-on "rg")
+(depends-on "git-gutter")
+(depends-on "goto-addr")
+(depends-on "nameless")
 
 ;; key
 (depends-on "bind-key")

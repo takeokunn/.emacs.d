@@ -101,3 +101,12 @@
 (use-package rg
     :hook ((rg-mode . wgrep-rg-setup)))
 (rg-enable-default-bindings)
+
+;; git-gutter
+(use-package git-gutter)
+; (global-git-gutter-mode t)
+
+;; goto-addr
+(use-package goto-addr
+  :hook ((prog-mode . goto-address-prog-mode)
+         (text-mode . goto-address-mode)))

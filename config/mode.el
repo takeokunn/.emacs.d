@@ -99,3 +99,6 @@
 
 ;; elc
 (add-to-list 'auto-mode-alist '("\\.elc\\'" . fundamental-mode))
+
+;; elisp
+(add-hook 'emacs-lisp-mode-hook #'nameless-mode)

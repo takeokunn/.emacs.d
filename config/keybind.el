@@ -82,3 +82,5 @@
 ;; markdown
 (define-key markdown-mode-map (kbd "C-j") nil)
 (define-key markdown-mode-map (kbd "C-m") nil)
+
+;; pdf
