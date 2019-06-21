@@ -14,6 +14,9 @@
 (setq lsp-response-timeout 5)
 (setq lsp-ui-sideline-enable nil)
 
+;; path
+(add-to-list 'exec-path "~/.npm-global/bin" t)
+
 ;; hook
 (add-hook 'go-mode-hook #'lsp)
 (add-hook 'js2-mode-hook #'lsp)
@@ -26,13 +29,14 @@
 ;;;;;;;;;;;;;;
 (use-package lsp-ui)
 
-;; config
+;; config lsp-ui-doc
 (setq lsp-ui-doc-enable t)
-(setq lsp-ui-doc-header t)
-(setq lsp-ui-doc-include-signature t)
-(setq lsp-ui-doc-max-width 150)
-(setq lsp-ui-doc-max-height 30)
-(setq lsp-ui-peek-enable t)
+
+;; config lsp-ui-sideline
+(setq lsp-ui-sideline-enable nil)
+
+;; config lsp-ui-imenu
+(setq lsp-ui-imenu-enable nil)
 
 ;; hook
 (add-hook 'lsp-mode-hook 'lsp-ui-mode)
@@ -49,6 +53,7 @@
 ;;  dap-mode   ;;
 ;;;;;;;;;;;;;;;;;
 (use-package dap-php)
+(use-package dap-node)
 (use-package dap-ruby)
 
 ;; config

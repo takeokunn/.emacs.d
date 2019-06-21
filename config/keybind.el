@@ -64,7 +64,14 @@
     (global-set-key (kbd "M-.") 'xref-find-definitions)
     (global-set-key (kbd "M-/") 'xref-find-references))
 
-(defun ladicle/toggle-lsp-ui-doc ()
+(defun toggle-lsp-ui-imenu ()
+    (interactive)
+    (if lsp-ui-imenu-enable
+        (progn
+            (lsp-ui-imenu-enable -1))
+        (lsp-ui-imenu-enable 1)))
+
+(defun toggle-lsp-ui-doc ()
     (interactive)
     (if lsp-ui-doc-mode
         (progn
@@ -72,13 +79,12 @@
             (lsp-ui-doc--hide-frame))
         (lsp-ui-doc-mode 1)))
 
-(define-key lsp-mode-map (kbd "C-c r") 'lsp-rename)
 (define-key lsp-mode-map (kbd "C-c C-r") 'lsp-ui-peek-find-references)
 (define-key lsp-mode-map (kbd "C-c C-j") 'lsp-ui-peek-find-definitions)
 (define-key lsp-mode-map (kbd "C-c i") 'lsp-ui-peek-find-implementation)
-(define-key lsp-mode-map (kbd "C-c m") 'lsp-ui-menu)
+(define-key lsp-mode-map (kbd "C-c m") 'toggle-lsp-ui-imenu)
 (define-key lsp-mode-map (kbd "C-c s") 'lsp-ui-sideline-mode)
-(define-key lsp-mode-map (kbd "C-c d") 'ladicle/toggle-lsp-ui-doc)
+(define-key lsp-mode-map (kbd "C-c d") 'toggle-lsp-ui-doc)
 
 ;; markdown
 (define-key markdown-mode-map (kbd "C-j") nil)
