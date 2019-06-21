@@ -27,7 +27,8 @@
     (bind-key "C-x o" 'ace-window)
     (bind-key "C-x C-o" 'ace-window)
     (bind-key "C-x m" 'magit-status)
-    (bind-key "C-c l" 'magit-blame))
+    (bind-key "C-c l" 'magit-blame)
+    (bind-key "C-x C-k" nil))
 
 ;; for term
 (define-key term-raw-map (kbd "C-h") 'term-send-backspace)
@@ -82,6 +83,3 @@
 ;; markdown
 (define-key markdown-mode-map (kbd "C-j") nil)
 (define-key markdown-mode-map (kbd "C-m") nil)
-
-;; whitespace
-(global-set-key (kbd "C-x w") 'global-whitespace-mode)

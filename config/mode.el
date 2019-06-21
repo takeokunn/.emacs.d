@@ -41,6 +41,9 @@
 (add-to-list 'auto-mode-alist '("\\.fish$" . fish-mode))
 
 ;; php
+(when (file-directory-p "~/.ghq/github.com/takeokunn/php-mode/")
+    (add-to-list 'load-path (expand-file-name "~/.ghq/github.com/takeokunn/php-mode/"))
+    (use-package "php-mode"))
 (autoload 'php-mode "php-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 
@@ -85,6 +88,10 @@
 (autoload 'clojure-mode "clojurescript-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
 (add-to-list 'auto-mode-alist '("\\.cljs$" . clojurescript-mode))
+
+;; vue
+(autoload 'vue-mode "vue-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.vue$" . vue-mode))
 
 ;; emmet
 (use-package emmet-mode)

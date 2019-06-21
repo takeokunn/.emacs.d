@@ -17,11 +17,14 @@
 (depends-on "magit")
 (depends-on "ivy-rich")
 (depends-on "rg")
-(depends-on "git-gutter")
 (depends-on "goto-addr")
 (depends-on "nameless")
 (depends-on "swoop")
 (depends-on "whitespace")
+(depends-on "dashboard")
+(depends-on "dumb-jump")
+(depends-on "swoop")
+(depends-on "company")
 
 ;; key
 (depends-on "bind-key")
@@ -51,9 +54,7 @@
 ;; lsp
 (depends-on "lsp-mode")
 (depends-on "lsp-ui")
-(depends-on "company")
 (depends-on "company-lsp")
-(depends-on "dumb-jump")
 (depends-on "dap-mode")
 
 ;; mode
@@ -78,3 +79,4 @@
 (depends-on "clojure-mode")
 (depends-on "emmet-mode")
 (depends-on "scala-mode")
+(depends-on "vue-mode")

@@ -19,6 +19,7 @@
 (add-hook 'js2-mode-hook #'lsp)
 (add-hook 'web-mode-hook #'lsp)
 (add-hook 'ruby-mode-hook #'lsp)
+(add-hook 'php-mode-hook #'lsp)
 
 ;;;;;;;;;;;;;;
 ;;  lsp-ui  ;;
@@ -39,19 +40,17 @@
 ;;;;;;;;;;;;;;;;;
 ;; company-lsp ;;
 ;;;;;;;;;;;;;;;;;
-;; (use-package company-lsp)
+(use-package company-lsp)
 
-;; config
-;; (push company-lsp company-backends)
-;; (setq company-lsp-async t)
-;; (setq company-lsp-cache-candidates t)
-
+;; push
+(push 'company-lsp company-backends)
 
 ;;;;;;;;;;;;;;;;;
 ;;  dap-mode   ;;
 ;;;;;;;;;;;;;;;;;
-;; (use-package dap-ruby)
+(use-package dap-php)
+(use-package dap-ruby)
 
 ;; config
-;; (dap-mode 1)
-;; n(dap-ui-mode 1)
+(dap-mode 1)
+(dap-ui-mode 1)

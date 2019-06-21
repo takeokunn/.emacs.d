@@ -3,7 +3,6 @@
 (put 'narrow-to-region 'disabled nil)
 
 ;; neotree
-
 (use-package neotree
     :custom
     (neo-theme 'nerd2))

@@ -88,10 +88,6 @@
 (use-package ace-window)
 (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
 
-;; company
-(use-package company)
-(global-company-mode)
-
 ;; dump jump mode
 (use-package dumb-jump)
 (setq dumb-jump-mode t)
@@ -101,10 +97,6 @@
 (use-package rg
     :hook ((rg-mode . wgrep-rg-setup)))
 (rg-enable-default-bindings)
-
-;; git-gutter
-(use-package git-gutter)
-; (global-git-gutter-mode t)
 
 ;; goto-addr
 (use-package goto-addr
@@ -128,3 +120,13 @@
 (set-face-background 'whitespace-space 'nil)
 (set-face-bold-p 'whitespace-space t)
 (global-whitespace-mode t)
+
+;; dashboard
+(use-package dashboard
+    :ensure t
+    :config
+    (dashboard-setup-startup-hook))
+
+;; company
+(require 'company)
+(global-company-mode)
