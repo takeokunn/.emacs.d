@@ -25,6 +25,7 @@
 (depends-on "dumb-jump")
 (depends-on "swoop")
 (depends-on "company")
+(depends-on "git-gutter-fringe")
 
 ;; key
 (depends-on "bind-key")

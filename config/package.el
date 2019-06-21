@@ -130,3 +130,7 @@
 ;; company
 (require 'company)
 (global-company-mode)
+
+;; git-gutter
+(use-package git-gutter-fringe)
+(global-git-gutter-mode +1)
