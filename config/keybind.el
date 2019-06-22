@@ -1,6 +1,8 @@
 ;; ----- Keybind ----- ;;
 
-(defun beginning-of-intendation ()
+(keyboard-translate ?\C-h ?\C-?)
+
+(defun my/beginning-of-intendation ()
     "move to beginning of line, or indentation"
     (interactive)
     (back-to-indentation))
@@ -9,11 +11,13 @@
     (interactive)
     (find-file (ido-completing-read "Find recent file: " recentf-list)))
 
-
-(keyboard-translate ?\C-h ?\C-?)
+(defun my/counsel-ag ()
+    (interactive)
+    (let ((symbol (thing-at-point 'symbol 'no-properties)))
+        (counsel-ag symbol)))
 
 (progn
-    (bind-key "C-a" 'beginning-of-intendation)
+    (bind-key "C-a" 'my/beginning-of-intendation)
     (bind-key "C-z" 'undo)
     (bind-key "C-h" 'delete-backward-char)
     (bind-key "C-?" 'help-command)
@@ -28,9 +32,10 @@
     (bind-key "C-x m" 'magit-status)
     (bind-key "C-c l" 'magit-blame)
     (bind-key "C-c j" 'counsel-git)
-    (bind-key "C-c k" 'counsel-ag)
+    (bind-key "C-c k" 'my/counsel-ag)
     (bind-key "C-x C-r" 'counsel-recentf)
     (bind-key "C-x C-f" 'counsel-find-file)
+    (bind-key "M-x" 'counsel-M-x)
     (bind-key "C-x C-k" nil))
 
 ;; for term
@@ -61,33 +66,10 @@
          ("O" . 'mc/reverse-regions)))
 
 ;; for lsp
-(defun lsp-mode-init ()
-    (lsp)
-    (global-set-key (kbd "M-*") 'xref-pop-marker-stack)
-    (global-set-key (kbd "M-.") 'xref-find-definitions)
-    (global-set-key (kbd "M-/") 'xref-find-references))
-
-(defun toggle-lsp-ui-imenu ()
-    (interactive)
-    (if lsp-ui-imenu-enable
-        (progn
-            (lsp-ui-imenu-enable -1))
-        (lsp-ui-imenu-enable 1)))
-
-(defun toggle-lsp-ui-doc ()
-    (interactive)
-    (if lsp-ui-doc-mode
-        (progn
-            (lsp-ui-doc-mode -1)
-            (lsp-ui-doc--hide-frame))
-        (lsp-ui-doc-mode 1)))
-
 (define-key lsp-mode-map (kbd "C-c C-r") 'lsp-ui-peek-find-references)
 (define-key lsp-mode-map (kbd "C-c C-j") 'lsp-ui-peek-find-definitions)
 (define-key lsp-mode-map (kbd "C-c i") 'lsp-ui-peek-find-implementation)
-(define-key lsp-mode-map (kbd "C-c m") 'toggle-lsp-ui-imenu)
 (define-key lsp-mode-map (kbd "C-c s") 'lsp-ui-sideline-mode)
-(define-key lsp-mode-map (kbd "C-c d") 'toggle-lsp-ui-doc)
 
 ;; markdown
 (define-key markdown-mode-map (kbd "C-j") nil)

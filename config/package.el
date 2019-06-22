@@ -58,6 +58,7 @@
 ;; counsel
 (use-package counsel)
 (setq ivy-use-virtual-buffers t)
+(setq counsel-ag-base-command "ag --nocolor --nogroup -u %s")
 (ivy-mode 1)
 (counsel-mode 1)
 
@@ -127,7 +128,7 @@
     (dashboard-setup-startup-hook))
 
 ;; company
-(require 'company)
+(use-package company)
 (global-company-mode)
 
 ;; git-gutter

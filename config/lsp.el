@@ -55,6 +55,7 @@
 (use-package dap-php)
 (use-package dap-node)
 (use-package dap-ruby)
+(use-package dap-chrome)
 
 ;; config
 (dap-mode 1)
