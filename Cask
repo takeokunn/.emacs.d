@@ -36,7 +36,6 @@
 
 ;; file/directory/theme
 (depends-on "neotree")
-(depends-on "find-file-in-project")
 (depends-on "doom-themes")
 (depends-on "doom-modeline")
 (depends-on "recentf")

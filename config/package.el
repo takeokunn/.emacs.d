@@ -16,12 +16,6 @@
 (setq global-hl-line-timer
     (run-with-idle-timer 0.03 t 'global-hl-line-timer-function))
 
-;; auto-complete
-(use-package auto-complete)
-(use-package auto-complete-config)
-(global-auto-complete-mode t)
-(ac-config-default)
-
 ;; all-the-icons
 (use-package all-the-icons)
 (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
@@ -72,9 +66,6 @@
     :ensure t
     :config
     (all-the-icons-ivy-setup))
-
-;; find-file-in-project
-(use-package find-file-in-project)
 
 ;; recentf
 (use-package recentf)
