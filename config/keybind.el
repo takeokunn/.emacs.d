@@ -23,11 +23,14 @@
     (bind-key "C-c i" 'find-function)
     (bind-key "C-c c" 'org-capture)
     (bind-key "C-c a" 'org-agenda)
-    (bind-key "C-x C-r" 'counsel-recentf)
     (bind-key "C-x o" 'ace-window)
     (bind-key "C-x C-o" 'ace-window)
     (bind-key "C-x m" 'magit-status)
     (bind-key "C-c l" 'magit-blame)
+    (bind-key "C-c j" 'counsel-git)
+    (bind-key "C-c k" 'counsel-ag)
+    (bind-key "C-x C-r" 'counsel-recentf)
+    (bind-key "C-x C-f" 'counsel-find-file)
     (bind-key "C-x C-k" nil))
 
 ;; for term
@@ -89,3 +92,6 @@
 ;; markdown
 (define-key markdown-mode-map (kbd "C-j") nil)
 (define-key markdown-mode-map (kbd "C-m") nil)
+
+;; swoop
+(define-key ivy-mode-map (kbd "C-o") 'swoop-from-isearch)

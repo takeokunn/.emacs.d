@@ -63,8 +63,15 @@
 
 ;; counsel
 (use-package counsel)
+(setq ivy-use-virtual-buffers t)
 (ivy-mode 1)
 (counsel-mode 1)
+
+;; all-the-icons-ivy
+(use-package all-the-icons-ivy
+    :ensure t
+    :config
+    (all-the-icons-ivy-setup))
 
 ;; find-file-in-project
 (use-package find-file-in-project)
@@ -105,6 +112,7 @@
 
 ;; swoop
 (use-package swoop)
+(setq swoop-minibuffer-input-dilay 0.4)
 
 ;; whitespace
 (use-package whitespace)
@@ -119,7 +127,7 @@
 (set-face-foreground 'whitespace-space "#7cfc00")
 (set-face-background 'whitespace-space 'nil)
 (set-face-bold-p 'whitespace-space t)
-(global-whitespace-mode t)
+(global-whitespace-mode 1)
 
 ;; dashboard
 (use-package dashboard
@@ -134,3 +142,7 @@
 ;; git-gutter
 (use-package git-gutter-fringe)
 (global-git-gutter-mode +1)
+
+;; smooth-scroll
+(use-package smooth-scroll)
+(smooth-scroll-mode t)

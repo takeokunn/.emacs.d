@@ -16,6 +16,7 @@
 (depends-on "counsel")
 (depends-on "magit")
 (depends-on "ivy-rich")
+(depends-on "all-the-icons-ivy")
 (depends-on "rg")
 (depends-on "goto-addr")
 (depends-on "nameless")
@@ -26,6 +27,7 @@
 (depends-on "swoop")
 (depends-on "company")
 (depends-on "git-gutter-fringe")
+(depends-on "smooth-scroll")
 
 ;; key
 (depends-on "bind-key")
