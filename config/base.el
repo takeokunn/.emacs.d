@@ -3,7 +3,7 @@
 ;; initial view
 (setq inhibit-startup-message t)
 
-;; white space
+;; whitespace
 (setq-default show-trailing-whitespace t)
 
 (defun my/disable-trailing-mode-hook ()
@@ -15,8 +15,8 @@
          eshell-mode
          eww-mode
          term-mode
-         twittering-mode))
-
+         twittering-mode
+         minibuffer-inactive-mode))
 (mapc
     (lambda (mode)
         (add-hook (intern (concat (symbol-name mode) "-hook"))
