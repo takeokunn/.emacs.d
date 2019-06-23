@@ -28,6 +28,7 @@
 (depends-on "company")
 (depends-on "git-gutter-fringe")
 (depends-on "smooth-scroll")
+(depends-on "exec-path-from-shell")
 
 ;; key
 (depends-on "bind-key")

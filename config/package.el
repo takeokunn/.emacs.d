@@ -138,3 +138,7 @@
 ;; smooth-scroll
 (use-package smooth-scroll)
 (smooth-scroll-mode t)
+
+;; exec-path-from-shell
+(use-package exec-path-from-shell)
+(exec-path-from-shell-copy-env "PATH")
