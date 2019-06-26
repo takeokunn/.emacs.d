@@ -71,6 +71,10 @@
 (define-key lsp-mode-map (kbd "C-c i") 'lsp-ui-peek-find-implementation)
 (define-key lsp-mode-map (kbd "C-c s") 'lsp-ui-sideline-mode)
 
+;; for dap
+(define-key lsp-mode-map (kbd "C-c d") 'dap-breakpoint-toggle)
+;; (define-key lsp-mode-map (kbd "C-c C-l") 'dap-ui-)
+
 ;; markdown
 (define-key markdown-mode-map (kbd "C-j") nil)
 (define-key markdown-mode-map (kbd "C-m") nil)
