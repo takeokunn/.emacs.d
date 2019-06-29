@@ -4,11 +4,9 @@
 
 ## Setup
 
-```
 $ make install
 $ make update
 $ make link
-```
 
 ## Dependency
 
