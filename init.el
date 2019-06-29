@@ -5,7 +5,7 @@
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/site-lisp"))
 
 (load "~/.emacs.d/config/base.el")
-(load "~/.emacs.d/config/package.el")
+(load "~/.emacs.d/config/plugin.el")
 (load "~/.emacs.d/config/theme.el")
 (load "~/.emacs.d/config/lisp.el")
 (load "~/.emacs.d/config/php.el")
