@@ -102,3 +102,12 @@
 
 ;; elisp
 (add-hook 'emacs-lisp-mode-hook #'nameless-mode)
+
+;; spell mode
+(mapc (lambda (hook)
+          (add-hook hook 'flyspell-prog-mode))
+    '(prog-mode-hook))
+
+(mapc (lambda (hook)
+          (add-hook hook '(lambda () (flyspell-mode 1))))
+    '(text-mode-hook))

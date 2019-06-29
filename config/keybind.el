@@ -73,7 +73,6 @@
 
 ;; for dap
 (define-key lsp-mode-map (kbd "C-c d") 'dap-breakpoint-toggle)
-;; (define-key lsp-mode-map (kbd "C-c C-l") 'dap-ui-)
 
 ;; markdown
 (define-key markdown-mode-map (kbd "C-j") nil)
