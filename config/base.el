@@ -59,3 +59,6 @@
 
 ;; ruby encoding magic comment
 (setq ruby-insert-encoding-magic-comment nil)
+
+;; error level
+(setq display-warning-minimum-level :error)
