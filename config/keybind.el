@@ -1,4 +1,4 @@
-;; ----- Keybind ----- ;;
+;; ----- key bind ----- ;;
 
 (keyboard-translate ?\C-h ?\C-?)
 
@@ -65,13 +65,13 @@
          ("o" . 'mc/sort-regions)
          ("O" . 'mc/reverse-regions)))
 
-;; for lsp
+;; for lsp-mode
 (define-key lsp-mode-map (kbd "C-c C-r") 'lsp-ui-peek-find-references)
 (define-key lsp-mode-map (kbd "C-c C-j") 'lsp-ui-peek-find-definitions)
 (define-key lsp-mode-map (kbd "C-c i") 'lsp-ui-peek-find-implementation)
 (define-key lsp-mode-map (kbd "C-c s") 'lsp-ui-sideline-mode)
 
-;; for dap
+;; for dap-mode
 (define-key lsp-mode-map (kbd "C-c d") 'dap-breakpoint-toggle)
 
 ;; markdown

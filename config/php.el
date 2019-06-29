@@ -8,6 +8,5 @@
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 
 ;; psysh.el
-
 (when (file-directory-p "~/.ghq/github.com/takeokunn/psysh.el/")
     (add-to-list 'load-path (expand-file-name "~/.ghq/github.com/takeokunn/psysh.el/")))
