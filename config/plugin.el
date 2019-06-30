@@ -140,4 +140,4 @@
 
 ;; exec-path-from-shell
 (use-package exec-path-from-shell)
-(exec-path-from-shell-copy-env "PATH")
+(exec-path-from-shell-copy-envs '("PATH" "GEM_HOME"))

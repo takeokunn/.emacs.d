@@ -62,3 +62,11 @@
 
 ;; error level
 (setq display-warning-minimum-level :error)
+
+;; current
+(defun my/reset-default-directory-by-buffer-file-name ()
+    "Set default-directory by `buffer-file-name'."
+    (interactive)
+    (require 'f)
+    (when buffer-file-name
+        (setq default-directory (f-dirname buffer-file-name))))
