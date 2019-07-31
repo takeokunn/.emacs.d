@@ -29,6 +29,7 @@
 (depends-on "git-gutter-fringe")
 (depends-on "smooth-scroll")
 (depends-on "exec-path-from-shell")
+(depends-on "sound-wav")
 
 ;; key
 (depends-on "bind-key")

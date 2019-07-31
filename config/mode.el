@@ -76,6 +76,10 @@
 (autoload 'ssh-config-mode "ssh-config-mode" nil t)
 (add-to-list 'auto-mode-alist '("/path-to-your-ssh/config\\'" . ssh-config-mode))
 
+;; php
+(autoload 'php-mode "php-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+
 ;; clojure
 (autoload 'clojure-mode "clojure-mode" nil t)
 (autoload 'clojure-mode "clojurescript-mode" nil t)
