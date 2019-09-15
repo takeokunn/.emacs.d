@@ -79,7 +79,11 @@
 (define-key markdown-mode-map (kbd "C-m") nil)
 
 ;; swoop
-(define-key ivy-mode-map (kbd "C-o") 'swoop-from-isearch)
+(defun my/swoop-from-isearch ()
+    (interactive)
+    (let* ((symbol (thing-at-point 'symbol 'no-properties)))
+        (swoop-function symbol)))
+(define-key ivy-mode-map (kbd "C-o") 'my/swoop-from-isearch)
 
 ;; common lisp
 (define-key lisp-mode-map (kbd "C-c h") 'hyperspec-lookup)
