@@ -80,3 +80,6 @@
 
 ;; swoop
 (define-key ivy-mode-map (kbd "C-o") 'swoop-from-isearch)
+
+;; common lisp
+(define-key lisp-mode-map (kbd "C-c h") 'hyperspec-lookup)
