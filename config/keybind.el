@@ -15,7 +15,6 @@
     (interactive)
     (let ((symbol (thing-at-point 'symbol 'no-properties)))
         (counsel-ag symbol)))
-
 (progn
     (bind-key "C-a" 'my/beginning-of-intendation)
     (bind-key "C-z" 'undo)
