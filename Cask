@@ -30,6 +30,7 @@
 (depends-on "smooth-scroll")
 (depends-on "exec-path-from-shell")
 (depends-on "sound-wav")
+(depends-on "hindent")
 
 ;; key
 (depends-on "bind-key")
@@ -51,6 +52,9 @@
 (depends-on "ac-slime")
 (depends-on "rainbow-delimiters")
 (depends-on "elisp-slime-nav")
+
+;; typescript
+(depends-on "tide")
 
 ;; awesome
 (depends-on "emms")

@@ -4,6 +4,7 @@
 ;; lsp-mode ;;
 ;;;;;;;;;;;;;;
 (use-package lsp-mode)
+(use-package lsp-haskell)
 
 ;; config
 (setq lsp-print-io nil)
@@ -13,6 +14,7 @@
 (setq lsp-document-sync-method 'incremental)
 (setq lsp-response-timeout 5)
 (setq lsp-ui-sideline-enable nil)
+(setq lsp-prefer-flymake nil)
 
 ;; path
 (add-to-list 'exec-path "~/.npm-global/bin" t)
@@ -22,6 +24,8 @@
 (add-hook 'js2-mode-hook #'lsp)
 (add-hook 'web-mode-hook #'lsp)
 (add-hook 'ruby-mode-hook #'lsp)
+(add-hook 'haskell-mode-hook #'lsp)
+(add-hook 'typescript-mode-hook #'lsp)
 ;; (add-hook 'php-mode-hook #'lsp)
 
 ;;;;;;;;;;;;;;

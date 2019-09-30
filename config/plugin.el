@@ -142,24 +142,36 @@
 (use-package exec-path-from-shell)
 (exec-path-from-shell-copy-envs '("PATH" "GEM_HOME"))
 
+;; ghc
+(autoload 'ghc-init "ghc" nil t)
+(autoload 'ghc-debug "ghc" nil t)
+
+;; hindent
+(add-hook 'haskell-mode-hook #'hindent-mode)
+(setq hindent-style "johan-tibell")
+
+;; typescript
+(defun my/setup-tide-mode ()
+    (interactive)
+    (tide-setup)
+    (tide-hl-identifier-mode +1))
+(add-hook 'typescript-mode-hook #'my/setup-tide-mode)
+
 ;; sound-wav
-;;; ファイルを開くときの効果音
-(defun find-file-hook--sound ()
-    (sound-wav-play
-        (expand-file-name
-            "~/sound/Typewriter_Sound_FXs/Antique_Typewriter_Sound_FXs/Paper_load.wav")))
+;; (defun find-file-hook--sound ()
+;;     (sound-wav-play
+;;         (expand-file-name
+;;             "~/sound/Typewriter_Sound_FXs/Antique_Typewriter_Sound_FXs/Paper_load.wav")))
 ;; (add-hook 'find-file-hook 'find-file-hook--sound)
 
-;;; キーを叩くたびに音を出す(うるさいので注意(笑))
-(defun post-command-hook--sound ()
-    (ignore-errors
-        (sound-wav-play
-            (expand-file-name
-                (cl-case last-command-event
-                    (?\s "~/sound/Typewriter_Sound_FXs/Typewriter_Sound_FXs/Spacebar.wav")
-                    ('backspace "~/sound/Typewriter_Sound_FXs/Typewriter_Sound_FXs/Backspace.wav")
-                    ((?\C-m 'return) "~/sound/Typewriter_Sound_FXs/Typewriter_Sound_FXs/Return.wav")
-                    ;; やかましいので2回に1回のペースで鳴らすか
-                    (t (when (zerop (random 2))
-                           "~/sound/Typewriter_Sound_FXs/Typewriter_Sound_FXs/2_click.wav")))))))
+;; (defun post-command-hook--sound ()
+;;     (ignore-errors
+;;         (sound-wav-play
+;;             (expand-file-name
+;;                 (cl-case last-command-event
+;;                     (?\s "~/sound/Typewriter_Sound_FXs/Typewriter_Sound_FXs/Spacebar.wav")
+;;                     ('backspace "~/sound/Typewriter_Sound_FXs/Typewriter_Sound_FXs/Backspace.wav")
+;;                     ((?\C-m 'return) "~/sound/Typewriter_Sound_FXs/Typewriter_Sound_FXs/Return.wav")
+;;                     (t (when (zerop (random 2))
+;;                            "~/sound/Typewriter_Sound_FXs/Typewriter_Sound_FXs/2_click.wav")))))))
 ;; (add-hook 'post-command-hook 'post-command-hook--sound)

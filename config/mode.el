@@ -43,7 +43,6 @@
 ;; dhall
 (autoload 'dhall-mode "dhall-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.dhall$" . dhall-mode))
-(setq dhall-use-header-line nil)
 
 ;; javascript
 (autoload 'js2-mode "js2-mode" nil t)
@@ -55,6 +54,11 @@
 ;; typescript
 (autoload 'typescript-mode "typescript-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+(add-hook 'web-mode-hook
+    (lambda ()
+        (when (string-equal "tsx" (file-name-extension buffer-file-name))
+            (my/setup-tide-mode))))
 
 ;; slim
 (autoload 'slim-mode "slim-mode" nil t)
@@ -106,3 +110,11 @@
 
 ;; elisp
 (add-hook 'emacs-lisp-mode-hook #'nameless-mode)
+
+;; haskell
+(autoload 'haskell-mode "haskell-mode" nil t)
+(autoload 'haskell-cabal "haskell-cabal" nil t)
+
+(add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
+(add-to-list 'auto-mode-alist '("\\.lhs$" . literate-haskell-mode))
+(add-to-list 'auto-mode-alist '("\\.cable$" . haskell-cabal-mode))
