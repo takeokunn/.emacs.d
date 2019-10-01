@@ -73,16 +73,19 @@
 ;; for dap-mode
 (define-key lsp-mode-map (kbd "C-c d") 'dap-breakpoint-toggle)
 
-;; markdown
+;; for markdown
 (define-key markdown-mode-map (kbd "C-j") nil)
 (define-key markdown-mode-map (kbd "C-m") nil)
 
-;; swoop
+;; for swoop
 (defun my/swoop-from-isearch ()
     (interactive)
     (let* ((symbol (thing-at-point 'symbol 'no-properties)))
         (swoop-function symbol)))
 (define-key ivy-mode-map (kbd "C-o") 'my/swoop-from-isearch)
 
-;; common lisp
+;; for common lisp
 (define-key lisp-mode-map (kbd "C-c h") 'hyperspec-lookup)
+
+;; for haskell
+(define-key haskell-indentation-mode-map (kbd "RET") 'set-mark-command)
