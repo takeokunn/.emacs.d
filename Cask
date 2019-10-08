@@ -88,3 +88,5 @@
 (depends-on "emmet-mode")
 (depends-on "scala-mode")
 (depends-on "vue-mode")
+(depends-on "haskell-mode")
+(depends-on "gradle-mode")
