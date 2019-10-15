@@ -20,16 +20,18 @@
 (add-to-list 'exec-path "~/.npm-global/bin" t)
 
 ;; hook
-(add-hook 'go-mode-hook #'lsp)
-(add-hook 'js2-mode-hook #'lsp)
-(add-hook 'web-mode-hook #'lsp)
-(add-hook 'ruby-mode-hook #'lsp)
-(add-hook 'haskell-mode-hook #'lsp)
-(add-hook 'typescript-mode-hook #'lsp)
-(add-hook 'vue-mode-hook #'lsp)
-(add-hook 'sh-mode-hook #'lsp)
-(add-hook 'shell-mode-hook #'lsp)
-;; (add-hook 'php-mode-hook #'lsp)
+(dolist (hook '(go-mode-hook
+                   js2-mode-hook
+                   web-mode-hook
+                   css-mode-hook
+                   scss-mode-hook
+                   ruby-mode-hook
+                   haskell-mode-hook
+                   typescript-mode-hook
+                   vue-mode-hook
+                   sh-mode-hook
+                   shell-mode-hook))
+    (add-hook hook #'lsp))
 
 ;;;;;;;;;;;;;;
 ;;  lsp-ui  ;;

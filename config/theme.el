@@ -6,7 +6,9 @@
 (use-package neotree
     :custom
     (neo-theme 'nerd2))
+
 (setq-default neo-show-hidden-files t)
+(setq neo-window-fixed-size nil)
 
 (defun neo-buffer--insert-fold-symbol (name &optional file-name)
     "Custom overriding function for the fold symbol.

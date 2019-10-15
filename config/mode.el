@@ -124,3 +124,7 @@
 ;; gradle
 (autoload 'gradle-mode "gradle-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.gradle$" . java-mode))
+
+;; cmake
+(autoload 'cmake-mode "cmake-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.cmake$" . cmake-mode))

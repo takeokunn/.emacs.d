@@ -97,3 +97,4 @@
 (depends-on "vue-mode")
 (depends-on "haskell-mode")
 (depends-on "gradle-mode")
+(depends-on "cmake-mode")
