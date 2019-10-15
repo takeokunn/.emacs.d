@@ -37,6 +37,9 @@
     (bind-key "M-x" 'counsel-M-x)
     (bind-key "C-x C-k" nil))
 
+;; for refactor
+(define-key prog-mode-map (kbd "M-RET") 'emr-show-refactor-menu)
+
 ;; for term
 (define-key term-raw-map (kbd "C-h") 'term-send-backspace)
 (define-key term-raw-map (kbd "C-p") 'term-send-up)
@@ -81,11 +84,14 @@
 (defun my/swoop-from-isearch ()
     (interactive)
     (let* ((symbol (thing-at-point 'symbol 'no-properties)))
-        (swoop-function symbol)))
+        (swoop symbol)))
 (define-key ivy-mode-map (kbd "C-o") 'my/swoop-from-isearch)
 
 ;; for common lisp
 (define-key lisp-mode-map (kbd "C-c h") 'hyperspec-lookup)
 
 ;; for haskell
-(define-key haskell-indentation-mode-map (kbd "RET") 'set-mark-command)
+;; (define-key haskell-mode-map (kbd "RET") 'set-mark-command)
+
+;; for js2-mode
+(js2r-add-keybindings-with-prefix "C-c C-m")

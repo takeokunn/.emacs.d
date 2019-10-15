@@ -47,9 +47,11 @@
 ;; javascript
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(add-hook 'js2-mode-hook #'js2-refactor-mode)
 
 ;; ruby
 (add-to-list 'auto-mode-alist '("Schemafile" . ruby-mode))
+(add-hook 'ruby-mode-hook 'ruby-refactor-mode-launch)
 
 ;; typescript
 (autoload 'typescript-mode "typescript-mode" nil t)
@@ -121,5 +123,4 @@
 
 ;; gradle
 (autoload 'gradle-mode "gradle-mode" nil t)
-
 (add-to-list 'auto-mode-alist '("\\.gradle$" . java-mode))

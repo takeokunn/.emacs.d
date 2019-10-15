@@ -32,6 +32,11 @@
 (depends-on "sound-wav")
 (depends-on "hindent")
 
+;; refactor
+(depends-on "emr")
+(depends-on "js2-refactor")
+(depends-on "ruby-refactor")
+
 ;; key
 (depends-on "bind-key")
 (depends-on "smartrep")
@@ -62,8 +67,10 @@
 ;; lsp
 (depends-on "lsp-mode")
 (depends-on "lsp-ui")
+(depends-on "lsp-haskell")
 (depends-on "company-lsp")
 (depends-on "dap-mode")
+(depends-on "ccls")
 
 ;; mode
 (depends-on "web-mode")

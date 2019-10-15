@@ -26,6 +26,9 @@
 (add-hook 'ruby-mode-hook #'lsp)
 (add-hook 'haskell-mode-hook #'lsp)
 (add-hook 'typescript-mode-hook #'lsp)
+(add-hook 'vue-mode-hook #'lsp)
+(add-hook 'sh-mode-hook #'lsp)
+(add-hook 'shell-mode-hook #'lsp)
 ;; (add-hook 'php-mode-hook #'lsp)
 
 ;;;;;;;;;;;;;;
@@ -64,3 +67,17 @@
 ;; config
 (dap-mode 1)
 (dap-ui-mode 1)
+
+;;;;;;;;;;;;;;;;;
+;;    ccls     ;;
+;;;;;;;;;;;;;;;;;
+(use-package ccls)
+
+;; hook
+(add-hook 'c-mode-hook 'lsp)
+(add-hook 'c++-mode-hook 'lsp)
+(add-hook 'objc-mode-hook 'lsp)
+(add-hook 'cuda-mode-hook 'lsp)
+
+;; config
+(setq ccls-executable "~/.ghq/github.com/MaskRay/ccls/Release/ccls")

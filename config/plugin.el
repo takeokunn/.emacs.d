@@ -157,6 +157,9 @@
     (tide-hl-identifier-mode +1))
 (add-hook 'typescript-mode-hook #'my/setup-tide-mode)
 
+;; js2-mode
+(setq js2-skip-preprocessor-directives t)
+
 ;; sound-wav
 ;; (defun find-file-hook--sound ()
 ;;     (sound-wav-play
