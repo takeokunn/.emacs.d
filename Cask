@@ -70,7 +70,6 @@
 (depends-on "lsp-haskell")
 (depends-on "company-lsp")
 (depends-on "dap-mode")
-(depends-on "ccls")
 
 ;; mode
 (depends-on "web-mode")
@@ -98,3 +97,4 @@
 (depends-on "haskell-mode")
 (depends-on "gradle-mode")
 (depends-on "cmake-mode")
+(depends-on "csv-mode")

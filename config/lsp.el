@@ -69,17 +69,3 @@
 ;; config
 (dap-mode 1)
 (dap-ui-mode 1)
-
-;;;;;;;;;;;;;;;;;
-;;    ccls     ;;
-;;;;;;;;;;;;;;;;;
-(use-package ccls)
-
-;; hook
-(add-hook 'c-mode-hook 'lsp)
-(add-hook 'c++-mode-hook 'lsp)
-(add-hook 'objc-mode-hook 'lsp)
-(add-hook 'cuda-mode-hook 'lsp)
-
-;; config
-(setq ccls-executable "~/.ghq/github.com/MaskRay/ccls/Release/ccls")
