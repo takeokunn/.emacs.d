@@ -34,6 +34,7 @@
                    sh-mode-hook
                    shell-mode-hook))
     (add-hook hook #'lsp))
+(add-hook 'lsp-mode-hook 'flycheck-mode)
 
 ;;;;;;;;;;;;;;
 ;;  lsp-ui  ;;
@@ -42,6 +43,7 @@
 
 ;; config lsp-ui-doc
 (setq lsp-ui-doc-enable t)
+(setq lsp-ui-doc-max-height 15)
 
 ;; config lsp-ui-sideline
 (setq lsp-ui-sideline-enable nil)

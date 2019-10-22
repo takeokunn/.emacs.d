@@ -128,7 +128,9 @@
 
 ;; company
 (use-package company)
+(use-package company-glsl)
 (global-company-mode)
+(add-to-list 'company-backends 'company-glsl)
 
 ;; git-gutter
 (use-package git-gutter-fringe)
