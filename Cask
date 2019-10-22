@@ -68,6 +68,7 @@
 (depends-on "lsp-mode")
 (depends-on "lsp-ui")
 (depends-on "lsp-haskell")
+(depends-on "lsp-java")
 (depends-on "company-lsp")
 (depends-on "dap-mode")
 
@@ -98,3 +99,4 @@
 (depends-on "gradle-mode")
 (depends-on "cmake-mode")
 (depends-on "csv-mode")
+(depends-on "glsl-mode")

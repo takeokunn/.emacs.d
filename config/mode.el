@@ -96,6 +96,11 @@
 (autoload 'vue-mode "vue-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.vue$" . vue-mode))
 
+;; glsl
+(autoload 'glsl-mode "glsl-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.vsh$" . glsl-mode))
+(add-to-list 'auto-mode-alist '("\\.fsh$" . glsl-mode))
+
 ;; emmet
 (use-package emmet-mode)
 (autoload 'emmet-mode "emmet-mode" nil t)

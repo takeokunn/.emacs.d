@@ -4,6 +4,7 @@
 ;; lsp-mode ;;
 ;;;;;;;;;;;;;;
 (use-package lsp-mode)
+(use-package lsp-java)
 (use-package lsp-haskell)
 
 ;; config
@@ -28,6 +29,7 @@
                    ruby-mode-hook
                    haskell-mode-hook
                    typescript-mode-hook
+                   java-mode-hook
                    vue-mode-hook
                    sh-mode-hook
                    shell-mode-hook))
