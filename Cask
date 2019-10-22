@@ -26,6 +26,7 @@
 (depends-on "dumb-jump")
 (depends-on "swoop")
 (depends-on "company")
+(depends-on "company-glsl")
 (depends-on "git-gutter-fringe")
 (depends-on "smooth-scroll")
 (depends-on "exec-path-from-shell")
