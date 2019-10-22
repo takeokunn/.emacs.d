@@ -68,9 +68,9 @@
          ("O" . 'mc/reverse-regions)))
 
 ;; for lsp-mode
-(define-key lsp-mode-map (kbd "C-c i") 'lsp-ui-peek-find-implementation)
 (define-key lsp-mode-map (kbd "C-c s") 'lsp-ui-sideline-mode)
 (define-key lsp-mode-map (kbd "M-.") #'lsp-ui-peek-find-definitions)
+(define-key lsp-mode-map (kbd "M-?") 'lsp-ui-peek-find-implementation)
 
 ;; for dap-mode
 (define-key lsp-mode-map (kbd "C-c d") 'dap-breakpoint-toggle)
