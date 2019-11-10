@@ -101,3 +101,4 @@
 (depends-on "cmake-mode")
 (depends-on "csv-mode")
 (depends-on "glsl-mode")
+(depends-on "toml-mode")

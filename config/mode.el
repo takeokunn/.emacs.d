@@ -133,3 +133,7 @@
 ;; cmake
 (autoload 'cmake-mode "cmake-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.cmake$" . cmake-mode))
+
+;; toml
+(autoload 'toml-mode "toml-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.toml$" . toml-mode))

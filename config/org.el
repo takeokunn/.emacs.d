@@ -1,5 +1,6 @@
 ;; ----- Org ----- ;;
 
+(setq org-use-speed-commands t)
 (setq org-agenda-todo-ignore-with-date t)
 (setq org-directory "~/emacs/org")
 (setq org-agenda-files '("~/emacs/org/todo.org"))
