@@ -15,6 +15,7 @@
     (interactive)
     (let ((symbol (thing-at-point 'symbol 'no-properties)))
         (counsel-ag symbol)))
+
 (progn
     (bind-key "C-a" 'my/beginning-of-intendation)
     (bind-key "C-z" 'undo)
@@ -90,7 +91,7 @@
 (define-key lisp-mode-map (kbd "C-c h") 'hyperspec-lookup)
 
 ;; for haskell
-;; (define-key haskell-mode-map (kbd "RET") 'set-mark-command)
+(define-key haskell-indentation-mode-map (kbd "C-m") nil)
 
 ;; for js2-mode
 (js2r-add-keybindings-with-prefix "C-c C-m")

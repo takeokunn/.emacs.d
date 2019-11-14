@@ -9,7 +9,7 @@
           (file+headline "~/emacs/org/todo.org" "予定")
           "* TODO %?\n\n")
          ("m" "Memo" entry
-             (file+headline "~/emacs/memo.org" "メモ")
+             (file+headline "~/emacs/org/memo.org" "メモ")
              "* %U%?\n%i\n%a")))
 (setq org-agenda-custom-commands
     '(("a" "Agenda and TODO"
