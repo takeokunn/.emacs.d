@@ -93,5 +93,10 @@
 ;; for haskell
 (define-key haskell-indentation-mode-map (kbd "C-m") nil)
 
+;; for org-mode
+(add-hook 'org-mode-hook
+    (lambda ()
+        (define-key org-mode-map (kbd "C-m") nil)))
+
 ;; for js2-mode
 (js2r-add-keybindings-with-prefix "C-c C-m")
