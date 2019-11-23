@@ -102,3 +102,4 @@
 (depends-on "csv-mode")
 (depends-on "glsl-mode")
 (depends-on "toml-mode")
+(depends-on "gitignore-mode")
