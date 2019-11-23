@@ -137,3 +137,7 @@
 ;; toml
 (autoload 'toml-mode "toml-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.toml$" . toml-mode))
+
+;; php
+(autoload 'php-mode "php-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))

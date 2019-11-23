@@ -8,7 +8,6 @@
 (load "~/.emacs.d/config/plugin.el")
 (load "~/.emacs.d/config/theme.el")
 (load "~/.emacs.d/config/lisp.el")
-;; (load "~/.emacs.d/config/php.el")
 (load "~/.emacs.d/config/mode.el")
 (load "~/.emacs.d/config/lsp.el")
 (load "~/.emacs.d/config/org.el")

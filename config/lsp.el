@@ -32,7 +32,8 @@
                    java-mode-hook
                    vue-mode-hook
                    sh-mode-hook
-                   shell-mode-hook))
+                   shell-mode-hook
+                   php-mode-hook))
     (add-hook hook #'lsp))
 (add-hook 'lsp-mode-hook 'flycheck-mode)
 
