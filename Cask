@@ -32,11 +32,13 @@
 (depends-on "exec-path-from-shell")
 (depends-on "sound-wav")
 (depends-on "hindent")
+(depends-on "cider")
 
 ;; refactor
 (depends-on "emr")
 (depends-on "js2-refactor")
 (depends-on "ruby-refactor")
+(depends-on "clj-refactor")
 
 ;; key
 (depends-on "bind-key")
@@ -103,3 +105,4 @@
 (depends-on "glsl-mode")
 (depends-on "toml-mode")
 (depends-on "gitignore-mode")
+(depends-on "clojure-mode")

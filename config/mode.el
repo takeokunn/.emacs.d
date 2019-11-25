@@ -145,3 +145,7 @@
 ;; gitignore
 (autoload 'gitignore-mode "gitignore-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.dockerignore$" . gitignore-mode))
+
+;; clojure
+(autoload 'clojure-mode "clojure-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
