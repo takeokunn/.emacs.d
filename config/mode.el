@@ -145,3 +145,7 @@
 ;; gitignore
 (autoload 'gitignore-mode "gitignore-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.dockerignore$" . gitignore-mode))
+
+;; plantuml
+(autoload 'plantuml-mode "plantuml-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.pu$" . plantuml-mode))

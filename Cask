@@ -103,3 +103,4 @@
 (depends-on "glsl-mode")
 (depends-on "toml-mode")
 (depends-on "gitignore-mode")
+(depends-on "plantuml-mode")
