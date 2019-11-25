@@ -106,3 +106,4 @@
 (depends-on "toml-mode")
 (depends-on "gitignore-mode")
 (depends-on "clojure-mode")
+(depends-on "plantuml-mode")

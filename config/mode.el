@@ -146,6 +146,11 @@
 (autoload 'gitignore-mode "gitignore-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.dockerignore$" . gitignore-mode))
 
+
 ;; clojure
 (autoload 'clojure-mode "clojure-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
+
+;; plantuml
+(autoload 'plantuml-mode "plantuml-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.pu$" . plantuml-mode))
