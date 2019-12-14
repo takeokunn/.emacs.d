@@ -162,6 +162,11 @@
 ;; js2-mode
 (setq js2-skip-preprocessor-directives t)
 
+;; js2-refactor
+(use-package js2-refactor)
+(add-hook 'js2-mode-hook #'js2-refactor-mode)
+(add-hook 'typescript-mode-hook #'js2-refactor-mode)
+
 ;; sound-wav
 ;; (defun find-file-hook--sound ()
 ;;     (sound-wav-play

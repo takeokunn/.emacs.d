@@ -74,14 +74,3 @@
 ;; config
 (dap-mode 1)
 (dap-ui-mode 1)
-
-;; ;;;;;;;;;;;;;;;;;
-;; ;;  lsp-glsl   ;;
-;; ;;;;;;;;;;;;;;;;;
-;; (lsp-register-client
-;;     (make-lsp-client
-;;         :new-connection (lsp-stdio-connection '("glslls"))
-;;         :major-modes '(glsl-mode)
-;;         :server-id 'glsl-ls
-;;         :multi-root t))
-;; (add-hook 'glsl-mode-hook #'lsp)

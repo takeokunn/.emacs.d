@@ -107,3 +107,4 @@
 (depends-on "gitignore-mode")
 (depends-on "clojure-mode")
 (depends-on "plantuml-mode")
+(depends-on "processing-mode")

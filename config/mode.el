@@ -57,6 +57,7 @@
 (autoload 'typescript-mode "typescript-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+(add-hook 'typescript-mode-hook #'js2-refactor-mode)
 (add-hook 'web-mode-hook
     (lambda ()
         (when (string-equal "tsx" (file-name-extension buffer-file-name))
@@ -154,3 +155,9 @@
 ;; plantuml
 (autoload 'plantuml-mode "plantuml-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.pu$" . plantuml-mode))
+
+;; processing
+(autoload 'processing-mode "processing-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.pde$" . processing-mode))
+(setq processing-location "/opt/processing/processing-java")
+(setq processing-output-dir "/tmp")
