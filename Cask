@@ -33,6 +33,7 @@
 (depends-on "sound-wav")
 (depends-on "hindent")
 (depends-on "cider")
+(depends-on "gamegrid")
 
 ;; refactor
 (depends-on "emr")

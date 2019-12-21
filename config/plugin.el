@@ -8,10 +8,10 @@
 (set-face-attribute 'hl-line nil :inherit nil)
 (defvar global-hl-line-timer-exclude-modes '(todotxt-mode))
 (defun global-hl-line-timer-function ()
-    (unless (memq major-mode global-hl-line-timer-exclude-modes)
-        (global-hl-line-unhighlight-all)
-        (let ((global-hl-line-mode t))
-            (global-hl-line-highlight))))
+  (unless (memq major-mode global-hl-line-timer-exclude-modes)
+    (global-hl-line-unhighlight-all)
+    (let ((global-hl-line-mode t))
+      (global-hl-line-highlight))))
 (setq global-hl-line-timer
     (run-with-idle-timer 0.03 t 'global-hl-line-timer-function))
 
@@ -20,6 +20,7 @@
 (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
 
 ;; editorconfig
+
 (use-package editorconfig
     :ensure t
     :config
@@ -48,8 +49,8 @@
 
 ;; yasnippet
 (use-package yasnippet
-    :ensure t
-    :diminish yas-minor-mode)
+  :ensure t
+  :diminish yas-minor-mode)
 
 (use-package yasnippet-snippets)
 (yas-global-mode 1)
@@ -63,9 +64,9 @@
 
 ;; all-the-icons-ivy
 (use-package all-the-icons-ivy
-    :ensure t
-    :config
-    (all-the-icons-ivy-setup))
+  :ensure t
+  :config
+  (all-the-icons-ivy-setup))
 
 ;; recentf
 (use-package recentf)
