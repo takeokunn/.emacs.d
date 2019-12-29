@@ -1,11 +1,8 @@
 (source gnu)
 (source melpa)
 
-;; package
 (depends-on "cask")
 (depends-on "use-package")
-
-;; util
 (depends-on "magit")
 (depends-on "yasnippet")
 (depends-on "yasnippet-snippets")
@@ -14,7 +11,6 @@
 (depends-on "multi-term")
 (depends-on "open-junk-file")
 (depends-on "counsel")
-(depends-on "magit")
 (depends-on "ivy-rich")
 (depends-on "all-the-icons-ivy")
 (depends-on "rg")
@@ -34,19 +30,14 @@
 (depends-on "hindent")
 (depends-on "cider")
 (depends-on "gamegrid")
-
-;; refactor
+(depends-on "hl-todo")
 (depends-on "emr")
 (depends-on "js2-refactor")
 (depends-on "ruby-refactor")
 (depends-on "clj-refactor")
-
-;; key
 (depends-on "bind-key")
 (depends-on "smartrep")
 (depends-on "multiple-cursors")
-
-;; file/directory/theme
 (depends-on "neotree")
 (depends-on "doom-themes")
 (depends-on "doom-modeline")
@@ -55,28 +46,18 @@
 (depends-on "all-the-icons")
 (depends-on "all-the-icons-dired")
 (depends-on "hl-line")
-
-;; lisp
 (depends-on "paredit")
 (depends-on "ac-slime")
 (depends-on "rainbow-delimiters")
 (depends-on "elisp-slime-nav")
-
-;; typescript
 (depends-on "tide")
-
-;; awesome
 (depends-on "emms")
-
-;; lsp
 (depends-on "lsp-mode")
 (depends-on "lsp-ui")
 (depends-on "lsp-haskell")
 (depends-on "lsp-java")
 (depends-on "company-lsp")
 (depends-on "dap-mode")
-
-;; mode
 (depends-on "web-mode")
 (depends-on "nyan-mode")
 (depends-on "go-mode")

@@ -12,7 +12,6 @@
 (load "~/.emacs.d/config/lsp.el")
 (load "~/.emacs.d/config/org.el")
 (load "~/.emacs.d/config/keybind.el")
-(load "~/.emacs.d/config/xmas.el")
 
 ;; auto generated
 (custom-set-variables

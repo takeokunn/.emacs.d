@@ -26,43 +26,42 @@
                     symbol-name)))))
 
 (defun common-lisp-hyperspec-lookup-reader-macro (macro)
-    (interactive
-        (list
-            (let ((completion-ignore-case t))
-                (completing-read "Look up reader-macro: "
-                    common-lisp-hyperspec--reader-macros nil t
-                    (common-lisp-hyperspec-reader-macro-at-point)))))
-    (eww-open-file
-        (concat common-lisp-hyperspec-root "Body/"
-            (gethash macro common-lisp-hyperspec--reader-macros))))
+  (interactive
+   (list
+    (let ((completion-ignore-case t))
+      (completing-read "Look up reader-macro: "
+                       common-lisp-hyperspec--reader-macros nil t
+                       (common-lisp-hyperspec-reader-macro-at-point)))))
+  (eww-open-file
+   (concat common-lisp-hyperspec-root "Body/"
+           (gethash macro common-lisp-hyperspec--reader-macros))))
 
 (defun common-lisp-hyperspec-format (character-name)
-    (interactive (list (common-lisp-hyperspec--read-format-character)))
-    (cl-maplist (lambda (entry)
-                    (eww-open-file (common-lisp-hyperspec-section (car entry))))
-        (or (gethash character-name
-                common-lisp-hyperspec--format-characters)
-            (error "The symbol `%s' is not defined in Common Lisp"
-                character-name))))
+  (interactive (list (common-lisp-hyperspec--read-format-character)))
+  (cl-maplist (lambda (entry)
+                (eww-open-file (common-lisp-hyperspec-section (car entry))))
+              (or (gethash character-name
+                           common-lisp-hyperspec--format-characters)
+                  (error "The symbol `%s' is not defined in Common Lisp"
+                         character-name))))
 
 (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
-    (let ((buf (current-buffer)))
-        ad-do-it
-        (switch-to-buffer buf)
-        (pop-to-buffer "*eww*")))
+  (let ((buf (current-buffer)))
+    ad-do-it
+    (switch-to-buffer buf)
+    (pop-to-buffer "*eww*")))
 
 (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
-    (let ((buf (current-buffer)))
-        ad-do-it
-        (switch-to-buffer buf)
-        (pop-to-buffer "*eww*")))
+  (let ((buf (current-buffer)))
+    ad-do-it
+    (switch-to-buffer buf)
+    (pop-to-buffer "*eww*")))
 
 (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
-    (let ((buf (current-buffer)))
-        ad-do-it
-        (switch-to-buffer buf)
-        (pop-to-buffer "*eww*")))
-
+  (let ((buf (current-buffer)))
+    ad-do-it
+    (switch-to-buffer buf)
+    (pop-to-buffer "*eww*")))
 (dolist (hook '(emacs-lisp-mode-hook
                 lisp-interaction-mode-hook
                 ielm-mode-hook))
