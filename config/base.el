@@ -11,17 +11,17 @@
     (setq show-trailing-whitespace nil))
 
 (defvar my/disable-trailing-modes
-    '(comint-mode
-         eshell-mode
-         eww-mode
-         term-mode
-         twittering-mode
-         minibuffer-inactive-mode))
+  '(comint-mode
+    eshell-mode
+    eww-mode
+    term-mode
+    twittering-mode
+    minibuffer-inactive-mode))
 (mapc
-    (lambda (mode)
-        (add-hook (intern (concat (symbol-name mode) "-hook"))
-            'my/disable-trailing-mode-hook))
-    my/disable-trailing-modes)
+ (lambda (mode)
+   (add-hook (intern (concat (symbol-name mode) "-hook"))
+             'my/disable-trailing-mode-hook))
+ my/disable-trailing-modes)
 
 ;; editor bar
 (menu-bar-mode -1)
@@ -62,11 +62,3 @@
 
 ;; error level
 (setq display-warning-minimum-level :error)
-
-;; current
-(defun my/reset-default-directory-by-buffer-file-name ()
-    "Set default-directory by `buffer-file-name'."
-    (interactive)
-    (require 'f)
-    (when buffer-file-name
-        (setq default-directory (f-dirname buffer-file-name))))

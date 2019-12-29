@@ -59,9 +59,9 @@
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
 (add-hook 'typescript-mode-hook #'js2-refactor-mode)
 (add-hook 'web-mode-hook
-    (lambda ()
-        (when (string-equal "tsx" (file-name-extension buffer-file-name))
-            (my/setup-tide-mode))))
+          (lambda ()
+            (when (string-equal "tsx" (file-name-extension buffer-file-name))
+              (my/setup-tide-mode))))
 
 ;; slim
 (autoload 'slim-mode "slim-mode" nil t)

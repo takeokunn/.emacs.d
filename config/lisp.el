@@ -63,19 +63,10 @@
         (switch-to-buffer buf)
         (pop-to-buffer "*eww*")))
 
-;; ----- Emacs Lisp ----- ;;
-
-;; elisp
 (dolist (hook '(emacs-lisp-mode-hook
-                   lisp-interaction-mode-hook
-                   ielm-mode-hook))
-    (add-hook hook 'elisp-slime-nav-mode))
-
-;; ----- Clojure ----- ;;
-
-;; ----- Scheme ----- ;;
-
-;; ----- Common ----- ;;
+                lisp-interaction-mode-hook
+                ielm-mode-hook))
+  (add-hook hook 'elisp-slime-nav-mode))
 
 ;; paredit
 (use-package paredit)

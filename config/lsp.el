@@ -22,19 +22,19 @@
 
 ;; hook
 (dolist (hook '(go-mode-hook
-                   js2-mode-hook
-                   web-mode-hook
-                   css-mode-hook
-                   scss-mode-hook
-                   ruby-mode-hook
-                   haskell-mode-hook
-                   typescript-mode-hook
-                   java-mode-hook
-                   vue-mode-hook
-                   sh-mode-hook
-                   shell-mode-hook
-                   php-mode-hook))
-    (add-hook hook #'lsp))
+                js2-mode-hook
+                web-mode-hook
+                css-mode-hook
+                scss-mode-hook
+                ruby-mode-hook
+                haskell-mode-hook
+                typescript-mode-hook
+                java-mode-hook
+                vue-mode-hook
+                sh-mode-hook
+                shell-mode-hook
+                php-mode-hook))
+  (add-hook hook #'lsp))
 (add-hook 'lsp-mode-hook 'flycheck-mode)
 
 ;;;;;;;;;;;;;;

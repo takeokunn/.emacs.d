@@ -20,7 +20,6 @@
 (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
 
 ;; editorconfig
-
 (use-package editorconfig
     :ensure t
     :config
