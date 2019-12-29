@@ -182,3 +182,16 @@
 (use-package js2-refactor)
 (add-hook 'js2-mode-hook #'js2-refactor-mode)
 (add-hook 'typescript-mode-hook #'js2-refactor-mode)
+
+;; ivy-ghq
+(use-package ivy-ghq
+  :commands (ivy-ghq-open)
+  :bind
+  ("M-o" . ivy-ghq-open-and-fzf)
+  :custom
+  (ivy-ghq-short-list t)
+  :preface
+  (defun ivy-ghq-open-and-fzf ()
+    (interactive)
+    (ivy-ghq-open)
+    (counsel-fzf)))

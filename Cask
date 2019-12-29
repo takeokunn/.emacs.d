@@ -57,6 +57,9 @@
 (depends-on "lsp-haskell")
 (depends-on "lsp-java")
 (depends-on "company-lsp")
+(depends-on "ivy-ghq" :git "https://github.com/analyticd/ivy-ghq.git")
+
+;; mode
 (depends-on "dap-mode")
 (depends-on "web-mode")
 (depends-on "nyan-mode")
