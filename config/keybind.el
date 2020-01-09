@@ -36,6 +36,7 @@
   (bind-key "C-x C-r" 'counsel-recentf)
   (bind-key "C-x C-f" 'counsel-find-file)
   (bind-key "M-x" 'counsel-M-x)
+  (bind-key "M-g" 'google-this)
   (bind-key "C-x C-k" nil))
 
 ;; for refactor
@@ -100,3 +101,11 @@
 
 ;; for js2-mode
 (js2r-add-keybindings-with-prefix "C-c C-m")
+
+;; vterm
+(define-key vterm-mode-map [mouse-1] nil)
+(define-key vterm-mode-map [mouse-2] nil)
+(define-key vterm-mode-map [mouse-3] nil)
+(define-key vterm-mode-map [mouse-4] nil)
+(define-key vterm-mode-map [mouse-5] nil)
+(define-key vterm-mode-map [mouse-5] nil)

@@ -37,9 +37,9 @@
 
 ;; editorconfig
 (use-package editorconfig
-    :ensure t
-    :config
-    (editorconfig-mode 1))
+  :ensure t
+  :config
+  (editorconfig-mode 1))
 
 ;; emms
 (use-package emms-setup)
@@ -195,3 +195,8 @@
     (interactive)
     (ivy-ghq-open)
     (counsel-fzf)))
+
+;; vterm
+(use-package vterm)
+(add-hook 'vterm-mode-hook #'(lambda ()
+                               (setq show-trailing-whitespace nil)))

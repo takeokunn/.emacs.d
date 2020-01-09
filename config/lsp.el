@@ -33,7 +33,8 @@
                 vue-mode-hook
                 sh-mode-hook
                 shell-mode-hook
-                php-mode-hook))
+                php-mode-hook
+                python-mode-hook))
   (add-hook hook #'lsp))
 (add-hook 'lsp-mode-hook 'flycheck-mode)
 

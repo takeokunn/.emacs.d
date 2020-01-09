@@ -58,6 +58,8 @@
 (depends-on "lsp-java")
 (depends-on "company-lsp")
 (depends-on "ivy-ghq" :git "https://github.com/analyticd/ivy-ghq.git")
+(depends-on "google-this")
+(depends-on "vterm")
 
 ;; mode
 (depends-on "dap-mode")
