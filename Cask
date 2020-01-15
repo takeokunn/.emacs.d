@@ -60,6 +60,7 @@
 (depends-on "ivy-ghq" :git "https://github.com/analyticd/ivy-ghq.git")
 (depends-on "google-this")
 (depends-on "vterm")
+(depends-on "htmlize")
 
 ;; mode
 (depends-on "dap-mode")
