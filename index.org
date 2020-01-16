@@ -7,187 +7,210 @@
 #+setupfile: theme-readtheorg.setup
 #+SETUPFILE: https://fniessen.github.io/org-html-themes/setup/theme-readtheorg.setup
 
-* Cask
+* はじめに
+** TODO 基本情報
+   url: [[http://github.com/takeokunn/.emacs.d][takeokunn/.emacs.d]]
+* 基本設定
+** TODO スタートアップメッセージを非表示
+   #+BEGIN_SRC emacs-lisp
+     (setq inhibit-startup-message t)
+   #+END_SRC
+** TODO 末尾のスペースを可視化する
+   #+BEGIN_SRC emacs-lisp
+     (setq-default show-trailing-whitespace t)
+
+     (defun my/disable-trailing-mode-hook ()
+       "Disable show tail whitespace."
+       (setq show-trailing-whitespace nil))
+
+     (defvar my/disable-trailing-modes
+       '(comint-mode
+         eshell-mode
+         eww-mode
+         term-mode
+         twittering-mode
+         minibuffer-inactive-mode))
+     (mapc
+      (lambda (mode)
+        (add-hook (intern (concat (symbol-name mode) "-hook"))
+                  'my/disable-trailing-mode-hook))
+      my/disable-trailing-modes)
+   #+END_SRC
+
+** TODO エディタのバーを非表示にする
+   #+BEGIN_SRC emacs-lisp
+     (menu-bar-mode -1)
+     (tool-bar-mode -1)
+     (global-linum-mode t)
+     (toggle-scroll-bar -1)
+   #+END_SRC
+
+** TODO 自動生成ファイルを無効にする
+   #+BEGIN_SRC emacs-lisp
+     (setq make-backup-files nil)
+     (setq auto-save-default nil)
+     (setq auto-save-list-file-prefix nil)
+     (setq create-lockfiles nil)
+   #+END_SRC
+
+** TODO C-kで行削除
+   #+BEGIN_SRC emacs-lisp
+     (setq kill-whole-line t)
+   #+END_SRC
+
+** TODO ビープ音を消す
+   #+BEGIN_SRC emacs-lisp
+     (setq ring-bell-function 'ignore)
+   #+END_SRC
+** TODO カッコの中をハイライトする
+   #+BEGIN_SRC emacs-lisp
+     (show-paren-mode t)
+     (setq show-paren-style 'mixed)
+   #+END_SRC
+** TODO デフォルトのタブサイズを設定する
+   #+BEGIN_SRC emacs-lisp
+     (setq-default tab-widtph 4 indent-tabs-mode nil)
+   #+END_SRC
+** TODO カッコが自動的に作られるようにする
+   #+BEGIN_SRC emacs-lisp
+     (electric-pair-mode 1)
+   #+END_SRC
+** TODO ウィンドウの大きさを変える
+   #+BEGIN_SRC emacs-lisp
+     (setq window-min-height 10)
+   #+END_SRC
+** TODO time locale
+   #+BEGIN_SRC emacs-lisp
+     (setq system-time-locale "C")
+   #+END_SRC
+** TODO rubyのマジックコードを非表示
+   #+BEGIN_SRC emacs-lisp
+     (setq ruby-insert-encoding-magic-comment nil)
+   #+END_SRC
+** TODO 起動時にerrorの時のみ表示する
+** TODO ナローイングを無効
+   #+BEGIN_SRC emacs-lisp
+     (put 'narrow-to-region 'disabled nil)
+   #+END_SRC
   #+BEGIN_SRC emacs-lisp
+    (setq display-warning-minimum-level :error)
+  #+END_SRC
+* Package管理
+** TODO cask
+   #+BEGIN_SRC emacs-lisp
     (require 'cask "~/.cask/cask.el")
     (cask-initialize)
   #+END_SRC
-* Base
-  #+BEGIN_SRC emacs-lisp
-
-    ;; -*- lexical-binding: nil -*-
-
-    ;; initial view
-    (setq inhibit-startup-message t)
-
-    ;; whitespace
-    (setq-default show-trailing-whitespace t)
-
-    ;; editor bar
-    (menu-bar-mode -1)
-    (tool-bar-mode -1)
-    (global-linum-mode t)
-    (toggle-scroll-bar -1)
-
-    ;; auto generate file
-    (setq make-backup-files nil)
-    (setq auto-save-default nil)
-    (setq auto-save-list-file-prefix nil)
-    (setq create-lockfiles nil)
-
-    ;; delete a line with C-k
-    (setq kill-whole-line t)
-
-    ;; ignore ring bell
-    (setq ring-bell-function 'ignore)
-
-    ;; highlight
-    (show-paren-mode t)
-    (setq show-paren-style 'mixed)
-
-    ;; tab
-    (setq-default tab-widtph 4 indent-tabs-mode nil)
-
-    ;; pair
-    (electric-pair-mode 1)
-
-    ;; window size
-    (setq window-min-height 10)
-
-    ;; system time locale
-    (setq system-time-locale "C")
-
-    ;; ruby encoding magic comment
-    (setq ruby-insert-encoding-magic-comment nil)
-
-    ;; error level
-    (setq display-warning-minimum-level :error)
-
-    (defun my/disable-trailing-mode-hook ()
-      "Disable show tail whitespace."
-      (setq show-trailing-whitespace nil))
-
-    (defvar my/disable-trailing-modes
-      '(comint-mode
-        eshell-mode
-        eww-mode
-        term-mode
-        twittering-mode
-        minibuffer-inactive-mode))
-    (mapc
-     (lambda (mode)
-       (add-hook (intern (concat (symbol-name mode) "-hook"))
-                 'my/disable-trailing-mode-hook))
-     my/disable-trailing-modes)
+** TODO use-package
+   [[https://qiita.com/kai2nenobu/items/5dfae3767514584f5220][use-packageで可読性の高いinit.elを書く(qiita)]] を参考に書いていく。
+* org-mode設定
+** TODO 基本設定
+   #+BEGIN_SRC emacs-lisp
+     (setq org-use-speed-commands t)
+     (setq org-agenda-todo-ignore-with-date t)
+     (setq org-directory "~/emacs/org")
+     (setq org-agenda-files '("~/emacs/org/todo.org"))
+     (setq org-capture-templates
+           '(("t" "New TODO" entry
+              (file+headline "~/emacs/org/todo.org" "TODO")
+              "* TODO %?\n\n")
+             ("m" "Memo" entry
+              (file+headline "~/emacs/org/memo.org" "MEMO")
+              "* %U%?\n%i\n%a")))
+     (setq org-agenda-custom-commands
+           '(("a" "Agenda and TODO"
+              ((agenda "")
+               (alltodo "")))))
+     (put 'set-goal-column 'disabled nil)
   #+END_SRC
-* Org
-  #+BEGIN_SRC emacs-lisp
-    (setq org-use-speed-commands t)
-    (setq org-agenda-todo-ignore-with-date t)
-    (setq org-directory "~/emacs/org")
-    (setq org-agenda-files '("~/emacs/org/todo.org"))
-    (setq org-capture-templates
-          '(("t" "New TODO" entry
-             (file+headline "~/emacs/org/todo.org" "予定")
-             "* TODO %?\n\n")
-            ("m" "Memo" entry
-             (file+headline "~/emacs/org/memo.org" "メモ")
-             "* %U%?\n%i\n%a")))
-    (setq org-agenda-custom-commands
-          '(("a" "Agenda and TODO"
-             ((agenda "")
-              (alltodo "")))))
-    (put 'set-goal-column 'disabled nil)
-  #+END_SRC
+* テーマ
+** TODO neotree
+   #+BEGIN_SRC emacs-lisp
 
-* Theme
-  #+BEGIN_SRC emacs-lisp
-    ;; ----- Theme ----- ;;
+     ;; neotree
+     (use-package neotree
+       :custom
+       (neo-theme 'nerd2))
 
-    (put 'narrow-to-region 'disabled nil)
+     (setq-default neo-show-hidden-files t)
+     (setq neo-window-fixed-size nil)
 
-    ;; neotree
-    (use-package neotree
-      :custom
-      (neo-theme 'nerd2))
+     (defun neo-buffer--insert-fold-symbol (name &optional file-name)
+       "Custom overriding function for the fold symbol.
+         `NAME' decides what fold icon to use, while `FILE-NAME' decides
+         what file icon to use."
+       (or (and (equal name 'open)  (insert (all-the-icons-icon-for-dir file-name "down")))
+           (and (equal name 'close) (insert (all-the-icons-icon-for-dir file-name "right")))
+           (and (equal name 'leaf)  (insert (format "\t\t\t%s\t" (all-the-icons-icon-for-file file-name))))))
 
-    (setq-default neo-show-hidden-files t)
-    (setq neo-window-fixed-size nil)
+     (defun neo-buffer--insert-dir-entry (node depth expanded)
+       (let ((node-short-name (neo-path--file-short-name node)))
+         (insert-char ?\s (* (- depth 1) 2)) ; indent
+         (when (memq 'char neo-vc-integration)
+           (insert-char ?\s 2))
+         (neo-buffer--insert-fold-symbol
+          (if expanded 'open 'close) node)
+         (insert-button (concat node-short-name "/")
+                        'follow-link t
+                        'face neo-dir-link-face
+                        'neo-full-path node
+                        'keymap neotree-dir-button-keymap)
+         (neo-buffer--node-list-set nil node)
+         (neo-buffer--newline-and-begin)))
 
-    (defun neo-buffer--insert-fold-symbol (name &optional file-name)
-      "Custom overriding function for the fold symbol.
-        `NAME' decides what fold icon to use, while `FILE-NAME' decides
-        what file icon to use."
-      (or (and (equal name 'open)  (insert (all-the-icons-icon-for-dir file-name "down")))
-          (and (equal name 'close) (insert (all-the-icons-icon-for-dir file-name "right")))
-          (and (equal name 'leaf)  (insert (format "\t\t\t%s\t" (all-the-icons-icon-for-file file-name))))))
+     (defun neo-buffer--insert-file-entry (node depth)
+       (let ((node-short-name (neo-path--file-short-name node))
+             (vc (when neo-vc-integration (neo-vc-for-node node))))
+         (insert-char ?\s (* (- depth 1) 2)) ; indent
+         (when (memq 'char neo-vc-integration)
+           (insert-char (car vc))
+           (insert-char ?\s))
+         (neo-buffer--insert-fold-symbol 'leaf node-short-name)
+         (insert-button node-short-name
+                        'follow-link t
+                        'face (if (memq 'face neo-vc-integration)
+                                  (cdr vc)
+                                neo-file-link-face)
+                        'neo-full-path node
+                        'keymap neotree-file-button-keymap)
+         (neo-buffer--node-list-set nil node)
+         (neo-buffer--newline-and-begin)))
 
-    (defun neo-buffer--insert-dir-entry (node depth expanded)
-      (let ((node-short-name (neo-path--file-short-name node)))
-        (insert-char ?\s (* (- depth 1) 2)) ; indent
-        (when (memq 'char neo-vc-integration)
-          (insert-char ?\s 2))
-        (neo-buffer--insert-fold-symbol
-         (if expanded 'open 'close) node)
-        (insert-button (concat node-short-name "/")
-                       'follow-link t
-                       'face neo-dir-link-face
-                       'neo-full-path node
-                       'keymap neotree-dir-button-keymap)
-        (neo-buffer--node-list-set nil node)
-        (neo-buffer--newline-and-begin)))
+     (add-hook 'neotree-mode-hook
+               (lambda ()
+                 (with-current-buffer " *NeoTree*"
+                   (setq-local linum-mode nil))))
+   #+END_SRC
+** TODO doom-theme
+   #+BEGIN_SRC emacs-lisp
+     ;; doom themes
+     (use-package doom-themes
+       :custom
+       (doom-themes-enable-italic t)
+       (doom-themes-enable-bold t)
+       :custom-face
+       (doom-modeline-bar ((t (:background "#6272a4"))))
+       :config
+       (load-theme 'tango-dark t)
+       (doom-themes-neotree-config)
+       (doom-themes-org-config))
 
-    (defun neo-buffer--insert-file-entry (node depth)
-      (let ((node-short-name (neo-path--file-short-name node))
-            (vc (when neo-vc-integration (neo-vc-for-node node))))
-        (insert-char ?\s (* (- depth 1) 2)) ; indent
-        (when (memq 'char neo-vc-integration)
-          (insert-char (car vc))
-          (insert-char ?\s))
-        (neo-buffer--insert-fold-symbol 'leaf node-short-name)
-        (insert-button node-short-name
-                       'follow-link t
-                       'face (if (memq 'face neo-vc-integration)
-                                 (cdr vc)
-                               neo-file-link-face)
-                       'neo-full-path node
-                       'keymap neotree-file-button-keymap)
-        (neo-buffer--node-list-set nil node)
-        (neo-buffer--newline-and-begin)))
+     ;; doom modeline
+     (use-package doom-modeline
+       :custom
+       (doom-modeline-buffer-file-name-style 'truncate-with-project)
+       (doom-modeline-icon t)
+       (doom-modeline-major-mode-icon nil)
+       (doom-modeline-minor-modes nil)
+       :hook
+       (after-init . doom-modeline-mode)
+       :config
+       (line-number-mode 0)
+       (column-number-mode 0))
 
-    (add-hook 'neotree-mode-hook
-              (lambda ()
-                (with-current-buffer " *NeoTree*"
-                  (setq-local linum-mode nil))))
-
-    ;; doom themes
-    (use-package doom-themes
-      :custom
-      (doom-themes-enable-italic t)
-      (doom-themes-enable-bold t)
-      :custom-face
-      (doom-modeline-bar ((t (:background "#6272a4"))))
-      :config
-      (load-theme 'tango-dark t)
-      (doom-themes-neotree-config)
-      (doom-themes-org-config))
-
-    ;; doom modeline
-    (use-package doom-modeline
-      :custom
-      (doom-modeline-buffer-file-name-style 'truncate-with-project)
-      (doom-modeline-icon t)
-      (doom-modeline-major-mode-icon nil)
-      (doom-modeline-minor-modes nil)
-      :hook
-      (after-init . doom-modeline-mode)
-      :config
-      (line-number-mode 0)
-      (column-number-mode 0))
-
-    ;; font
-    (set-fontset-font t 'japanese-jisx0208 "TakaoPGothic")
-    (add-to-list 'face-font-rescale-alist '(".*Takao P.*" . 0.85))
+     ;; font
+     (set-fontset-font t 'japanese-jisx0208 "TakaoPGothic")
+     (add-to-list 'face-font-rescale-alist '(".*Takao P.*" . 0.85))
   #+END_SRC
 * Plugin
   #+BEGIN_SRC emacs-lisp
@@ -508,7 +531,6 @@
     ;; hook
     (dolist (hook '(go-mode-hook
                     js2-mode-hook
-                    web-mode-hook
                     css-mode-hook
                     scss-mode-hook
                     ruby-mode-hook
@@ -562,63 +584,78 @@
     (dap-ui-mode 1)
   #+END_SRC
 * Mode
-  #+BEGIN_SRC emacs-lisp
-    ;; ----- Mode ----- ;;
-
-    ;; lisp
-    (add-to-list 'auto-mode-alist '("Cask" . lisp-mode))
-    (add-to-list 'auto-mode-alist '("\\.lemrc?$" . lisp-mode))
-
-    ;; web
-    (use-package web-mode)
-    (add-to-list 'auto-mode-alist '("\\.html?$" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.erb?$" . web-mode))
-    (setq web-mode-auto-close-style t)
-    (setq web-mode-tag-auto-close-style t)
-
-    ;; go
-    (autoload 'go-mode "go-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.go$" . go-mode))
-
-    ;; terraform
-    (autoload 'terraform-mode "terraform-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.tf$" . terraform-mode))
-
-    ;; markdown
-    (autoload 'markdown-mode "markdown-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-    (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
-
-    ;; yaml
-    (autoload 'yaml-mode "yaml-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
-
-    ;; json
-    (autoload 'json-mode "json-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
-
-    ;; dockerfile
-    (autoload 'dockerfile-mode "dockerfile-mode" nil t)
-    (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
-
-    ;; fish
-    (autoload 'fish-mode "fish-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.fish$" . fish-mode))
-
-    ;; dhall
-    (autoload 'dhall-mode "dhall-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.dhall$" . dhall-mode))
-
-    ;; javascript
-    (autoload 'js2-mode "js2-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-    (add-hook 'js2-mode-hook #'js2-refactor-mode)
-
-    ;; ruby
-    (add-to-list 'auto-mode-alist '("Schemafile" . ruby-mode))
-    (add-hook 'ruby-mode-hook 'ruby-refactor-mode-launch)
-
-    ;; typescript
+** fundamental-mode
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'auto-mode-alist '("\\.elc\\'" . fundamental-mode))
+   #+END_SRC
+** lisp-mode
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'auto-mode-alist '("Cask" . lisp-mode))
+     (add-to-list 'auto-mode-alist '("\\.lemrc?$" . lisp-mode))
+   #+END_SRC
+** TODO web-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package web-mode)
+     (add-to-list 'auto-mode-alist '("\\.html?$" . web-mode))
+     (add-to-list 'auto-mode-alist '("\\.erb?$" . web-mode))
+     (setq web-mode-auto-close-style t)
+     (setq web-mode-tag-auto-close-style t)
+   #+END_SRC
+** TODO go-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'go-mode "go-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.go$" . go-mode))
+   #+END_SRC
+** TODO terraform-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'terraform-mode "terraform-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.tf$" . terraform-mode))
+   #+END_SRC
+** TODO markdown-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'markdown-mode "markdown-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+     (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
+   #+END_SRC
+** TODO yaml-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'yaml-mode "yaml-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
+   #+END_SRC
+** TODO json-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'json-mode "json-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
+   #+END_SRC
+** TODO dockerfile-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'dockerfile-mode "dockerfile-mode" nil t)
+     (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+   #+END_SRC
+** TODO fish-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'fish-mode "fish-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.fish$" . fish-mode))
+   #+END_SRC
+** TODO dhall-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'dhall-mode "dhall-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.dhall$" . dhall-mode))
+   #+END_SRC
+** TODO js2-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'js2-mode "js2-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+     (add-hook 'js2-mode-hook #'js2-refactor-mode)
+   #+END_SRC
+** TODO ruby-mode
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'auto-mode-alist '("Schemafile" . ruby-mode))
+     (add-hook 'ruby-mode-hook 'ruby-refactor-mode-launch)
+   #+END_SRC
+** TODO typescript-mode
+   #+BEGIN_SRC emacs-lisp
+       ;; typescript
     (autoload 'typescript-mode "typescript-mode" nil t)
     (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
     (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
@@ -628,111 +665,148 @@
                 (when (string-equal "tsx" (file-name-extension buffer-file-name))
                   (my/setup-tide-mode))))
 
-    ;; slim
-    (autoload 'slim-mode "slim-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.slim$" . slim-mode))
-
-    ;; coffee
-    (autoload 'coffee-mode "coffee-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
-
-    ;; scala
+   #+END_SRC
+** TODO slim-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'slim-mode "slim-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.slim$" . slim-mode))
+   #+END_SRC
+** TODO coffee-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'coffee-mode "coffee-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
+   #+END_SRC
+** TODO scala-mode
+   #+BEGIN_SRC emacs-lisp
+       ;; scala
     (autoload 'scala-mode "scala-mode" nil t)
     (add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
 
-    ;; nginx
-    (autoload 'nginx-mode "nginx-mode" nil t)
-    (add-to-list 'auto-mode-alist '("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
-
-    ;; ssh-config
-    (autoload 'ssh-config-mode "ssh-config-mode" nil t)
-    (add-to-list 'auto-mode-alist '("/path-to-your-ssh/config\\'" . ssh-config-mode))
-
-    ;; php
-    (autoload 'php-mode "php-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
-
-    ;; clojure
-    (autoload 'clojure-mode "clojure-mode" nil t)
-    (autoload 'clojure-mode "clojurescript-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
-    (add-to-list 'auto-mode-alist '("\\.cljs$" . clojurescript-mode))
-
-    ;; vue
-    (autoload 'vue-mode "vue-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.vue$" . vue-mode))
-
-    ;; glsl
-    (autoload 'glsl-mode "glsl-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.vsh$" . glsl-mode))
-    (add-to-list 'auto-mode-alist '("\\.fsh$" . glsl-mode))
-
-    ;; emmet
-    (use-package emmet-mode)
-    (autoload 'emmet-mode "emmet-mode" nil t)
-    (add-hook 'web-mode-hook 'emmet-mode)
-
-    ;; nyan mode
-    (use-package nyan-mode)
-    (nyan-mode)
-    (nyan-start-animation)
-    (setq nyan-wavy-trail t)
-
-    ;; elc
-    (add-to-list 'auto-mode-alist '("\\.elc\\'" . fundamental-mode))
-
-    ;; elisp
-    (add-hook 'emacs-lisp-mode-hook #'nameless-mode)
-
-    ;; haskell
-    (autoload 'haskell-mode "haskell-mode" nil t)
-    (autoload 'haskell-cabal "haskell-cabal" nil t)
-
-    (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
-    (add-to-list 'auto-mode-alist '("\\.lhs$" . literate-haskell-mode))
-    (add-to-list 'auto-mode-alist '("\\.cable$" . haskell-cabal-mode))
-
-    ;; gradle
-    (autoload 'gradle-mode "gradle-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.gradle$" . java-mode))
-
-    ;; cmake
-    (autoload 'cmake-mode "cmake-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.cmake$" . cmake-mode))
-
-    ;; toml
-    (autoload 'toml-mode "toml-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.toml$" . toml-mode))
-
-    ;; php
-    (autoload 'php-mode "php-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
-
-    ;; gitignore
-    (autoload 'gitignore-mode "gitignore-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.dockerignore$" . gitignore-mode))
-
-
-    ;; clojure
-    (autoload 'clojure-mode "clojure-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
-
-    ;; plantuml
-    (autoload 'plantuml-mode "plantuml-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.pu$" . plantuml-mode))
-
-    ;; processing
-    (autoload 'processing-mode "processing-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.pde$" . processing-mode))
-    (setq processing-location "/opt/processing/processing-java")
-    (setq processing-output-dir "/tmp")
+   #+END_SRC
+** TODO nginx-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'nginx-mode "nginx-mode" nil t)
+     (add-to-list 'auto-mode-alist '("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
+   #+END_SRC
+** TODO ssh-config-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'ssh-config-mode "ssh-config-mode" nil t)
+     (add-to-list 'auto-mode-alist '("/path-to-your-ssh/config\\'" . ssh-config-mode))
+   #+END_SRC
+** TODO php-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'php-mode "php-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+   #+END_SRC
+** TODO clojure-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'clojure-mode "clojure-mode" nil t)
+     (autoload 'clojure-mode "clojurescript-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
+     (add-to-list 'auto-mode-alist '("\\.cljs$" . clojurescript-mode))
+   #+END_SRC
+** TODO vue-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'vue-mode "vue-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.vue$" . vue-mode))
+   #+END_SRC
+** TODO glsl-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'glsl-mode "glsl-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.vsh$" . glsl-mode))
+     (add-to-list 'auto-mode-alist '("\\.fsh$" . glsl-mode))
+   #+END_SRC
+** TODO emmet-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package emmet-mode)
+     (autoload 'emmet-mode "emmet-mode" nil t)
+     (add-hook 'web-mode-hook 'emmet-mode)
+   #+END_SRC
+** TODO nyan-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package nyan-mode)
+     (nyan-mode)
+     (nyan-start-animation)
+     (setq nyan-wavy-trail t)
+   #+END_SRC
+** TODO nameless-mode
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'emacs-lisp-mode-hook #'nameless-mode)
+   #+END_SRC
+** TODO haskell-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'haskell-mode "haskell-mode" nil t)
+     (autoload 'haskell-cabal "haskell-cabal" nil t)
+     (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
+     (add-to-list 'auto-mode-alist '("\\.lhs$" . literate-haskell-mode))
+     (add-to-list 'auto-mode-alist '("\\.cable$" . haskell-cabal-mode))
+   #+END_SRC
+** TODO gradle-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'gradle-mode "gradle-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.gradle$" . java-mode))
+   #+END_SRC
+** TODO cmake-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'cmake-mode "cmake-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.cmake$" . cmake-mode))
+   #+END_SRC
+** TODO toml-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'toml-mode "toml-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.toml$" . toml-mode))
+   #+END_SRC
+** TODO php-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'php-mode "php-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+   #+END_SRC
+** TODO gitignore-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'gitignore-mode "gitignore-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.dockerignore$" . gitignore-mode))
+   #+END_SRC
+** TODO plantuml-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'plantuml-mode "plantuml-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.pu$" . plantuml-mode))
+   #+END_SRC
+** TODO processing-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'processing-mode "processing-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.pde$" . processing-mode))
+     (setq processing-location "/opt/processing/processing-java")
+     (setq processing-output-dir "/tmp")
   #+END_SRC
 * Keybind
+** TODO 基本設定
+   #+BEGIN_SRC emacs-lisp
+     (keyboard-translate ?\C-h ?\C-?)
+     (progn
+       (bind-key "C-a" 'my/beginning-of-intendation)
+       (bind-key "C-z" 'undo)
+       (bind-key "C-h" 'delete-backward-char)
+       (bind-key "C-?" 'help-command)
+       (bind-key "C-m" 'set-mark-command)
+       (bind-key "C-q" 'neotree-toggle)
+       (bind-key "C-x j" 'open-junk-file)
+       (bind-key "C-c i" 'find-function)
+       (bind-key "C-c c" 'org-capture)
+       (bind-key "C-c a" 'org-agenda)
+       (bind-key "C-x o" 'ace-window)
+       (bind-key "C-x C-o" 'ace-window)
+       (bind-key "C-x m" 'magit-status)
+       (bind-key "C-c l" 'magit-blame)
+       (bind-key "C-c j" 'counsel-git)
+       (bind-key "C-c k" 'my/counsel-ag)
+       (bind-key "C-x C-r" 'counsel-recentf)
+       (bind-key "C-x C-f" 'counsel-find-file)
+       (bind-key "M-x" 'counsel-M-x)
+       (bind-key "M-g" 'google-this)
+       (bind-key "C-x C-k" nil))
+   #+END_SRC
+** tmp
   #+BEGIN_SRC emacs-lisp
-    ;; ----- key bind ----- ;;
-
-    (keyboard-translate ?\C-h ?\C-?)
-
     (defun my/beginning-of-intendation ()
       "move to beginning of line, or indentation"
       (interactive)
@@ -746,29 +820,6 @@
       (interactive)
       (let ((symbol (thing-at-point 'symbol 'no-properties)))
         (counsel-ag symbol)))
-
-    (progn
-      (bind-key "C-a" 'my/beginning-of-intendation)
-      (bind-key "C-z" 'undo)
-      (bind-key "C-h" 'delete-backward-char)
-      (bind-key "C-?" 'help-command)
-      (bind-key "C-m" 'set-mark-command)
-      (bind-key "C-q" 'neotree-toggle)
-      (bind-key "C-x j" 'open-junk-file)
-      (bind-key "C-c i" 'find-function)
-      (bind-key "C-c c" 'org-capture)
-      (bind-key "C-c a" 'org-agenda)
-      (bind-key "C-x o" 'ace-window)
-      (bind-key "C-x C-o" 'ace-window)
-      (bind-key "C-x m" 'magit-status)
-      (bind-key "C-c l" 'magit-blame)
-      (bind-key "C-c j" 'counsel-git)
-      (bind-key "C-c k" 'my/counsel-ag)
-      (bind-key "C-x C-r" 'counsel-recentf)
-      (bind-key "C-x C-f" 'counsel-find-file)
-      (bind-key "M-x" 'counsel-M-x)
-      (bind-key "M-g" 'google-this)
-      (bind-key "C-x C-k" nil))
 
     ;; for refactor
     (define-key prog-mode-map (kbd "M-RET") 'emr-show-refactor-menu)
