@@ -131,6 +131,12 @@
                (alltodo "")))))
      (put 'set-goal-column 'disabled nil)
   #+END_SRC
+** TODO keybind
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'org-mode-hook
+               (lambda ()
+                 (define-key org-mode-map (kbd "C-m") nil)))
+   #+END_SRC
 * テーマ
 ** TODO neotree
    #+BEGIN_SRC emacs-lisp
@@ -289,6 +295,20 @@
    #+BEGIN_SRC emacs-lisp
      (use-package smartrep)
      (use-package multiple-cursors)
+
+     (smartrep-define-key global-map "C-t"
+       '(("n" . 'mc/mark-next-like-this)
+         ("p" . 'mc/mark-previous-like-this)
+         ("m" . 'mc/mark-more-like-this-extended)
+         ("u" . 'mc/unmark-next-like-this)
+         ("U" . 'mc/unmark-previous-like-this)
+         ("s" . 'mc/skip-to-next-like-this)
+         ("S" . 'mc/skip-to-previous-like-this)
+         ("*" . 'mc/mark-all-like-this)
+         ("d" . 'mc/mark-all-like-this-dwim)
+         ("i" . 'mc/insert-numbers)
+         ("o" . 'mc/sort-regions)
+         ("O" . 'mc/reverse-regions)))
    #+END_SRC
 ** TODO yasnippet
    #+BEGIN_SRC emacs-lisp
@@ -306,6 +326,11 @@
      (setq counsel-ag-base-command "ag --nocolor --nogroup -u %s")
      (ivy-mode 1)
      (counsel-mode 1)
+
+     (defun my/counsel-ag ()
+       (interactive)
+       (let ((symbol (thing-at-point 'symbol 'no-properties)))
+         (counsel-ag symbol)))
    #+END_SRC
 ** TODO all-the-icons-ivy
    #+BEGIN_SRC emacs-lisp
@@ -357,9 +382,14 @@
    #+END_SRC
 ** TODO swoop
    #+BEGIN_SRC emacs-lisp
-
      (use-package swoop)
      (setq swoop-minibuffer-input-dilay 0.4)
+
+     (defun my/swoop-from-isearch ()
+       (interactive)
+       (let* ((symbol (thing-at-point 'symbol 'no-properties)))
+         (swoop symbol)))
+     (define-key ivy-mode-map (kbd "C-o") 'my/swoop-from-isearch)
    #+END_SRC
 ** TODO whitespace
    #+BEGIN_SRC emacs-lisp
@@ -432,6 +462,8 @@
      (use-package js2-refactor)
      (add-hook 'js2-mode-hook #'js2-refactor-mode)
      (add-hook 'typescript-mode-hook #'js2-refactor-mode)
+
+     (js2r-add-keybindings-with-prefix "C-c C-m")
    #+END_SRC
 ** TODO ivy-ghq
    #+BEGIN_SRC emacs-lisp
@@ -452,6 +484,12 @@
     (use-package vterm)
     (add-hook 'vterm-mode-hook #'(lambda ()
                                    (setq show-trailing-whitespace nil)))
+    (define-key vterm-mode-map [mouse-1] nil)
+    (define-key vterm-mode-map [mouse-2] nil)
+    (define-key vterm-mode-map [mouse-3] nil)
+    (define-key vterm-mode-map [mouse-4] nil)
+    (define-key vterm-mode-map [mouse-5] nil)
+    (define-key vterm-mode-map [mouse-5] nil)
   #+END_SRC
 * Lisp
 ** TODO slime
@@ -478,8 +516,6 @@
    #+END_SRC
 ** TODO hyperspec
    #+BEGIN_SRC emacs-lisp
-
-     ;; hyperspec
      (setq common-lisp-hyperspec-root "~/quicklisp/HyperSpec/")
 
      (defun common-lisp-hyperspec (symbol-name)
@@ -537,6 +573,7 @@
                      ielm-mode-hook))
        (add-hook hook 'elisp-slime-nav-mode))
 
+     (define-key lisp-mode-map (kbd "C-c h") 'hyperspec-lookup)
    #+END_SRC
 ** TODO rainbow-dpelimiters
    #+BEGIN_SRC emacs-lisp
@@ -576,6 +613,11 @@
                      python-mode-hook))
        (add-hook hook #'lsp))
      (add-hook 'lsp-mode-hook 'flycheck-mode)
+
+     ;; keybind
+     (define-key lsp-mode-map (kbd "C-c s") 'lsp-ui-sideline-mode)
+     (define-key lsp-mode-map (kbd "M-.") #'lsp-ui-peek-find-definitions)
+     (define-key lsp-mode-map (kbd "M-?") 'lsp-ui-peek-find-implementation)
    #+END_SRC
 ** TODO lsp-ui
    #+BEGIN_SRC emacs-lisp
@@ -608,6 +650,8 @@
 
      (dap-mode 1)
      (dap-ui-mode 1)
+
+     (define-key lsp-mode-map (kbd "C-c d") 'dap-breakpoint-toggle)
   #+END_SRC
 * Mode
 ** fundamental-mode
@@ -642,6 +686,9 @@
      (autoload 'markdown-mode "markdown-mode" nil t)
      (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
      (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
+
+     (define-key markdown-mode-map (kbd "C-j") nil)
+     (define-key markdown-mode-map (kbd "C-m") nil)
    #+END_SRC
 ** TODO yaml-mode
    #+BEGIN_SRC emacs-lisp
@@ -748,6 +795,8 @@
      (use-package emmet-mode)
      (autoload 'emmet-mode "emmet-mode" nil t)
      (add-hook 'web-mode-hook 'emmet-mode)
+     (define-key emmet-mode-keymap (kbd "C-j") nil)
+     (define-key emmet-mode-keymap (kbd "C-x i") 'emmet-expand-line)
    #+END_SRC
 ** TODO nyan-mode
    #+BEGIN_SRC emacs-lisp
@@ -767,6 +816,8 @@
      (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
      (add-to-list 'auto-mode-alist '("\\.lhs$" . literate-haskell-mode))
      (add-to-list 'auto-mode-alist '("\\.cable$" . haskell-cabal-mode))
+
+     (define-key haskell-indentation-mode-map (kbd "C-m") nil)
    #+END_SRC
 ** TODO gradle-mode
    #+BEGIN_SRC emacs-lisp
@@ -805,10 +856,26 @@
      (setq processing-location "/opt/processing/processing-java")
      (setq processing-output-dir "/tmp")
   #+END_SRC
+* MyFunc
+** TODO my/beginning-of-intendation
+   #+BEGIN_SRC emacs-lisp
+     (defun my/beginning-of-intendation ()
+       "move to beginning of line, or indentation"
+       (interactive)
+       (back-to-indentation))
+   #+END_SRC
+** TODO my/ido-recentf
+   #+BEGIN_SRC emacs-lisp
+     (defun my/ido-recentf ()
+       (interactive)
+       (find-file (ido-completing-read "Find recent file: " recentf-list)))
+   #+END_SRC
 * Keybind
 ** TODO 基本設定
    #+BEGIN_SRC emacs-lisp
+     (global-unset-key "\C-t")
      (keyboard-translate ?\C-h ?\C-?)
+
      (progn
        (bind-key "C-a" 'my/beginning-of-intendation)
        (bind-key "C-z" 'undo)
@@ -832,90 +899,15 @@
        (bind-key "M-g" 'google-this)
        (bind-key "C-x C-k" nil))
    #+END_SRC
-** tmp
-  #+BEGIN_SRC emacs-lisp
-    (defun my/beginning-of-intendation ()
-      "move to beginning of line, or indentation"
-      (interactive)
-      (back-to-indentation))
-
-    (defun my/ido-recentf ()
-      (interactive)
-      (find-file (ido-completing-read "Find recent file: " recentf-list)))
-
-    (defun my/counsel-ag ()
-      (interactive)
-      (let ((symbol (thing-at-point 'symbol 'no-properties)))
-        (counsel-ag symbol)))
-
-    ;; for refactor
-    (define-key prog-mode-map (kbd "M-RET") 'emr-show-refactor-menu)
-
-    ;; for term
-    (define-key term-raw-map (kbd "C-h") 'term-send-backspace)
-    (define-key term-raw-map (kbd "C-p") 'term-send-up)
-    (define-key term-raw-map (kbd "C-n") 'term-send-down)
-    (define-key term-raw-map (kbd "C-f") 'term-send-forward-word)
-    (define-key term-raw-map (kbd "C-b") 'term-send-backward-word)
-
-    ;; for emmet-mode
-    (define-key emmet-mode-keymap (kbd "C-j") nil)
-    (define-key emmet-mode-keymap (kbd "C-x i") 'emmet-expand-line)
-
-    ;; for multi-cursor
-    (global-unset-key "\C-t")
-    (smartrep-define-key global-map "C-t"
-      '(("n" . 'mc/mark-next-like-this)
-        ("p" . 'mc/mark-previous-like-this)
-        ("m" . 'mc/mark-more-like-this-extended)
-        ("u" . 'mc/unmark-next-like-this)
-        ("U" . 'mc/unmark-previous-like-this)
-        ("s" . 'mc/skip-to-next-like-this)
-        ("S" . 'mc/skip-to-previous-like-this)
-        ("*" . 'mc/mark-all-like-this)
-        ("d" . 'mc/mark-all-like-this-dwim)
-        ("i" . 'mc/insert-numbers)
-        ("o" . 'mc/sort-regions)
-        ("O" . 'mc/reverse-regions)))
-
-    ;; for lsp-mode
-    (define-key lsp-mode-map (kbd "C-c s") 'lsp-ui-sideline-mode)
-    (define-key lsp-mode-map (kbd "M-.") #'lsp-ui-peek-find-definitions)
-    (define-key lsp-mode-map (kbd "M-?") 'lsp-ui-peek-find-implementation)
-
-    ;; for dap-mode
-    (define-key lsp-mode-map (kbd "C-c d") 'dap-breakpoint-toggle)
-
-    ;; for markdown
-    (define-key markdown-mode-map (kbd "C-j") nil)
-    (define-key markdown-mode-map (kbd "C-m") nil)
-
-    ;; for swoop
-    (defun my/swoop-from-isearch ()
-      (interactive)
-      (let* ((symbol (thing-at-point 'symbol 'no-properties)))
-        (swoop symbol)))
-    (define-key ivy-mode-map (kbd "C-o") 'my/swoop-from-isearch)
-
-    ;; for common lisp
-    (define-key lisp-mode-map (kbd "C-c h") 'hyperspec-lookup)
-
-    ;; for haskell
-    (define-key haskell-indentation-mode-map (kbd "C-m") nil)
-
-    ;; for org-mode
-    (add-hook 'org-mode-hook
-              (lambda ()
-                (define-key org-mode-map (kbd "C-m") nil)))
-
-    ;; for js2-mode
-    (js2r-add-keybindings-with-prefix "C-c C-m")
-
-    ;; vterm
-    (define-key vterm-mode-map [mouse-1] nil)
-    (define-key vterm-mode-map [mouse-2] nil)
-    (define-key vterm-mode-map [mouse-3] nil)
-    (define-key vterm-mode-map [mouse-4] nil)
-    (define-key vterm-mode-map [mouse-5] nil)
-    (define-key vterm-mode-map [mouse-5] nil)
-  #+END_SRC
+** TODO term
+   #+BEGIN_SRC emacs-lisp
+     (define-key term-raw-map (kbd "C-h") 'term-send-backspace)
+     (define-key term-raw-map (kbd "C-p") 'term-send-up)
+     (define-key term-raw-map (kbd "C-n") 'term-send-down)
+     (define-key term-raw-map (kbd "C-f") 'term-send-forward-word)
+     (define-key term-raw-map (kbd "C-b") 'term-send-backward-word)
+   #+END_SRC
+** TODO emr
+   #+BEGIN_SRC emacs-lisp
+     (define-key prog-mode-map (kbd "M-RET") 'emr-show-refactor-menu)
+   #+END_SRC
