@@ -10,6 +10,10 @@
 * はじめに
 ** TODO 基本情報
    url: [[http://github.com/takeokunn/.emacs.d][takeokunn/.emacs.d]]
+** TODO Dependency
+   書いてく
+** TODO Language Server
+   書いてく
 * 基本設定
 ** TODO スタートアップメッセージを非表示
    #+BEGIN_SRC emacs-lisp
@@ -95,11 +99,15 @@
   #+BEGIN_SRC emacs-lisp
     (setq display-warning-minimum-level :error)
   #+END_SRC
-* Package管理
+** TODO npm-binにpathを通す
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'exec-path "~/.npm-global/bin" t)
+   #+END_SRC
+* Package管理ツール
 ** TODO cask
    #+BEGIN_SRC emacs-lisp
-    (require 'cask "~/.cask/cask.el")
-    (cask-initialize)
+     (require 'cask "~/.cask/cask.el")
+     (cask-initialize)
   #+END_SRC
 ** TODO use-package
    [[https://qiita.com/kai2nenobu/items/5dfae3767514584f5220][use-packageで可読性の高いinit.elを書く(qiita)]] を参考に書いていく。
@@ -212,376 +220,394 @@
      (set-fontset-font t 'japanese-jisx0208 "TakaoPGothic")
      (add-to-list 'face-font-rescale-alist '(".*Takao P.*" . 0.85))
   #+END_SRC
-* Plugin
+* Package
+** TODO hl-line
+   #+BEGIN_SRC emacs-lisp
+     (use-package hl-line)
+     (set-face-background 'hl-line "#444642")
+     (set-face-attribute 'hl-line nil :inherit nil)
+     (defvar global-hl-line-timer-exclude-modes '(todotxt-mode))
+     (defun global-hl-line-timer-function ()
+       (unless (memq major-mode global-hl-line-timer-exclude-modes)
+         (global-hl-line-unhighlight-all)
+         (let ((global-hl-line-mode t))
+           (global-hl-line-highlight))))
+     (setq global-hl-line-timer
+         (run-with-idle-timer 0.03 t 'global-hl-line-timer-function))
+   #+END_SRC
+** TODO hl-todo
+   #+BEGIN_SRC emacs-lisp
+     (setq hl-todo-keyword-faces
+           '(("HOLD" . "#d0bf8f")
+             ("TODO" . "#cc9393")
+             ("NEXT" . "#dca3a3")
+             ("THEM" . "#dc8cc3")
+             ("PROG" . "#7cb8bb")
+             ("OKAY" . "#7cb8bb")
+             ("DONT" . "#5f7f5f")
+             ("FAIL" . "#8c5353")
+             ("DONE" . "#afd8af")
+             ("FIXME" . "#cc9393")
+             ("???"   . "#cc9393")))
+     (setq hl-todo-activate-in-modes '(prog-mode ruby-mode enh-ruby-mode))
+     (global-hl-todo-mode 1)
+   #+END_SRC
+** TODO all-the-icons
+   #+BEGIN_SRC emacs-lisp
+     (use-package all-the-icons)
+     (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+   #+END_SRC
+** TODO editorconfig
+   #+BEGIN_SRC emacs-lisp
+     (use-package editorconfig
+       :ensure t
+       :config
+       (editorconfig-mode 1))
+   #+END_SRC
+** TODO emms
+   #+BEGIN_SRC emacs-lisp
+     ;; emms
+     (use-package emms-setup)
+     (use-package emms-i18n)
+     (emms-standard)
+     (emms-default-players)
+     (setq emms-repeat-playlist t)
+     (setq emms-player-list '(emms-player-mplayer))
+     (setq emms-source-file-default-directory "~/emacs/emms/")
+   #+END_SRC
+** TODO multi-term
+   #+BEGIN_SRC emacs-lisp
+     (use-package multi-term)
+     (setq multi-term-program shell-file-name)
+   #+END_SRC
+** TODO open-junk-file
+   #+BEGIN_SRC emacs-lisp
+     (use-package open-junk-file)
+     (setq open-junk-file-format "~/.emacs.d/.junk/%Y-%m%d-%H%M%S.")
+   #+END_SRC
+** TODO smartrep/multiple-cursors
+   #+BEGIN_SRC emacs-lisp
+     (use-package smartrep)
+     (use-package multiple-cursors)
+   #+END_SRC
+** TODO yasnippet
+   #+BEGIN_SRC emacs-lisp
+     (use-package yasnippet
+       :ensure t
+       :diminish yas-minor-mode)
+
+     (use-package yasnippet-snippets)
+     (yas-global-mode 1)
+   #+END_SRC
+** TODO counsel
+   #+BEGIN_SRC emacs-lisp
+     (use-package counsel)
+     (setq ivy-use-virtual-buffers t)
+     (setq counsel-ag-base-command "ag --nocolor --nogroup -u %s")
+     (ivy-mode 1)
+     (counsel-mode 1)
+   #+END_SRC
+** TODO all-the-icons-ivy
+   #+BEGIN_SRC emacs-lisp
+     (use-package all-the-icons-ivy
+       :ensure t
+       :config
+       (all-the-icons-ivy-setup))
+   #+END_SRC
+** TODO recentf
+   #+BEGIN_SRC emacs-lisp
+     (use-package recentf)
+     (setq recentf-max-saved-items 2000)
+     (setq recentf-auto-cleanup 'never)
+     (setq recentf-save-file "~/.emacs.d/.recentf")
+     (setq recentf-exclude '(".recentf"))
+     (recentf-mode 1)
+   #+END_SRC
+** TODO magit
+   #+BEGIN_SRC emacs-lisp
+     (use-package magit)
+   #+END_SRC
+** TODO ivy-rich
+   #+BEGIN_SRC emacs-lisp
+     (use-package ivy-rich)
+     (ivy-rich-mode 1)
+   #+END_SRC
+** TODO ace-window
+   #+BEGIN_SRC emacs-lisp
+     (use-package ace-window)
+     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+   #+END_SRC
+** TODO dumb-jump
+   #+BEGIN_SRC emacs-lisp
+     (use-package dumb-jump)
+     (setq dumb-jump-mode t)
+     (setq dumb-jump-selector 'ivy)
+   #+END_SRC
+** TODO rg
+   #+BEGIN_SRC emacs-lisp
+     (use-package rg
+         :hook ((rg-mode . wgrep-rg-setup)))
+     (rg-enable-default-bindings)
+   #+END_SRC
+** TODO goto-addr
+   #+BEGIN_SRC emacs-lisp
+     (use-package goto-addr
+      :hook ((prog-mode . goto-address-prog-mode)
+                (text-mode . goto-address-mode)))
+   #+END_SRC
+** TODO swoop
+   #+BEGIN_SRC emacs-lisp
+
+     (use-package swoop)
+     (setq swoop-minibuffer-input-dilay 0.4)
+   #+END_SRC
+** TODO whitespace
+   #+BEGIN_SRC emacs-lisp
+     (use-package whitespace)
+     (setq whitespace-style '(face tabs tab-mark spaces space-mark))
+     (setq whitespace-display-mappings
+           '((space-mark ?\u3000 [?\u25a1])
+             (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t])))
+     (setq whitespace-space-regexp "\\(\u3000+\\)")
+     (set-face-foreground 'whitespace-tab "#adff2f")
+     (set-face-background 'whitespace-tab 'nil)
+     (set-face-underline  'whitespace-tab t)
+     (set-face-foreground 'whitespace-space "#7cfc00")
+     (set-face-background 'whitespace-space 'nil)
+     (set-face-bold-p 'whitespace-space t)
+     (global-whitespace-mode 1)
+   #+END_SRC
+** TODO dashboard
+   #+BEGIN_SRC emacs-lisp
+     (use-package dashboard
+       :ensure t
+       :config
+       (dashboard-setup-startup-hook))
+   #+END_SRC
+** TODO company
+   #+BEGIN_SRC emacs-lisp
+     (use-package company)
+     (use-package company-glsl)
+     (global-company-mode)
+     (add-to-list 'company-backends 'company-glsl)
+   #+END_SRC
+
+** TODO git-gutter
+   #+BEGIN_SRC emacs-lisp
+     (use-package git-gutter-fringe)
+     (global-git-gutter-mode +1)
+   #+END_SRC
+** TODO smooth-scroll
+   #+BEGIN_SRC emacs-lisp
+     (use-package smooth-scroll)
+     (smooth-scroll-mode t)
+   #+END_SRC
+
+** TODO exec-path-from-shell
+   #+BEGIN_SRC emacs-lisp
+     (use-package exec-path-from-shell)
+     (exec-path-from-shell-copy-envs '("PATH" "GEM_HOME"))
+   #+END_SRC
+
+** TODO ghc
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'ghc-init "ghc" nil t)
+     (autoload 'ghc-debug "ghc" nil t)
+   #+END_SRC
+** TODO hindent
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'haskell-mode-hook #'hindent-mode)
+     (setq hindent-style "johan-tibell")
+   #+END_SRC
+** TODO tide
+   #+BEGIN_SRC emacs-lisp
+     (defun my/setup-tide-mode ()
+       (interactive)
+       (tide-setup)
+       (tide-hl-identifier-mode +1))
+     (add-hook 'typescript-mode-hook #'my/setup-tide-mode)
+   #+END_SRC
+** TODO js2-refactor
+   #+BEGIN_SRC emacs-lisp
+     (use-package js2-refactor)
+     (add-hook 'js2-mode-hook #'js2-refactor-mode)
+     (add-hook 'typescript-mode-hook #'js2-refactor-mode)
+   #+END_SRC
+** TODO ivy-ghq
+   #+BEGIN_SRC emacs-lisp
+     (use-package ivy-ghq
+       :commands (ivy-ghq-open)
+       :bind
+       ("M-o" . ivy-ghq-open-and-fzf)
+       :custom
+       (ivy-ghq-short-list t)
+       :preface
+       (defun ivy-ghq-open-and-fzf ()
+         (interactive)
+         (ivy-ghq-open)
+         (counsel-fzf)))
+   #+END_SRC
+** TODO vterm
   #+BEGIN_SRC emacs-lisp
-    ;; ----- Plugin ----- ;;
-
-    (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
-
-    ;; hl-line
-    (use-package hl-line)
-    (set-face-background 'hl-line "#444642")
-    (set-face-attribute 'hl-line nil :inherit nil)
-    (defvar global-hl-line-timer-exclude-modes '(todotxt-mode))
-    (defun global-hl-line-timer-function ()
-      (unless (memq major-mode global-hl-line-timer-exclude-modes)
-        (global-hl-line-unhighlight-all)
-        (let ((global-hl-line-mode t))
-          (global-hl-line-highlight))))
-    (setq global-hl-line-timer
-        (run-with-idle-timer 0.03 t 'global-hl-line-timer-function))
-
-    ;; TODO: hl-todo
-    (setq hl-todo-keyword-faces
-          '(("HOLD" . "#d0bf8f")
-            ("TODO" . "#cc9393")
-            ("NEXT" . "#dca3a3")
-            ("THEM" . "#dc8cc3")
-            ("PROG" . "#7cb8bb")
-            ("OKAY" . "#7cb8bb")
-            ("DONT" . "#5f7f5f")
-            ("FAIL" . "#8c5353")
-            ("DONE" . "#afd8af")
-            ("FIXME" . "#cc9393")
-            ("???"   . "#cc9393")))
-    (setq hl-todo-activate-in-modes '(prog-mode ruby-mode enh-ruby-mode))
-    (global-hl-todo-mode 1)
-
-    ;; all-the-icons
-    (use-package all-the-icons)
-    (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-
-    ;; editorconfig
-    (use-package editorconfig
-      :ensure t
-      :config
-      (editorconfig-mode 1))
-
-    ;; emms
-    (use-package emms-setup)
-    (use-package emms-i18n)
-    (emms-standard)
-    (emms-default-players)
-    (setq emms-repeat-playlist t)
-    (setq emms-player-list '(emms-player-mplayer))
-    (setq emms-source-file-default-directory "~/emacs/emms/")
-
-    ;; multi-term
-    (use-package multi-term)
-    (setq multi-term-program shell-file-name)
-
-    ;; open junk file
-    (use-package open-junk-file)
-    (setq open-junk-file-format "~/.emacs.d/.junk/%Y-%m%d-%H%M%S.")
-
-    ;; multiple-cursors
-    (use-package smartrep)
-    (use-package multiple-cursors)
-
-    ;; yasnippet
-    (use-package yasnippet
-      :ensure t
-      :diminish yas-minor-mode)
-
-    (use-package yasnippet-snippets)
-    (yas-global-mode 1)
-
-    ;; counsel
-    (use-package counsel)
-    (setq ivy-use-virtual-buffers t)
-    (setq counsel-ag-base-command "ag --nocolor --nogroup -u %s")
-    (ivy-mode 1)
-    (counsel-mode 1)
-
-    ;; all-the-icons-ivy
-    (use-package all-the-icons-ivy
-      :ensure t
-      :config
-      (all-the-icons-ivy-setup))
-
-    ;; recentf
-    (use-package recentf)
-    (setq recentf-max-saved-items 2000)
-    (setq recentf-auto-cleanup 'never)
-    (setq recentf-save-file "~/.emacs.d/.recentf")
-    (setq recentf-exclude '(".recentf"))
-    (recentf-mode 1)
-
-    ;; magit
-    (use-package magit)
-
-    ;; ivy-rich
-    (use-package ivy-rich)
-    (ivy-rich-mode 1)
-
-    ;; ace-window
-    (use-package ace-window)
-    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-
-    ;; dump jump mode
-    (use-package dumb-jump)
-    (setq dumb-jump-mode t)
-    (setq dumb-jump-selector 'ivy)
-
-    ;; rg
-    (use-package rg
-        :hook ((rg-mode . wgrep-rg-setup)))
-    (rg-enable-default-bindings)
-
-    ;; goto-addr
-    (use-package goto-addr
-        :hook ((prog-mode . goto-address-prog-mode)
-                  (text-mode . goto-address-mode)))
-
-    ;; swoop
-    (use-package swoop)
-    (setq swoop-minibuffer-input-dilay 0.4)
-
-    ;; whitespace
-    (use-package whitespace)
-    (setq whitespace-style '(face tabs tab-mark spaces space-mark))
-    (setq whitespace-display-mappings
-          '((space-mark ?\u3000 [?\u25a1])
-            (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t])))
-    (setq whitespace-space-regexp "\\(\u3000+\\)")
-    (set-face-foreground 'whitespace-tab "#adff2f")
-    (set-face-background 'whitespace-tab 'nil)
-    (set-face-underline  'whitespace-tab t)
-    (set-face-foreground 'whitespace-space "#7cfc00")
-    (set-face-background 'whitespace-space 'nil)
-    (set-face-bold-p 'whitespace-space t)
-    (global-whitespace-mode 1)
-
-    ;; dashboard
-    (use-package dashboard
-      :ensure t
-      :config
-      (dashboard-setup-startup-hook))
-
-    ;; company
-    (use-package company)
-    (use-package company-glsl)
-    (global-company-mode)
-    (add-to-list 'company-backends 'company-glsl)
-
-    ;; git-gutter
-    (use-package git-gutter-fringe)
-    (global-git-gutter-mode +1)
-
-    ;; smooth-scroll
-    (use-package smooth-scroll)
-    (smooth-scroll-mode t)
-
-    ;; exec-path-from-shell
-    (use-package exec-path-from-shell)
-    (exec-path-from-shell-copy-envs '("PATH" "GEM_HOME"))
-
-    ;; ghc
-    (autoload 'ghc-init "ghc" nil t)
-    (autoload 'ghc-debug "ghc" nil t)
-
-    ;; hindent
-    (add-hook 'haskell-mode-hook #'hindent-mode)
-    (setq hindent-style "johan-tibell")
-
-    ;; typescript
-    (defun my/setup-tide-mode ()
-      (interactive)
-      (tide-setup)
-      (tide-hl-identifier-mode +1))
-    (add-hook 'typescript-mode-hook #'my/setup-tide-mode)
-
-    ;; js2-mode
-    (setq js2-skip-preprocessor-directives t)
-
-    ;; js2-refactor
-    (use-package js2-refactor)
-    (add-hook 'js2-mode-hook #'js2-refactor-mode)
-    (add-hook 'typescript-mode-hook #'js2-refactor-mode)
-
-    ;; ivy-ghq
-    (use-package ivy-ghq
-      :commands (ivy-ghq-open)
-      :bind
-      ("M-o" . ivy-ghq-open-and-fzf)
-      :custom
-      (ivy-ghq-short-list t)
-      :preface
-      (defun ivy-ghq-open-and-fzf ()
-        (interactive)
-        (ivy-ghq-open)
-        (counsel-fzf)))
-
-    ;; vterm
     (use-package vterm)
     (add-hook 'vterm-mode-hook #'(lambda ()
                                    (setq show-trailing-whitespace nil)))
   #+END_SRC
 * Lisp
-  #+BEGIN_SRC emacs-lisp
-    ;; ----- Common Lisp ----- ;;
+** TODO slime
+   #+BEGIN_SRC emacs-lisp
+     (load (expand-file-name "~/quicklisp/slime-helper.el"))
+     (setq inferior-lisp-program "sbcl")
 
-    ;; slime
-    (load (expand-file-name "~/quicklisp/slime-helper.el"))
-    (setq inferior-lisp-program "sbcl")
+     (use-package ac-slime)
+     (add-hook 'slime-mode-hook 'set-up-slime-ac)
+     (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+   #+END_SRC
+** TODO paredit
+   #+BEGIN_SRC emacs-lisp
+     (use-package paredit)
+     (autoload 'enable-paredit-mode "paredit" t)
+     (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+     (add-hook 'lisp-mode-hook 'enable-paredit-mode)
+     (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+     (add-hook 'scheme-mode-hook 'enable-paredit-mode)
+     (eval-after-load "paredit"
+         #'(define-key paredit-mode-map (kbd "C-c f") 'paredit-forward-slurp-sexp))
+     (eval-after-load "paredit"
+         #'(define-key paredit-mode-map (kbd "C-c b") 'paredit-forward-barf-sexp))
+   #+END_SRC
+** TODO hyperspec
+   #+BEGIN_SRC emacs-lisp
 
-    ;; ac-slime
-    (use-package ac-slime)
-    (add-hook 'slime-mode-hook 'set-up-slime-ac)
-    (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+     ;; hyperspec
+     (setq common-lisp-hyperspec-root "~/quicklisp/HyperSpec/")
 
-    ;; hyperspec
-    (setq common-lisp-hyperspec-root "~/quicklisp/HyperSpec/")
+     (defun common-lisp-hyperspec (symbol-name)
+         (interactive (list (common-lisp-hyperspec-read-symbol-name)))
+         (let ((name (common-lisp-hyperspec--strip-cl-package
+                         (downcase symbol-name))))
+             (cl-maplist (lambda (entry)
+                             (eww-open-file (concat common-lisp-hyperspec-root "Body/"
+                                                (car entry)))
+                             (when (cdr entry)
+                                 (sleep-for 1.5)))
+                 (or (common-lisp-hyperspec--find name)
+                     (error "The symbol `%s' is not defined in Common Lisp"
+                         symbol-name)))))
 
-    (defun common-lisp-hyperspec (symbol-name)
-        (interactive (list (common-lisp-hyperspec-read-symbol-name)))
-        (let ((name (common-lisp-hyperspec--strip-cl-package
-                        (downcase symbol-name))))
-            (cl-maplist (lambda (entry)
-                            (eww-open-file (concat common-lisp-hyperspec-root "Body/"
-                                               (car entry)))
-                            (when (cdr entry)
-                                (sleep-for 1.5)))
-                (or (common-lisp-hyperspec--find name)
-                    (error "The symbol `%s' is not defined in Common Lisp"
-                        symbol-name)))))
+     (defun common-lisp-hyperspec-lookup-reader-macro (macro)
+       (interactive
+        (list
+         (let ((completion-ignore-case t))
+           (completing-read "Look up reader-macro: "
+                            common-lisp-hyperspec--reader-macros nil t
+                            (common-lisp-hyperspec-reader-macro-at-point)))))
+       (eww-open-file
+        (concat common-lisp-hyperspec-root "Body/"
+                (gethash macro common-lisp-hyperspec--reader-macros))))
 
-    (defun common-lisp-hyperspec-lookup-reader-macro (macro)
-      (interactive
-       (list
-        (let ((completion-ignore-case t))
-          (completing-read "Look up reader-macro: "
-                           common-lisp-hyperspec--reader-macros nil t
-                           (common-lisp-hyperspec-reader-macro-at-point)))))
-      (eww-open-file
-       (concat common-lisp-hyperspec-root "Body/"
-               (gethash macro common-lisp-hyperspec--reader-macros))))
+     (defun common-lisp-hyperspec-format (character-name)
+       (interactive (list (common-lisp-hyperspec--read-format-character)))
+       (cl-maplist (lambda (entry)
+                     (eww-open-file (common-lisp-hyperspec-section (car entry))))
+                   (or (gethash character-name
+                                common-lisp-hyperspec--format-characters)
+                       (error "The symbol `%s' is not defined in Common Lisp"
+                              character-name))))
 
-    (defun common-lisp-hyperspec-format (character-name)
-      (interactive (list (common-lisp-hyperspec--read-format-character)))
-      (cl-maplist (lambda (entry)
-                    (eww-open-file (common-lisp-hyperspec-section (car entry))))
-                  (or (gethash character-name
-                               common-lisp-hyperspec--format-characters)
-                      (error "The symbol `%s' is not defined in Common Lisp"
-                             character-name))))
+     (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
+       (let ((buf (current-buffer)))
+         ad-do-it
+         (switch-to-buffer buf)
+         (pop-to-buffer "*eww*")))
 
-    (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
-      (let ((buf (current-buffer)))
-        ad-do-it
-        (switch-to-buffer buf)
-        (pop-to-buffer "*eww*")))
+     (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
+       (let ((buf (current-buffer)))
+         ad-do-it
+         (switch-to-buffer buf)
+         (pop-to-buffer "*eww*")))
 
-    (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
-      (let ((buf (current-buffer)))
-        ad-do-it
-        (switch-to-buffer buf)
-        (pop-to-buffer "*eww*")))
+     (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
+       (let ((buf (current-buffer)))
+         ad-do-it
+         (switch-to-buffer buf)
+         (pop-to-buffer "*eww*")))
+     (dolist (hook '(emacs-lisp-mode-hook
+                     lisp-interaction-mode-hook
+                     ielm-mode-hook))
+       (add-hook hook 'elisp-slime-nav-mode))
 
-    (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
-      (let ((buf (current-buffer)))
-        ad-do-it
-        (switch-to-buffer buf)
-        (pop-to-buffer "*eww*")))
-    (dolist (hook '(emacs-lisp-mode-hook
-                    lisp-interaction-mode-hook
-                    ielm-mode-hook))
-      (add-hook hook 'elisp-slime-nav-mode))
-
-    ;; paredit
-    (use-package paredit)
-    (autoload 'enable-paredit-mode "paredit" t)
-    (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
-    (add-hook 'lisp-mode-hook 'enable-paredit-mode)
-    (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
-    (add-hook 'scheme-mode-hook 'enable-paredit-mode)
-    (eval-after-load "paredit"
-        #'(define-key paredit-mode-map (kbd "C-c f") 'paredit-forward-slurp-sexp))
-    (eval-after-load "paredit"
-        #'(define-key paredit-mode-map (kbd "C-c b") 'paredit-forward-barf-sexp))
-
-    ;; rainbow-dpelimiters
-    (use-package rainbow-delimiters)
-    (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+   #+END_SRC
+** TODO rainbow-dpelimiters
+   #+BEGIN_SRC emacs-lisp
+     (use-package rainbow-delimiters)
+     (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
   #+END_SRC
 * LSP
-  #+BEGIN_SRC emacs-lisp
-    ;; ----- Lsp ----- ;;
+** TODO lsp-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package lsp-mode)
+     (use-package lsp-java)
+     (use-package lsp-haskell)
 
-    ;;;;;;;;;;;;;;
-    ;; lsp-mode ;;
-    ;;;;;;;;;;;;;;
-    (use-package lsp-mode)
-    (use-package lsp-java)
-    (use-package lsp-haskell)
+     ;; config
+     (setq lsp-print-io nil)
+     (setq lsp-trace nil)
+     (setq lsp-print-performance nil)
+     (setq lsp-auto-guess-root t)
+     (setq lsp-document-sync-method 'incremental)
+     (setq lsp-response-timeout 5)
+     (setq lsp-ui-sideline-enable nil)
+     (setq lsp-prefer-flymake nil)
 
-    ;; config
-    (setq lsp-print-io nil)
-    (setq lsp-trace nil)
-    (setq lsp-print-performance nil)
-    (setq lsp-auto-guess-root t)
-    (setq lsp-document-sync-method 'incremental)
-    (setq lsp-response-timeout 5)
-    (setq lsp-ui-sideline-enable nil)
-    (setq lsp-prefer-flymake nil)
+     ;; hook
+     (dolist (hook '(go-mode-hook
+                     js2-mode-hook
+                     css-mode-hook
+                     scss-mode-hook
+                     ruby-mode-hook
+                     haskell-mode-hook
+                     typescript-mode-hook
+                     java-mode-hook
+                     vue-mode-hook
+                     sh-mode-hook
+                     shell-mode-hook
+                     php-mode-hook
+                     python-mode-hook))
+       (add-hook hook #'lsp))
+     (add-hook 'lsp-mode-hook 'flycheck-mode)
+   #+END_SRC
+** TODO lsp-ui
+   #+BEGIN_SRC emacs-lisp
+     (use-package lsp-ui)
 
-    ;; path
-    (add-to-list 'exec-path "~/.npm-global/bin" t)
+     ;; config lsp-ui-doc
+     (setq lsp-ui-doc-enable t)
+     (setq lsp-ui-doc-max-height 15)
 
-    ;; hook
-    (dolist (hook '(go-mode-hook
-                    js2-mode-hook
-                    css-mode-hook
-                    scss-mode-hook
-                    ruby-mode-hook
-                    haskell-mode-hook
-                    typescript-mode-hook
-                    java-mode-hook
-                    vue-mode-hook
-                    sh-mode-hook
-                    shell-mode-hook
-                    php-mode-hook
-                    python-mode-hook))
-      (add-hook hook #'lsp))
-    (add-hook 'lsp-mode-hook 'flycheck-mode)
+     ;; config lsp-ui-sideline
+     (setq lsp-ui-sideline-enable nil)
 
-    ;;;;;;;;;;;;;;
-    ;;  lsp-ui  ;;
-    ;;;;;;;;;;;;;;
-    (use-package lsp-ui)
+     ;; config lsp-ui-imenu
+     (setq lsp-ui-imenu-enable nil)
 
-    ;; config lsp-ui-doc
-    (setq lsp-ui-doc-enable t)
-    (setq lsp-ui-doc-max-height 15)
+     ;; hook
+     (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+   #+END_SRC
+** TODO company-lsp
+   #+BEGIN_SRC emacs-lisp
+     (use-package company-lsp)
+     (push 'company-lsp company-backends)
+   #+END_SRC
+** TODO dap-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package dap-php)
+     (use-package dap-node)
+     (use-package dap-ruby)
+     (use-package dap-chrome)
 
-    ;; config lsp-ui-sideline
-    (setq lsp-ui-sideline-enable nil)
-
-    ;; config lsp-ui-imenu
-    (setq lsp-ui-imenu-enable nil)
-
-    ;; hook
-    (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-
-    ;;;;;;;;;;;;;;;;;
-    ;; company-lsp ;;
-    ;;;;;;;;;;;;;;;;;
-    (use-package company-lsp)
-
-    ;; push
-    (push 'company-lsp company-backends)
-
-    ;;;;;;;;;;;;;;;;;
-    ;;  dap-mode   ;;
-    ;;;;;;;;;;;;;;;;;
-    (use-package dap-php)
-    (use-package dap-node)
-    (use-package dap-ruby)
-    (use-package dap-chrome)
-
-    ;; config
-    (dap-mode 1)
-    (dap-ui-mode 1)
+     (dap-mode 1)
+     (dap-ui-mode 1)
   #+END_SRC
 * Mode
 ** fundamental-mode
@@ -647,6 +673,7 @@
      (autoload 'js2-mode "js2-mode" nil t)
      (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
      (add-hook 'js2-mode-hook #'js2-refactor-mode)
+     (setq js2-skip-preprocessor-directives t)
    #+END_SRC
 ** TODO ruby-mode
    #+BEGIN_SRC emacs-lisp
