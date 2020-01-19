@@ -1,12 +1,18 @@
 EMACS ?= emacs
 TOP_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
+.PHONY: all
+all: compile org-to-html
+
 .PHONY: install
-install:
+install: link cask-install cask-update
+
+.PHONY: cask-install
+cask-install:
 	cask install
 
-.PHONY: update
-update:
+.PHONY: cask-update
+cask-update:
 	cask update
 
 .PHONY: clean
@@ -20,3 +26,7 @@ link:
 .PHONY: compile
 compile:
 	$(EMACS) -Q --batch --eval "(progn (require 'ob-tangle) (org-babel-tangle-file \"./index.org\" \"./index.el\" \"emacs-lisp\") (byte-compile-file \"./index.el\"))"
+
+.PHONY: org-to-html
+org-to-html:
+	$(EMACS) index.org -Q --batch --eval "(progn (setq org-html-htmlize-output-type nil) (org-html-export-to-html))"
