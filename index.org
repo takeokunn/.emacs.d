@@ -8,12 +8,16 @@
 #+SETUPFILE: https://fniessen.github.io/org-html-themes/setup/theme-readtheorg.setup
 
 * はじめに
-** TODO 基本情報
-   url: [[http://github.com/takeokunn/.emacs.d][takeokunn/.emacs.d]]
-** TODO Dependency
-   書いてく
-** TODO Language Server
-   書いてく
+** 基本情報
+   - repo: [[http://github.com/takeokunn/.emacs.d][takeokunn/.emacs.d]]
+   - twitter: [[https://twitter.com/takeokunn][たけてぃ@takeokunn]]
+** Dependency
+   この emacs.dは以下のlibrary/packageに依存しています。
+   - [[https://github.com/ggreer/the_silver_searcher][ggreer/the_silver_searcher]]
+   - [[https://github.com/quicklisp/quicklisp-slime-helper][quicklisp/quicklisp-slime-helper]]
+   - [[https://github.com/sbcl/sbcl][sbcl/sbcl]]
+   - [[https://github.com/npm/cli][npm/cli]]
+   - [[https://github.com/composer/composer][composer/composer]]
 * 基本設定
 ** TODO スタートアップメッセージを非表示
    #+BEGIN_SRC emacs-lisp
@@ -493,6 +497,12 @@
     ;; (define-key vterm-mode-map [mouse-5] nil)
     ;; (define-key vterm-mode-map [mouse-5] nil)
   #+END_SRC
+** TODO omnisharp
+   #+BEGIN_SRC emacs-lisp
+     (use-package omnisharp)c
+     (define-key omnisharp-mode-map (kbd ".") 'omnisharp-add-dot-and-auto-complete)
+     (add-hook 'csharp-mode-hook 'omnisharp-mode)
+   #+END_SRC
 * Lisp
 ** TODO slime
    #+BEGIN_SRC emacs-lisp
@@ -865,6 +875,12 @@
      (setq processing-location "/opt/processing/processing-java")
      (setq processing-output-dir "/tmp")
   #+END_SRC
+** TODO csharp-mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'csharp-mode "csharp-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.cs$" . csharp-mode))
+   #+END_SRC
+
 * MyFunc
 ** TODO my/beginning-of-intendation
    #+BEGIN_SRC emacs-lisp

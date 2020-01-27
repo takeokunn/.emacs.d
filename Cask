@@ -52,6 +52,7 @@
 (depends-on "whitespace")
 (depends-on "yasnippet")
 (depends-on "yasnippet-snippets")
+(depends-on "omnisharp")
 
 ;; lsp
 (depends-on "company-lsp")
@@ -101,3 +102,4 @@
 (depends-on "vue-mode")
 (depends-on "web-mode")
 (depends-on "yaml-mode")
+(depends-on "csharp-mode")
