@@ -19,11 +19,17 @@
    - [[https://github.com/npm/cli][npm/cli]]
    - [[https://github.com/composer/composer][composer/composer]]
 * 基本設定
-** TODO スタートアップメッセージを非表示
+** スタートアップメッセージを非表示
+   url: [[http://flex.phys.tohoku.ac.jp/texi/eljman/eljman_250.html][http://flex.phys.tohoku.ac.jp/texi/eljman/eljman_250.html]]
+
+   trueにすると最初のスタートアップメッセージ の表示を取りやめます。
    #+BEGIN_SRC emacs-lisp
      (setq inhibit-startup-message t)
    #+END_SRC
-** TODO 末尾のスペースを可視化する
+** 末尾のスペースを可視化する
+   url: [[https://qiita.com/tadsan/items/df73c711f921708facdc][show-trailing-whitespaceは便利だが、見栄えが悪いこともある(qiita)]]
+
+   特定のmode以外末尾のスペースを可視化するようにした。
    #+BEGIN_SRC emacs-lisp
      (setq-default show-trailing-whitespace t)
 
@@ -45,69 +51,79 @@
       my/disable-trailing-modes)
    #+END_SRC
 
-** TODO エディタのバーを非表示にする
+** バーを非表示にする
+   各種バーを非表示にした。
    #+BEGIN_SRC emacs-lisp
      (menu-bar-mode -1)
      (tool-bar-mode -1)
-     (global-linum-mode t)
      (toggle-scroll-bar -1)
    #+END_SRC
-
-** TODO 自動生成ファイルを無効にする
+** 行番号を表示する
+   url: [[https://www.emacswiki.org/emacs/LineNumbers][https://www.emacswiki.org/emacs/LineNumbers]]
+   #+BEGIN_SRC emacs-lisp
+     (global-linum-mode t)
+   #+END_SRC
+** 自動生成ファイルを無効にする
+   url: [[http://yohshiy.blog.fc2.com/blog-entry-319.html][http://yohshiy.blog.fc2.com/blog-entry-319.html]]
    #+BEGIN_SRC emacs-lisp
      (setq make-backup-files nil)
      (setq auto-save-default nil)
      (setq auto-save-list-file-prefix nil)
      (setq create-lockfiles nil)
    #+END_SRC
-
-** TODO C-kで行削除
+** C-kで行削除
+   url: [[https://ayatakesi.github.io/emacs/24.5/Killing-by-Lines.html][https://ayatakesi.github.io/emacs/24.5/Killing-by-Lines.html]]
    #+BEGIN_SRC emacs-lisp
      (setq kill-whole-line t)
    #+END_SRC
-
-** TODO ビープ音を消す
+** ビープ音を消す
+   url: [[http://th.nao.ac.jp/MEMBER/zenitani/elisp-j.html#bell][http://th.nao.ac.jp/MEMBER/zenitani/elisp-j.html#bell]]
    #+BEGIN_SRC emacs-lisp
      (setq ring-bell-function 'ignore)
    #+END_SRC
-** TODO カッコの中をハイライトする
+** カッコの中をハイライトする
+   url: [[http://syohex.hatenablog.com/entry/20110331/1301584188][http://syohex.hatenablog.com/entry/20110331/1301584188]]
    #+BEGIN_SRC emacs-lisp
      (show-paren-mode t)
      (setq show-paren-style 'mixed)
    #+END_SRC
-** TODO デフォルトのタブサイズを設定する
-   #+BEGIN_SRC emacs-lisp
-     (setq-default tab-widtph 4 indent-tabs-mode nil)
-   #+END_SRC
-** TODO カッコが自動的に作られるようにする
+** カッコが自動的に作られるようにする
+   url: [[https://www.emacswiki.org/emacs/ElectricPair][https://www.emacswiki.org/emacs/ElectricPair]]
    #+BEGIN_SRC emacs-lisp
      (electric-pair-mode 1)
    #+END_SRC
-** TODO ウィンドウの大きさを変える
+** ウィンドウの大きさを変える
+   url: [[http://flex.phys.tohoku.ac.jp/texi/eljman/eljman_184.html][http://flex.phys.tohoku.ac.jp/texi/eljman/eljman_184.html]]
    #+BEGIN_SRC emacs-lisp
      (setq window-min-height 10)
    #+END_SRC
-** TODO time locale
+** time locale
+   url: [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Locales.html][https://www.gnu.org/software/emacs/manual/html_node/elisp/Locales.html]]
    #+BEGIN_SRC emacs-lisp
      (setq system-time-locale "C")
    #+END_SRC
-** TODO rubyのマジックコードを非表示
+** rubyのマジックコードを非表示
+   url: [[https://mat-aki.hatenadiary.org/entry/20090210/1234234027][https://mat-aki.hatenadiary.org/entry/20090210/1234234027]]
    #+BEGIN_SRC emacs-lisp
      (setq ruby-insert-encoding-magic-comment nil)
    #+END_SRC
-** TODO 起動時にerrorの時のみ表示する
-** TODO ナローイングを無効
+** 起動時にerrorの時のみ表示する
+   url: [[https://qiita.com/kakikubo/items/412715e378b03b79faff][https://qiita.com/kakikubo/items/412715e378b03b79faff]]
+   #+BEGIN_SRC emacs-lisp
+     (setq display-warning-minimum-level :error)
+   #+END_SRC
+** ナローイングを無効
+   url: [[https://ayatakesi.github.io/emacs/26.1/html/Narrowing.html][https://ayatakesi.github.io/emacs/26.1/html/Narrowing.html]]
    #+BEGIN_SRC emacs-lisp
      (put 'narrow-to-region 'disabled nil)
    #+END_SRC
-  #+BEGIN_SRC emacs-lisp
-    (setq display-warning-minimum-level :error)
-  #+END_SRC
-** TODO npm-binにpathを通す
+** npm-binにpathを通す
+   url: [[https://emacs-jp.github.io/tips/environment-variable][https://emacs-jp.github.io/tips/environment-variable]]
    #+BEGIN_SRC emacs-lisp
      (add-to-list 'exec-path "~/.npm-global/bin" t)
    #+END_SRC
-** TODO Font
+** Font
+   url: [[https://qiita.com/j8takagi/items/01aecdd28f87cdd3cd2c][https://qiita.com/j8takagi/items/01aecdd28f87cdd3cd2c]]
    #+BEGIN_SRC emacs-lisp
      (set-fontset-font t 'japanese-jisx0208 "TakaoPGothic")
      (add-to-list 'face-font-rescale-alist '(".*Takao P.*" . 0.85))
