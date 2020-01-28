@@ -36,7 +36,6 @@
 (depends-on "ivy-rich")
 (depends-on "js2-refactor")
 (depends-on "magit")
-(depends-on "multi-term")
 (depends-on "multiple-cursors")
 (depends-on "nameless")
 (depends-on "neotree")

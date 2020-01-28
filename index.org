@@ -130,16 +130,20 @@
      (add-to-list 'face-font-rescale-alist '(".*Takao P.*" . 0.85))
    #+END_SRC
 * Package管理ツール
-** TODO cask
+** Cask
    url: [[https://github.com/cask/cask][cask/cask]]
 
-   package managerとしてcaskを使っています。
+   package managerにはCaskを使っています。
    #+BEGIN_SRC emacs-lisp
      (require 'cask "~/.cask/cask.el")
      (cask-initialize)
   #+END_SRC
-** TODO use-package
+** use-package
    [[https://qiita.com/kai2nenobu/items/5dfae3767514584f5220][use-packageで可読性の高いinit.elを書く(qiita)]] を参考に書いていく。
+
+   #+begin_src emacs-lisp
+     ;; (use-package use-package :no-require t :ensure t :defer t)
+   #+end_src
 * org-mode設定
 ** TODO 基本設定
    #+BEGIN_SRC emacs-lisp
@@ -165,6 +169,17 @@
      (add-hook 'org-mode-hook
                (lambda ()
                  (define-key org-mode-map (kbd "C-m") nil)))
+   #+END_SRC
+* emms設定
+** TODO 基本設定
+   #+BEGIN_SRC emacs-lisp
+     (use-package emms-setup)
+     (use-package emms-i18n)
+     (emms-standard)
+     (emms-default-players)
+     (setq emms-repeat-playlist t)
+     (setq emms-player-list '(emms-player-mplayer))
+     (setq emms-source-file-default-directory "~/emacs/emms/")
    #+END_SRC
 * テーマ
 ** TODO neotree
@@ -252,127 +267,151 @@
        (column-number-mode 0))
   #+END_SRC
 * Package
-** TODO hl-line
+** hl-line
+   url: [[https://www.emacswiki.org/emacs/HighlightCurrentLine][https://www.emacswiki.org/emacs/HighlightCurrentLine]]
+
+   現在の行をハイライトするパッケージ。
    #+BEGIN_SRC emacs-lisp
-     (use-package hl-line)
-     (set-face-background 'hl-line "#444642")
-     (set-face-attribute 'hl-line nil :inherit nil)
-     (defvar global-hl-line-timer-exclude-modes '(todotxt-mode))
-     (defun global-hl-line-timer-function ()
-       (unless (memq major-mode global-hl-line-timer-exclude-modes)
-         (global-hl-line-unhighlight-all)
-         (let ((global-hl-line-mode t))
-           (global-hl-line-highlight))))
-     (setq global-hl-line-timer
-         (run-with-idle-timer 0.03 t 'global-hl-line-timer-function))
-   #+END_SRC
-** TODO hl-todo
-   #+BEGIN_SRC emacs-lisp
-     (setq hl-todo-keyword-faces
-           '(("HOLD" . "#d0bf8f")
-             ("TODO" . "#cc9393")
-             ("NEXT" . "#dca3a3")
-             ("THEM" . "#dc8cc3")
-             ("PROG" . "#7cb8bb")
-             ("OKAY" . "#7cb8bb")
-             ("DONT" . "#5f7f5f")
-             ("FAIL" . "#8c5353")
-             ("DONE" . "#afd8af")
-             ("FIXME" . "#cc9393")
-             ("???"   . "#cc9393")))
-     (setq hl-todo-activate-in-modes '(prog-mode ruby-mode enh-ruby-mode))
-     (global-hl-todo-mode 1)
-   #+END_SRC
-** TODO all-the-icons
-   #+BEGIN_SRC emacs-lisp
-     (use-package all-the-icons)
-     (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-   #+END_SRC
-** TODO editorconfig
-   #+BEGIN_SRC emacs-lisp
-     (use-package editorconfig
-       :ensure t
+     (use-package hl-line
+       :defer t
        :config
-       (editorconfig-mode 1))
+       (set-face-background 'hl-line "#444642")
+       (set-face-attribute 'hl-line nil :inherit nil)
+       (defvar global-hl-line-timer-exclude-modes '(todotxt-mode))
+       (defun global-hl-line-timer-function ()
+         (unless (memq major-mode global-hl-line-timer-exclude-modes)
+           (global-hl-line-unhighlight-all)
+           (let ((global-hl-line-mode t))
+             (global-hl-line-highlight))))
+       (setq global-hl-line-timer
+             (run-with-idle-timer 0.03 t 'global-hl-line-timer-function)))
    #+END_SRC
-** TODO emms
-   #+BEGIN_SRC emacs-lisp
-     ;; emms
-     (use-package emms-setup)
-     (use-package emms-i18n)
-     (emms-standard)
-     (emms-default-players)
-     (setq emms-repeat-playlist t)
-     (setq emms-player-list '(emms-player-mplayer))
-     (setq emms-source-file-default-directory "~/emacs/emms/")
-   #+END_SRC
-** TODO multi-term
-   #+BEGIN_SRC emacs-lisp
-     (use-package multi-term)
-     (setq multi-term-program shell-file-name)
-   #+END_SRC
-** TODO open-junk-file
-   #+BEGIN_SRC emacs-lisp
-     (use-package open-junk-file)
-     (setq open-junk-file-format "~/.emacs.d/.junk/%Y-%m%d-%H%M%S.")
-   #+END_SRC
-** TODO smartrep/multiple-cursors
-   #+BEGIN_SRC emacs-lisp
-     (use-package smartrep)
-     (use-package multiple-cursors)
+** hl-todo
+   url: [[http://emacs.rubikitch.com/hl-todo/][http://emacs.rubikitch.com/hl-todo/]]
 
-     (global-unset-key "\C-t")
-     (smartrep-define-key global-map "C-t"
-       '(("n" . 'mc/mark-next-like-this)
-         ("p" . 'mc/mark-previous-like-this)
-         ("m" . 'mc/mark-more-like-this-extended)
-         ("u" . 'mc/unmark-next-like-this)
-         ("U" . 'mc/unmark-previous-like-this)
-         ("s" . 'mc/skip-to-next-like-this)
-         ("S" . 'mc/skip-to-previous-like-this)
-         ("*" . 'mc/mark-all-like-this)
-         ("d" . 'mc/mark-all-like-this-dwim)
-         ("i" . 'mc/insert-numbers)
-         ("o" . 'mc/sort-regions)
-         ("O" . 'mc/reverse-regions)))
-   #+END_SRC
-** TODO yasnippet
+   TODOやFIXMEなどのキーワードをハイライトするパッケージ。
    #+BEGIN_SRC emacs-lisp
-     (use-package yasnippet
-       :ensure t
-       :diminish yas-minor-mode)
-
-     (use-package yasnippet-snippets)
-     (yas-global-mode 1)
+     (use-package hl-todo
+       :defer t
+       :init
+       (global-hl-todo-mode 1)
+       :config
+       (setq hl-todo-keyword-faces
+             '(("HOLD" . "#d0bf8f")
+               ("TODO" . "#cc9393")
+               ("NEXT" . "#dca3a3")
+               ("THEM" . "#dc8cc3")
+               ("PROG" . "#7cb8bb")
+               ("OKAY" . "#7cb8bb")
+               ("DONT" . "#5f7f5f")
+               ("FAIL" . "#8c5353")
+               ("DONE" . "#afd8af")
+               ("FIXME" . "#cc9393")
+               ("???"   . "#cc9393"))))
    #+END_SRC
-** TODO counsel
+** all-the-icons
+   url: [[https://github.com/domtronn/all-the-icons.el][https://github.com/domtronn/all-the-icons.el]]
+
+   アイコンを追加するパッケージ。dired-mode時のみ有効にしている。
    #+BEGIN_SRC emacs-lisp
-     (use-package counsel)
-     (setq ivy-use-virtual-buffers t)
-     (setq counsel-ag-base-command "ag --nocolor --nogroup -u %s")
-     (ivy-mode 1)
-     (counsel-mode 1)
-
-     (defun my/counsel-ag ()
-       (interactive)
-       (let ((symbol (thing-at-point 'symbol 'no-properties)))
-         (counsel-ag symbol)))
+     (use-package all-the-icons
+       :defer t
+       :init
+       (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
    #+END_SRC
-** TODO all-the-icons-ivy
+** all-the-icons-ivy
+   url: [[https://github.com/asok/all-the-icons-ivy][https://github.com/asok/all-the-icons-ivy]]
    #+BEGIN_SRC emacs-lisp
      (use-package all-the-icons-ivy
-       :ensure t
+       :defer t
        :config
        (all-the-icons-ivy-setup))
    #+END_SRC
-** TODO recentf
+** editorconfig
+   url: [[https://github.com/editorconfig/editorconfig-emacs][https://github.com/editorconfig/editorconfig-emacs]]
+
+   editorconfigを有効にするパッケージ。
    #+BEGIN_SRC emacs-lisp
-     (use-package recentf)
-     (setq recentf-max-saved-items 2000)
-     (setq recentf-auto-cleanup 'never)
-     (setq recentf-save-file "~/.emacs.d/.recentf")
-     (setq recentf-exclude '(".recentf"))
-     (recentf-mode 1)
+     (use-package editorconfig
+       :defer t
+       :config
+       (editorconfig-mode 1))
+   #+END_SRC
+** open-junk-file
+   url: [[https://www.emacswiki.org/emacs/open-junk-file.el][https://www.emacswiki.org/emacs/open-junk-file.el]]
+
+   使い捨てファイルを作成するパッケージ。
+   #+BEGIN_SRC emacs-lisp
+     (use-package open-junk-file
+       :defer t
+       :config
+       (setq open-junk-file-format "~/.emacs.d/.junk/%Y-%m%d-%H%M%S."))
+   #+END_SRC
+** smartrep/multiple-cursors
+   url: [[https://qiita.com/scalper/items/b9e357b3af071c930777][https://qiita.com/scalper/items/b9e357b3af071c930777]]
+
+   複数cursorを便利に扱えるようにした。
+   #+BEGIN_SRC emacs-lisp
+     (use-package multiple-cursors
+       :init
+       (require 'smartrep)
+       (declare-function smartrep-define-key "smartrep")
+       (bind-key "C-M-c" 'mc/edit-lines)
+       (bind-key "C-M-r" 'mc/mark-all-in-region)
+       (global-unset-key (kbd "C-t"))
+       (smartrep-define-key global-map "C-t"
+         '(("C-t" . 'mc/mark-next-like-this)
+           ("n"   . 'mc/mark-next-like-this)
+           ("p"   . 'mc/mark-previous-like-this)
+           ("m"   . 'mc/mark-more-like-this-extended)
+           ("u"   . 'mc/unmark-next-like-this)
+           ("U"   . 'mc/unmark-previous-like-this)
+           ("s"   . 'mc/skip-to-next-like-this)
+           ("S"   . 'mc/skip-to-previous-like-this)
+           ("*"   . 'mc/mark-all-like-this)
+           ("d"   . 'mc/mark-all-like-this-dwim)
+           ("i"   . 'mc/insert-numbers)
+           ("o"   . 'mc/sort-regions)
+           ("O"   . 'mc/reverse-regions))))
+   #+END_SRC
+** yasnippet
+   url: [[https://github.com/joaotavora/yasnippet][https://github.com/joaotavora/yasnippet]]
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package yasnippet
+       :defer t
+       :diminish yas-minor-mode)
+
+     (use-package yasnippet-snippets
+       :config
+       (yas-global-mode 1))
+   #+END_SRC
+** counsel
+   url: [[https://github.com/abo-abo/swiper][https://github.com/abo-abo/swiper]]
+   #+BEGIN_SRC emacs-lisp
+     (use-package counsel
+       :defer t
+       :config
+       (setq ivy-use-virtual-buffers t)
+       (setq counsel-ag-base-command "ag --nocolor --nogroup -u %s")
+       (ivy-mode 1)
+       (counsel-mode 1)
+       (defun my/counsel-ag ()
+         (interactive)
+         (let ((symbol (thing-at-point 'symbol 'no-properties)))
+           (counsel-ag symbol))))
+   #+END_SRC
+** recentf
+   url: [[][]]
+   #+BEGIN_SRC emacs-lisp
+     (use-package recentf
+       :defer t
+       :config
+       (setq recentf-max-saved-items 10000)
+       (setq recentf-auto-cleanup 'never)
+       (setq recentf-save-file "~/.emacs.d/.recentf")
+       (setq recentf-exclude '(".recentf"))
+       (recentf-mode 1))
    #+END_SRC
 ** TODO magit
    #+BEGIN_SRC emacs-lisp
@@ -948,14 +987,6 @@
        (bind-key "M-x" 'counsel-M-x)
        (bind-key "M-g" 'google-this)
        (bind-key "C-x C-k" nil))
-   #+END_SRC
-** TODO term
-   #+BEGIN_SRC emacs-lisp
-     (define-key term-raw-map (kbd "C-h") 'term-send-backspace)
-     (define-key term-raw-map (kbd "C-p") 'term-send-up)
-     (define-key term-raw-map (kbd "C-n") 'term-send-down)
-     (define-key term-raw-map (kbd "C-f") 'term-send-forward-word)
-     (define-key term-raw-map (kbd "C-b") 'term-send-backward-word)
    #+END_SRC
 ** TODO emr
    #+BEGIN_SRC emacs-lisp
