@@ -118,11 +118,6 @@
    #+BEGIN_SRC emacs-lisp
      (put 'narrow-to-region 'disabled nil)
    #+END_SRC
-** npm-binにpathを通す
-   url: [[https://emacs-jp.github.io/tips/environment-variable][https://emacs-jp.github.io/tips/environment-variable]]
-   #+BEGIN_SRC emacs-lisp
-     (add-to-list 'exec-path "~/.npm-global/bin" t)
-   #+END_SRC
 ** Font
    url: [[https://qiita.com/j8takagi/items/01aecdd28f87cdd3cd2c][https://qiita.com/j8takagi/items/01aecdd28f87cdd3cd2c]]
    #+BEGIN_SRC emacs-lisp
@@ -402,7 +397,7 @@
            (counsel-ag symbol))))
    #+END_SRC
 ** recentf
-   url: [[][]]
+   url: [https://www.emacswiki.org/emacs/RecentFiles][https://www.emacswiki.org/emacs/RecentFiles]]
    #+BEGIN_SRC emacs-lisp
      (use-package recentf
        :defer t
@@ -413,97 +408,101 @@
        (setq recentf-exclude '(".recentf"))
        (recentf-mode 1))
    #+END_SRC
-** TODO magit
+** magit
+   url: [[https://www.emacswiki.org/emacs/Magit][https://www.emacswiki.org/emacs/Magit]]
    #+BEGIN_SRC emacs-lisp
-     (use-package magit)
+     (use-package magit
+       :defer t)
    #+END_SRC
-** TODO ivy-rich
+** ivy-rich
+   url: [[https://github.com/Yevgnen/ivy-rich][https://github.com/Yevgnen/ivy-rich]]
    #+BEGIN_SRC emacs-lisp
-     (use-package ivy-rich)
-     (ivy-rich-mode 1)
+     (use-package ivy-rich
+       :defer t
+       :config
+       (ivy-rich-mode 1))
    #+END_SRC
-** TODO ace-window
+** ace-window
+   url: [[http://emacs.rubikitch.com/ace-window/][http://emacs.rubikitch.com/ace-window/]]
    #+BEGIN_SRC emacs-lisp
-     (use-package ace-window)
-     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+     (use-package ace-window
+       :defer t
+       :config
+       (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
    #+END_SRC
-** TODO dumb-jump
-   #+BEGIN_SRC emacs-lisp
-     (use-package dumb-jump)
-     (setq dumb-jump-mode t)
-     (setq dumb-jump-selector 'ivy)
-   #+END_SRC
-** TODO rg
-   #+BEGIN_SRC emacs-lisp
-     (use-package rg
-         :hook ((rg-mode . wgrep-rg-setup)))
-     (rg-enable-default-bindings)
-   #+END_SRC
-** TODO goto-addr
+** goto-addr
+   url: [[https://www.emacswiki.org/emacs/GotoAddress][https://www.emacswiki.org/emacs/GotoAddress]]
    #+BEGIN_SRC emacs-lisp
      (use-package goto-addr
-      :hook ((prog-mode . goto-address-prog-mode)
-                (text-mode . goto-address-mode)))
+       :defer t
+       :hook ((prog-mode . goto-address-prog-mode)(text-mode . goto-address-mode)))
    #+END_SRC
-** TODO swoop
+** swoop
+   url: [[https://www.emacswiki.org/emacs/HelmSwoop][https://www.emacswiki.org/emacs/HelmSwoop]]
    #+BEGIN_SRC emacs-lisp
-     (use-package swoop)
-     (setq swoop-minibuffer-input-dilay 0.4)
-
+     (use-package swoop
+       :defer t
+       :config
+       (setq swoop-minibuffer-input-dilay 0.4))
      (defun my/swoop-from-isearch ()
        (interactive)
        (let* ((symbol (thing-at-point 'symbol 'no-properties)))
-         (swoop symbol)))
-     (define-key ivy-mode-map (kbd "C-o") 'my/swoop-from-isearch)
+       (swoop symbol)))
+     ;; (define-key ivy-mode-map (kbd "C-o") 'my/swoop-from-isearch)
    #+END_SRC
-** TODO whitespace
+** whitespace
+   url: [[https://www.emacswiki.org/emacs/WhiteSpace][https://www.emacswiki.org/emacs/WhiteSpace]]
    #+BEGIN_SRC emacs-lisp
-     (use-package whitespace)
-     (setq whitespace-style '(face tabs tab-mark spaces space-mark))
-     (setq whitespace-display-mappings
-           '((space-mark ?\u3000 [?\u25a1])
-             (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t])))
-     (setq whitespace-space-regexp "\\(\u3000+\\)")
-     (set-face-foreground 'whitespace-tab "#adff2f")
-     (set-face-background 'whitespace-tab 'nil)
-     (set-face-underline  'whitespace-tab t)
-     (set-face-foreground 'whitespace-space "#7cfc00")
-     (set-face-background 'whitespace-space 'nil)
-     (set-face-bold-p 'whitespace-space t)
-     (global-whitespace-mode 1)
+     (use-package whitespace
+       :defer t
+       :config
+       (setq whitespace-style '(face tabs tab-mark spaces space-mark))
+       (setq whitespace-display-mappings
+             '((space-mark ?\u3000 [?\u25a1])
+               (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t])))
+       (setq whitespace-space-regexp "\\(\u3000+\\)")
+       (set-face-foreground 'whitespace-tab "#adff2f")
+       (set-face-background 'whitespace-tab 'nil)
+       (set-face-underline  'whitespace-tab t)
+       (set-face-foreground 'whitespace-space "#7cfc00")
+       (set-face-background 'whitespace-space 'nil)
+       (set-face-bold-p 'whitespace-space t)
+       (global-whitespace-mode 1))
    #+END_SRC
-** TODO dashboard
+** dashboard
+   url: [[https://www-he.scphys.kyoto-u.ac.jp/member/shotakaha/dokuwiki/doku.php?id=toolbox:emacs:dashboard:start][https://www-he.scphys.kyoto-u.ac.jp/member/shotakaha/dokuwiki/doku.php?id=toolbox:emacs:dashboard:start]]
    #+BEGIN_SRC emacs-lisp
      (use-package dashboard
-       :ensure t
        :config
        (dashboard-setup-startup-hook))
    #+END_SRC
-** TODO company
+** company
    #+BEGIN_SRC emacs-lisp
      (use-package company)
      (use-package company-glsl)
      (global-company-mode)
      (add-to-list 'company-backends 'company-glsl)
    #+END_SRC
-
-** TODO git-gutter
+** git-gutter
    #+BEGIN_SRC emacs-lisp
-     (use-package git-gutter-fringe)
-     (global-git-gutter-mode +1)
+     (use-package git-gutter-fringe
+       :defer t
+       :config
+       (global-git-gutter-mode +1))
    #+END_SRC
-** TODO smooth-scroll
+** smooth-scroll
    #+BEGIN_SRC emacs-lisp
-     (use-package smooth-scroll)
-     (smooth-scroll-mode t)
+     (use-package smooth-scroll
+       :config
+       (smooth-scroll-mode t))
    #+END_SRC
-
-** TODO exec-path-from-shell
+** exec-path-from-shell
    #+BEGIN_SRC emacs-lisp
-     (use-package exec-path-from-shell)
-     (exec-path-from-shell-copy-envs '("PATH" "GEM_HOME"))
+     (use-package exec-path-from-shell
+       :defer t
+       :config
+       (exec-path-from-shell-copy-envs '("PATH" "GEM_HOME")))
    #+END_SRC
-
 ** TODO ghc
    #+BEGIN_SRC emacs-lisp
      (autoload 'ghc-init "ghc" nil t)
@@ -522,17 +521,20 @@
        (tide-hl-identifier-mode +1))
      (add-hook 'typescript-mode-hook #'my/setup-tide-mode)
    #+END_SRC
-** TODO js2-refactor
+** js2-refactor
    #+BEGIN_SRC emacs-lisp
-     (use-package js2-refactor)
-     (add-hook 'js2-mode-hook #'js2-refactor-mode)
-     (add-hook 'typescript-mode-hook #'js2-refactor-mode)
-
-     (js2r-add-keybindings-with-prefix "C-c C-m")
+     (use-package js2-refactor
+       :defer t
+       :init
+       (add-hook 'js2-mode-hook #'js2-refactor-mode)
+       (add-hook 'typescript-mode-hook #'js2-refactor-mode)
+       :config
+       (js2r-add-keybindings-with-prefix "C-c C-m"))
    #+END_SRC
-** TODO ivy-ghq
+** ivy-ghq
    #+BEGIN_SRC emacs-lisp
      (use-package ivy-ghq
+       :defer t
        :commands (ivy-ghq-open)
        :bind
        ("M-o" . ivy-ghq-open-and-fzf)

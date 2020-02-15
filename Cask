@@ -19,7 +19,6 @@
 (depends-on "company-glsl")
 (depends-on "counsel")
 (depends-on "dashboard")
-(depends-on "dumb-jump")
 (depends-on "editorconfig")
 (depends-on "elisp-slime-nav")
 (depends-on "emms")
@@ -41,7 +40,6 @@
 (depends-on "neotree")
 (depends-on "open-junk-file")
 (depends-on "recentf")
-(depends-on "rg")
 (depends-on "ruby-refactor")
 (depends-on "smartrep")
 (depends-on "smooth-scroll")
@@ -52,6 +50,7 @@
 (depends-on "yasnippet")
 (depends-on "yasnippet-snippets")
 (depends-on "omnisharp")
+(depends-on "ein")
 
 ;; lsp
 (depends-on "company-lsp")
