@@ -142,22 +142,22 @@
 * org-mode設定
 ** TODO 基本設定
    #+BEGIN_SRC emacs-lisp
-   (setq org-use-speed-commands t)
-   (setq org-agenda-todo-ignore-with-date t)
-   (setq org-directory "~/emacs/org")
-   (setq org-agenda-files '("~/emacs/org/todo.org"))
-   (setq org-capture-templates
-         '(("t" "New TODO" entry
-            (file+headline "~/emacs/org/todo.org" "TODO")
-            "* TODO %?\n\n")
-           ("m" "Memo" entry
-            (file+headline "~/emacs/org/memo.org" "MEMO")
-            "* %U%?\n%i\n%a")))
-   (setq org-agenda-custom-commands
-         '(("a" "Agenda and TODO"
-            ((agenda "")
-             (alltodo "")))))
-   (put 'set-goal-column 'disabled nil)
+     (setq org-use-speed-commands t)
+     (setq org-agenda-todo-ignore-with-date t)
+     (setq org-directory "~/emacs/org")
+     (setq org-agenda-files '("~/emacs/org/todo.org"))
+     (setq org-capture-templates
+           '(("t" "New TODO" entry
+              (file+headline "~/emacs/org/todo.org" "TODO")
+              "* TODO %?\n\n")
+             ("m" "Memo" entry
+              (file+headline "~/emacs/org/memo.org" "MEMO")
+              "* %U%?\n%i\n%a")))
+     (setq org-agenda-custom-commands
+           '(("a" "Agenda and TODO"
+              ((agenda "")
+               (alltodo "")))))
+     (put 'set-goal-column 'disabled nil)
   #+END_SRC
 ** TODO keybind
    #+BEGIN_SRC emacs-lisp
@@ -712,7 +712,7 @@
 * Mode
 ** fundamental-mode
    #+BEGIN_SRC emacs-lisp
-     (add-to-list 'auto-mode-alist '("\\.elc\\'" . fundamental-mode))
+     (add-to-list 'auto-mode-alist '("\\.elc$" . fundamental-mode))
    #+END_SRC
 ** ruby-mode
    #+BEGIN_SRC emacs-lisp
@@ -728,7 +728,7 @@
    #+BEGIN_SRC emacs-lisp
      (use-package web-mode
        :mode (("\\.html?\\'" . web-mode)
-              ("\\.erb?\\'" . web-mode)
+              ("\\.erb\\'" . web-mode)
               ("\\.gsp\\'" . web-mode)
               ("\\.tsx\\'" . web-mode))
        :init
@@ -743,12 +743,12 @@
 ** go-mode
    #+BEGIN_SRC emacs-lisp
      (use-package go-mode
-       :mode (("\\.go?\\'" . go-mode)))
+       :mode (("\\.go$" . go-mode)))
    #+END_SRC
 ** terraform-mode
    #+BEGIN_SRC emacs-lisp
      (use-package terraform-mode
-       :mode (("\\.tf?\\'" . terraform-mode)))
+       :mode (("\\.tf$" . terraform-mode)))
    #+END_SRC
 ** markdown-mode
    #+BEGIN_SRC emacs-lisp
@@ -766,13 +766,13 @@
    #+END_SRC
 ** json-mode
    #+BEGIN_SRC emacs-lisp
-     ;; (use-package json-mode
-       ;; :mode (("\\.json$" .json-mode)))
+     (use-package json-mode
+       :mode (("\\.json$" . json-mode)))
    #+END_SRC
 ** dockerfile-mode
    #+BEGIN_SRC emacs-lisp
      (use-package dockerfile-mode
-       :mode (("Dockerfile\\" . dockerfile-mode)))
+       :mode (("Dockerfile\\'" . dockerfile-mode)))
    #+END_SRC
 ** fish-mode
    #+BEGIN_SRC emacs-lisp
@@ -823,7 +823,7 @@
 ** ssh-config-mode
    #+BEGIN_SRC emacs-lisp
      (use-package ssh-config-mode
-       :mode (("/path-to-your-ssh/config\\'" . ssh-config-mode)))
+       :mode (("/path-to-your-ssh/config\\$" . ssh-config-mode)))
    #+END_SRC
 ** php-mode
    #+BEGIN_SRC emacs-lisp
@@ -866,9 +866,9 @@
    #+END_SRC
 ** nameless-mode
    #+BEGIN_SRC emacs-lisp
-     ;; (use-package nameless-mode)
-       ;; :init
-       ;; (add-hook 'emacs-lisp-mode-hook #'nameless-mode))
+     (use-package nameless-mode
+       :init
+       (add-hook 'emacs-lisp-mode-hook 'nameless-mode))
    #+END_SRC
 ** haskell-mode
    #+BEGIN_SRC emacs-lisp
@@ -930,7 +930,7 @@
        (interactive)
        (find-file (ido-completing-read "Find recent file: " recentf-list)))
    #+END_SRC
-** TODO my/suspend
+** my/suspend
    #+BEGIN_SRC emacs-lisp
      (defun my/suspend ()
        (interactive)
