@@ -142,22 +142,22 @@
 * org-mode設定
 ** TODO 基本設定
    #+BEGIN_SRC emacs-lisp
-     (setq org-use-speed-commands t)
-     (setq org-agenda-todo-ignore-with-date t)
-     (setq org-directory "~/emacs/org")
-     (setq org-agenda-files '("~/emacs/org/todo.org"))
-     (setq org-capture-templates
-           '(("t" "New TODO" entry
-              (file+headline "~/emacs/org/todo.org" "TODO")
-              "* TODO %?\n\n")
-             ("m" "Memo" entry
-              (file+headline "~/emacs/org/memo.org" "MEMO")
-              "* %U%?\n%i\n%a")))
-     (setq org-agenda-custom-commands
-           '(("a" "Agenda and TODO"
-              ((agenda "")
-               (alltodo "")))))
-     (put 'set-goal-column 'disabled nil)
+   (setq org-use-speed-commands t)
+   (setq org-agenda-todo-ignore-with-date t)
+   (setq org-directory "~/emacs/org")
+   (setq org-agenda-files '("~/emacs/org/todo.org"))
+   (setq org-capture-templates
+         '(("t" "New TODO" entry
+            (file+headline "~/emacs/org/todo.org" "TODO")
+            "* TODO %?\n\n")
+           ("m" "Memo" entry
+            (file+headline "~/emacs/org/memo.org" "MEMO")
+            "* %U%?\n%i\n%a")))
+   (setq org-agenda-custom-commands
+         '(("a" "Agenda and TODO"
+            ((agenda "")
+             (alltodo "")))))
+   (put 'set-goal-column 'disabled nil)
   #+END_SRC
 ** TODO keybind
    #+BEGIN_SRC emacs-lisp
@@ -234,7 +234,7 @@
                  (with-current-buffer " *NeoTree*"
                    (setq-local linum-mode nil))))
    #+END_SRC
-** TODO doom-theme
+** doom-theme
    #+BEGIN_SRC emacs-lisp
      ;; doom themes
      (use-package doom-themes
@@ -268,18 +268,17 @@
    現在の行をハイライトするパッケージ。
    #+BEGIN_SRC emacs-lisp
      (use-package hl-line
-       :defer t
        :config
        (set-face-background 'hl-line "#444642")
        (set-face-attribute 'hl-line nil :inherit nil)
        (defvar global-hl-line-timer-exclude-modes '(todotxt-mode))
        (defun global-hl-line-timer-function ()
-         (unless (memq major-mode global-hl-line-timer-exclude-modes)
-           (global-hl-line-unhighlight-all)
-           (let ((global-hl-line-mode t))
-             (global-hl-line-highlight))))
+	 (unless (memq major-mode global-hl-line-timer-exclude-modes)
+	   (global-hl-line-unhighlight-all)
+	   (let ((global-hl-line-mode t))
+	     (global-hl-line-highlight))))
        (setq global-hl-line-timer
-             (run-with-idle-timer 0.03 t 'global-hl-line-timer-function)))
+	     (run-with-idle-timer 0.03 t 'global-hl-line-timer-function)))
    #+END_SRC
 ** hl-todo
    url: [[http://emacs.rubikitch.com/hl-todo/][http://emacs.rubikitch.com/hl-todo/]]
@@ -287,22 +286,21 @@
    TODOやFIXMEなどのキーワードをハイライトするパッケージ。
    #+BEGIN_SRC emacs-lisp
      (use-package hl-todo
-       :defer t
        :init
        (global-hl-todo-mode 1)
        :config
        (setq hl-todo-keyword-faces
-             '(("HOLD" . "#d0bf8f")
-               ("TODO" . "#cc9393")
-               ("NEXT" . "#dca3a3")
-               ("THEM" . "#dc8cc3")
-               ("PROG" . "#7cb8bb")
-               ("OKAY" . "#7cb8bb")
-               ("DONT" . "#5f7f5f")
-               ("FAIL" . "#8c5353")
-               ("DONE" . "#afd8af")
-               ("FIXME" . "#cc9393")
-               ("???"   . "#cc9393"))))
+	     '(("HOLD" . "#d0bf8f")
+	       ("TODO" . "#cc9393")
+	       ("NEXT" . "#dca3a3")
+	       ("THEM" . "#dc8cc3")
+	       ("PROG" . "#7cb8bb")
+	       ("OKAY" . "#7cb8bb")
+	       ("DONT" . "#5f7f5f")
+	       ("FAIL" . "#8c5353")
+	       ("DONE" . "#afd8af")
+	       ("FIXME" . "#cc9393")
+	       ("???"   . "#cc9393"))))
    #+END_SRC
 ** all-the-icons
    url: [[https://github.com/domtronn/all-the-icons.el][https://github.com/domtronn/all-the-icons.el]]
@@ -310,7 +308,6 @@
    アイコンを追加するパッケージ。dired-mode時のみ有効にしている。
    #+BEGIN_SRC emacs-lisp
      (use-package all-the-icons
-       :defer t
        :init
        (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
    #+END_SRC
@@ -318,7 +315,6 @@
    url: [[https://github.com/asok/all-the-icons-ivy][https://github.com/asok/all-the-icons-ivy]]
    #+BEGIN_SRC emacs-lisp
      (use-package all-the-icons-ivy
-       :defer t
        :config
        (all-the-icons-ivy-setup))
    #+END_SRC
@@ -328,7 +324,6 @@
    editorconfigを有効にするパッケージ。
    #+BEGIN_SRC emacs-lisp
      (use-package editorconfig
-       :defer t
        :config
        (editorconfig-mode 1))
    #+END_SRC
@@ -338,7 +333,6 @@
    使い捨てファイルを作成するパッケージ。
    #+BEGIN_SRC emacs-lisp
      (use-package open-junk-file
-       :defer t
        :config
        (setq open-junk-file-format "~/.emacs.d/.junk/%Y-%m%d-%H%M%S."))
    #+END_SRC
@@ -374,9 +368,7 @@
 
    #+BEGIN_SRC emacs-lisp
      (use-package yasnippet
-       :defer t
        :diminish yas-minor-mode)
-
      (use-package yasnippet-snippets
        :config
        (yas-global-mode 1))
@@ -385,7 +377,6 @@
    url: [[https://github.com/abo-abo/swiper][https://github.com/abo-abo/swiper]]
    #+BEGIN_SRC emacs-lisp
      (use-package counsel
-       :defer t
        :config
        (setq ivy-use-virtual-buffers t)
        (setq counsel-ag-base-command "ag --nocolor --nogroup -u %s")
@@ -400,7 +391,6 @@
    url: [https://www.emacswiki.org/emacs/RecentFiles][https://www.emacswiki.org/emacs/RecentFiles]]
    #+BEGIN_SRC emacs-lisp
      (use-package recentf
-       :defer t
        :config
        (setq recentf-max-saved-items 10000)
        (setq recentf-auto-cleanup 'never)
@@ -411,14 +401,12 @@
 ** magit
    url: [[https://www.emacswiki.org/emacs/Magit][https://www.emacswiki.org/emacs/Magit]]
    #+BEGIN_SRC emacs-lisp
-     (use-package magit
-       :defer t)
+     (use-package magit)
    #+END_SRC
 ** ivy-rich
    url: [[https://github.com/Yevgnen/ivy-rich][https://github.com/Yevgnen/ivy-rich]]
    #+BEGIN_SRC emacs-lisp
      (use-package ivy-rich
-       :defer t
        :config
        (ivy-rich-mode 1))
    #+END_SRC
@@ -426,7 +414,6 @@
    url: [[http://emacs.rubikitch.com/ace-window/][http://emacs.rubikitch.com/ace-window/]]
    #+BEGIN_SRC emacs-lisp
      (use-package ace-window
-       :defer t
        :config
        (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
    #+END_SRC
@@ -434,27 +421,25 @@
    url: [[https://www.emacswiki.org/emacs/GotoAddress][https://www.emacswiki.org/emacs/GotoAddress]]
    #+BEGIN_SRC emacs-lisp
      (use-package goto-addr
-       :defer t
        :hook ((prog-mode . goto-address-prog-mode)(text-mode . goto-address-mode)))
    #+END_SRC
 ** swoop
    url: [[https://www.emacswiki.org/emacs/HelmSwoop][https://www.emacswiki.org/emacs/HelmSwoop]]
    #+BEGIN_SRC emacs-lisp
      (use-package swoop
-       :defer t
        :config
-       (setq swoop-minibuffer-input-dilay 0.4))
-     (defun my/swoop-from-isearch ()
-       (interactive)
-       (let* ((symbol (thing-at-point 'symbol 'no-properties)))
-       (swoop symbol)))
-     ;; (define-key ivy-mode-map (kbd "C-o") 'my/swoop-from-isearch)
+       (setq swoop-minibuffer-input-dilay 0.4)
+       (defun my/swoop-from-isearch ()
+         (interactive)
+         (let* ((symbol (thing-at-point 'symbol 'no-properties)))
+           (swoop symbol))))
+
+     (define-key ivy-mode-map (kbd "C-o") 'my/swoop-from-isearch)
    #+END_SRC
 ** whitespace
    url: [[https://www.emacswiki.org/emacs/WhiteSpace][https://www.emacswiki.org/emacs/WhiteSpace]]
    #+BEGIN_SRC emacs-lisp
      (use-package whitespace
-       :defer t
        :config
        (setq whitespace-style '(face tabs tab-mark spaces space-mark))
        (setq whitespace-display-mappings
@@ -486,7 +471,6 @@
 ** git-gutter
    #+BEGIN_SRC emacs-lisp
      (use-package git-gutter-fringe
-       :defer t
        :config
        (global-git-gutter-mode +1))
    #+END_SRC
@@ -499,7 +483,6 @@
 ** exec-path-from-shell
    #+BEGIN_SRC emacs-lisp
      (use-package exec-path-from-shell
-       :defer t
        :config
        (exec-path-from-shell-copy-envs '("PATH" "GEM_HOME")))
    #+END_SRC
@@ -524,7 +507,6 @@
 ** js2-refactor
    #+BEGIN_SRC emacs-lisp
      (use-package js2-refactor
-       :defer t
        :init
        (add-hook 'js2-mode-hook #'js2-refactor-mode)
        (add-hook 'typescript-mode-hook #'js2-refactor-mode)
@@ -534,7 +516,6 @@
 ** ivy-ghq
    #+BEGIN_SRC emacs-lisp
      (use-package ivy-ghq
-       :defer t
        :commands (ivy-ghq-open)
        :bind
        ("M-o" . ivy-ghq-open-and-fzf)
@@ -565,27 +546,29 @@
      (add-hook 'csharp-mode-hook 'omnisharp-mode)
    #+END_SRC
 * Lisp
-** TODO slime
+** slime
    #+BEGIN_SRC emacs-lisp
      (load (expand-file-name "~/quicklisp/slime-helper.el"))
      (setq inferior-lisp-program "sbcl")
 
-     (use-package ac-slime)
-     (add-hook 'slime-mode-hook 'set-up-slime-ac)
-     (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+     (use-package ac-slime
+       :init
+       (add-hook 'slime-mode-hook 'set-up-slime-ac)
+       (add-hook 'slime-repl-mode-hook 'set-up-slime-ac))
    #+END_SRC
-** TODO paredit
+** paredit
    #+BEGIN_SRC emacs-lisp
-     (use-package paredit)
-     (autoload 'enable-paredit-mode "paredit" t)
-     (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
-     (add-hook 'lisp-mode-hook 'enable-paredit-mode)
-     (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
-     (add-hook 'scheme-mode-hook 'enable-paredit-mode)
-     (eval-after-load "paredit"
+     (use-package paredit
+       :config
+       (autoload 'enable-paredit-mode "paredit" t)
+       (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+       (add-hook 'lisp-mode-hook 'enable-paredit-mode)
+       (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+       (add-hook 'scheme-mode-hook 'enable-paredit-mode)
+       (eval-after-load "paredit"
          #'(define-key paredit-mode-map (kbd "C-c f") 'paredit-forward-slurp-sexp))
-     (eval-after-load "paredit"
-         #'(define-key paredit-mode-map (kbd "C-c b") 'paredit-forward-barf-sexp))
+       (eval-after-load "paredit"
+         #'(define-key paredit-mode-map (kbd "C-c b") 'paredit-forward-barf-sexp)))
    #+END_SRC
 ** TODO hyperspec
    #+BEGIN_SRC emacs-lisp
@@ -648,36 +631,33 @@
 
      (define-key lisp-mode-map (kbd "C-c h") 'hyperspec-lookup)
    #+END_SRC
-** TODO rainbow-dpelimiters
+** rainbow-dpelimiters
    #+BEGIN_SRC emacs-lisp
-     (use-package rainbow-delimiters)
-     (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+     (use-package rainbow-delimiters
+       :init
+       (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
   #+END_SRC
 ** cider
    emacsからleiningenを扱えるようにするpackage
    公式document: [[https://docs.cider.mx/cider/index.html][https://docs.cider.mx/cider/index.html]]
    #+BEGIN_SRC emacs-lisp
-     (use-package cider
-       :ensure t)
+   (use-package cider)
    #+END_SRC
 * LSP
-** TODO lsp-mode
+** lsp-mode
    #+BEGIN_SRC emacs-lisp
-     (use-package lsp-mode)
+     (use-package lsp-mode
+       :config
+       (setq lsp-print-io nil)
+       (setq lsp-trace nil)
+       (setq lsp-print-performance nil)
+       (setq lsp-auto-guess-root t)
+       (setq lsp-document-sync-method 'incremental)
+       (setq lsp-response-timeout 5)
+       (setq lsp-ui-sideline-enable nil)
+       (setq lsp-prefer-flymake nil))
      (use-package lsp-java)
      (use-package lsp-haskell)
-
-     ;; config
-     (setq lsp-print-io nil)
-     (setq lsp-trace nil)
-     (setq lsp-print-performance nil)
-     (setq lsp-auto-guess-root t)
-     (setq lsp-document-sync-method 'incremental)
-     (setq lsp-response-timeout 5)
-     (setq lsp-ui-sideline-enable nil)
-     (setq lsp-prefer-flymake nil)
-
-     ;; hook
      (dolist (hook '(go-mode-hook
                      js2-mode-hook
                      css-mode-hook
@@ -693,255 +673,249 @@
                      python-mode-hook))
        (add-hook hook #'lsp))
      (add-hook 'lsp-mode-hook 'flycheck-mode)
-
-     ;; keybind
-     (define-key lsp-mode-map (kbd "C-c s") 'lsp-ui-sideline-mode)
-     (define-key lsp-mode-map (kbd "M-.") #'lsp-ui-peek-find-definitions)
-     (define-key lsp-mode-map (kbd "M-?") 'lsp-ui-peek-find-implementation)
    #+END_SRC
-** TODO lsp-ui
+** lsp-ui
    #+BEGIN_SRC emacs-lisp
-     (use-package lsp-ui)
+     (use-package lsp-ui
+       :init
+       (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+       :config
+       (setq lsp-ui-doc-enable t)
+       (setq lsp-ui-doc-max-height 15)
+       (setq lsp-ui-sideline-enable nil)
+       (setq lsp-ui-imenu-enable nil))
 
-     ;; config lsp-ui-doc
-     (setq lsp-ui-doc-enable t)
-     (setq lsp-ui-doc-max-height 15)
 
-     ;; config lsp-ui-sideline
-     (setq lsp-ui-sideline-enable nil)
+     ;; (define-key lsp-mode-map (kbd "M-.") 'lsp-ui-peek-find-definitions)
+     ;; (define-key lsp-mode-map (kbd "M-?") 'lsp-ui-peek-find-implementation)
 
-     ;; config lsp-ui-imenu
-     (setq lsp-ui-imenu-enable nil)
-
-     ;; hook
-     (add-hook 'lsp-mode-hook 'lsp-ui-mode)
    #+END_SRC
-** TODO company-lsp
+** company-lsp
    #+BEGIN_SRC emacs-lisp
-     (use-package company-lsp)
-     (push 'company-lsp company-backends)
+     (use-package company-lsp
+       :config
+       (push 'company-lsp company-backends))
    #+END_SRC
-** TODO dap-mode
+** dap-mode
    #+BEGIN_SRC emacs-lisp
+     (use-package dap-mode
+       ;; :bind
+       ;; (("C-c d" 'dap-breakpoint-toggle))
+       :config
+       (dap-mode 1)
+       (dap-ui-mode 1))
      (use-package dap-php)
      (use-package dap-node)
      (use-package dap-ruby)
      (use-package dap-chrome)
-
-     (dap-mode 1)
-     (dap-ui-mode 1)
-
-     (define-key lsp-mode-map (kbd "C-c d") 'dap-breakpoint-toggle)
   #+END_SRC
 * Mode
 ** fundamental-mode
    #+BEGIN_SRC emacs-lisp
      (add-to-list 'auto-mode-alist '("\\.elc\\'" . fundamental-mode))
    #+END_SRC
+** ruby-mode
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'auto-mode-alist '("Schemafile" . ruby-mode))
+     (add-hook 'ruby-mode-hook 'ruby-refactor-mode-launch)
+   #+END_SRC
 ** lisp-mode
    #+BEGIN_SRC emacs-lisp
      (add-to-list 'auto-mode-alist '("Cask" . lisp-mode))
      (add-to-list 'auto-mode-alist '("\\.lemrc?$" . lisp-mode))
    #+END_SRC
-** TODO web-mode
+** web-mode
    #+BEGIN_SRC emacs-lisp
-     (use-package web-mode)
-     (add-to-list 'auto-mode-alist '("\\.html?$" . web-mode))
-     (add-to-list 'auto-mode-alist '("\\.erb?$" . web-mode))
-     (setq web-mode-auto-close-style t)
-     (setq web-mode-tag-auto-close-style t)
+     (use-package web-mode
+       :mode (("\\.html?\\'" . web-mode)
+              ("\\.erb?\\'" . web-mode)
+              ("\\.gsp\\'" . web-mode)
+              ("\\.tsx\\'" . web-mode))
+       :init
+       (add-hook 'web-mode-hook
+                 (lambda ()
+                   (when (string-equal "tsx" (file-name-extension buffer-file-name))
+                     (my/setup-tide-mode))))
+       :config
+       (setq web-mode-auto-close-style t)
+       (setq web-mode-tag-auto-close-style t))
    #+END_SRC
-** TODO go-mode
+** go-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'go-mode "go-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.go$" . go-mode))
+     (use-package go-mode
+       :mode (("\\.go?\\'" . go-mode)))
    #+END_SRC
-** TODO terraform-mode
+** terraform-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'terraform-mode "terraform-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.tf$" . terraform-mode))
+     (use-package terraform-mode
+       :mode (("\\.tf?\\'" . terraform-mode)))
    #+END_SRC
-** TODO markdown-mode
+** markdown-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'markdown-mode "markdown-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-     (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
-
-     (define-key markdown-mode-map (kbd "C-j") nil)
-     (define-key markdown-mode-map (kbd "C-m") nil)
+     (use-package markdown-mode
+       :mode (("\\.md$" . markdown-mode)
+              ("\\.markdown$" . markdown-mode))
+       :bind
+       (("C-j" . nil)
+                   ("C-m" . nil)))
    #+END_SRC
-** TODO yaml-mode
+** yaml-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'yaml-mode "yaml-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
+     (use-package yaml-mode
+       :mode (("\\.ya?ml$" . yaml-mode)))
    #+END_SRC
-** TODO json-mode
+** json-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'json-mode "json-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
+     ;; (use-package json-mode
+       ;; :mode (("\\.json$" .json-mode)))
    #+END_SRC
-** TODO dockerfile-mode
+** dockerfile-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'dockerfile-mode "dockerfile-mode" nil t)
-     (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+     (use-package dockerfile-mode
+       :mode (("Dockerfile\\" . dockerfile-mode)))
    #+END_SRC
-** TODO fish-mode
+** fish-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'fish-mode "fish-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.fish$" . fish-mode))
+     (use-package fish-mode
+       :mode (("\\.fish$" . fish-mode)))
    #+END_SRC
-** TODO dhall-mode
+** dhall-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'dhall-mode "dhall-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.dhall$" . dhall-mode))
+     (use-package dhall-mode
+       :mode (("\\dhall$" . dhall-mode)))
    #+END_SRC
-** TODO js2-mode
+** js2-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'js2-mode "js2-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-     (add-hook 'js2-mode-hook #'js2-refactor-mode)
-     (setq js2-skip-preprocessor-directives t)
+     (use-package js2-mode
+       :mode (("\\.js$" . js2-mode))
+       :init
+       (add-hook 'js2-mode-hook #'js2-refactor-mode)
+       :config
+       (setq js2-skip-preprocessor-directives t))
    #+END_SRC
-** TODO ruby-mode
+** typescript-mode
    #+BEGIN_SRC emacs-lisp
-     (add-to-list 'auto-mode-alist '("Schemafile" . ruby-mode))
-     (add-hook 'ruby-mode-hook 'ruby-refactor-mode-launch)
+     (use-package typescript-mode
+       :mode (("\\.ts$" . typescript-mode))
+       :init
+       (add-hook 'typescript-mode-hook #'js2-refactor-mode))
    #+END_SRC
-** TODO typescript-mode
+** slim-mode
    #+BEGIN_SRC emacs-lisp
-       ;; typescript
-    (autoload 'typescript-mode "typescript-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
-    (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
-    (add-hook 'typescript-mode-hook #'js2-refactor-mode)
-    (add-hook 'web-mode-hook
-              (lambda ()
-                (when (string-equal "tsx" (file-name-extension buffer-file-name))
-                  (my/setup-tide-mode))))
-
+     (use-package slim-mode
+       :mode (("\\.slim$" . slim-mode)))
    #+END_SRC
-** TODO slim-mode
+** coffee-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'slim-mode "slim-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.slim$" . slim-mode))
+     (use-package coffee-mode
+       :mode (("\\.coffee$" . coffee-mode)))
    #+END_SRC
-** TODO coffee-mode
+** scala-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'coffee-mode "coffee-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
+     (use-package scala-mode
+       :mode (("\\.scala$" . scala-mode)))
    #+END_SRC
-** TODO scala-mode
+** nginx-mode
    #+BEGIN_SRC emacs-lisp
-       ;; scala
-    (autoload 'scala-mode "scala-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
-
+     (use-package nginx-mode
+       :mode (("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode)))
    #+END_SRC
-** TODO nginx-mode
+** ssh-config-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'nginx-mode "nginx-mode" nil t)
-     (add-to-list 'auto-mode-alist '("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
+     (use-package ssh-config-mode
+       :mode (("/path-to-your-ssh/config\\'" . ssh-config-mode)))
    #+END_SRC
-** TODO ssh-config-mode
+** php-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'ssh-config-mode "ssh-config-mode" nil t)
-     (add-to-list 'auto-mode-alist '("/path-to-your-ssh/config\\'" . ssh-config-mode))
+     (use-package php-mode
+       :mode (("\\.php$" . php-mode)))
    #+END_SRC
-** TODO php-mode
+** clojure-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'php-mode "php-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+     (use-package clojure-mode
+       :mode (("\\.clj$" . clojure-mode)
+              ("\\.cljs$" . clojurescript-mode)))
    #+END_SRC
-** TODO clojure-mode
+** vue-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'clojure-mode "clojure-mode" nil t)
-     (autoload 'clojure-mode "clojurescript-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
-     (add-to-list 'auto-mode-alist '("\\.cljs$" . clojurescript-mode))
+     (use-package vue-mode
+       :mode (("\\.vue$" . vue-mode)))
    #+END_SRC
-** TODO vue-mode
+** glsl-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'vue-mode "vue-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.vue$" . vue-mode))
+     (use-package glsl-mode
+       :mode (("\\.vsh$" . glsl-mode)
+              ("\\.fsh$" . glsl-mode)))
    #+END_SRC
-** TODO glsl-mode
+** emmet-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'glsl-mode "glsl-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.vsh$" . glsl-mode))
-     (add-to-list 'auto-mode-alist '("\\.fsh$" . glsl-mode))
+     (use-package emmet-mode
+       :init
+       (add-hook 'web-mode-hook 'emmet-mode)
+       :bind (("C-j" . nil)
+              ("C-x i" . nil)))
    #+END_SRC
-** TODO emmet-mode
+** nyan-mode
    #+BEGIN_SRC emacs-lisp
-     (use-package emmet-mode)
-     (autoload 'emmet-mode "emmet-mode" nil t)
-     (add-hook 'web-mode-hook 'emmet-mode)
-     (define-key emmet-mode-keymap (kbd "C-j") nil)
-     (define-key emmet-mode-keymap (kbd "C-x i") 'emmet-expand-line)
+     (use-package nyan-mode
+       :init
+       (nyan-mode)
+       (nyan-start-animation)
+       :config
+       (setq nyan-wavy-trail t))
    #+END_SRC
-** TODO nyan-mode
+** nameless-mode
    #+BEGIN_SRC emacs-lisp
-     (use-package nyan-mode)
-     (nyan-mode)
-     (nyan-start-animation)
-     (setq nyan-wavy-trail t)
+     ;; (use-package nameless-mode)
+       ;; :init
+       ;; (add-hook 'emacs-lisp-mode-hook #'nameless-mode))
    #+END_SRC
-** TODO nameless-mode
+** haskell-mode
    #+BEGIN_SRC emacs-lisp
-     (add-hook 'emacs-lisp-mode-hook #'nameless-mode)
+     (use-package haskell-mode
+       :mode (("\\.hs$" . haskell-mode)
+              ("\\.lhs$" . literate-haskell-mode)
+              ("\\.cable$" . haskell-cabal-mode))
+       :bind (("C-m" . nil)))
    #+END_SRC
-** TODO haskell-mode
+** gradle-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'haskell-mode "haskell-mode" nil t)
-     (autoload 'haskell-cabal "haskell-cabal" nil t)
-     (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
-     (add-to-list 'auto-mode-alist '("\\.lhs$" . literate-haskell-mode))
-     (add-to-list 'auto-mode-alist '("\\.cable$" . haskell-cabal-mode))
-
-     (define-key haskell-indentation-mode-map (kbd "C-m") nil)
+     (use-package gradle-mode
+       :mode (("\\.gradle$" . java-mode)))
    #+END_SRC
-** TODO gradle-mode
+** cmake-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'gradle-mode "gradle-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.gradle$" . java-mode))
+     (use-package cmake-mode
+       :mode (("\\.cmake$" . cmake-mode)))
    #+END_SRC
-** TODO cmake-mode
+** toml-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'cmake-mode "cmake-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.cmake$" . cmake-mode))
+     (use-package toml-mode
+       :mode (("\\.toml$" . toml-mode)))
    #+END_SRC
-** TODO toml-mode
+** gitignore-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'toml-mode "toml-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.toml$" . toml-mode))
+     (use-package gitignore-mode
+       :mode (("\\.dockerignore$" . gitignore-mode)))
    #+END_SRC
-** TODO php-mode
+** plantuml-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'php-mode "php-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+     (use-package plantuml-mode
+       :mode (("\\.pu$" . plantuml-mode)))
    #+END_SRC
-** TODO gitignore-mode
+** processing-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'gitignore-mode "gitignore-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.dockerignore$" . gitignore-mode))
-   #+END_SRC
-** TODO plantuml-mode
-   #+BEGIN_SRC emacs-lisp
-     (autoload 'plantuml-mode "plantuml-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.pu$" . plantuml-mode))
-   #+END_SRC
-** TODO processing-mode
-   #+BEGIN_SRC emacs-lisp
-     (autoload 'processing-mode "processing-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.pde$" . processing-mode))
-     (setq processing-location "/opt/processing/processing-java")
-     (setq processing-output-dir "/tmp")
+     (use-package processing-mode
+       :mode (("\\.pde$" . processing-mode))
+       :config
+       (setq processing-location "/opt/processing/processing-java")
+       (setq processing-output-dir "/tmp"))
   #+END_SRC
-** TODO csharp-mode
+** csharp-mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'csharp-mode "csharp-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.cs$" . csharp-mode))
+     (use-package csharp-mode
+       :mode (("\\.cs$" . csharp-mode)))
    #+END_SRC
-
 * MyFunc
 ** TODO my/beginning-of-intendation
    #+BEGIN_SRC emacs-lisp
@@ -966,7 +940,6 @@
 ** TODO 基本設定
    #+BEGIN_SRC emacs-lisp
      (keyboard-translate ?\C-h ?\C-?)
-
      (progn
        (bind-key "C-a" 'my/beginning-of-intendation)
        (bind-key "C-z" 'undo)
