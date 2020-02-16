@@ -145,7 +145,7 @@
      ;; (use-package use-package :no-require t :ensure t :defer t)
    #+end_src
 * org-mode設定
-** TODO 基本設定
+** 基本設定
    #+BEGIN_SRC emacs-lisp
      (setq org-use-speed-commands t)
      (setq org-agenda-todo-ignore-with-date t)
@@ -164,80 +164,64 @@
                (alltodo "")))))
      (put 'set-goal-column 'disabled nil)
   #+END_SRC
-** TODO keybind
+** keybind
    #+BEGIN_SRC emacs-lisp
      (add-hook 'org-mode-hook
                (lambda ()
                  (define-key org-mode-map (kbd "C-m") nil)))
    #+END_SRC
-* emms設定
-** TODO 基本設定
-   #+BEGIN_SRC emacs-lisp
-     ;; (use-package emms-setup)
-     ;; (use-package emms-i18n)
-     ;; (emms-standard)
-     ;; (emms-default-players)
-     ;; (setq emms-repeat-playlist t)
-     ;; (setq emms-player-list '(emms-player-mplayer))
-     ;; (setq emms-source-file-default-directory "~/emacs/emms/")
-   #+END_SRC
 * テーマ
-** TODO neotree
+** neotree
    #+BEGIN_SRC emacs-lisp
-
-     ;; neotree
      (use-package neotree
-       :custom
-       (neo-theme 'nerd2))
-
-     (setq-default neo-show-hidden-files t)
-     (setq neo-window-fixed-size nil)
-
-     (defun neo-buffer--insert-fold-symbol (name &optional file-name)
-       "Custom overriding function for the fold symbol.
+       :init
+       (add-hook 'neotree-mode-hook
+                 (lambda ()
+                   (with-current-buffer " *NeoTree*"
+                     (setq-local linum-mode nil))))
+       :config
+       (setq-default neo-show-hidden-files t)
+       (setq neo-window-fixed-size nil)
+       (defun neo-buffer--insert-fold-symbol (name &optional file-name)
+         "Custom overriding function for the fold symbol.
          `NAME' decides what fold icon to use, while `FILE-NAME' decides
          what file icon to use."
-       (or (and (equal name 'open)  (insert (all-the-icons-icon-for-dir file-name "down")))
-           (and (equal name 'close) (insert (all-the-icons-icon-for-dir file-name "right")))
-           (and (equal name 'leaf)  (insert (format "\t\t\t%s\t" (all-the-icons-icon-for-file file-name))))))
-
-     (defun neo-buffer--insert-dir-entry (node depth expanded)
-       (let ((node-short-name (neo-path--file-short-name node)))
-         (insert-char ?\s (* (- depth 1) 2)) ; indent
-         (when (memq 'char neo-vc-integration)
-           (insert-char ?\s 2))
-         (neo-buffer--insert-fold-symbol
-          (if expanded 'open 'close) node)
-         (insert-button (concat node-short-name "/")
-                        'follow-link t
-                        'face neo-dir-link-face
-                        'neo-full-path node
-                        'keymap neotree-dir-button-keymap)
-         (neo-buffer--node-list-set nil node)
-         (neo-buffer--newline-and-begin)))
-
-     (defun neo-buffer--insert-file-entry (node depth)
-       (let ((node-short-name (neo-path--file-short-name node))
-             (vc (when neo-vc-integration (neo-vc-for-node node))))
-         (insert-char ?\s (* (- depth 1) 2)) ; indent
-         (when (memq 'char neo-vc-integration)
-           (insert-char (car vc))
-           (insert-char ?\s))
-         (neo-buffer--insert-fold-symbol 'leaf node-short-name)
-         (insert-button node-short-name
-                        'follow-link t
-                        'face (if (memq 'face neo-vc-integration)
-                                  (cdr vc)
-                                neo-file-link-face)
-                        'neo-full-path node
-                        'keymap neotree-file-button-keymap)
-         (neo-buffer--node-list-set nil node)
-         (neo-buffer--newline-and-begin)))
-
-     (add-hook 'neotree-mode-hook
-               (lambda ()
-                 (with-current-buffer " *NeoTree*"
-                   (setq-local linum-mode nil))))
+         (or (and (equal name 'open)  (insert (all-the-icons-icon-for-dir file-name "down")))
+             (and (equal name 'close) (insert (all-the-icons-icon-for-dir file-name "right")))
+             (and (equal name 'leaf)  (insert (format "\t\t\t%s\t" (all-the-icons-icon-for-file file-name))))))
+       (defun neo-buffer--insert-dir-entry (node depth expanded)
+         (let ((node-short-name (neo-path--file-short-name node)))
+           (insert-char ?\s (* (- depth 1) 2)) ; indent
+           (when (memq 'char neo-vc-integration)
+             (insert-char ?\s 2))
+           (neo-buffer--insert-fold-symbol
+            (if expanded 'open 'close) node)
+           (insert-button (concat node-short-name "/")
+                          'follow-link t
+                          'face neo-dir-link-face
+                          'neo-full-path node
+                          'keymap neotree-dir-button-keymap)
+           (neo-buffer--node-list-set nil node)
+           (neo-buffer--newline-and-begin)))
+       (defun neo-buffer--insert-file-entry (node depth)
+         (let ((node-short-name (neo-path--file-short-name node))
+               (vc (when neo-vc-integration (neo-vc-for-node node))))
+           (insert-char ?\s (* (- depth 1) 2)) ; indent
+           (when (memq 'char neo-vc-integration)
+             (insert-char (car vc))
+             (insert-char ?\s))
+           (neo-buffer--insert-fold-symbol 'leaf node-short-name)
+           (insert-button node-short-name
+                          'follow-link t
+                          'face (if (memq 'face neo-vc-integration)
+                                    (cdr vc)
+                                  neo-file-link-face)
+                          'neo-full-path node
+                          'keymap neotree-file-button-keymap)
+           (neo-buffer--node-list-set nil node)
+           (neo-buffer--newline-and-begin)))
+       :custom
+       (neo-theme 'nerd2))
    #+END_SRC
 ** doom-theme
    #+BEGIN_SRC emacs-lisp
@@ -497,11 +481,6 @@
        :config
        (exec-path-from-shell-copy-envs '("PATH" "GEM_HOME")))
    #+END_SRC
-** TODO ghc
-   #+BEGIN_SRC emacs-lisp
-     (autoload 'ghc-init "ghc" nil t)
-     (autoload 'ghc-debug "ghc" nil t)
-   #+END_SRC
 ** hindent
    #+BEGIN_SRC emacs-lisp
      (use-package hindent
@@ -510,24 +489,17 @@
        :config
        (setq hindent-style "johan-tibell"))
    #+END_SRC
-** TODO tide
+** tide
    #+BEGIN_SRC emacs-lisp
-     (defun my/setup-tide-mode ()
-       (interactive)
-       (tide-setup)
-       (tide-hl-identifier-mode +1))
-     (add-hook 'typescript-mode-hook #'my/setup-tide-mode)
-   #+END_SRC
-** js2-refactor
-   #+BEGIN_SRC emacs-lisp
-     (use-package js2-refactor
+     (use-package tide
        :ensure t
        :defer t
        :init
-       (add-hook 'js2-mode-hook #'js2-refactor-mode)
-       (add-hook 'typescript-mode-hook #'js2-refactor-mode)
-       :config
-       (js2r-add-keybindings-with-prefix "C-c C-m"))
+       (defun my/setup-tide-mode ()
+         (interactive)
+         (tide-setup)
+         (tide-hl-identifier-mode +1))
+       (add-hook 'typescript-mode-hook #'my/setup-tide-mode))
    #+END_SRC
 ** ivy-ghq
    #+BEGIN_SRC emacs-lisp
@@ -562,7 +534,8 @@
        :defer t
        :init
        (add-hook 'csharp-mode-hook 'omnisharp-mode)
-       :bind ("." . 'omnisharp-add-dot-and-auto-complete))
+       ;; :bind ("." . 'omnisharp-add-dot-and-auto-complete)
+       )
    #+END_SRC
 ** nameless
    #+BEGIN_SRC emacs-lisp
@@ -595,7 +568,7 @@
        (eval-after-load "paredit"
          #'(define-key paredit-mode-map (kbd "C-c b") 'paredit-forward-barf-sexp)))
    #+END_SRC
-** TODO hyperspec
+** hyperspec
    #+BEGIN_SRC emacs-lisp
      (setq common-lisp-hyperspec-root "~/quicklisp/HyperSpec/")
 
@@ -763,7 +736,6 @@
 ** ruby-mode
    #+BEGIN_SRC emacs-lisp
      (add-to-list 'auto-mode-alist '("Schemafile" . ruby-mode))
-     (add-hook 'ruby-mode-hook 'ruby-refactor-mode-launch)
    #+END_SRC
 ** lisp-mode
    #+BEGIN_SRC emacs-lisp
@@ -801,9 +773,7 @@
      (use-package markdown-mode
        :mode (("\\.md$" . markdown-mode)
               ("\\.markdown$" . markdown-mode))
-       :bind
-       (("C-j" . nil)
-                   ("C-m" . nil)))
+       :bind (("C-m" . nil)))
    #+END_SRC
 ** yaml-mode
    #+BEGIN_SRC emacs-lisp
@@ -842,9 +812,7 @@
 ** typescript-mode
    #+BEGIN_SRC emacs-lisp
      (use-package typescript-mode
-       :mode (("\\.ts$" . typescript-mode))
-       :init
-       (add-hook 'typescript-mode-hook #'js2-refactor-mode))
+       :mode (("\\.ts$" . typescript-mode)))
    #+END_SRC
 ** slim-mode
    #+BEGIN_SRC emacs-lisp
@@ -956,15 +924,40 @@
      (use-package csharp-mode
        :mode (("\\.cs$" . csharp-mode)))
    #+END_SRC
+* Refactor
+** emr
+   #+BEGIN_SRC emacs-lisp
+     (use-package emr
+       :bind (("M-RET" . 'emr-show-refactor-menu)))
+   #+END_SRC
+** js2-refactor
+   #+BEGIN_SRC emacs-lisp
+     (use-package js2-refactor
+       :ensure t
+       :defer t
+       :init
+       (add-hook 'js2-mode-hook #'js2-refactor-mode)
+       (add-hook 'typescript-mode-hook #'js2-refactor-mode)
+       :config
+       (js2r-add-keybindings-with-prefix "C-c C-m"))
+   #+END_SRC
+** ruby-refactor
+   #+BEGIN_SRC emacs-lisp
+     (use-package ruby-refactor
+       :ensure t
+       :defer t
+       :init
+       (add-hook 'ruby-mode-hook 'ruby-refactor-mode-launch))
+   #+END_SRC
 * MyFunc
-** TODO my/beginning-of-intendation
+** my/beginning-of-intendation
    #+BEGIN_SRC emacs-lisp
      (defun my/beginning-of-intendation ()
        "move to beginning of line, or indentation"
        (interactive)
        (back-to-indentation))
    #+END_SRC
-** TODO my/ido-recentf
+** my/ido-recentf
    #+BEGIN_SRC emacs-lisp
      (defun my/ido-recentf ()
        (interactive)
@@ -977,7 +970,7 @@
        (shell-command-to-string "systemctl suspend"))
    #+END_SRC
 * Keybind
-** TODO 基本設定
+** 基本設定
    #+BEGIN_SRC emacs-lisp
      (keyboard-translate ?\C-h ?\C-?)
      (progn
@@ -1002,8 +995,4 @@
        (bind-key "M-x" 'counsel-M-x)
        (bind-key "M-g" 'google-this)
        (bind-key "C-x C-k" nil))
-   #+END_SRC
-** TODO emr
-   #+BEGIN_SRC emacs-lisp
-     (define-key prog-mode-map (kbd "M-RET") 'emr-show-refactor-menu)
    #+END_SRC

@@ -25,7 +25,7 @@ link:
 
 .PHONY: compile
 compile:
-	$(EMACS) -Q --batch --eval "(progn (require 'ob-tangle) (org-babel-tangle-file \"./index.org\" \"./index.el\" \"emacs-lisp\") (byte-compile-file \"./index.el\"))"
+	$(EMACS) -Q --batch --eval "(progn (require 'ob-tangle) (org-babel-tangle-file \"./index.org\" \"./index.el\" \"emacs-lisp\"))"
 
 .PHONY: org-to-html
 org-to-html:
