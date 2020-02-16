@@ -21,6 +21,7 @@
 (depends-on "dashboard")
 (depends-on "editorconfig")
 (depends-on "elisp-slime-nav")
+(depends-on "esup")
 (depends-on "exec-path-from-shell")
 (depends-on "git-gutter-fringe")
 (depends-on "google-this")
@@ -35,6 +36,7 @@
 (depends-on "multiple-cursors")
 (depends-on "nameless")
 (depends-on "neotree")
+(depends-on "omnisharp")
 (depends-on "open-junk-file")
 (depends-on "recentf")
 (depends-on "smartrep")
@@ -45,8 +47,6 @@
 (depends-on "whitespace")
 (depends-on "yasnippet")
 (depends-on "yasnippet-snippets")
-(depends-on "omnisharp")
-(depends-on "esup")
 
 ;; lsp
 (depends-on "company-lsp")
@@ -64,8 +64,8 @@
 
 ;; refactor
 (depends-on "emr")
-(depends-on "ruby-refactor")
 (depends-on "js2-refactor")
+(depends-on "ruby-refactor")
 
 ;; mode
 (depends-on "clojure-mode")
