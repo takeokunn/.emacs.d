@@ -50,7 +50,7 @@
 (depends-on "yasnippet")
 (depends-on "yasnippet-snippets")
 (depends-on "omnisharp")
-(depends-on "ein")
+(depends-on "esup")
 
 ;; lsp
 (depends-on "company-lsp")

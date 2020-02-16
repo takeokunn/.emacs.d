@@ -124,6 +124,11 @@
      (set-fontset-font t 'japanese-jisx0208 "TakaoPGothic")
      (add-to-list 'face-font-rescale-alist '(".*Takao P.*" . 0.85))
    #+END_SRC
+** GC
+   #+BEGIN_SRC emacs-lisp
+     (setq gc-cons-threshold (* 128 1024 1024)) ;; 128MB
+     (setq garbage-collection-messages t)
+   #+END_SRC
 * Package管理ツール
 ** Cask
    url: [[https://github.com/cask/cask][cask/cask]]
@@ -168,13 +173,13 @@
 * emms設定
 ** TODO 基本設定
    #+BEGIN_SRC emacs-lisp
-     (use-package emms-setup)
-     (use-package emms-i18n)
-     (emms-standard)
-     (emms-default-players)
-     (setq emms-repeat-playlist t)
-     (setq emms-player-list '(emms-player-mplayer))
-     (setq emms-source-file-default-directory "~/emacs/emms/")
+     ;; (use-package emms-setup)
+     ;; (use-package emms-i18n)
+     ;; (emms-standard)
+     ;; (emms-default-players)
+     ;; (setq emms-repeat-playlist t)
+     ;; (setq emms-player-list '(emms-player-mplayer))
+     ;; (setq emms-source-file-default-directory "~/emacs/emms/")
    #+END_SRC
 * テーマ
 ** TODO neotree
@@ -368,8 +373,10 @@
 
    #+BEGIN_SRC emacs-lisp
      (use-package yasnippet
+       :defer t
        :diminish yas-minor-mode)
      (use-package yasnippet-snippets
+       :defer t
        :config
        (yas-global-mode 1))
    #+END_SRC
@@ -401,7 +408,9 @@
 ** magit
    url: [[https://www.emacswiki.org/emacs/Magit][https://www.emacswiki.org/emacs/Magit]]
    #+BEGIN_SRC emacs-lisp
-     (use-package magit)
+     (use-package magit
+       :ensure t
+       :defer t)
    #+END_SRC
 ** ivy-rich
    url: [[https://github.com/Yevgnen/ivy-rich][https://github.com/Yevgnen/ivy-rich]]
@@ -483,6 +492,8 @@
 ** exec-path-from-shell
    #+BEGIN_SRC emacs-lisp
      (use-package exec-path-from-shell
+       :ensure t
+       :defer t
        :config
        (exec-path-from-shell-copy-envs '("PATH" "GEM_HOME")))
    #+END_SRC
@@ -491,10 +502,13 @@
      (autoload 'ghc-init "ghc" nil t)
      (autoload 'ghc-debug "ghc" nil t)
    #+END_SRC
-** TODO hindent
+** hindent
    #+BEGIN_SRC emacs-lisp
-     (add-hook 'haskell-mode-hook #'hindent-mode)
-     (setq hindent-style "johan-tibell")
+     (use-package hindent
+       :init
+       (add-hook 'haskell-mode-hook #'hindent-mode)
+       :config
+       (setq hindent-style "johan-tibell"))
    #+END_SRC
 ** TODO tide
    #+BEGIN_SRC emacs-lisp
@@ -507,6 +521,8 @@
 ** js2-refactor
    #+BEGIN_SRC emacs-lisp
      (use-package js2-refactor
+       :ensure t
+       :defer t
        :init
        (add-hook 'js2-mode-hook #'js2-refactor-mode)
        (add-hook 'typescript-mode-hook #'js2-refactor-mode)
@@ -527,23 +543,32 @@
          (ivy-ghq-open)
          (counsel-fzf)))
    #+END_SRC
-** TODO vterm
+** vterm
   #+BEGIN_SRC emacs-lisp
-    ;; (use-package vterm)
-    ;; (add-hook 'vterm-mode-hook #'(lambda ()
-    ;;                             (setq show-trailing-whitespace nil)))
-    ;; (define-key vterm-mode-map [mouse-1] nil)
-    ;; (define-key vterm-mode-map [mouse-2] nil)
-    ;; (define-key vterm-mode-map [mouse-3] nil)
-    ;; (define-key vterm-mode-map [mouse-4] nil)
-    ;; (define-key vterm-mode-map [mouse-5] nil)
-    ;; (define-key vterm-mode-map [mouse-5] nil)
+    ;; (use-package vterm
+    ;;   :init
+    ;;   (add-hook 'vterm-mode-hook #'(lambda ()
+    ;;                                  (setq show-trailing-whitespace nil)))
+    ;;   :bind (([mouse-1] . nil)
+    ;;          ([mouse-2] . nil)
+    ;;          ([mouse-3] . nil)
+    ;;          ([mouse-4] . nil)
+    ;;          ([mouse-5] . nil)))
   #+END_SRC
-** TODO omnisharp
+** omnisharp
    #+BEGIN_SRC emacs-lisp
-     (use-package omnisharp)
-     (define-key omnisharp-mode-map (kbd ".") 'omnisharp-add-dot-and-auto-complete)
-     (add-hook 'csharp-mode-hook 'omnisharp-mode)
+     (use-package omnisharp
+       :ensure t
+       :defer t
+       :init
+       (add-hook 'csharp-mode-hook 'omnisharp-mode)
+       :bind ("." . 'omnisharp-add-dot-and-auto-complete))
+   #+END_SRC
+** nameless
+   #+BEGIN_SRC emacs-lisp
+     (use-package nameless
+       :init
+       (add-hook 'emacs-lisp-mode-hook 'nameless-mode))
    #+END_SRC
 * Lisp
 ** slime
@@ -641,12 +666,16 @@
    emacsからleiningenを扱えるようにするpackage
    公式document: [[https://docs.cider.mx/cider/index.html][https://docs.cider.mx/cider/index.html]]
    #+BEGIN_SRC emacs-lisp
-   (use-package cider)
+     (use-package cider
+       :ensure t
+       :defer t)
    #+END_SRC
 * LSP
 ** lsp-mode
    #+BEGIN_SRC emacs-lisp
      (use-package lsp-mode
+       :ensure t
+       :defer t
        :config
        (setq lsp-print-io nil)
        (setq lsp-trace nil)
@@ -656,8 +685,7 @@
        (setq lsp-response-timeout 5)
        (setq lsp-ui-sideline-enable nil)
        (setq lsp-prefer-flymake nil))
-     (use-package lsp-java)
-     (use-package lsp-haskell)
+
      (dolist (hook '(go-mode-hook
                      js2-mode-hook
                      css-mode-hook
@@ -673,41 +701,59 @@
                      python-mode-hook))
        (add-hook hook #'lsp))
      (add-hook 'lsp-mode-hook 'flycheck-mode)
+
+     (use-package lsp-java
+       :ensure t
+       :defer t)
+     (use-package lsp-haskell
+       :ensure t
+       :defer t)
    #+END_SRC
 ** lsp-ui
    #+BEGIN_SRC emacs-lisp
      (use-package lsp-ui
+       :ensure t
+       :defer t
        :init
        (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+       :bind (("M-." . 'lsp-ui-peek-find-definitions)
+              ("M-?" . 'lsp-ui-peek-find-implementation))
        :config
        (setq lsp-ui-doc-enable t)
        (setq lsp-ui-doc-max-height 15)
        (setq lsp-ui-sideline-enable nil)
        (setq lsp-ui-imenu-enable nil))
-
-
-     ;; (define-key lsp-mode-map (kbd "M-.") 'lsp-ui-peek-find-definitions)
-     ;; (define-key lsp-mode-map (kbd "M-?") 'lsp-ui-peek-find-implementation)
-
    #+END_SRC
 ** company-lsp
    #+BEGIN_SRC emacs-lisp
      (use-package company-lsp
+       :ensure t
+       :defer t
        :config
        (push 'company-lsp company-backends))
    #+END_SRC
 ** dap-mode
    #+BEGIN_SRC emacs-lisp
      (use-package dap-mode
-       ;; :bind
-       ;; (("C-c d" 'dap-breakpoint-toggle))
+       :ensure t
+       :defer t
+       :bind
+       (("C-c d" . 'dap-breakpoint-toggle))
        :config
        (dap-mode 1)
        (dap-ui-mode 1))
-     (use-package dap-php)
-     (use-package dap-node)
-     (use-package dap-ruby)
-     (use-package dap-chrome)
+     ;; (use-package dap-php
+     ;;   :ensure t
+     ;;   :defer t)
+     ;; (use-package dap-node
+     ;;   :ensure t
+     ;;   :defer t)
+     ;; (use-package dap-ruby
+     ;;   :ensure t
+     ;;   :defer t)
+     ;; (use-package dap-chrome
+     ;;   :ensure t
+     ;;   :defer t)
   #+END_SRC
 * Mode
 ** fundamental-mode
@@ -863,12 +909,6 @@
        (nyan-start-animation)
        :config
        (setq nyan-wavy-trail t))
-   #+END_SRC
-** nameless-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package nameless-mode
-       :init
-       (add-hook 'emacs-lisp-mode-hook 'nameless-mode))
    #+END_SRC
 ** haskell-mode
    #+BEGIN_SRC emacs-lisp
