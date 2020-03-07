@@ -55,9 +55,6 @@
 ** バーを非表示にする
    各種バーを非表示にした。
    #+BEGIN_SRC emacs-lisp
-     (menu-bar-mode -1)
-     (tool-bar-mode -1)
-     (toggle-scroll-bar -1)
    #+END_SRC
 ** 行番号を表示する
    url: [[https://www.emacswiki.org/emacs/LineNumbers][https://www.emacswiki.org/emacs/LineNumbers]]
@@ -142,7 +139,7 @@
    [[https://qiita.com/kai2nenobu/items/5dfae3767514584f5220][use-packageで可読性の高いinit.elを書く(qiita)]] を参考に書いていく。
 
    #+begin_src emacs-lisp
-     ;; (use-package use-package :no-require t :ensure t :defer t)
+     (require 'bind-key)
    #+end_src
 * org-mode設定
 ** 基本設定
@@ -174,6 +171,7 @@
 ** neotree
    #+BEGIN_SRC emacs-lisp
      (use-package neotree
+       :defer t
        :init
        (add-hook 'neotree-mode-hook
                  (lambda ()
@@ -331,6 +329,7 @@
    複数cursorを便利に扱えるようにした。
    #+BEGIN_SRC emacs-lisp
      (use-package multiple-cursors
+       :defer t
        :init
        (require 'smartrep)
        (declare-function smartrep-define-key "smartrep")
@@ -368,6 +367,7 @@
    url: [[https://github.com/abo-abo/swiper][https://github.com/abo-abo/swiper]]
    #+BEGIN_SRC emacs-lisp
      (use-package counsel
+       :defer t
        :config
        (setq ivy-use-virtual-buffers t)
        (setq counsel-ag-base-command "ag --nocolor --nogroup -u %s")
@@ -400,6 +400,7 @@
    url: [[https://github.com/Yevgnen/ivy-rich][https://github.com/Yevgnen/ivy-rich]]
    #+BEGIN_SRC emacs-lisp
      (use-package ivy-rich
+       :defer t
        :config
        (ivy-rich-mode 1))
    #+END_SRC
@@ -456,10 +457,15 @@
    #+END_SRC
 ** company
    #+BEGIN_SRC emacs-lisp
-     (use-package company)
-     (use-package company-glsl)
-     (global-company-mode)
-     (add-to-list 'company-backends 'company-glsl)
+     (use-package company
+       :defer t
+       :init
+       (global-company-mode))
+
+     (use-package company-glsl
+       :defer t
+       :config
+       (add-to-list 'company-backends 'company-glsl))
    #+END_SRC
 ** git-gutter
    #+BEGIN_SRC emacs-lisp
@@ -552,11 +558,9 @@
 * Lisp
 ** slime
    #+BEGIN_SRC emacs-lisp
-     (load (expand-file-name "~/quicklisp/slime-helper.el"))
-     (setq inferior-lisp-program "sbcl")
-
-     (use-package ac-slime
-       :init
+     (with-eval-after-load 'slime
+       (load (expand-file-name "~/quicklisp/slime-helper.el"))
+       (setq inferior-lisp-program "sbcl")
        (add-hook 'slime-mode-hook 'set-up-slime-ac)
        (add-hook 'slime-repl-mode-hook 'set-up-slime-ac))
    #+END_SRC
@@ -995,7 +999,7 @@
                    :caller 'my/counsel-fd)))
    #+END_SRC
 * Keybind
-** 基本設定
+** 基本設定`
    #+BEGIN_SRC emacs-lisp
      (keyboard-translate ?\C-h ?\C-?)
      (progn
