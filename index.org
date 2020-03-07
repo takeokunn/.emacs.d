@@ -1006,12 +1006,40 @@
    #+BEGIN_SRC emacs-lisp
      (defun my/before-set-auto-mode ()
        (when (or (and buffer-file-name
-                      (> (file-attribute-size (file-attributes buffer-file-name)) 10000000))
+                      (> (file-attribute-size (file-attributes buffer-file-name)) 100000))
                  (> (line-number-at-pos (point-max)) 10000))
          (prog1 t
            (prog-mode))))
 
      (advice-add 'set-auto-mode :before-until 'my/before-set-auto-mode)
+   #+END_SRC
+** my/exec-npm-script
+   #+BEGIN_SRC emacs-lisp
+     (defun my/exec-npm-script ()
+       (interactive)
+       (let* ((npm-root (and default-directory (locate-dominating-file default-directory "package.json")))
+              (default-directory (or npm-root default-directory))
+              choice scripts command-names)
+         (unless npm-root
+           (user-error "package.json not found..."))
+         (setq scripts (cdr-safe (assq 'scripts (json-read-file (file-relative-name "package.json" default-directory)))))
+         (setq command-names (mapcar #'(lambda (s) (symbol-name (car s))) scripts))
+         (setq choice (intern (completing-read "choice command: " command-names)))
+         (setq command (cdr-safe (assq choice scripts)))
+         (when command
+           (compile command))))
+   #+END_SRC
+** my/slime-history
+   #+BEGIN_SRC emacs-lisp
+     (defun my/slime-history ()
+       (interactive)
+       (insert
+        (completing-read
+         "choice history: "
+         (with-temp-buffer
+           (insert-file-contents "~/.slime-history.eld")
+           (let ((read-circle t))
+             (nreverse (read (current-buffer))))))))
    #+END_SRC
 * Keybind
 ** 基本設定`
