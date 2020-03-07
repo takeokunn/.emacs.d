@@ -126,6 +126,10 @@
      (setq gc-cons-threshold (* 128 1024 1024)) ;; 128MB
      (setq garbage-collection-messages t)
    #+END_SRC
+** indent
+   #+BEGIN_SRC emacs-lisp
+     (setq-default indent-tabs-mode nil)
+   #+END_SRC
 * Package管理ツール
 ** Cask
    url: [[https://github.com/cask/cask][cask/cask]]
@@ -997,6 +1001,17 @@
                                    (counsel-find-file (concat expanded-name "/"))
                                  (find-file expanded-name))))
                    :caller 'my/counsel-fd)))
+   #+END_SRC
+** my/before-set-auto-mode
+   #+BEGIN_SRC emacs-lisp
+     (defun my/before-set-auto-mode ()
+       (when (or (and buffer-file-name
+                      (> (file-attribute-size (file-attributes buffer-file-name)) 10000000))
+                 (> (line-number-at-pos (point-max)) 100))
+         (prog1 t
+           (prog-mode))))
+
+     (advice-add 'set-auto-mode :before-until 'my/before-set-auto-mode)
    #+END_SRC
 * Keybind
 ** 基本設定`

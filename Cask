@@ -22,6 +22,7 @@
 (depends-on "editorconfig")
 (depends-on "elisp-slime-nav")
 (depends-on "esup")
+(depends-on "ein")
 (depends-on "exec-path-from-shell")
 (depends-on "git-gutter-fringe")
 (depends-on "google-this")
