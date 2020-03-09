@@ -427,6 +427,7 @@
    url: [[https://www.emacswiki.org/emacs/HelmSwoop][https://www.emacswiki.org/emacs/HelmSwoop]]
    #+BEGIN_SRC emacs-lisp
      (use-package swoop
+       :defer t
        :config
        (setq swoop-minibuffer-input-dilay 0.4)
        (defun my/swoop-from-isearch ()
@@ -486,11 +487,13 @@
    #+END_SRC
 ** exec-path-from-shell
    #+BEGIN_SRC emacs-lisp
+     (defun my-exec-path-from-shell-initialize ()
+       (when (memq window-system '(mac ns x))
+         (exec-path-from-shell-initialize)))
+
      (use-package exec-path-from-shell
-       ;;:ensure t
-     ;;  :defer t
-       :config
-       (exec-path-from-shell-copy-envs '("PATH" "GEM_HOME")))
+       :init
+       (add-hook 'after-init-hook 'my-exec-path-from-shell-initialize))
    #+END_SRC
 ** hindent
    #+BEGIN_SRC emacs-lisp
@@ -572,6 +575,7 @@
 ** rubocop
    #+begin_src emacs-lisp
      (use-package rubocop
+       :defer t
        :init
        (add-hook 'ruby-mode-hook 'rubocop-mode))
    #+end_src
@@ -924,9 +928,7 @@
      (use-package emmet-mode
        :init
        (add-hook 'web-mode-hook 'emmet-mode)
-       (add-hook 'vue-mode 'emmet-mode)
-       :bind (("C-j" . 'newline)
-              ("C-i" . 'emmet-expand-line)))
+       (add-hook 'vue-mode 'emmet-mode))
    #+END_SRC
 ** nyan-mode
    #+BEGIN_SRC emacs-lisp
