@@ -462,7 +462,6 @@
 ** company
    #+BEGIN_SRC emacs-lisp
      (use-package company
-       :defer t
        :init
        (global-company-mode))
 
@@ -559,6 +558,45 @@
        :ensure t
        :defer t)
    #+END_SRC
+** robe
+   #+begin_src emacs-lisp
+     (use-package robe
+       :defer t
+       :init
+       (add-hook 'ruby-mode-hook 'robe-mode)
+       :config
+       (push 'company-robe company-backends))
+   #+end_src
+** rubocop
+   #+begin_src emacs-lisp
+     (use-package rubocop
+       :init
+       (add-hook 'ruby-mode-hook 'rubocop-mode))
+   #+end_src
+** flycheck
+   #+begin_src emacs-lisp
+     (use-package flycheck
+       :init
+       (add-hook 'ruby-mode-hook 'flycheck-mode)
+       (add-hook 'ruby-mode-hook
+                 '(lambda ()
+                    (setq flycheck-checker 'ruby-rubocop)))
+       :config
+       (flycheck-define-checker ruby-rubocop
+         "A Ruby syntax and style checker using the RuboCop tool."
+         :command ("rubocop" "--format" "emacs"
+                   (config-file "--config" flycheck-rubocoprc)
+                   source)
+         :error-patterns
+         ((warning line-start
+                   (file-name) ":" line ":" column ": " (or "C" "W") ": " (message)
+                   line-end)
+          (error line-start
+                 (file-name) ":" line ":" column ": " (or "E" "F") ": " (message)
+                 line-end))
+         :modes (ruby-mode motion-mode))
+       (setq flycheck-check-syntax-automatically '(mode-enabled save)))
+   #+end_src
 * Lisp
 ** slime
    #+BEGIN_SRC emacs-lisp
@@ -566,7 +604,8 @@
        (load (expand-file-name "~/quicklisp/slime-helper.el"))
        (setq inferior-lisp-program "sbcl")
        (add-hook 'slime-mode-hook 'set-up-slime-ac)
-       (add-hook 'slime-repl-mode-hook 'set-up-slime-ac))
+       (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+       (define-key slime-repl-mode-map (kbd "C-c C-r") 'my/slime-history))
    #+END_SRC
 ** paredit
    #+BEGIN_SRC emacs-lisp
@@ -677,7 +716,6 @@
                      js2-mode-hook
                      css-mode-hook
                      scss-mode-hook
-                     ruby-mode-hook
                      haskell-mode-hook
                      typescript-mode-hook
                      java-mode-hook
@@ -1042,7 +1080,7 @@
              (nreverse (read (current-buffer))))))))
    #+END_SRC
 * Keybind
-** 基本設定`
+** 基本設定
    #+BEGIN_SRC emacs-lisp
      (keyboard-translate ?\C-h ?\C-?)
      (progn
@@ -1067,5 +1105,6 @@
        (bind-key "M-x" 'counsel-M-x)
        (bind-key "M-p" 'my/counsel-fd)
        (bind-key "M-g" 'google-this)
-       (bind-key "C-x C-k" nil))
+       (bind-key "C-x C-k" nil)
+       (bind-key "C-c C-r" 'compile))
    #+END_SRC
