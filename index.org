@@ -380,7 +380,9 @@
        (defun my/counsel-ag ()
          (interactive)
          (let ((symbol (thing-at-point 'symbol 'no-properties)))
-           (counsel-ag symbol))))
+           (counsel-ag symbol)))
+       :bind
+       (("C-x m" . counsel-compile)))
    #+END_SRC
 ** recentf
    url: [https://www.emacswiki.org/emacs/RecentFiles][https://www.emacswiki.org/emacs/RecentFiles]]
@@ -922,7 +924,9 @@
      (use-package emmet-mode
        :init
        (add-hook 'web-mode-hook 'emmet-mode)
-       :bind (("C-x i" . nil)))
+       (add-hook 'vue-mode 'emmet-mode)
+       :bind (("C-j" . 'newline)
+              ("C-i" . 'emmet-expand-line)))
    #+END_SRC
 ** nyan-mode
    #+BEGIN_SRC emacs-lisp
@@ -1105,6 +1109,5 @@
        (bind-key "M-x" 'counsel-M-x)
        (bind-key "M-p" 'my/counsel-fd)
        (bind-key "M-g" 'google-this)
-       (bind-key "C-x C-k" nil)
-       (bind-key "C-c C-r" 'compile))
+       (bind-key "C-x C-k" nil))
    #+END_SRC
