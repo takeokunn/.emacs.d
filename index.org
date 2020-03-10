@@ -465,8 +465,12 @@
 ** company
    #+BEGIN_SRC emacs-lisp
      (use-package company
+       :defer t
        :init
-       (global-company-mode))
+       (global-company-mode)
+       :config
+       (define-key company-active-map (kbd "C-n") 'company-select-next)
+       (define-key company-active-map (kbd "C-p") 'company-select-previous))
 
      (use-package company-glsl
        :defer t
@@ -1111,5 +1115,6 @@
        (bind-key "M-x" 'counsel-M-x)
        (bind-key "M-p" 'my/counsel-fd)
        (bind-key "M-g" 'google-this)
+       (bind-key "C-x m" 'counsel-compile)
        (bind-key "C-x C-k" nil))
    #+END_SRC
