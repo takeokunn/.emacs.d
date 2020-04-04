@@ -41,6 +41,7 @@
 (depends-on "omnisharp")
 (depends-on "open-junk-file")
 (depends-on "recentf")
+(depends-on "request")
 (depends-on "robe")
 (depends-on "rubocop")
 (depends-on "smartrep")

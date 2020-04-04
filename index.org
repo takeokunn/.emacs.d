@@ -175,7 +175,6 @@
 ** neotree
    #+BEGIN_SRC emacs-lisp
      (use-package neotree
-       :defer t
        :init
        (add-hook 'neotree-mode-hook
                  (lambda ()
@@ -333,7 +332,6 @@
    複数cursorを便利に扱えるようにした。
    #+BEGIN_SRC emacs-lisp
      (use-package multiple-cursors
-       :defer t
        :init
        (require 'smartrep)
        (declare-function smartrep-define-key "smartrep")
@@ -360,10 +358,8 @@
 
    #+BEGIN_SRC emacs-lisp
      (use-package yasnippet
-       :defer t
        :diminish yas-minor-mode)
      (use-package yasnippet-snippets
-       :defer t
        :config
        (yas-global-mode 1))
    #+END_SRC
@@ -371,7 +367,6 @@
    url: [[https://github.com/abo-abo/swiper][https://github.com/abo-abo/swiper]]
    #+BEGIN_SRC emacs-lisp
      (use-package counsel
-       :defer t
        :config
        (setq ivy-use-virtual-buffers t)
        (setq counsel-ag-base-command "ag --nocolor --nogroup -u %s")
@@ -399,14 +394,12 @@
    url: [[https://www.emacswiki.org/emacs/Magit][https://www.emacswiki.org/emacs/Magit]]
    #+BEGIN_SRC emacs-lisp
      (use-package magit
-       :ensure t
-       :defer t)
+       :ensure t)
    #+END_SRC
 ** ivy-rich
    url: [[https://github.com/Yevgnen/ivy-rich][https://github.com/Yevgnen/ivy-rich]]
    #+BEGIN_SRC emacs-lisp
      (use-package ivy-rich
-       :defer t
        :config
        (ivy-rich-mode 1))
    #+END_SRC
@@ -427,7 +420,6 @@
    url: [[https://www.emacswiki.org/emacs/HelmSwoop][https://www.emacswiki.org/emacs/HelmSwoop]]
    #+BEGIN_SRC emacs-lisp
      (use-package swoop
-       :defer t
        :config
        (setq swoop-minibuffer-input-dilay 0.4)
        (defun my/swoop-from-isearch ()
@@ -465,7 +457,6 @@
 ** company
    #+BEGIN_SRC emacs-lisp
      (use-package company
-       :defer t
        :init
        (global-company-mode)
        :config
@@ -473,7 +464,6 @@
        (define-key company-active-map (kbd "C-p") 'company-select-previous))
 
      (use-package company-glsl
-       :defer t
        :config
        (add-to-list 'company-backends 'company-glsl))
    #+END_SRC
@@ -512,7 +502,6 @@
    #+BEGIN_SRC emacs-lisp
      (use-package tide
        :ensure t
-       :defer t
        :init
        (defun my/setup-tide-mode ()
          (interactive)
@@ -550,7 +539,6 @@
    #+BEGIN_SRC emacs-lisp
      (use-package omnisharp
        :ensure t
-       :defer t
        :init
        (add-hook 'csharp-mode-hook 'omnisharp-mode)
        ;; :bind ("." . 'omnisharp-add-dot-and-auto-complete)
@@ -565,13 +553,11 @@
 ** esup
    #+BEGIN_SRC emacs-lisp
      (use-package esup
-       :ensure t
-       :defer t)
+       :ensure t)
    #+END_SRC
 ** robe
    #+begin_src emacs-lisp
      (use-package robe
-       :defer t
        :init
        (add-hook 'ruby-mode-hook 'robe-mode)
        :config
@@ -580,7 +566,6 @@
 ** rubocop
    #+begin_src emacs-lisp
      (use-package rubocop
-       :defer t
        :init
        (add-hook 'ruby-mode-hook 'rubocop-mode))
    #+end_src
@@ -704,15 +689,13 @@
    公式document: [[https://docs.cider.mx/cider/index.html][https://docs.cider.mx/cider/index.html]]
    #+BEGIN_SRC emacs-lisp
      (use-package cider
-       :ensure t
-       :defer t)
+       :ensure t)
    #+END_SRC
 * LSP
 ** lsp-mode
    #+BEGIN_SRC emacs-lisp
      (use-package lsp-mode
        :ensure t
-       :defer t
        :config
        (setq lsp-print-io nil)
        (setq lsp-trace nil)
@@ -739,17 +722,14 @@
      (add-hook 'lsp-mode-hook 'flycheck-mode)
 
      (use-package lsp-java
-       :ensure t
-       :defer t)
+       :ensure t)
      (use-package lsp-haskell
-       :ensure t
-       :defer t)
+       :ensure t)
    #+END_SRC
 ** lsp-ui
    #+BEGIN_SRC emacs-lisp
      (use-package lsp-ui
        :ensure t
-       :defer t
        :init
        (add-hook 'lsp-mode-hook 'lsp-ui-mode)
        :bind (("M-." . 'lsp-ui-peek-find-definitions)
@@ -764,7 +744,6 @@
    #+BEGIN_SRC emacs-lisp
      (use-package company-lsp
        :ensure t
-       :defer t
        :config
        (push 'company-lsp company-backends))
    #+END_SRC
@@ -772,7 +751,6 @@
    #+BEGIN_SRC emacs-lisp
      (use-package dap-mode
        :ensure t
-       :defer t
        :bind
        (("C-c d" . 'dap-breakpoint-toggle))
        :config
@@ -780,16 +758,16 @@
        (dap-ui-mode 1))
      ;; (use-package dap-php
      ;;   :ensure t
-     ;;   :defer t)
+  )
      ;; (use-package dap-node
      ;;   :ensure t
-     ;;   :defer t)
+  )
      ;; (use-package dap-ruby
      ;;   :ensure t
-     ;;   :defer t)
+  )
      ;; (use-package dap-chrome
      ;;   :ensure t
-     ;;   :defer t)
+  )
   #+END_SRC
 * Mode
 ** fundamental-mode
@@ -1007,7 +985,6 @@
    #+BEGIN_SRC emacs-lisp
      (use-package js2-refactor
        :ensure t
-       :defer t
        :init
        (add-hook 'js2-mode-hook #'js2-refactor-mode)
        (add-hook 'typescript-mode-hook #'js2-refactor-mode)
@@ -1018,7 +995,6 @@
    #+BEGIN_SRC emacs-lisp
      (use-package ruby-refactor
        :ensure t
-       :defer t
        :init
        (add-hook 'ruby-mode-hook 'ruby-refactor-mode-launch))
    #+END_SRC
