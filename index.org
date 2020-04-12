@@ -514,7 +514,8 @@
    #+BEGIN_SRC emacs-lisp
      (defun my-exec-path-from-shell-initialize ()
        (when (memq window-system '(mac ns x))
-         (exec-path-from-shell-initialize)))
+         (exec-path-from-shell-initialize)
+         (exec-path-from-shell-copy-envs '("PATH" "GEM_HOME")))
 
      (use-package exec-path-from-shell
        :init
@@ -788,16 +789,16 @@
        (dap-ui-mode 1))
      ;; (use-package dap-php
      ;;   :ensure t
-     ;;   :defer t)
+  )
      ;; (use-package dap-node
      ;;   :ensure t
-     ;;   :defer t)
+  )
      ;; (use-package dap-ruby
      ;;   :ensure t
-     ;;   :defer t)
+  )
      ;; (use-package dap-chrome
      ;;   :ensure t
-     ;;   :defer t)
+  )
   #+END_SRC
 * Mode
 ** fundamental-mode
@@ -941,7 +942,9 @@
      (use-package emmet-mode
        :init
        (add-hook 'web-mode-hook 'emmet-mode)
-       (add-hook 'vue-mode 'emmet-mode))
+       (add-hook 'vue-mode 'emmet-mode)
+       :config
+       (define-key emmet-mode-keymap (kbd "C-j") nil))
    #+END_SRC
 ** nyan-mode
    #+BEGIN_SRC emacs-lisp
@@ -998,6 +1001,11 @@
      (use-package csharp-mode
        :mode (("\\.cs$" . csharp-mode)))
    #+END_SRC
+** docker-compose-mode
+   #+begin_src emacs-lisp
+     (use-package docker-compose-mode
+       :mode (("docker-compose*" . docker-compose-mode)))
+   #+end_src
 * Refactor
 ** emr
    #+BEGIN_SRC emacs-lisp
@@ -1126,7 +1134,7 @@
        (bind-key "C-c a" 'org-agenda)
        (bind-key "C-x o" 'ace-window)
        (bind-key "C-x C-o" 'ace-window)
-       (bind-key "C-x m" 'magit-status)
+       (bind-key "C-x g" 'magit-status)
        (bind-key "C-c l" 'magit-blame)
        (bind-key "C-c j" 'counsel-git)
        (bind-key "C-c k" 'my/counsel-ag)
