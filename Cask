@@ -28,6 +28,7 @@
 (depends-on "git-gutter-fringe")
 (depends-on "google-this")
 (depends-on "goto-addr")
+(depends-on "helpful")
 (depends-on "hindent")
 (depends-on "hl-line")
 (depends-on "hl-todo")

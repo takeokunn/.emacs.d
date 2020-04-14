@@ -623,6 +623,20 @@
          :modes (ruby-mode motion-mode))
        (setq flycheck-check-syntax-automatically '(mode-enabled save)))
    #+end_src
+** helpful
+   #+BEGIN_SRC emacs-lisp
+     (use-package helpful
+       :bind
+       (("C-? f" . #'helpful-callable)
+        ("C-? v" . #'helpful-variable)
+        ("C-? k" . #'helpful-key)
+        ("C-c C-d" . #'helpful-at-point)
+        ("C-? F" . #'helpful-function)
+        ("C-? C" . #'helpful-command))
+       :config
+       (setq counsel-describe-function-function #'helpful-callable)
+       (setq counsel-describe-variable-function #'helpful-variable))
+   #+END_SRC
 * Lisp
 ** slime
    #+BEGIN_SRC emacs-lisp
