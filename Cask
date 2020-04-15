@@ -47,6 +47,7 @@
 (depends-on "rubocop")
 (depends-on "smartrep")
 (depends-on "smooth-scroll")
+(depends-on "sql-indent")
 (depends-on "swoop")
 (depends-on "tide")
 (depends-on "vterm")
