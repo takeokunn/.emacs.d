@@ -405,7 +405,8 @@
        (counsel-mode 1)
        (defun my/counsel-ag ()
          (interactive)
-         (let ((symbol (thing-at-point 'symbol 'no-properties)))
+         (let ((symbol (thing-at-point 'symbol 'no-properties))
+               (default-directory (locate-dominating-file default-directory ".git")))
            (counsel-ag symbol)))
        :bind
        (("C-x m" . counsel-compile)))
@@ -514,6 +515,7 @@
    #+BEGIN_SRC emacs-lisp
      (defun my-exec-path-from-shell-initialize ()
        (when (memq window-system '(mac ns x))
+         (exec-path-from-shell-copy-envs '("PATH" "GEM_HOME"))
          (exec-path-from-shell-initialize)))
 
      (use-package exec-path-from-shell
@@ -1132,6 +1134,13 @@
                (push (ring-ref comint-input-ring index) history))
              history)))))
    #+END_SRC
+** my/neotree-toggle
+   #+BEGIN_SRC emacs-lisp
+     (defun my/neotree-toggle ()
+       (interactive)
+       (let ((default-directory (locate-dominating-file default-directory ".git")))
+         (neotree-toggle)))
+   #+END_SRC
 * Keybind
 ** 基本設定
    #+BEGIN_SRC emacs-lisp
@@ -1142,7 +1151,7 @@
        (bind-key "C-h" 'delete-backward-char)
        (bind-key "C-?" 'help-command)
        (bind-key "C-m" 'set-mark-command)
-       (bind-key "C-q" 'neotree-toggle)
+       (bind-key "C-q" 'my/neotree-toggle)
        (bind-key "C-x j" 'open-junk-file)
        (bind-key "C-c i" 'find-function)
        (bind-key "C-c c" 'org-capture)
