@@ -515,7 +515,7 @@
    #+BEGIN_SRC emacs-lisp
      (defun my-exec-path-from-shell-initialize ()
        (when (memq window-system '(mac ns x))
-         (exec-path-from-shell-copy-envs '("PATH" "GEM_HOME"))
+         (exec-path-from-shell-copy-envs '("PATH" "GEM_HOME" "GOPATH"))
          (exec-path-from-shell-initialize)))
 
      (use-package exec-path-from-shell
@@ -649,8 +649,9 @@
 ** slime
    #+BEGIN_SRC emacs-lisp
      (with-eval-after-load 'slime
-       (load (expand-file-name "~/quicklisp/slime-helper.el"))
-       (setq inferior-lisp-program "sbcl")
+       ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
+       ;; (setq inferior-lisp-program "sbcl")
+       (load (expand-file-name "~/.roswell/helper.el"))
        (add-hook 'slime-mode-hook 'set-up-slime-ac)
        (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
        (define-key slime-repl-mode-map (kbd "C-c C-r") 'my/slime-history))
@@ -747,18 +748,10 @@
 ** lsp-mode
    #+BEGIN_SRC emacs-lisp
      (use-package lsp-mode
-       :ensure t
-       :config
-       (setq lsp-print-io nil)
-       (setq lsp-trace nil)
-       (setq lsp-print-performance nil)
-       (setq lsp-auto-guess-root t)
-       (setq lsp-document-sync-method 'incremental)
-       (setq lsp-response-timeout 5)
-       (setq lsp-ui-sideline-enable nil)
-       (setq lsp-prefer-flymake nil))
+       :ensure t)
 
      (dolist (hook '(go-mode-hook
+                     lsp-deferred
                      js2-mode-hook
                      css-mode-hook
                      scss-mode-hook
@@ -790,7 +783,8 @@
        (setq lsp-ui-doc-enable t)
        (setq lsp-ui-doc-max-height 15)
        (setq lsp-ui-sideline-enable nil)
-       (setq lsp-ui-imenu-enable nil))
+       (setq lsp-ui-imenu-enable nil)
+       (setq lsp-ui-sideline-enable nil))
    #+END_SRC
 ** company-lsp
    #+BEGIN_SRC emacs-lisp
@@ -1133,6 +1127,17 @@
              (dotimes (index (ring-length comint-input-ring))
                (push (ring-ref comint-input-ring index) history))
              history)))))
+   #+END_SRC
+** my/irb-history
+   #+BEGIN_SRC emacs-lisp
+     (defun my/irb-history ()
+       (interactive)
+       (insert
+        (completing-read
+         "choose history: "
+         (-map #'list (-distinct (s-lines (f-read-text "~/.irb_history")))))))
+
+     (define-key inf-ruby-mode-map (kbd "C-c C-r") 'my/irb-history)
    #+END_SRC
 ** my/neotree-toggle
    #+BEGIN_SRC emacs-lisp
