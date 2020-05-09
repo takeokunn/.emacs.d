@@ -573,8 +573,10 @@
        :ensure t
        :init
        (add-hook 'csharp-mode-hook 'omnisharp-mode)
+       (add-hook 'csharp-mode-hook #'flycheck-mode)
        ;; :bind ("." . 'omnisharp-add-dot-and-auto-complete)
-       )
+       :config
+       (add-to-list 'company-backends 'company-omnisharp))
    #+END_SRC
 ** nameless
    #+BEGIN_SRC emacs-lisp
@@ -645,6 +647,23 @@
        :init
        (add-hook 'sql-mode-hook 'sqlind-minor-mode))
    #+END_SRC
+** aweshell
+   #+BEGIN_SRC emacs-lisp
+     (use-package aweshell)
+   #+END_SRC
+** racer
+   #+BEGIN_SRC emacs-lisp
+     (use-package racer
+       :init
+       (add-hook 'rust-mode-hook #'racer-mode)
+       (add-hook 'racer-mode-hook #'eldoc-mode))
+   #+END_SRC
+** rastic
+   #+BEGIN_SRC emacs-lisp
+     (use-package rustic
+       :init
+       (add-hook 'rust-mode-hook #'rustic-mode))
+   #+END_SRC
 * Lisp
 ** slime
    #+BEGIN_SRC emacs-lisp
@@ -672,7 +691,7 @@
    #+END_SRC
 ** hyperspec
    #+BEGIN_SRC emacs-lisp
-     (setq common-lisp-hyperspec-root "~/quicklisp/HyperSpec/")
+     (setq common-lisp-hyperspec-root "~/.roswell/HyperSpec/")
 
      (defun common-lisp-hyperspec (symbol-name)
          (interactive (list (common-lisp-hyperspec-read-symbol-name)))
@@ -1017,6 +1036,11 @@
      (use-package docker-compose-mode
        :mode (("docker-compose*" . docker-compose-mode)))
    #+end_src
+** rust-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package rust-mode
+       :mode (("\\.rs$" . rust-mode)))
+   #+END_SRC
 * Refactor
 ** emr
    #+BEGIN_SRC emacs-lisp
