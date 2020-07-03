@@ -156,7 +156,6 @@
            (comint-read-input-ring)
            (add-hook 'kill-buffer-hook #'comint-write-input-ring)
            (define-key ielm-map (kbd "C-c C-r") 'my/ielm-history)
-
            (set-process-sentinel process #'my/ielm-write-history-on-exit))))
 
      (add-hook 'ielm-mode-hook 'my/ielm-turn-on-history)
@@ -181,20 +180,17 @@
    #+BEGIN_SRC emacs-lisp
      (setq org-use-speed-commands t)
      (setq org-agenda-todo-ignore-with-date t)
-     (setq org-directory "~/emacs/org")
-     (setq org-agenda-files '("~/emacs/org/todo.org"))
+     (setq org-directory "~/org")
+     (setq org-agenda-files '("~/org/todo.org"))
+     (setq org-todo-keywords
+           '((sequence "TODO(t)" "WAIT(w)" "|" "DONE(d)")))
      (setq org-capture-templates
-           '(("t" "New TODO" entry
-              (file+headline "~/emacs/org/todo.org" "TODO")
-              "* TODO %?\n\n")
-             ("m" "Memo" entry
-              (file+headline "~/emacs/org/memo.org" "MEMO")
-              "* %U%?\n%i\n%a")))
-     (setq org-agenda-custom-commands
-           '(("a" "Agenda and TODO"
-              ((agenda "")
-               (alltodo "")))))
-     (put 'set-goal-column 'disabled nil)
+           '(("t" "Todo" entry (file+datetree "~/org/todo.org")
+              "* TODO %?")
+             ("b" "Blog" entry (file "~/org/blog.org")
+              "* %?")
+             ("m" "Memo" entry (file "~/org/memo.org")
+              "* %?")))
   #+END_SRC
 ** keybind
    #+BEGIN_SRC emacs-lisp
@@ -312,13 +308,16 @@
        :config
        (setq hl-todo-keyword-faces
              '(("HOLD" . "#d0bf8f")
+               ("WAIT" . "#d0bf8f")
                ("TODO" . "#cc9393")
                ("NEXT" . "#dca3a3")
                ("THEM" . "#dc8cc3")
+               ("REMIND" . "#dc8cc3")
                ("PROG" . "#7cb8bb")
                ("OKAY" . "#7cb8bb")
                ("DONT" . "#5f7f5f")
                ("FAIL" . "#8c5353")
+               ("SOMEDAY" . "#8c5353")
                ("DONE" . "#afd8af")
                ("FIXME" . "#cc9393")
                ("???"   . "#cc9393"))))
@@ -1135,10 +1134,7 @@
        (insert
         (completing-read
          "choice history: "
-         (with-temp-buffer
-           (insert-file-contents "~/.slime-history.eld")
-           (let ((read-circle t))
-             (nreverse (read (current-buffer))))))))
+         (-distinct (read (f-read-text "~/.slime-history.eld"))))))
    #+END_SRC
 ** my/ielm-history
    #+BEGIN_SRC emacs-lisp
