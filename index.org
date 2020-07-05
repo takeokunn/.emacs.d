@@ -1041,6 +1041,14 @@
      (use-package rust-mode
        :mode (("\\.rs$" . rust-mode)))
    #+END_SRC
+** scheme-mode
+   #+BEGIN_SRC emacs-lisp
+     (setq gosh-program-name "/usr/local/bin/gosh -i")
+     (add-hook 'inferior-scheme-mode-hook '(lambda()
+                                             (define-key inferior-scheme-mode-map "\C-p" 'comint-previous-input)
+                                             (define-key inferior-scheme-mode-map "\C-n" 'comint-next-input)))
+
+   #+END_SRC
 * Refactor
 ** emr
    #+BEGIN_SRC emacs-lisp
