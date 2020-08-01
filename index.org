@@ -15,7 +15,7 @@
 ** byte-compile
    #+BEGIN_SRC emacs-lisp
      ;; Local Variables:
-     ;; byte-compile-warnings: (not mapcar)
+     ;; byte-compile-warnings: (not mapcar inferior-lisp-program)
      ;; End:
    #+END_SRC
 ** cask
@@ -335,6 +335,173 @@
      (use-package yaml-mode
        :mode (("\\.ya?ml$" . yaml-mode)))
    #+END_SRC
+* Lisp
+** Basic
+*** paredit
+    #+BEGIN_SRC emacs-lisp
+      (use-package paredit
+        :init
+        (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+        (add-hook 'lisp-mode-hook 'enable-paredit-mode)
+        (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+        (add-hook 'scheme-mode-hook 'enable-paredit-mode)
+        (general-define-key
+         :keymaps 'paredit-mode-map
+         "C-c f" 'paredit-forward-slurp-sexp
+         "C-c b" 'paredit-forward-barf-sexp)
+        :config
+        (autoload 'enable-paredit-mode "paredit" t))
+    #+END_SRC
+*** rainbow-delimiters
+    #+BEGIN_SRC emacs-lisp
+      (use-package rainbow-delimiters
+        :init
+        (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
+    #+END_SRC
+** CommonLisp
+*** TODO HyperSpec
+    #+BEGIN_SRC emacs-lisp
+      ;; (setq common-lisp-hyperspec-root "~/quicklisp/HyperSpec/")
+
+      ;; (defun common-lisp-hyperspec (symbol-name)
+      ;;     (interactive (list (common-lisp-hyperspec-read-symbol-name)))
+      ;;     (let ((name (common-lisp-hyperspec--strip-cl-package
+      ;;                     (downcase symbol-name))))
+      ;;         (cl-maplist (lambda (entry)
+      ;;                         (eww-open-file (concat common-lisp-hyperspec-root "Body/"
+      ;;                                            (car entry)))
+      ;;                         (when (cdr entry)
+      ;;                             (sleep-for 1.5)))
+      ;;             (or (common-lisp-hyperspec--find name)
+      ;;                 (error "The symbol `%s' is not defined in Common Lisp"
+      ;;                     symbol-name)))))
+
+      ;; (defun common-lisp-hyperspec-lookup-reader-macro (macro)
+      ;;   (interactive
+      ;;    (list
+      ;;     (let ((completion-ignore-case t))
+      ;;       (completing-read "Look up reader-macro: "
+      ;;                        common-lisp-hyperspec--reader-macros nil t
+      ;;                        (common-lisp-hyperspec-reader-macro-at-point)))))
+      ;;   (eww-open-file
+      ;;    (concat common-lisp-hyperspec-root "Body/"
+      ;;            (gethash macro common-lisp-hyperspec--reader-macros))))
+
+      ;; (defun common-lisp-hyperspec-format (character-name)
+      ;;   (interactive (list (common-lisp-hyperspec--read-format-character)))
+      ;;   (cl-maplist (lambda (entry)
+      ;;                 (eww-open-file (common-lisp-hyperspec-section (car entry))))
+      ;;               (or (gethash character-name
+      ;;                            common-lisp-hyperspec--format-characters)
+      ;;                   (error "The symbol `%s' is not defined in Common Lisp"
+      ;;                          character-name))))
+
+      ;; (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
+      ;;   (let ((buf (current-buffer)))
+      ;;     ad-do-it
+      ;;     (switch-to-buffer buf)
+      ;;     (pop-to-buffer "*eww*")))
+
+      ;; (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
+      ;;   (let ((buf (current-buffer)))
+      ;;     ad-do-it
+      ;;     (switch-to-buffer buf)
+      ;;     (pop-to-buffer "*eww*")))
+
+      ;; (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
+      ;;   (let ((buf (current-buffer)))
+      ;;     ad-do-it
+      ;;     (switch-to-buffer buf)
+      ;;     (pop-to-buffer "*eww*")))
+      ;; (dolist (hook '(emacs-lisp-mode-hook
+      ;;                 lisp-interaction-mode-hook
+      ;;                 ielm-mode-hook))
+      ;;   (add-hook hook 'elisp-slime-nav-mode))
+
+      ;; (define-key lisp-mode-map (kbd "C-c h") 'hyperspec-lookup)
+
+    #+END_SRC
+*** slime
+    #+BEGIN_SRC emacs-lisp
+      (with-eval-after-load 'slime
+        (load (expand-file-name "~/quicklisp/slime-helper.el"))
+        (setq inferior-lisp-program "sbcl")
+        (add-hook 'slime-mode-hook 'set-up-slime-ac)
+        (add-hook 'slime-repl-mode-hook 'set-up-slime-ac))
+    #+END_SRC
+*** ac-slime
+    #+BEGIN_SRC emacs-lisp
+      (use-package ac-slime
+        :defer t)
+    #+END_SRC
+*** takeokunn/slime-history
+    #+BEGIN_SRC emacs-lisp
+      (defun takeokunn/slime-history ()
+        (interactive)
+        (insert
+         (completing-read
+          "choice history: "
+          (-distinct (read (f-read-text "~/.slime-history.eld"))))))
+
+      (general-define-key
+       :keymaps 'slime-repl-mode-map
+       "C-c C-r" 'takeokunn/slime-history)
+    #+END_SRC
+** EmacsLisp
+*** elisp-slime-nav
+    #+BEGIN_SRC emacs-lisp
+      (use-package elisp-slime-nav)
+    #+END_SRC
+*** nameless
+    #+BEGIN_SRC emacs-lisp
+      (use-package nameless
+        :init
+        (add-hook 'emacs-lisp-mode-hook 'nameless-mode))
+    #+END_SRC
+*** ielm
+*** takeokunn/ielm-history
+    #+BEGIN_SRC emacs-lisp
+      ;; (defun takeokunn/ielm-history ()
+      ;;   (interactive)
+      ;;   (insert
+      ;;    (completing-read
+      ;;     "choice history: "
+      ;;     (progn
+      ;;       (let ((history nil))
+      ;;         (dotimes (index (ring-length comint-input-ring))
+      ;;           (push (ring-ref comint-input-ring index) history))
+      ;;         history)))))
+
+      ;; (defun takeokunn/ielm-write-history-on-exit (process event)
+      ;;   (comint-write-input-ring)
+      ;;   (let ((buf (process-buffer process)))
+      ;;     (when (buffer-live-p buf)
+      ;;       (with-current-buffer buf
+      ;;         (insert (format "\nProcess %s %s" process event))))))
+
+      ;; (defun takeokunn/ielm-turn-on-history ()
+      ;;   (let ((process (get-buffer-process (current-buffer))))
+      ;;     (when process
+      ;;       (setq comint-input-ring-file-name (concat (file-remote-p default-directory) "~/.ielm-history"))
+      ;;       (setq comint-input-ring-size 100000)
+      ;;       (setq comint-input-ignoredups t)
+      ;;       (comint-read-input-ring)
+      ;;       (add-hook 'kill-buffer-hook #'comint-write-input-ring)
+      ;;       (define-key ielm-map (kbd "C-c C-r") 'takeokunn/ielm-history)
+      ;;       (general-define-key
+      ;;        :keymaps 'ielm-map
+      ;;        "C-c C-r" 'takeokunn/ielm-history)
+
+      ;;       (set-process-sentinel process #'takeokunn/ielm-write-history-on-exit))))
+
+      ;; (add-hook 'ielm-mode-hook 'takeokunn/ielm-turn-on-history)
+    #+END_SRC
+** Clojure
+*** cider
+    #+BEGIN_SRC emacs-lisp
+      (use-package cider
+        :defer t)
+    #+END_SRC
 * Awesome Package
 ** Theme
 *** all-the-icons
@@ -449,10 +616,12 @@
 *** yasnippet
     #+BEGIN_SRC emacs-lisp
       (use-package yasnippet
+        :defer t
         :diminish yas-minor-mode)
 
       (use-package yasnippet-snippets
         :after (yasnippet)
+        :defer t
         :config
         (yas-global-mode 1))
     #+END_SRC
@@ -476,6 +645,7 @@
 *** company-lsp
     #+BEGIN_SRC emacs-lisp
       (use-package company-lsp
+        :defer t
         :after (company)
         :config
         (push 'company-lsp company-backends))
@@ -483,7 +653,8 @@
 ** LSP
 *** lsp-mode
     #+BEGIN_SRC emacs-lisp
-      (use-package lsp-mode)
+      (use-package lsp-mode
+        :defer t)
     #+END_SRC
 *** lsp-ui
     #+BEGIN_SRC emacs-lisp
@@ -504,9 +675,11 @@
 *** dap-mode
     #+BEGIN_SRC emacs-lisp
       (use-package dap-mode
-        ;; :commands (dap-breakpoint-toggle)
-        ;; :bind
-        ;; (("C-c d" . dap-breakpoint-toggle))
+        :defer t
+        :init
+        (general-define-key
+         :keymaps 'dap-mode-map
+         "C-c d" 'dap-breakpoint-toggle)
         :config
         (dap-mode 1)
         (dap-ui-mode 1))
@@ -514,7 +687,8 @@
 ** Git
 *** magit
     #+BEGIN_SRC emacs-lisp
-      (use-package magit)
+      (use-package magit
+        :defer t)
     #+END_SRC
 *** git-gutter
     #+BEGIN_SRC emacs-lisp
@@ -547,11 +721,10 @@
       (use-package ivy-ghq
         :after (counsel)
         :commands (ivy-ghq-open)
-        :preface
+        :init
         (defun takeokunn/ivy-ghq-open-and-fzf ()
           (ivy-ghq-open)
           (counsel-fzf))
-        :init
         (general-define-key
          "M-o" 'takeokunn/ivy-ghq-open-and-fzf)
         :custom
@@ -581,9 +754,9 @@
 ** Shell
 *** aweshell
     #+BEGIN_SRC emacs-lisp
-      (use-package aweshell)
+      (use-package aweshell
+        :defer t)
     #+END_SRC
-
 *** exec-path-from-shell
     #+BEGIN_SRC emacs-lisp
       (use-package exec-path-from-shell
@@ -677,6 +850,7 @@
 *** ruby-refactor
     #+BEGIN_SRC emacs-lisp
       (use-package ruby-refactor
+        :defer t
         :init
         (add-hook 'ruby-mode-hook 'ruby-refactor-mode-launch))
     #+END_SRC
@@ -687,54 +861,6 @@
         :after (sql-mode)
         :init
         (add-hook 'sql-mode-hook 'sqlind-minor-mode))
-    #+END_SRC
-** TODO Lisp
-*** slime
-    #+BEGIN_SRC emacs-lisp
-      (with-eval-after-load 'slime
-        (load (expand-file-name "~/quicklisp/slime-helper.el"))
-        (setq inferior-lisp-program "sbcl")
-        (add-hook 'slime-mode-hook 'set-up-slime-ac)
-        (add-hook 'slime-repl-mode-hook 'set-up-slime-ac))
-    #+END_SRC
-*** ac-slime
-    #+BEGIN_SRC emacs-lisp
-      (use-package ac-slime)
-    #+END_SRC
-*** cider
-    #+BEGIN_SRC emacs-lisp
-      (use-package cider)
-    #+END_SRC
-*** elisp-slime-nav
-    #+BEGIN_SRC emacs-lisp
-      (use-package elisp-slime-nav)
-    #+END_SRC
-*** nameless
-    #+BEGIN_SRC emacs-lisp
-      (use-package nameless
-        :init
-        (add-hook 'emacs-lisp-mode-hook 'nameless-mode))
-    #+END_SRC
-*** paredit
-    #+BEGIN_SRC emacs-lisp
-      (use-package paredit
-        :init
-        (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
-        (add-hook 'lisp-mode-hook 'enable-paredit-mode)
-        (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
-        (add-hook 'scheme-mode-hook 'enable-paredit-mode)
-        (general-define-key
-         :keymaps 'paredit-mode-map
-         "C-c f" 'paredit-forward-slurp-sexp
-         "C-c b" 'paredit-forward-barf-sexp)
-        :config
-        (autoload 'enable-paredit-mode "paredit" t))
-    #+END_SRC
-*** rainbow-delimiters
-    #+BEGIN_SRC emacs-lisp
-      (use-package rainbow-delimiters
-        :init
-        (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
     #+END_SRC
 ** File
 *** recentf
@@ -757,6 +883,7 @@
 *** flycheck
     #+begin_src emacs-lisp
       (use-package flycheck
+        :defer t
         :after (ruby-mode)
         :init
         (add-hook 'ruby-mode-hook 'flycheck-mode))
@@ -897,69 +1024,6 @@
      (general-def org-mode-map
        "C-m" nil)
    #+END_SRC
-* Lisp
-** TODO HyperSpec
-   #+BEGIN_SRC emacs-lisp
-     ;; (setq common-lisp-hyperspec-root "~/quicklisp/HyperSpec/")
-
-     ;; (defun common-lisp-hyperspec (symbol-name)
-     ;;     (interactive (list (common-lisp-hyperspec-read-symbol-name)))
-     ;;     (let ((name (common-lisp-hyperspec--strip-cl-package
-     ;;                     (downcase symbol-name))))
-     ;;         (cl-maplist (lambda (entry)
-     ;;                         (eww-open-file (concat common-lisp-hyperspec-root "Body/"
-     ;;                                            (car entry)))
-     ;;                         (when (cdr entry)
-     ;;                             (sleep-for 1.5)))
-     ;;             (or (common-lisp-hyperspec--find name)
-     ;;                 (error "The symbol `%s' is not defined in Common Lisp"
-     ;;                     symbol-name)))))
-
-     ;; (defun common-lisp-hyperspec-lookup-reader-macro (macro)
-     ;;   (interactive
-     ;;    (list
-     ;;     (let ((completion-ignore-case t))
-     ;;       (completing-read "Look up reader-macro: "
-     ;;                        common-lisp-hyperspec--reader-macros nil t
-     ;;                        (common-lisp-hyperspec-reader-macro-at-point)))))
-     ;;   (eww-open-file
-     ;;    (concat common-lisp-hyperspec-root "Body/"
-     ;;            (gethash macro common-lisp-hyperspec--reader-macros))))
-
-     ;; (defun common-lisp-hyperspec-format (character-name)
-     ;;   (interactive (list (common-lisp-hyperspec--read-format-character)))
-     ;;   (cl-maplist (lambda (entry)
-     ;;                 (eww-open-file (common-lisp-hyperspec-section (car entry))))
-     ;;               (or (gethash character-name
-     ;;                            common-lisp-hyperspec--format-characters)
-     ;;                   (error "The symbol `%s' is not defined in Common Lisp"
-     ;;                          character-name))))
-
-     ;; (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
-     ;;   (let ((buf (current-buffer)))
-     ;;     ad-do-it
-     ;;     (switch-to-buffer buf)
-     ;;     (pop-to-buffer "*eww*")))
-
-     ;; (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
-     ;;   (let ((buf (current-buffer)))
-     ;;     ad-do-it
-     ;;     (switch-to-buffer buf)
-     ;;     (pop-to-buffer "*eww*")))
-
-     ;; (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
-     ;;   (let ((buf (current-buffer)))
-     ;;     ad-do-it
-     ;;     (switch-to-buffer buf)
-     ;;     (pop-to-buffer "*eww*")))
-     ;; (dolist (hook '(emacs-lisp-mode-hook
-     ;;                 lisp-interaction-mode-hook
-     ;;                 ielm-mode-hook))
-     ;;   (add-hook hook 'elisp-slime-nav-mode))
-
-     ;; (define-key lisp-mode-map (kbd "C-c h") 'hyperspec-lookup)
-
-   #+END_SRC
 * MyFunc
 ** takeokunn/beginning-of-intendation
    #+BEGIN_SRC emacs-lisp
@@ -979,19 +1043,6 @@
 
      (advice-add 'set-auto-mode :before-until 'takeokunn/before-set-auto-mode)
    #+END_SRC
-** takeokunn/slime-history
-   #+BEGIN_SRC emacs-lisp
-     (defun takeokunn/slime-history ()
-       (interactive)
-       (insert
-        (completing-read
-         "choice history: "
-         (-distinct (read (f-read-text "~/.slime-history.eld"))))))
-
-     (general-define-key
-      :keymaps 'slime-repl-mode-map
-      "C-c C-r" 'takeokunn/slime-history)
-   #+END_SRC
 ** takeokunn/irb-history
    #+BEGIN_SRC emacs-lisp
      (defun takeokunn/irb-history ()
@@ -1003,16 +1054,6 @@
 
      (general-def inf-ruby-mode-map
        "C-c C-r" 'takeokunn/irb-history)
-   #+END_SRC
-** takeokunn/neotree-toggle
-   #+BEGIN_SRC emacs-lisp
-     (defun takeokunn/neotree-toggle ()
-       (interactive)
-       (let ((default-directory (locate-dominating-file default-directory ".git")))
-         (neotree-toggle)))
-
-     (general-define-key
-      "C-q" 'my/neotree-toggle)
    #+END_SRC
 ** takeokunn/reload-major-mode
    #+BEGIN_SRC emacs-lisp
@@ -1039,41 +1080,4 @@
      ;;     (setq command (cdr-safe (assq choice scripts)))
      ;;     (when command
      ;;       (compile command))))
-   #+END_SRC
-** takeokunn/ielm-history
-   #+BEGIN_SRC emacs-lisp
-     ;; (defun takeokunn/ielm-history ()
-     ;;   (interactive)
-     ;;   (insert
-     ;;    (completing-read
-     ;;     "choice history: "
-     ;;     (progn
-     ;;       (let ((history nil))
-     ;;         (dotimes (index (ring-length comint-input-ring))
-     ;;           (push (ring-ref comint-input-ring index) history))
-     ;;         history)))))
-
-     ;; (defun takeokunn/ielm-write-history-on-exit (process event)
-     ;;   (comint-write-input-ring)
-     ;;   (let ((buf (process-buffer process)))
-     ;;     (when (buffer-live-p buf)
-     ;;       (with-current-buffer buf
-     ;;         (insert (format "\nProcess %s %s" process event))))))
-
-     ;; (defun takeokunn/ielm-turn-on-history ()
-     ;;   (let ((process (get-buffer-process (current-buffer))))
-     ;;     (when process
-     ;;       (setq comint-input-ring-file-name (concat (file-remote-p default-directory) "~/.ielm-history"))
-     ;;       (setq comint-input-ring-size 100000)
-     ;;       (setq comint-input-ignoredups t)
-     ;;       (comint-read-input-ring)
-     ;;       (add-hook 'kill-buffer-hook #'comint-write-input-ring)
-     ;;       (define-key ielm-map (kbd "C-c C-r") 'takeokunn/ielm-history)
-     ;;       (general-define-key
-     ;;        :keymaps 'ielm-map
-     ;;        "C-c C-r" 'takeokunn/ielm-history)
-
-     ;;       (set-process-sentinel process #'takeokunn/ielm-write-history-on-exit))))
-
-     ;; (add-hook 'ielm-mode-hook 'takeokunn/ielm-turn-on-history)
    #+END_SRC
