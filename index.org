@@ -32,6 +32,7 @@
 ** utility
    #+BEGIN_SRC emacs-lisp
      (eval-and-compile
+       (use-package bind-key)
        (use-package dash)
        (use-package dash-functional)
        (use-package s)
@@ -118,6 +119,7 @@
       "C-?" 'help-command
       "C-m" 'set-mark-command
       "C-a" 'back-to-indentation
+      "C-x C-o" 'other-window
       "C-x C-k" nil)
    #+END_SRC
 * Major/Minor Mode
@@ -142,7 +144,10 @@
      (use-package csharp-mode
        :mode (("\\.cs$" . csharp-mode)))
    #+END_SRC
-** TODO csv-mode
+** csv-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package csv-mode)
+   #+END_SRC
 ** dhall-mode
    #+BEGIN_SRC emacs-lisp
      (use-package dhall-mode
@@ -158,14 +163,14 @@
      (use-package dockerfile-mode
        :mode (("Dockerfile\\'" . dockerfile-mode)))
    #+END_SRC
-** TODO emmet-mode
+** emmet-mode
    #+BEGIN_SRC emacs-lisp
-     ;; (use-package emmet-mode
-     ;;   :init
-     ;;   (add-hook 'web-mode-hook 'emmet-mode)
-     ;;   (add-hook 'vue-mode 'emmet-mode)
-     ;;   :config
-     ;;   (define-key emmet-mode-keymap (kbd "C-j") nil))
+     (use-package emmet-mode
+       :after (web-mode vue-mode)
+       :init
+       (add-hook 'web-mode-hook 'emmet-mode)
+       (add-hook 'vue-mode 'emmet-mode)
+       :bind (("C-j" . nil)))
    #+END_SRC
 ** fish-mode
    #+BEGIN_SRC emacs-lisp
@@ -193,21 +198,20 @@
      (use-package gradle-mode
        :mode (("\\.gradle$" . java-mode)))
    #+END_SRC
-** TODO haskell-mode
+** haskell-mode
    #+BEGIN_SRC emacs-lisp
-     ;; (use-package haskell-mode
-     ;;   :mode (("\\.hs$" . haskell-mode)
-     ;;          ("\\.cable$" . haskell-cabal-mode))
-     ;;   :bind (("C-m" . nil)))
+     (use-package haskell-mode
+       :mode (("\\.hs$" . haskell-mode)
+              ("\\.cable$" . haskell-cabal-mode)))
    #+END_SRC
-** TODO js2-mode
+** js2-mode
    #+BEGIN_SRC emacs-lisp
-     ;; (use-package js2-mode
-     ;;   :mode (("\\.js$" . js2-mode))
-     ;;   :init
-     ;;   (add-hook 'js2-mode-hook #'js2-refactor-mode)
-     ;;   :config
-     ;;   (setq js2-skip-preprocessor-directives t))
+     (use-package js2-mode
+       :mode (("\\.js$" . js2-mode))
+       :init
+       (add-hook 'js2-mode-hook #'js2-refactor-mode)
+       :config
+       (setq js2-skip-preprocessor-directives t))
    #+END_SRC
 ** json-mode
    #+BEGIN_SRC emacs-lisp
@@ -300,29 +304,31 @@
    #+END_SRC
 ** TODO vue-mode
    #+BEGIN_SRC emacs-lisp
-     ;; (use-package vue-mode
-     ;;   :mode (("\\.vue$" . vue-mode))
-     ;;   :config
-     ;;   (setq mmm-js-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
-     ;;   (setq mmm-typescript-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
-     ;;   (setq indent-tabs-mode nil
-     ;;         js-indent-level 2))
+     (use-package vue-mode
+       :mode (("\\.vue$" . vue-mode))
+       :config
+       ;; (setq mmm-js-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
+       ;; (setq mmm-typescript-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
+       ;; (setq indent-tabs-mode nil js-indent-level 2)
+       )
    #+END_SRC
 ** TODO web-mode
    #+BEGIN_SRC emacs-lisp
-     ;; (use-package web-mode
-     ;;   :mode (("\\.html?\\'" . web-mode)
-     ;;          ("\\.erb\\'" . web-mode)
-     ;;          ("\\.gsp\\'" . web-mode)
-     ;;          ("\\.tsx\\'" . web-mode))
-     ;;   :init
-     ;;   (add-hook 'web-mode-hook
-     ;;             (lambda ()
-     ;;               (when (string-equal "tsx" (file-name-extension buffer-file-name))
-     ;;                 (my/setup-tide-mode))))
-     ;;   :config
-     ;;   (setq web-mode-auto-close-style t)
-     ;;   (setq web-mode-tag-auto-close-style t))
+     (use-package web-mode
+       :after (tide)
+       :mode (("\\.html?\\'" . web-mode)
+              ("\\.erb\\'" . web-mode)
+              ("\\.gsp\\'" . web-mode)
+              ("\\.tsx\\'" . web-mode))
+       :init
+       ;; (add-hook 'web-mode-hook
+       ;;           (lambda ()
+       ;;             (when (string-equal "tsx" (file-name-extension buffer-file-name))
+       ;;               (my/setup-tide-mode))))
+       :config
+       (setq web-mode-auto-close-style t)
+       ;; (setq web-mode-tag-auto-close-style t)
+       )
    #+END_SRC
 ** yaml-mode
    #+BEGIN_SRC emacs-lisp
@@ -337,11 +343,12 @@
         :init
         (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
     #+END_SRC
-*** TODO all-the-icons-ivy
+*** all-the-icons-ivy
     #+BEGIN_SRC emacs-lisp
-      ;; (use-package all-the-icons-ivy
-      ;;   :config
-      ;;   (all-the-icons-ivy-setup))
+      (use-package all-the-icons-ivy
+        :after (all-the-icons)
+        :config
+        (all-the-icons-ivy-setup))
     #+END_SRC
 *** doom-modeline
     #+BEGIN_SRC emacs-lisp
@@ -423,6 +430,7 @@
 *** nyan-mode
     #+BEGIN_SRC emacs-lisp
       (use-package nyan-mode
+        :after (doom-modeline)
         :custom
         (nyan-cat-face-number 4)
         (nyan-animate-nyancat t)
@@ -430,11 +438,12 @@
         (doom-modeline-mode . nyan-mode))
    #+END_SRC
 ** Refactor
-*** TODO emr
+*** emr
     #+BEGIN_SRC emacs-lisp
-      ;; (use-package emr
-      ;;   :commands (emr-show-refactor-menu)
-      ;;   :bind (("M-RET" . 'emr-show-refactor-menu)))
+      (use-package emr
+        :init
+        (general-define-key
+         "M-RET" 'emr-show-refactor-menu))
     #+END_SRC
 ** Completion
 *** yasnippet
@@ -452,9 +461,10 @@
      (use-package company
        :init
        (global-company-mode)
-       :config
-       (define-key company-active-map (kbd "C-n") 'company-select-next)
-       (define-key company-active-map (kbd "C-p") 'company-select-previous))
+       (general-define-key
+        :keymaps 'company-active-map
+        "C-n" 'company-select-next
+        "C-p" 'company-select-previous))
    #+END_SRC
 *** company-glsl
     #+BEGIN_SRC emacs-lisp
@@ -474,17 +484,16 @@
 *** lsp-mode
     #+BEGIN_SRC emacs-lisp
       (use-package lsp-mode)
-      (use-package lsp-java)
-      (use-package lsp-haskell)
     #+END_SRC
-*** TODO lsp-ui
+*** lsp-ui
     #+BEGIN_SRC emacs-lisp
       (use-package lsp-ui
         :after (lsp)
+        :commands (lsp-ui-peek-find-definitions lsp-ui-peek-find-implementation)
         :init
         (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-        ;; :bind (("M-." . 'lsp-ui-peek-find-definitions)
-        ;;        ("M-?" . 'lsp-ui-peek-find-implementation))
+        :bind (("M-." . 'lsp-ui-peek-find-definitions)
+               ("M-?" . 'lsp-ui-peek-find-implementation))
         :config
         (setq-default lsp-ui-doc-enable t
                       lsp-ui-doc-max-height 15
@@ -492,22 +501,15 @@
                       lsp-ui-imenu-enable nil
                       lsp-ui-sideline-enable nil))
     #+END_SRC
-*** TODO dap-mode
+*** dap-mode
     #+BEGIN_SRC emacs-lisp
-      ;; (use-package dap-mode
-      ;;   :bind
-      ;;   (("C-c d" . 'dap-breakpoint-toggle))
-      ;;   :config
-      ;;   (dap-mode 1)
-      ;;   (dap-ui-mode 1))
-      ;; (use-package dap-php
-      ;;   :ensure t
-      ;; (use-package dap-node
-      ;;   :ensure t
-      ;; (use-package dap-ruby
-      ;;   :ensure t
-      ;; (use-package dap-chrome
-      ;;   :ensure t
+      (use-package dap-mode
+        ;; :commands (dap-breakpoint-toggle)
+        ;; :bind
+        ;; (("C-c d" . dap-breakpoint-toggle))
+        :config
+        (dap-mode 1)
+        (dap-ui-mode 1))
    #+END_SRC
 ** Git
 *** magit
@@ -521,73 +523,78 @@
         (global-git-gutter-mode +1))
     #+END_SRC
 ** Search
-*** TODO counsel
+*** counsel
     #+BEGIN_SRC emacs-lisp
-      ;; (use-package counsel
-      ;;   :config
-      ;;   (setq ivy-use-virtual-buffers t)
-      ;;   (setq counsel-ag-base-command "ag --nocolor --nogroup -u %s")
-      ;;   (ivy-mode 1)
-      ;;   (counsel-mode 1)
-      ;;   (defun my/counsel-ag ()
-      ;;     (interactive)
-      ;;     (let ((symbol (thing-at-point 'symbol 'no-properties))
-      ;;           (default-directory (locate-dominating-file default-directory ".git")))
-      ;;       (counsel-ag symbol)))
-      ;;   :bind
-      ;;   (("C-x m" . counsel-compile)))
+      (use-package counsel
+        :init
+        (general-define-key
+         "C-x m" 'counsel-compile
+         "C-c k" 'takeokunn/counsel-ag)
+        :preface
+        (defun takeokunn/counsel-ag ()
+          (interactive)
+          (let ((symbol (thing-at-point 'symbol 'no-properties))
+                (default-directory (locate-dominating-file default-directory ".git")))
+            (counsel-ag symbol)))
+        :config
+        (setq ivy-use-virtual-buffers t)
+        (setq counsel-ag-base-command "ag --nocolor --nogroup -u %s")
+        (ivy-mode 1)
+        (counsel-mode 1))
     #+END_SRC
-*** TODO ivy-ghq
+*** ivy-ghq
     #+BEGIN_SRC emacs-lisp
-      ;; (use-package ivy-ghq
-      ;;   :commands (ivy-ghq-open)
-      ;;   :bind
-      ;;   ("M-o" . ivy-ghq-open-and-fzf)
-      ;;   :custom
-      ;;   (ivy-ghq-short-list t)
-      ;;   :preface
-      ;;   (defun ivy-ghq-open-and-fzf ()
-      ;;     (interactive)
-      ;;     (ivy-ghq-open)
-      ;;     (counsel-fzf)))
+      (use-package ivy-ghq
+        :after (counsel)
+        :commands (ivy-ghq-open)
+        :preface
+        (defun takeokunn/ivy-ghq-open-and-fzf ()
+          (ivy-ghq-open)
+          (counsel-fzf))
+        :init
+        (general-define-key
+         "M-o" 'takeokunn/ivy-ghq-open-and-fzf)
+        :custom
+        (ivy-ghq-short-list t))
     #+END_SRC
-*** TODO ivy-rich
+*** ivy-rich
     #+BEGIN_SRC emacs-lisp
-      ;; (use-package ivy-rich
-      ;;   :config
-      ;;   (ivy-rich-mode 1))
+      (use-package ivy-rich
+        :after (counsel)
+        :config
+        (ivy-rich-mode 1))
     #+END_SRC
-*** TODO swoop
+*** swoop
     #+BEGIN_SRC emacs-lisp
-      ;; (use-package swoop
-      ;;   :config
-      ;;   (setq swoop-minibuffer-input-dilay 0.4)
-      ;;   (defun my/swoop-from-isearch ()
-      ;;     (interactive)
-      ;;     (let* ((symbol (thing-at-point 'symbol 'no-properties)))
-      ;;       (swoop symbol))))
-
-      ;; (define-key ivy-mode-map (kbd "C-o") 'my/swoop-from-isearch)
+      (use-package swoop
+        :preface
+        (defun takeokunn/swoop-from-isearch ()
+          (interactive)
+          (let* ((symbol (thing-at-point 'symbol 'no-properties)))
+            (swoop symbol)))
+        :init
+        (general-define-key
+         "C-o" 'takeokunn/swoop-from-isearch)
+        :config
+        (setq swoop-minibuffer-input-dilay 0.4))
     #+END_SRC
-
 ** Shell
 *** aweshell
     #+BEGIN_SRC emacs-lisp
       (use-package aweshell)
     #+END_SRC
 
-*** TODO exec-path-from-shell
+*** exec-path-from-shell
     #+BEGIN_SRC emacs-lisp
-      ;; (use-package exec-path-from-shell
-      ;;   :init
-      ;;   (add-hook 'after-init-hook 'my-exec-path-from-shell-initialize)
-      ;;   :config
-      ;;   (defun my-exec-path-from-shell-initialize ()
-      ;;     (when (memq window-system '(mac ns x))
-      ;;       (exec-path-from-shell-copy-envs '("PATH" "GEM_HOME" "GOPATH"))
-      ;;       (exec-path-from-shell-initialize))))
+      (use-package exec-path-from-shell
+        :init
+        (add-hook 'after-init-hook 'my-exec-path-from-shell-initialize)
+        :preface
+        (defun my-exec-path-from-shell-initialize ()
+          (when (memq window-system '(mac ns x))
+            (exec-path-from-shell-copy-envs '("PATH" "GEM_HOME" "GOPATH"))
+            (exec-path-from-shell-initialize))))
     #+END_SRC
-
 ** Rust
 *** racer
     #+BEGIN_SRC emacs-lisp
@@ -617,35 +624,38 @@
         (add-to-list 'company-backends 'company-omnisharp))
     #+END_SRC
 ** JavaScript
-*** TODO js2-refactor
+*** js2-refactor
     #+BEGIN_SRC emacs-lisp
-      ;; (use-package js2-refactor
-      ;;   :init
-      ;;   (add-hook 'js2-mode-hook #'js2-refactor-mode)
-      ;;   (add-hook 'typescript-mode-hook #'js2-refactor-mode)
-      ;;   :config
-      ;;   (js2r-add-keybindings-with-prefix "C-c C-m"))
+      (use-package js2-refactor
+        :after (js2-mode typescript-mode)
+        :init
+        (add-hook 'js2-mode-hook #'js2-refactor-mode)
+        (add-hook 'typescript-mode-hook #'js2-refactor-mode)
+        :config
+        (js2r-add-keybindings-with-prefix "C-c C-m"))
     #+END_SRC
-*** TODO tide
+*** tide
     #+BEGIN_SRC emacs-lisp
-      ;; (use-package tide
-      ;;   :after (typescript-mode)
-      ;;   :init
-      ;;   (defun my/setup-tide-mode ()
-      ;;     (interactive)
-      ;;     (tide-setup)
-      ;;     (tide-hl-identifier-mode +1))
-      ;;   (add-hook 'typescript-mode-hook #'my/setup-tide-mode))
+      (use-package tide
+        :after (typescript-mode)
+        :preface
+        (defun takeokunn/setup-tide-mode ()
+          (interactive)
+          (tide-setup)
+          (tide-hl-identifier-mode +1))
+        :init
+        (add-hook 'typescript-mode-hook #'takeokunn/setup-tide-mode))
     #+END_SRC
 ** Haskell
 *** hindent
     #+BEGIN_SRC emacs-lisp
-      ;; (use-package hindent
-      ;;   :after (haskell-mode)
-      ;;   :init
-      ;;   (add-hook 'haskell-mode-hook #'hindent-mode)
-      ;;   :config
-      ;;   (setq hindent-style "johan-tibell"))
+      (use-package hindent
+        :after (haskell-mode)
+        :init
+        (add-hook 'haskell-mode-hook #'hindent-mode)
+        :config
+        ;; (setq hindent-style "johan-tibell")
+        )
     #+END_SRC
 ** Ruby
 *** robe
@@ -678,18 +688,54 @@
         :init
         (add-hook 'sql-mode-hook 'sqlind-minor-mode))
     #+END_SRC
-** Lisp
-*** TODO ac-slime
-*** TODO cider
-*** TODO elisp-slime-nav
+** TODO Lisp
+*** slime
+    #+BEGIN_SRC emacs-lisp
+      (with-eval-after-load 'slime
+        (load (expand-file-name "~/quicklisp/slime-helper.el"))
+        (setq inferior-lisp-program "sbcl")
+        (add-hook 'slime-mode-hook 'set-up-slime-ac)
+        (add-hook 'slime-repl-mode-hook 'set-up-slime-ac))
+    #+END_SRC
+*** ac-slime
+    #+BEGIN_SRC emacs-lisp
+      (use-package ac-slime)
+    #+END_SRC
+*** cider
+    #+BEGIN_SRC emacs-lisp
+      (use-package cider)
+    #+END_SRC
+*** elisp-slime-nav
+    #+BEGIN_SRC emacs-lisp
+      (use-package elisp-slime-nav)
+    #+END_SRC
 *** nameless
     #+BEGIN_SRC emacs-lisp
       (use-package nameless
         :init
         (add-hook 'emacs-lisp-mode-hook 'nameless-mode))
     #+END_SRC
-*** TODO paredit
-*** TODO rainbow-delimiters
+*** paredit
+    #+BEGIN_SRC emacs-lisp
+      (use-package paredit
+        :init
+        (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+        (add-hook 'lisp-mode-hook 'enable-paredit-mode)
+        (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+        (add-hook 'scheme-mode-hook 'enable-paredit-mode)
+        (general-define-key
+         :keymaps 'paredit-mode-map
+         "C-c f" 'paredit-forward-slurp-sexp
+         "C-c b" 'paredit-forward-barf-sexp)
+        :config
+        (autoload 'enable-paredit-mode "paredit" t))
+    #+END_SRC
+*** rainbow-delimiters
+    #+BEGIN_SRC emacs-lisp
+      (use-package rainbow-delimiters
+        :init
+        (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
+    #+END_SRC
 ** File
 *** recentf
     #+BEGIN_SRC emacs-lisp
@@ -744,8 +790,10 @@
     #+BEGIN_SRC emacs-lisp
       (use-package smooth-scroll
         :commands (smooth-scroll-mode)
+        :init
+        (smooth-scroll-mode 1)
         :config
-        (smooth-scroll-mode 1))
+        (setq smooth-scroll/hscroll-step-size 4))
     #+END_SRC
 ** Other
 *** ace-window
@@ -770,30 +818,46 @@
     #+BEGIN_SRC emacs-lisp
       (use-package esup)
     #+END_SRC
-*** TODO font-lock-studio
-*** TODO google-this
+*** font-lock-studio
+    #+BEGIN_SRC emacs-lisp
+      (use-package font-lock-studio)
+    #+END_SRC
+*** google-this
+    #+BEGIN_SRC emacs-lisp
+      (use-package google-this
+        :init
+        (general-define-key
+         "M-g" 'google-this))
+    #+END_SRC
 *** goto-addr
     #+BEGIN_SRC emacs-lisp
       (use-package goto-addr
         :hook ((prog-mode . goto-address-prog-mode)
                (text-mode . goto-address-mode)))
     #+END_SRC
-*** TODO helpful
+*** helpful
     #+BEGIN_SRC emacs-lisp
-      ;; (use-package helpful
-      ;;   :bind
-      ;;   (("C-? f" . #'helpful-callable)
-      ;;    ("C-? v" . #'helpful-variable)
-      ;;    ("C-? k" . #'helpful-key)
-      ;;    ("C-c C-d" . #'helpful-at-point)
-      ;;    ("C-? F" . #'helpful-function)
-      ;;    ("C-? C" . #'helpful-command))
-      ;;   :config
-      ;;   (setq counsel-describe-function-function #'helpful-callable
-      ;;         counsel-describe-variable-function #'helpful-variable))
+      (use-package helpful
+        :init
+        (general-define-key
+         "C-? f" 'helpful-callable
+         "C-? v" 'helpful-variable
+         "C-? k" 'helpful-key
+         "C-? C-d" 'helpful-at-point
+         "C-? F" 'helpful-function
+         "C-? C" 'helpful-command)
+        :config
+        (setq counsel-describe-function-function #'helpful-callable
+              counsel-describe-variable-function #'helpful-variable))
     #+END_SRC
-*** TODO smartparens
-*** TODO smex
+*** smartparens
+    #+BEGIN_SRC emacs-lisp
+      (use-package smartparens)
+    #+END_SRC
+*** smex
+    #+BEGIN_SRC emacs-lisp
+      (use-package smex)
+    #+END_SRC
 *** whitespace
     #+BEGIN_SRC emacs-lisp
       (use-package whitespace
@@ -818,7 +882,7 @@
                    org-agenda-files '("~/org/todo.org")
                    org-todo-keywords '((sequence "TODO(t)" "WAIT(w)" "|" "DONE(d)"))
                    org-capture-templates '(("t" "Todo" entry (file+datetree "~/org/todo.org")
-                                            "* TODO %?")
+                                            "* %?")
                                            ("b" "Blog" entry (file "~/org/blog.org")
                                             "* %?")
                                            ("m" "Memo" entry (file "~/org/memo.org")
@@ -833,26 +897,134 @@
      (general-def org-mode-map
        "C-m" nil)
    #+END_SRC
-* MyFunc
-** my/beginning-of-intendation
+* Lisp
+** TODO HyperSpec
    #+BEGIN_SRC emacs-lisp
-     (defun my/beginning-of-intendation ()
+     ;; (setq common-lisp-hyperspec-root "~/quicklisp/HyperSpec/")
+
+     ;; (defun common-lisp-hyperspec (symbol-name)
+     ;;     (interactive (list (common-lisp-hyperspec-read-symbol-name)))
+     ;;     (let ((name (common-lisp-hyperspec--strip-cl-package
+     ;;                     (downcase symbol-name))))
+     ;;         (cl-maplist (lambda (entry)
+     ;;                         (eww-open-file (concat common-lisp-hyperspec-root "Body/"
+     ;;                                            (car entry)))
+     ;;                         (when (cdr entry)
+     ;;                             (sleep-for 1.5)))
+     ;;             (or (common-lisp-hyperspec--find name)
+     ;;                 (error "The symbol `%s' is not defined in Common Lisp"
+     ;;                     symbol-name)))))
+
+     ;; (defun common-lisp-hyperspec-lookup-reader-macro (macro)
+     ;;   (interactive
+     ;;    (list
+     ;;     (let ((completion-ignore-case t))
+     ;;       (completing-read "Look up reader-macro: "
+     ;;                        common-lisp-hyperspec--reader-macros nil t
+     ;;                        (common-lisp-hyperspec-reader-macro-at-point)))))
+     ;;   (eww-open-file
+     ;;    (concat common-lisp-hyperspec-root "Body/"
+     ;;            (gethash macro common-lisp-hyperspec--reader-macros))))
+
+     ;; (defun common-lisp-hyperspec-format (character-name)
+     ;;   (interactive (list (common-lisp-hyperspec--read-format-character)))
+     ;;   (cl-maplist (lambda (entry)
+     ;;                 (eww-open-file (common-lisp-hyperspec-section (car entry))))
+     ;;               (or (gethash character-name
+     ;;                            common-lisp-hyperspec--format-characters)
+     ;;                   (error "The symbol `%s' is not defined in Common Lisp"
+     ;;                          character-name))))
+
+     ;; (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
+     ;;   (let ((buf (current-buffer)))
+     ;;     ad-do-it
+     ;;     (switch-to-buffer buf)
+     ;;     (pop-to-buffer "*eww*")))
+
+     ;; (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
+     ;;   (let ((buf (current-buffer)))
+     ;;     ad-do-it
+     ;;     (switch-to-buffer buf)
+     ;;     (pop-to-buffer "*eww*")))
+
+     ;; (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
+     ;;   (let ((buf (current-buffer)))
+     ;;     ad-do-it
+     ;;     (switch-to-buffer buf)
+     ;;     (pop-to-buffer "*eww*")))
+     ;; (dolist (hook '(emacs-lisp-mode-hook
+     ;;                 lisp-interaction-mode-hook
+     ;;                 ielm-mode-hook))
+     ;;   (add-hook hook 'elisp-slime-nav-mode))
+
+     ;; (define-key lisp-mode-map (kbd "C-c h") 'hyperspec-lookup)
+
+   #+END_SRC
+* MyFunc
+** takeokunn/beginning-of-intendation
+   #+BEGIN_SRC emacs-lisp
+     (defun takeokunn/beginning-of-intendation ()
        "move to beginning of line, or indentation"
        (interactive)
        (back-to-indentation))
    #+END_SRC
-** my/before-set-auto-mode
+** takeokunn/before-set-auto-mode
    #+BEGIN_SRC emacs-lisp
-     (defun my/before-set-auto-mode ()
+     (defun takeokunn/before-set-auto-mode ()
        (when (or (and buffer-file-name
                       (> (file-attribute-size (file-attributes buffer-file-name)) 100000))
                  (> (line-number-at-pos (point-max)) 10000))
          (prog1 t
            (prog-mode))))
 
-     (advice-add 'set-auto-mode :before-until 'my/before-set-auto-mode)
+     (advice-add 'set-auto-mode :before-until 'takeokunn/before-set-auto-mode)
    #+END_SRC
-** TODO my/exec-npm-script
+** takeokunn/slime-history
+   #+BEGIN_SRC emacs-lisp
+     (defun takeokunn/slime-history ()
+       (interactive)
+       (insert
+        (completing-read
+         "choice history: "
+         (-distinct (read (f-read-text "~/.slime-history.eld"))))))
+
+     (general-define-key
+      :keymaps 'slime-repl-mode-map
+      "C-c C-r" 'takeokunn/slime-history)
+   #+END_SRC
+** takeokunn/irb-history
+   #+BEGIN_SRC emacs-lisp
+     (defun takeokunn/irb-history ()
+       (interactive)
+       (insert
+        (completing-read
+         "choose history: "
+         (-map #'list (-distinct (s-lines (f-read-text "~/.irb_history")))))))
+
+     (general-def inf-ruby-mode-map
+       "C-c C-r" 'takeokunn/irb-history)
+   #+END_SRC
+** takeokunn/neotree-toggle
+   #+BEGIN_SRC emacs-lisp
+     (defun takeokunn/neotree-toggle ()
+       (interactive)
+       (let ((default-directory (locate-dominating-file default-directory ".git")))
+         (neotree-toggle)))
+
+     (general-define-key
+      "C-q" 'my/neotree-toggle)
+   #+END_SRC
+** takeokunn/reload-major-mode
+   #+BEGIN_SRC emacs-lisp
+     (defun takeokunn/reload-major-mode ()
+       "Reload current major mode."
+       (interactive)
+       (let ((current-mode major-mode))
+         (fundamental-mode)
+         (funcall current-mode)
+         current-mode))
+   #+END_SRC
+** TODO takeokunn/exec-npm-script
    #+BEGIN_SRC emacs-lisp
      ;; (defun my/exec-npm-script ()
      ;;   (interactive)
@@ -868,56 +1040,40 @@
      ;;     (when command
      ;;       (compile command))))
    #+END_SRC
-** my/slime-history
+** takeokunn/ielm-history
    #+BEGIN_SRC emacs-lisp
-     (defun my/slime-history ()
-       (interactive)
-       (insert
-        (completing-read
-         "choice history: "
-         (-distinct (read (f-read-text "~/.slime-history.eld"))))))
-   #+END_SRC
-** my/ielm-history
-   #+BEGIN_SRC emacs-lisp
-     (defun my/ielm-history ()
-       (interactive)
-       (insert
-        (completing-read
-         "choice history: "
-         (progn
-           (let ((history nil))
-             (dotimes (index (ring-length comint-input-ring))
-               (push (ring-ref comint-input-ring index) history))
-             history)))))
-   #+END_SRC
-** TODO my/irb-history
-   #+BEGIN_SRC emacs-lisp
-     (defun my/irb-history ()
-       (interactive)
-       (insert
-        (completing-read
-         "choose history: "
-         (-map #'list (-distinct (s-lines (f-read-text "~/.irb_history")))))))
+     ;; (defun takeokunn/ielm-history ()
+     ;;   (interactive)
+     ;;   (insert
+     ;;    (completing-read
+     ;;     "choice history: "
+     ;;     (progn
+     ;;       (let ((history nil))
+     ;;         (dotimes (index (ring-length comint-input-ring))
+     ;;           (push (ring-ref comint-input-ring index) history))
+     ;;         history)))))
 
-     (define-key inf-ruby-mode-map (kbd "C-c C-r") 'my/irb-history)
-   #+END_SRC
-** my/neotree-toggle
-   #+BEGIN_SRC emacs-lisp
-     (defun my/neotree-toggle ()
-       (interactive)
-       (let ((default-directory (locate-dominating-file default-directory ".git")))
-         (neotree-toggle)))
+     ;; (defun takeokunn/ielm-write-history-on-exit (process event)
+     ;;   (comint-write-input-ring)
+     ;;   (let ((buf (process-buffer process)))
+     ;;     (when (buffer-live-p buf)
+     ;;       (with-current-buffer buf
+     ;;         (insert (format "\nProcess %s %s" process event))))))
 
-     (general-define-key
-      "C-q" 'my/neotree-toggle)
-   #+END_SRC
-** my/reload-major-mode
-   #+BEGIN_SRC emacs-lisp
-     (defun reload-major-mode ()
-       "Reload current major mode."
-       (interactive)
-       (let ((current-mode major-mode))
-         (fundamental-mode)
-         (funcall current-mode)
-         current-mode))
+     ;; (defun takeokunn/ielm-turn-on-history ()
+     ;;   (let ((process (get-buffer-process (current-buffer))))
+     ;;     (when process
+     ;;       (setq comint-input-ring-file-name (concat (file-remote-p default-directory) "~/.ielm-history"))
+     ;;       (setq comint-input-ring-size 100000)
+     ;;       (setq comint-input-ignoredups t)
+     ;;       (comint-read-input-ring)
+     ;;       (add-hook 'kill-buffer-hook #'comint-write-input-ring)
+     ;;       (define-key ielm-map (kbd "C-c C-r") 'takeokunn/ielm-history)
+     ;;       (general-define-key
+     ;;        :keymaps 'ielm-map
+     ;;        "C-c C-r" 'takeokunn/ielm-history)
+
+     ;;       (set-process-sentinel process #'takeokunn/ielm-write-history-on-exit))))
+
+     ;; (add-hook 'ielm-mode-hook 'takeokunn/ielm-turn-on-history)
    #+END_SRC

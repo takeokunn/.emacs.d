@@ -8,6 +8,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;          basic          ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(depends-on "bind-key")
 (depends-on "dash")
 (depends-on "s")
 (depends-on "f")
