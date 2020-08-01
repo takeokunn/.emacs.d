@@ -5,85 +5,23 @@
 (depends-on "cask")
 (depends-on "use-package")
 
-;; theme
-(depends-on "doom-modeline")
-(depends-on "doom-themes")
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;          basic          ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(depends-on "dash")
+(depends-on "s")
+(depends-on "f")
+(depends-on "ht")
+(depends-on "general")
 
-;; package
-(depends-on "ace-window")
-(depends-on "all-the-icons")
-(depends-on "all-the-icons-dired")
-(depends-on "all-the-icons-ivy")
-(depends-on "aweshell" :git "https://github.com/manateelazycat/aweshell")
-(depends-on "bind-key")
-(depends-on "company")
-(depends-on "company-glsl")
-(depends-on "counsel")
-(depends-on "dashboard")
-(depends-on "editorconfig")
-(depends-on "ein")
-(depends-on "elisp-slime-nav")
-(depends-on "esup")
-(depends-on "exec-path-from-shell")
-(depends-on "flycheck")
-(depends-on "git-gutter-fringe")
-(depends-on "google-this")
-(depends-on "goto-addr")
-(depends-on "helpful")
-(depends-on "hindent")
-(depends-on "hl-line")
-(depends-on "hl-todo")
-(depends-on "htmlize")
-(depends-on "ivy-ghq" :git "https://github.com/analyticd/ivy-ghq.git")
-(depends-on "ivy-rich")
-(depends-on "magit")
-(depends-on "multiple-cursors")
-(depends-on "nameless")
-(depends-on "neotree")
-(depends-on "omnisharp")
-(depends-on "open-junk-file")
-(depends-on "racer")
-(depends-on "recentf")
-(depends-on "request")
-(depends-on "robe")
-(depends-on "rubocop")
-(depends-on "rustic")
-(depends-on "smartrep")
-(depends-on "smooth-scroll")
-(depends-on "sql-indent")
-(depends-on "swoop")
-(depends-on "tide")
-(depends-on "vterm")
-(depends-on "whitespace")
-(depends-on "yasnippet")
-(depends-on "yasnippet-snippets")
-
-;; lsp
-(depends-on "company-lsp")
-(depends-on "lsp-haskell")
-(depends-on "lsp-java")
-(depends-on "lsp-mode")
-(depends-on "lsp-ui")
-
-;; lisp
-(depends-on "ac-slime")
-(depends-on "cider")
-(depends-on "paredit")
-(depends-on "rainbow-delimiters")
-(depends-on "smartparens")
-
-;; refactor
-(depends-on "emr")
-(depends-on "js2-refactor")
-(depends-on "ruby-refactor")
-
-;; mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;          mode           ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (depends-on "clojure-mode")
 (depends-on "cmake-mode")
 (depends-on "coffee-mode")
 (depends-on "csharp-mode")
 (depends-on "csv-mode")
-(depends-on "dap-mode")
 (depends-on "dhall-mode")
 (depends-on "docker-compose-mode")
 (depends-on "dockerfile-mode")
@@ -98,7 +36,6 @@
 (depends-on "json-mode")
 (depends-on "markdown-mode")
 (depends-on "nginx-mode")
-(depends-on "nyan-mode")
 (depends-on "php-mode")
 (depends-on "plantuml-mode")
 (depends-on "processing-mode")
@@ -113,3 +50,103 @@
 (depends-on "vue-mode")
 (depends-on "web-mode")
 (depends-on "yaml-mode")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;         awesome         ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; theme
+(depends-on "all-the-icons")
+(depends-on "all-the-icons-dired")
+(depends-on "all-the-icons-ivy")
+(depends-on "doom-modeline")
+(depends-on "doom-themes")
+(depends-on "hl-line")
+(depends-on "hl-todo")
+(depends-on "neotree")
+(depends-on "nyan-mode")
+
+;; refactor
+(depends-on "emr")
+
+;; completion
+(depends-on "company")
+(depends-on "company-glsl")
+(depends-on "company-lsp")
+(depends-on "yasnippet")
+(depends-on "yasnippet-snippets")
+
+;; lsp
+(depends-on "dap-mode")
+(depends-on "lsp-haskell")
+(depends-on "lsp-java")
+(depends-on "lsp-mode")
+(depends-on "lsp-ui")
+
+;; git
+(depends-on "git-gutter-fringe")
+(depends-on "magit")
+
+;; search
+(depends-on "counsel")
+(depends-on "ivy-ghq" :git "https://github.com/analyticd/ivy-ghq.git")
+(depends-on "ivy-rich")
+(depends-on "swoop")
+
+;; shell
+(depends-on "aweshell" :git "https://github.com/manateelazycat/aweshell")
+(depends-on "exec-path-from-shell")
+
+;; rust
+(depends-on "racer")
+(depends-on "rustic")
+
+;; c#
+(depends-on "omnisharp")
+
+;; javascript
+(depends-on "js2-refactor")
+(depends-on "tide")
+
+;; haskell
+(depends-on "hindent")
+
+;; ruby
+(depends-on "robe")
+(depends-on "rubocop")
+(depends-on "ruby-refactor")
+
+;; sql
+(depends-on "sql-indent")
+
+;; lisp
+(depends-on "ac-slime")
+(depends-on "cider")
+(depends-on "elisp-slime-nav")
+(depends-on "nameless")
+(depends-on "paredit")
+(depends-on "rainbow-delimiters")
+
+;; file
+(depends-on "recentf")
+(depends-on "open-junk-file")
+
+;; syntax
+(depends-on "flycheck")
+
+;; cursor
+(depends-on "multiple-cursors")
+(depends-on "smartrep")
+(depends-on "smooth-scroll")
+
+;; other
+(depends-on "ace-window")
+(depends-on "dashboard")
+(depends-on "editorconfig")
+(depends-on "esup")
+(depends-on "font-lock-studio")
+(depends-on "google-this")
+(depends-on "goto-addr")
+(depends-on "helpful")
+(depends-on "smartparens")
+(depends-on "smex")
+(depends-on "whitespace")

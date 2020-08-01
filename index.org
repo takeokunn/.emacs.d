@@ -9,60 +9,68 @@
 
 * はじめに
 ** 基本情報
-   - repo: [[http://github.com/takeokunn/.emacs.d][takeokunn/.emacs.d]]
-   - twitter: [[https://twitter.com/takeokunn][たけてぃ@takeokunn]]
-** Dependency
-   この emacs.dは以下のlibrary/packageに依存しています。
-   - [[https://github.com/ggreer/the_silver_searcher][ggreer/the_silver_searcher]]
-   - [[https://github.com/quicklisp/quicklisp-slime-helper][quicklisp/quicklisp-slime-helper]]
-   - [[https://github.com/sbcl/sbcl][sbcl/sbcl]]
-   - [[https://github.com/npm/cli][npm/cli]]
-   - [[https://github.com/composer/composer][composer/composer]]
-   - [[https://github.com/vterm/vterm][vterm/vterm]]
-* 基本設定
+  - repo: [[http://github.com/takeokunn/.emacs.d][takeokunn/.emacs.d]]
+  - twitter: [[https://twitter.com/takeokunn][たけてぃ@takeokunn]]
+* Initialize
+** byte-compile
+   #+BEGIN_SRC emacs-lisp
+     ;; Local Variables:
+     ;; byte-compile-warnings: (not mapcar)
+     ;; End:
+   #+END_SRC
+** cask
+   #+BEGIN_SRC emacs-lisp
+     (eval-and-compile
+       (require 'cask "~/.cask/cask.el")
+       (cask-initialize))
+   #+END_SRC
+** use-package
+   #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (require 'use-package))
+   #+END_SRC
+** utility
+   #+BEGIN_SRC emacs-lisp
+     (eval-and-compile
+       (use-package dash)
+       (use-package dash-functional)
+       (use-package s)
+       (use-package f)
+       (use-package ht)
+       (use-package general))
+   #+END_SRC
+* Basic
+** early-init
+   #+BEGIN_SRC emacs-lisp
+     (if (version< emacs-version "27")
+         (progn
+           (menu-bar-mode -1)
+           (tool-bar-mode -1)
+           (toggle-scroll-bar -1)))
+   #+END_SRC
 ** スタートアップメッセージを非表示
-   url: [[http://flex.phys.tohoku.ac.jp/texi/eljman/eljman_250.html][http://flex.phys.tohoku.ac.jp/texi/eljman/eljman_250.html]]
-
-   trueにすると最初のスタートアップメッセージ の表示を取りやめます。
    #+BEGIN_SRC emacs-lisp
      (setq inhibit-startup-message t)
    #+END_SRC
 ** 末尾のスペースを可視化する
-   url: [[https://qiita.com/tadsan/items/df73c711f921708facdc][show-trailing-whitespaceは便利だが、見栄えが悪いこともある(qiita)]]
-
    特定のmode以外末尾のスペースを可視化するようにした。
    #+BEGIN_SRC emacs-lisp
      (setq-default show-trailing-whitespace t)
 
-     (defun my/disable-trailing-mode-hook ()
-       "Disable show tail whitespace."
-       (setq show-trailing-whitespace nil))
-
-     (defvar my/disable-trailing-modes
-       '(comint-mode
-         eshell-mode
-         eww-mode
-         term-mode
-         twittering-mode
-         minibuffer-inactive-mode))
-     (mapc
-      (lambda (mode)
-        (add-hook (intern (concat (symbol-name mode) "-hook"))
-                  'my/disable-trailing-mode-hook))
-      my/disable-trailing-modes)
-   #+END_SRC
-
-** バーを非表示にする
-   各種バーを非表示にした。
-   #+BEGIN_SRC emacs-lisp
+     (--map (add-hook (intern (concat (symbol-name it) "-hook"))
+                      '(lambda () (setq show-trailing-whitespace nil)))
+            '(comint-mode
+              eshell-mode
+              eww-mode
+              term-mode
+              twittering-mode
+              minibuffer-inactive-mode))
    #+END_SRC
 ** 行番号を表示する
-   url: [[https://www.emacswiki.org/emacs/LineNumbers][https://www.emacswiki.org/emacs/LineNumbers]]
    #+BEGIN_SRC emacs-lisp
      (global-linum-mode t)
    #+END_SRC
 ** 自動生成ファイルを無効にする
-   url: [[http://yohshiy.blog.fc2.com/blog-entry-319.html][http://yohshiy.blog.fc2.com/blog-entry-319.html]]
    #+BEGIN_SRC emacs-lisp
      (setq make-backup-files nil)
      (setq auto-save-default nil)
@@ -70,53 +78,23 @@
      (setq create-lockfiles nil)
    #+END_SRC
 ** C-kで行削除
-   url: [[https://ayatakesi.github.io/emacs/24.5/Killing-by-Lines.html][https://ayatakesi.github.io/emacs/24.5/Killing-by-Lines.html]]
    #+BEGIN_SRC emacs-lisp
      (setq kill-whole-line t)
    #+END_SRC
-** ビープ音を消す
-   url: [[http://th.nao.ac.jp/MEMBER/zenitani/elisp-j.html#bell][http://th.nao.ac.jp/MEMBER/zenitani/elisp-j.html#bell]]
-   #+BEGIN_SRC emacs-lisp
-     (setq ring-bell-function 'ignore)
-   #+END_SRC
 ** カッコの中をハイライトする
-   url: [[http://syohex.hatenablog.com/entry/20110331/1301584188][http://syohex.hatenablog.com/entry/20110331/1301584188]]
    #+BEGIN_SRC emacs-lisp
      (show-paren-mode t)
-     (setq show-paren-style 'mixed)
+     (setq-default show-paren-style 'mixed)
    #+END_SRC
 ** カッコが自動的に作られるようにする
-   url: [[https://www.emacswiki.org/emacs/ElectricPair][https://www.emacswiki.org/emacs/ElectricPair]]
    #+BEGIN_SRC emacs-lisp
      (electric-pair-mode 1)
    #+END_SRC
-** ウィンドウの大きさを変える
-   url: [[http://flex.phys.tohoku.ac.jp/texi/eljman/eljman_184.html][http://flex.phys.tohoku.ac.jp/texi/eljman/eljman_184.html]]
-   #+BEGIN_SRC emacs-lisp
-     (setq window-min-height 10)
-   #+END_SRC
 ** time locale
-   url: [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Locales.html][https://www.gnu.org/software/emacs/manual/html_node/elisp/Locales.html]]
    #+BEGIN_SRC emacs-lisp
      (setq system-time-locale "C")
    #+END_SRC
-** rubyのマジックコードを非表示
-   url: [[https://mat-aki.hatenadiary.org/entry/20090210/1234234027][https://mat-aki.hatenadiary.org/entry/20090210/1234234027]]
-   #+BEGIN_SRC emacs-lisp
-     (setq ruby-insert-encoding-magic-comment nil)
-   #+END_SRC
-** 起動時にerrorの時のみ表示する
-   url: [[https://qiita.com/kakikubo/items/412715e378b03b79faff][https://qiita.com/kakikubo/items/412715e378b03b79faff]]
-   #+BEGIN_SRC emacs-lisp
-     (setq display-warning-minimum-level :error)
-   #+END_SRC
-** ナローイングを無効
-   url: [[https://ayatakesi.github.io/emacs/26.1/html/Narrowing.html][https://ayatakesi.github.io/emacs/26.1/html/Narrowing.html]]
-   #+BEGIN_SRC emacs-lisp
-     (put 'narrow-to-region 'disabled nil)
-   #+END_SRC
 ** Font
-   url: [[https://qiita.com/j8takagi/items/01aecdd28f87cdd3cd2c][https://qiita.com/j8takagi/items/01aecdd28f87cdd3cd2c]]
    #+BEGIN_SRC emacs-lisp
      (set-fontset-font t 'japanese-jisx0208 "TakaoPGothic")
      (add-to-list 'face-font-rescale-alist '(".*Takao P.*" . 0.85))
@@ -130,836 +108,74 @@
    #+BEGIN_SRC emacs-lisp
      (setq-default indent-tabs-mode nil)
    #+END_SRC
-** early-init
-   #+BEGIN_SRC emacs-lisp
-     (if (version< emacs-version "27")
-         (progn
-           (menu-bar-mode -1)
-           (tool-bar-mode -1)
-           (toggle-scroll-bar -1)))
-   #+END_SRC
-** ielm
-   #+BEGIN_SRC emacs-lisp
-     (defun my/ielm-write-history-on-exit (process event)
-       (comint-write-input-ring)
-       (let ((buf (process-buffer process)))
-         (when (buffer-live-p buf)
-           (with-current-buffer buf
-             (insert (format "\nProcess %s %s" process event))))))
-
-     (defun my/ielm-turn-on-history ()
-       (let ((process (get-buffer-process (current-buffer))))
-         (when process
-           (setq comint-input-ring-file-name (concat (file-remote-p default-directory) "~/.ielm-history"))
-           (setq comint-input-ring-size 100000)
-           (setq comint-input-ignoredups t)
-           (comint-read-input-ring)
-           (add-hook 'kill-buffer-hook #'comint-write-input-ring)
-           (define-key ielm-map (kbd "C-c C-r") 'my/ielm-history)
-           (set-process-sentinel process #'my/ielm-write-history-on-exit))))
-
-     (add-hook 'ielm-mode-hook 'my/ielm-turn-on-history)
-   #+END_SRC
-* Package管理ツール
-** Cask
-   url: [[https://github.com/cask/cask][cask/cask]]
-
-   package managerにはCaskを使っています。
-   #+BEGIN_SRC emacs-lisp
-     (require 'cask "~/.cask/cask.el")
-     (cask-initialize)
-  #+END_SRC
-** use-package
-   [[https://qiita.com/kai2nenobu/items/5dfae3767514584f5220][use-packageで可読性の高いinit.elを書く(qiita)]] を参考に書いていく。
-
-   #+begin_src emacs-lisp
-     (require 'bind-key)
-   #+end_src
-* org-mode設定
-** 基本設定
-   #+BEGIN_SRC emacs-lisp
-     (setq org-use-speed-commands t)
-     (setq org-agenda-todo-ignore-with-date t)
-     (setq org-directory "~/org")
-     (setq org-agenda-files '("~/org/todo.org"))
-     (setq org-todo-keywords
-           '((sequence "TODO(t)" "WAIT(w)" "|" "DONE(d)")))
-     (setq org-capture-templates
-           '(("t" "Todo" entry (file+datetree "~/org/todo.org")
-              "* TODO %?")
-             ("b" "Blog" entry (file "~/org/blog.org")
-              "* %?")
-             ("m" "Memo" entry (file "~/org/memo.org")
-              "* %?")))
-  #+END_SRC
 ** keybind
    #+BEGIN_SRC emacs-lisp
-     (add-hook 'org-mode-hook
-               (lambda ()
-                 (define-key org-mode-map (kbd "C-m") nil)))
-   #+END_SRC
-* テーマ
-** neotree
-   #+BEGIN_SRC emacs-lisp
-     (use-package neotree
-       :init
-       (add-hook 'neotree-mode-hook
-                 (lambda ()
-                   (with-current-buffer " *NeoTree*"
-                     (setq-local linum-mode nil))))
-       :config
-       (setq-default neo-show-hidden-files t)
-       (setq neo-window-fixed-size nil)
-       (defun neo-buffer--insert-fold-symbol (name &optional file-name)
-         "Custom overriding function for the fold symbol.
-         `NAME' decides what fold icon to use, while `FILE-NAME' decides
-         what file icon to use."
-         (or (and (equal name 'open)  (insert (all-the-icons-icon-for-dir file-name "down")))
-             (and (equal name 'close) (insert (all-the-icons-icon-for-dir file-name "right")))
-             (and (equal name 'leaf)  (insert (format "\t\t\t%s\t" (all-the-icons-icon-for-file file-name))))))
-       (defun neo-buffer--insert-dir-entry (node depth expanded)
-         (let ((node-short-name (neo-path--file-short-name node)))
-           (insert-char ?\s (* (- depth 1) 2)) ; indent
-           (when (memq 'char neo-vc-integration)
-             (insert-char ?\s 2))
-           (neo-buffer--insert-fold-symbol
-            (if expanded 'open 'close) node)
-           (insert-button (concat node-short-name "/")
-                          'follow-link t
-                          'face neo-dir-link-face
-                          'neo-full-path node
-                          'keymap neotree-dir-button-keymap)
-           (neo-buffer--node-list-set nil node)
-           (neo-buffer--newline-and-begin)))
-       (defun neo-buffer--insert-file-entry (node depth)
-         (let ((node-short-name (neo-path--file-short-name node))
-               (vc (when neo-vc-integration (neo-vc-for-node node))))
-           (insert-char ?\s (* (- depth 1) 2)) ; indent
-           (when (memq 'char neo-vc-integration)
-             (insert-char (car vc))
-             (insert-char ?\s))
-           (neo-buffer--insert-fold-symbol 'leaf node-short-name)
-           (insert-button node-short-name
-                          'follow-link t
-                          'face (if (memq 'face neo-vc-integration)
-                                    (cdr vc)
-                                  neo-file-link-face)
-                          'neo-full-path node
-                          'keymap neotree-file-button-keymap)
-           (neo-buffer--node-list-set nil node)
-           (neo-buffer--newline-and-begin)))
-       :custom
-       (neo-theme 'nerd2))
-   #+END_SRC
-** doom-theme
-   #+BEGIN_SRC emacs-lisp
-     ;; doom themes
-     (use-package doom-themes
-       :custom
-       (doom-themes-enable-italic t)
-       (doom-themes-enable-bold t)
-       :custom-face
-       (doom-modeline-bar ((t (:background "#6272a4"))))
-       :config
-       (load-theme 'tango-dark t)
-       (doom-themes-neotree-config)
-       (doom-themes-org-config))
+     (keyboard-translate ?\C-h ?\C-?)
 
-     ;; doom modeline
-     (use-package doom-modeline
-       :custom
-       (doom-modeline-buffer-file-name-style 'truncate-with-project)
-       (doom-modeline-icon t)
-       (doom-modeline-major-mode-icon nil)
-       (doom-modeline-minor-modes nil)
-       :hook
-       (after-init . doom-modeline-mode)
-       :config
-       (line-number-mode 0)
-       (column-number-mode 0))
-  #+END_SRC
-* Package
-** hl-line
-   url: [[https://www.emacswiki.org/emacs/HighlightCurrentLine][https://www.emacswiki.org/emacs/HighlightCurrentLine]]
-
-   現在の行をハイライトするパッケージ。
-   #+BEGIN_SRC emacs-lisp
-     (use-package hl-line
-       :config
-       (set-face-background 'hl-line "#444642")
-       (set-face-attribute 'hl-line nil :inherit nil)
-       (defvar global-hl-line-timer-exclude-modes '(todotxt-mode))
-       (defun global-hl-line-timer-function ()
-         (unless (memq major-mode global-hl-line-timer-exclude-modes)
-           (global-hl-line-unhighlight-all)
-           (let ((global-hl-line-mode t))
-             (global-hl-line-highlight))))
-       (setq global-hl-line-timer
-             (run-with-idle-timer 0.03 t 'global-hl-line-timer-function)))
+     (general-define-key
+      "C-h" 'backward-delete-char
+      "C-z" 'undo
+      "C-?" 'help-command
+      "C-m" 'set-mark-command
+      "C-a" 'back-to-indentation
+      "C-x C-k" nil)
    #+END_SRC
-** hl-todo
-   url: [[http://emacs.rubikitch.com/hl-todo/][http://emacs.rubikitch.com/hl-todo/]]
-
-   TODOやFIXMEなどのキーワードをハイライトするパッケージ。
-   #+BEGIN_SRC emacs-lisp
-     (use-package hl-todo
-       :init
-       (global-hl-todo-mode 1)
-       :config
-       (setq hl-todo-keyword-faces
-             '(("HOLD" . "#d0bf8f")
-               ("WAIT" . "#d0bf8f")
-               ("TODO" . "#cc9393")
-               ("NEXT" . "#dca3a3")
-               ("THEM" . "#dc8cc3")
-               ("REMIND" . "#dc8cc3")
-               ("PROG" . "#7cb8bb")
-               ("OKAY" . "#7cb8bb")
-               ("DONT" . "#5f7f5f")
-               ("FAIL" . "#8c5353")
-               ("SOMEDAY" . "#8c5353")
-               ("DONE" . "#afd8af")
-               ("FIXME" . "#cc9393")
-               ("???"   . "#cc9393"))))
-   #+END_SRC
-** all-the-icons
-   url: [[https://github.com/domtronn/all-the-icons.el][https://github.com/domtronn/all-the-icons.el]]
-
-   アイコンを追加するパッケージ。dired-mode時のみ有効にしている。
-   #+BEGIN_SRC emacs-lisp
-     (use-package all-the-icons
-       :init
-       (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
-   #+END_SRC
-** all-the-icons-ivy
-   url: [[https://github.com/asok/all-the-icons-ivy][https://github.com/asok/all-the-icons-ivy]]
-   #+BEGIN_SRC emacs-lisp
-     (use-package all-the-icons-ivy
-       :config
-       (all-the-icons-ivy-setup))
-   #+END_SRC
-** editorconfig
-   url: [[https://github.com/editorconfig/editorconfig-emacs][https://github.com/editorconfig/editorconfig-emacs]]
-
-   editorconfigを有効にするパッケージ。
-   #+BEGIN_SRC emacs-lisp
-     (use-package editorconfig
-       :config
-       (editorconfig-mode 1))
-   #+END_SRC
-** open-junk-file
-   url: [[https://www.emacswiki.org/emacs/open-junk-file.el][https://www.emacswiki.org/emacs/open-junk-file.el]]
-
-   使い捨てファイルを作成するパッケージ。
-   #+BEGIN_SRC emacs-lisp
-     (use-package open-junk-file
-       :config
-       (setq open-junk-file-format "~/.emacs.d/.junk/%Y-%m%d-%H%M%S."))
-   #+END_SRC
-** smartrep/multiple-cursors
-   url: [[https://qiita.com/scalper/items/b9e357b3af071c930777][https://qiita.com/scalper/items/b9e357b3af071c930777]]
-
-   複数cursorを便利に扱えるようにした。
-   #+BEGIN_SRC emacs-lisp
-     (use-package multiple-cursors
-       :init
-       (require 'smartrep)
-       (declare-function smartrep-define-key "smartrep")
-       (bind-key "C-M-c" 'mc/edit-lines)
-       (bind-key "C-M-r" 'mc/mark-all-in-region)
-       (global-unset-key (kbd "C-t"))
-       (smartrep-define-key global-map "C-t"
-         '(("C-t" . 'mc/mark-next-like-this)
-           ("n"   . 'mc/mark-next-like-this)
-           ("p"   . 'mc/mark-previous-like-this)
-           ("m"   . 'mc/mark-more-like-this-extended)
-           ("u"   . 'mc/unmark-next-like-this)
-           ("U"   . 'mc/unmark-previous-like-this)
-           ("s"   . 'mc/skip-to-next-like-this)
-           ("S"   . 'mc/skip-to-previous-like-this)
-           ("*"   . 'mc/mark-all-like-this)
-           ("d"   . 'mc/mark-all-like-this-dwim)
-           ("i"   . 'mc/insert-numbers)
-           ("o"   . 'mc/sort-regions)
-           ("O"   . 'mc/reverse-regions))))
-   #+END_SRC
-** yasnippet
-   url: [[https://github.com/joaotavora/yasnippet][https://github.com/joaotavora/yasnippet]]
-
-   #+BEGIN_SRC emacs-lisp
-     (use-package yasnippet
-       :diminish yas-minor-mode)
-     (use-package yasnippet-snippets
-       :config
-       (yas-global-mode 1))
-   #+END_SRC
-** counsel
-   url: [[https://github.com/abo-abo/swiper][https://github.com/abo-abo/swiper]]
-   #+BEGIN_SRC emacs-lisp
-     (use-package counsel
-       :config
-       (setq ivy-use-virtual-buffers t)
-       (setq counsel-ag-base-command "ag --nocolor --nogroup -u %s")
-       (ivy-mode 1)
-       (counsel-mode 1)
-       (defun my/counsel-ag ()
-         (interactive)
-         (let ((symbol (thing-at-point 'symbol 'no-properties))
-               (default-directory (locate-dominating-file default-directory ".git")))
-           (counsel-ag symbol)))
-       :bind
-       (("C-x m" . counsel-compile)))
-   #+END_SRC
-** recentf
-   url: [https://www.emacswiki.org/emacs/RecentFiles][https://www.emacswiki.org/emacs/RecentFiles]]
-   #+BEGIN_SRC emacs-lisp
-     (use-package recentf
-       :config
-       (setq recentf-max-saved-items 10000)
-       (setq recentf-auto-cleanup 'never)
-       (setq recentf-save-file "~/.emacs.d/.recentf")
-       (setq recentf-exclude '(".recentf"))
-       (recentf-mode 1))
-   #+END_SRC
-** magit
-   url: [[https://www.emacswiki.org/emacs/Magit][https://www.emacswiki.org/emacs/Magit]]
-   #+BEGIN_SRC emacs-lisp
-     (use-package magit
-       :ensure t)
-   #+END_SRC
-** ivy-rich
-   url: [[https://github.com/Yevgnen/ivy-rich][https://github.com/Yevgnen/ivy-rich]]
-   #+BEGIN_SRC emacs-lisp
-     (use-package ivy-rich
-       :config
-       (ivy-rich-mode 1))
-   #+END_SRC
-** ace-window
-   url: [[http://emacs.rubikitch.com/ace-window/][http://emacs.rubikitch.com/ace-window/]]
-   #+BEGIN_SRC emacs-lisp
-     (use-package ace-window
-       :config
-       (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
-   #+END_SRC
-** goto-addr
-   url: [[https://www.emacswiki.org/emacs/GotoAddress][https://www.emacswiki.org/emacs/GotoAddress]]
-   #+BEGIN_SRC emacs-lisp
-     (use-package goto-addr
-       :hook ((prog-mode . goto-address-prog-mode)(text-mode . goto-address-mode)))
-   #+END_SRC
-** swoop
-   url: [[https://www.emacswiki.org/emacs/HelmSwoop][https://www.emacswiki.org/emacs/HelmSwoop]]
-   #+BEGIN_SRC emacs-lisp
-     (use-package swoop
-       :config
-       (setq swoop-minibuffer-input-dilay 0.4)
-       (defun my/swoop-from-isearch ()
-         (interactive)
-         (let* ((symbol (thing-at-point 'symbol 'no-properties)))
-           (swoop symbol))))
-
-     (define-key ivy-mode-map (kbd "C-o") 'my/swoop-from-isearch)
-   #+END_SRC
-** whitespace
-   url: [[https://www.emacswiki.org/emacs/WhiteSpace][https://www.emacswiki.org/emacs/WhiteSpace]]
-   #+BEGIN_SRC emacs-lisp
-     (use-package whitespace
-       :config
-       (setq whitespace-style '(face tabs tab-mark spaces space-mark))
-       (setq whitespace-display-mappings
-             '((space-mark ?\u3000 [?\u25a1])
-               (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t])))
-       (setq whitespace-space-regexp "\\(\u3000+\\)")
-       (set-face-foreground 'whitespace-tab "#adff2f")
-       (set-face-background 'whitespace-tab 'nil)
-       (set-face-underline  'whitespace-tab t)
-       (set-face-foreground 'whitespace-space "#7cfc00")
-       (set-face-background 'whitespace-space 'nil)
-       (set-face-bold-p 'whitespace-space t)
-       (global-whitespace-mode 1))
-   #+END_SRC
-** dashboard
-   url: [[https://www-he.scphys.kyoto-u.ac.jp/member/shotakaha/dokuwiki/doku.php?id=toolbox:emacs:dashboard:start][https://www-he.scphys.kyoto-u.ac.jp/member/shotakaha/dokuwiki/doku.php?id=toolbox:emacs:dashboard:start]]
-   #+BEGIN_SRC emacs-lisp
-     (use-package dashboard
-       :config
-       (dashboard-setup-startup-hook))
-   #+END_SRC
-** company
-   #+BEGIN_SRC emacs-lisp
-     (use-package company
-       :init
-       (global-company-mode)
-       :config
-       (define-key company-active-map (kbd "C-n") 'company-select-next)
-       (define-key company-active-map (kbd "C-p") 'company-select-previous))
-
-     (use-package company-glsl
-       :config
-       (add-to-list 'company-backends 'company-glsl))
-   #+END_SRC
-** git-gutter
-   #+BEGIN_SRC emacs-lisp
-     (use-package git-gutter-fringe
-       :config
-       (global-git-gutter-mode +1))
-   #+END_SRC
-** smooth-scroll
-   #+BEGIN_SRC emacs-lisp
-     (use-package smooth-scroll
-       :config
-       (smooth-scroll-mode t))
-   #+END_SRC
-** exec-path-from-shell
-   #+BEGIN_SRC emacs-lisp
-     (defun my-exec-path-from-shell-initialize ()
-       (when (memq window-system '(mac ns x))
-         (exec-path-from-shell-copy-envs '("PATH" "GEM_HOME" "GOPATH"))
-         (exec-path-from-shell-initialize)))
-
-     (use-package exec-path-from-shell
-       :init
-       (add-hook 'after-init-hook 'my-exec-path-from-shell-initialize))
-   #+END_SRC
-** hindent
-   #+BEGIN_SRC emacs-lisp
-     (use-package hindent
-       :init
-       (add-hook 'haskell-mode-hook #'hindent-mode)
-       :config
-       (setq hindent-style "johan-tibell"))
-   #+END_SRC
-** tide
-   #+BEGIN_SRC emacs-lisp
-     (use-package tide
-       :ensure t
-       :init
-       (defun my/setup-tide-mode ()
-         (interactive)
-         (tide-setup)
-         (tide-hl-identifier-mode +1))
-       (add-hook 'typescript-mode-hook #'my/setup-tide-mode))
-   #+END_SRC
-** ivy-ghq
-   #+BEGIN_SRC emacs-lisp
-     (use-package ivy-ghq
-       :commands (ivy-ghq-open)
-       :bind
-       ("M-o" . ivy-ghq-open-and-fzf)
-       :custom
-       (ivy-ghq-short-list t)
-       :preface
-       (defun ivy-ghq-open-and-fzf ()
-         (interactive)
-         (ivy-ghq-open)
-         (counsel-fzf)))
-   #+END_SRC
-** vterm
-  #+BEGIN_SRC emacs-lisp
-    ;; (use-package vterm
-    ;;   :init
-    ;;   (add-hook 'vterm-mode-hook #'(lambda ()
-    ;;                                  (setq show-trailing-whitespace nil)))
-    ;;   :bind (([mouse-1] . nil)
-    ;;          ([mouse-2] . nil)
-    ;;          ([mouse-3] . nil)
-    ;;          ([mouse-4] . nil)
-    ;;          ([mouse-5] . nil)))
-  #+END_SRC
-** omnisharp
-   #+BEGIN_SRC emacs-lisp
-     (use-package omnisharp
-       :ensure t
-       :init
-       (add-hook 'csharp-mode-hook 'omnisharp-mode)
-       (add-hook 'csharp-mode-hook #'flycheck-mode)
-       ;; :bind ("." . 'omnisharp-add-dot-and-auto-complete)
-       :config
-       (add-to-list 'company-backends 'company-omnisharp))
-   #+END_SRC
-** nameless
-   #+BEGIN_SRC emacs-lisp
-     (use-package nameless
-       :init
-       (add-hook 'emacs-lisp-mode-hook 'nameless-mode))
-   #+END_SRC
-** esup
-   #+BEGIN_SRC emacs-lisp
-     (use-package esup
-       :ensure t)
-   #+END_SRC
-** robe
-   #+begin_src emacs-lisp
-     (use-package robe
-       :init
-       (add-hook 'ruby-mode-hook 'robe-mode)
-       :config
-       (push 'company-robe company-backends))
-   #+end_src
-** rubocop
-   #+begin_src emacs-lisp
-     (use-package rubocop
-       :init
-       (add-hook 'ruby-mode-hook 'rubocop-mode))
-   #+end_src
-** flycheck
-   #+begin_src emacs-lisp
-     (use-package flycheck
-       :init
-       (add-hook 'ruby-mode-hook 'flycheck-mode)
-       (add-hook 'ruby-mode-hook
-                 '(lambda ()
-                    (setq flycheck-checker 'ruby-rubocop)))
-       :config
-       (flycheck-define-checker ruby-rubocop
-         "A Ruby syntax and style checker using the RuboCop tool."
-         :command ("rubocop" "--format" "emacs"
-                   (config-file "--config" flycheck-rubocoprc)
-                   source)
-         :error-patterns
-         ((warning line-start
-                   (file-name) ":" line ":" column ": " (or "C" "W") ": " (message)
-                   line-end)
-          (error line-start
-                 (file-name) ":" line ":" column ": " (or "E" "F") ": " (message)
-                 line-end))
-         :modes (ruby-mode motion-mode))
-       (setq flycheck-check-syntax-automatically '(mode-enabled save)))
-   #+end_src
-** helpful
-   #+BEGIN_SRC emacs-lisp
-     (use-package helpful
-       :bind
-       (("C-? f" . #'helpful-callable)
-        ("C-? v" . #'helpful-variable)
-        ("C-? k" . #'helpful-key)
-        ("C-c C-d" . #'helpful-at-point)
-        ("C-? F" . #'helpful-function)
-        ("C-? C" . #'helpful-command))
-       :config
-       (setq counsel-describe-function-function #'helpful-callable)
-       (setq counsel-describe-variable-function #'helpful-variable))
-   #+END_SRC
-** sql-indent
-   #+BEGIN_SRC emacs-lisp
-     (use-package sql-indent
-       :init
-       (add-hook 'sql-mode-hook 'sqlind-minor-mode))
-   #+END_SRC
-** aweshell
-   #+BEGIN_SRC emacs-lisp
-     (use-package aweshell)
-   #+END_SRC
-** racer
-   #+BEGIN_SRC emacs-lisp
-     (use-package racer
-       :init
-       (add-hook 'rust-mode-hook #'racer-mode)
-       (add-hook 'racer-mode-hook #'eldoc-mode))
-   #+END_SRC
-** rastic
-   #+BEGIN_SRC emacs-lisp
-     (use-package rustic
-       :init
-       (add-hook 'rust-mode-hook #'rustic-mode)
-       (add-hook 'rustic-mode-hook #'eldoc-mode))
-   #+END_SRC
-* Lisp
-** slime
-   #+BEGIN_SRC emacs-lisp
-     (with-eval-after-load 'slime
-       ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
-       ;; (setq inferior-lisp-program "sbcl")
-       (load (expand-file-name "~/.roswell/helper.el"))
-       (add-hook 'slime-mode-hook 'set-up-slime-ac)
-       (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
-       (define-key slime-repl-mode-map (kbd "C-c C-r") 'my/slime-history))
-   #+END_SRC
-** paredit
-   #+BEGIN_SRC emacs-lisp
-     (use-package paredit
-       :config
-       (autoload 'enable-paredit-mode "paredit" t)
-       (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
-       (add-hook 'lisp-mode-hook 'enable-paredit-mode)
-       (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
-       (add-hook 'scheme-mode-hook 'enable-paredit-mode)
-       (eval-after-load "paredit"
-         #'(define-key paredit-mode-map (kbd "C-c f") 'paredit-forward-slurp-sexp))
-       (eval-after-load "paredit"
-         #'(define-key paredit-mode-map (kbd "C-c b") 'paredit-forward-barf-sexp)))
-   #+END_SRC
-** hyperspec
-   #+BEGIN_SRC emacs-lisp
-     (setq common-lisp-hyperspec-root "~/.roswell/HyperSpec/")
-
-     (defun common-lisp-hyperspec (symbol-name)
-         (interactive (list (common-lisp-hyperspec-read-symbol-name)))
-         (let ((name (common-lisp-hyperspec--strip-cl-package
-                         (downcase symbol-name))))
-             (cl-maplist (lambda (entry)
-                             (eww-open-file (concat common-lisp-hyperspec-root "Body/"
-                                                (car entry)))
-                             (when (cdr entry)
-                                 (sleep-for 1.5)))
-                 (or (common-lisp-hyperspec--find name)
-                     (error "The symbol `%s' is not defined in Common Lisp"
-                         symbol-name)))))
-
-     (defun common-lisp-hyperspec-lookup-reader-macro (macro)
-       (interactive
-        (list
-         (let ((completion-ignore-case t))
-           (completing-read "Look up reader-macro: "
-                            common-lisp-hyperspec--reader-macros nil t
-                            (common-lisp-hyperspec-reader-macro-at-point)))))
-       (eww-open-file
-        (concat common-lisp-hyperspec-root "Body/"
-                (gethash macro common-lisp-hyperspec--reader-macros))))
-
-     (defun common-lisp-hyperspec-format (character-name)
-       (interactive (list (common-lisp-hyperspec--read-format-character)))
-       (cl-maplist (lambda (entry)
-                     (eww-open-file (common-lisp-hyperspec-section (car entry))))
-                   (or (gethash character-name
-                                common-lisp-hyperspec--format-characters)
-                       (error "The symbol `%s' is not defined in Common Lisp"
-                              character-name))))
-
-     (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
-       (let ((buf (current-buffer)))
-         ad-do-it
-         (switch-to-buffer buf)
-         (pop-to-buffer "*eww*")))
-
-     (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
-       (let ((buf (current-buffer)))
-         ad-do-it
-         (switch-to-buffer buf)
-         (pop-to-buffer "*eww*")))
-
-     (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
-       (let ((buf (current-buffer)))
-         ad-do-it
-         (switch-to-buffer buf)
-         (pop-to-buffer "*eww*")))
-     (dolist (hook '(emacs-lisp-mode-hook
-                     lisp-interaction-mode-hook
-                     ielm-mode-hook))
-       (add-hook hook 'elisp-slime-nav-mode))
-
-     (define-key lisp-mode-map (kbd "C-c h") 'hyperspec-lookup)
-   #+END_SRC
-** rainbow-dpelimiters
-   #+BEGIN_SRC emacs-lisp
-     (use-package rainbow-delimiters
-       :init
-       (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
-  #+END_SRC
-** cider
-   emacsからleiningenを扱えるようにするpackage
-   公式document: [[https://docs.cider.mx/cider/index.html][https://docs.cider.mx/cider/index.html]]
-   #+BEGIN_SRC emacs-lisp
-     (use-package cider
-       :ensure t)
-   #+END_SRC
-* LSP
-** lsp-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package lsp-mode
-       :ensure t)
-
-     (dolist (hook '(go-mode-hook
-                     lsp-deferred
-                     js2-mode-hook
-                     css-mode-hook
-                     scss-mode-hook
-                     haskell-mode-hook
-                     typescript-mode-hook
-                     java-mode-hook
-                     vue-mode-hook
-                     sh-mode-hook
-                     shell-mode-hook
-                     php-mode-hook
-                     python-mode-hook))
-       (add-hook hook #'lsp))
-     (add-hook 'lsp-mode-hook 'flycheck-mode)
-
-     (use-package lsp-java
-       :ensure t)
-     (use-package lsp-haskell
-       :ensure t)
-   #+END_SRC
-** lsp-ui
-   #+BEGIN_SRC emacs-lisp
-     (use-package lsp-ui
-       :ensure t
-       :init
-       (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-       :bind (("M-." . 'lsp-ui-peek-find-definitions)
-              ("M-?" . 'lsp-ui-peek-find-implementation))
-       :config
-       (setq lsp-ui-doc-enable t)
-       (setq lsp-ui-doc-max-height 15)
-       (setq lsp-ui-sideline-enable nil)
-       (setq lsp-ui-imenu-enable nil)
-       (setq lsp-ui-sideline-enable nil))
-   #+END_SRC
-** company-lsp
-   #+BEGIN_SRC emacs-lisp
-     (use-package company-lsp
-       :ensure t
-       :config
-       (push 'company-lsp company-backends))
-   #+END_SRC
-** dap-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package dap-mode
-       :ensure t
-       :bind
-       (("C-c d" . 'dap-breakpoint-toggle))
-       :config
-       (dap-mode 1)
-       (dap-ui-mode 1))
-     ;; (use-package dap-php
-     ;;   :ensure t
-     ;; (use-package dap-node
-     ;;   :ensure t
-     ;; (use-package dap-ruby
-     ;;   :ensure t
-     ;; (use-package dap-chrome
-     ;;   :ensure t
-  #+END_SRC
-* Mode
-** fundamental-mode
-   #+BEGIN_SRC emacs-lisp
-     (add-to-list 'auto-mode-alist '("\\.elc$" . fundamental-mode))
-   #+END_SRC
-** ruby-mode
-   #+BEGIN_SRC emacs-lisp
-     (add-to-list 'auto-mode-alist '("Schemafile" . ruby-mode))
-   #+END_SRC
-** lisp-mode
-   #+BEGIN_SRC emacs-lisp
-     (add-to-list 'auto-mode-alist '("Cask" . lisp-mode))
-     (add-to-list 'auto-mode-alist '("\\.lemrc?$" . lisp-mode))
-   #+END_SRC
-** web-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package web-mode
-       :mode (("\\.html?\\'" . web-mode)
-              ("\\.erb\\'" . web-mode)
-              ("\\.gsp\\'" . web-mode)
-              ("\\.tsx\\'" . web-mode))
-       :init
-       (add-hook 'web-mode-hook
-                 (lambda ()
-                   (when (string-equal "tsx" (file-name-extension buffer-file-name))
-                     (my/setup-tide-mode))))
-       :config
-       (setq web-mode-auto-close-style t)
-       (setq web-mode-tag-auto-close-style t))
-   #+END_SRC
-** go-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package go-mode
-       :mode (("\\.go$" . go-mode)))
-   #+END_SRC
-** terraform-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package terraform-mode
-       :mode (("\\.tf$" . terraform-mode)))
-   #+END_SRC
-** markdown-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package markdown-mode
-       :mode (("\\.md$" . markdown-mode)
-              ("\\.markdown$" . markdown-mode)))
-   #+END_SRC
-** yaml-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package yaml-mode
-       :mode (("\\.ya?ml$" . yaml-mode)))
-   #+END_SRC
-** json-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package json-mode
-       :mode (("\\.json$" . json-mode)))
-   #+END_SRC
-** dockerfile-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package dockerfile-mode
-       :mode (("Dockerfile\\'" . dockerfile-mode)))
-   #+END_SRC
-** fish-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package fish-mode
-       :mode (("\\.fish$" . fish-mode)))
-   #+END_SRC
-** dhall-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package dhall-mode
-       :mode (("\\dhall$" . dhall-mode)))
-   #+END_SRC
-** js2-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package js2-mode
-       :mode (("\\.js$" . js2-mode))
-       :init
-       (add-hook 'js2-mode-hook #'js2-refactor-mode)
-       :config
-       (setq js2-skip-preprocessor-directives t))
-   #+END_SRC
-** typescript-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package typescript-mode
-       :mode (("\\.ts$" . typescript-mode)))
-   #+END_SRC
-** slim-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package slim-mode
-       :mode (("\\.slim$" . slim-mode)))
-   #+END_SRC
-** coffee-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package coffee-mode
-       :mode (("\\.coffee$" . coffee-mode)))
-   #+END_SRC
-** scala-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package scala-mode
-       :mode (("\\.scala$" . scala-mode)))
-   #+END_SRC
-** nginx-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package nginx-mode
-       :mode (("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode)))
-   #+END_SRC
-** ssh-config-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package ssh-config-mode
-       :mode (("/path-to-your-ssh/config\\$" . ssh-config-mode)))
-   #+END_SRC
-** php-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package php-mode
-       :mode (("\\.php$" . php-mode)))
-   #+END_SRC
+* Major/Minor Mode
 ** clojure-mode
    #+BEGIN_SRC emacs-lisp
      (use-package clojure-mode
        :mode (("\\.clj$" . clojure-mode)
               ("\\.cljs$" . clojurescript-mode)))
    #+END_SRC
-** vue-mode
+** cmake-mode
    #+BEGIN_SRC emacs-lisp
-     (use-package vue-mode
-       :mode (("\\.vue$" . vue-mode))
-       :config
-       (setq mmm-js-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
-       (setq mmm-typescript-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
-       (setq indent-tabs-mode nil
-             js-indent-level 2))
+     (use-package cmake-mode
+       :mode (("\\.cmake$" . cmake-mode)))
+   #+END_SRC
+** coffee-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package coffee-mode
+       :mode (("\\.coffee$" . coffee-mode)))
+   #+END_SRC
+** csharp-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package csharp-mode
+       :mode (("\\.cs$" . csharp-mode)))
+   #+END_SRC
+** TODO csv-mode
+** dhall-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package dhall-mode
+       :mode (("\\dhall$" . dhall-mode)))
+   #+END_SRC
+** docker-compose-mode
+   #+begin_src emacs-lisp
+     (use-package docker-compose-mode
+       :mode (("docker-compose*" . docker-compose-mode)))
+   #+end_src
+** dockerfile-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package dockerfile-mode
+       :mode (("Dockerfile\\'" . dockerfile-mode)))
+   #+END_SRC
+** TODO emmet-mode
+   #+BEGIN_SRC emacs-lisp
+     ;; (use-package emmet-mode
+     ;;   :init
+     ;;   (add-hook 'web-mode-hook 'emmet-mode)
+     ;;   (add-hook 'vue-mode 'emmet-mode)
+     ;;   :config
+     ;;   (define-key emmet-mode-keymap (kbd "C-j") nil))
+   #+END_SRC
+** fish-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package fish-mode
+       :mode (("\\.fish$" . fish-mode)))
+   #+END_SRC
+** gitignore-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package gitignore-mode
+       :mode (("\\.dockerignore$" . gitignore-mode)))
    #+END_SRC
 ** glsl-mode
    #+BEGIN_SRC emacs-lisp
@@ -967,51 +183,57 @@
        :mode (("\\.vsh$" . glsl-mode)
               ("\\.fsh$" . glsl-mode)))
    #+END_SRC
-** emmet-mode
+** go-mode
    #+BEGIN_SRC emacs-lisp
-     (use-package emmet-mode
-       :init
-       (add-hook 'web-mode-hook 'emmet-mode)
-       (add-hook 'vue-mode 'emmet-mode)
-       :config
-       (define-key emmet-mode-keymap (kbd "C-j") nil))
-   #+END_SRC
-** nyan-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package nyan-mode
-       :init
-       (nyan-mode)
-       (nyan-start-animation)
-       :config
-       (setq nyan-wavy-trail t))
-   #+END_SRC
-** haskell-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package haskell-mode
-       :mode (("\\.hs$" . haskell-mode)
-              ("\\.lhs$" . literate-haskell-mode)
-              ("\\.cable$" . haskell-cabal-mode))
-       :bind (("C-m" . nil)))
+     (use-package go-mode
+       :mode (("\\.go$" . go-mode)))
    #+END_SRC
 ** gradle-mode
    #+BEGIN_SRC emacs-lisp
      (use-package gradle-mode
        :mode (("\\.gradle$" . java-mode)))
    #+END_SRC
-** cmake-mode
+** TODO haskell-mode
    #+BEGIN_SRC emacs-lisp
-     (use-package cmake-mode
-       :mode (("\\.cmake$" . cmake-mode)))
+     ;; (use-package haskell-mode
+     ;;   :mode (("\\.hs$" . haskell-mode)
+     ;;          ("\\.cable$" . haskell-cabal-mode))
+     ;;   :bind (("C-m" . nil)))
    #+END_SRC
-** toml-mode
+** TODO js2-mode
    #+BEGIN_SRC emacs-lisp
-     (use-package toml-mode
-       :mode (("\\.toml$" . toml-mode)))
+     ;; (use-package js2-mode
+     ;;   :mode (("\\.js$" . js2-mode))
+     ;;   :init
+     ;;   (add-hook 'js2-mode-hook #'js2-refactor-mode)
+     ;;   :config
+     ;;   (setq js2-skip-preprocessor-directives t))
    #+END_SRC
-** gitignore-mode
+** json-mode
    #+BEGIN_SRC emacs-lisp
-     (use-package gitignore-mode
-       :mode (("\\.dockerignore$" . gitignore-mode)))
+     (use-package json-mode
+       :mode (("\\.json$" . json-mode)))
+   #+END_SRC
+** lisp-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package lisp-mode
+       :mode ("Cask" "\\.lemrc?$"))
+   #+END_SRC
+** markdown-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package markdown-mode
+       :mode (("\\.md$" . markdown-mode)
+              ("\\.markdown$" . markdown-mode)))
+   #+END_SRC
+** nginx-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package nginx-mode
+       :mode (("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode)))
+   #+END_SRC
+** php-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package php-mode
+       :mode (("\\.php$" . php-mode)))
    #+END_SRC
 ** plantuml-mode
    #+BEGIN_SRC emacs-lisp
@@ -1023,54 +245,593 @@
      (use-package processing-mode
        :mode (("\\.pde$" . processing-mode))
        :config
-       (setq processing-location "/opt/processing/processing-java")
-       (setq processing-output-dir "/tmp"))
+       (setq-default processing-location "/opt/processing/processing-java")
+       (setq-default processing-output-dir "/tmp"))
   #+END_SRC
-** csharp-mode
+** ruby-mode
    #+BEGIN_SRC emacs-lisp
-     (use-package csharp-mode
-       :mode (("\\.cs$" . csharp-mode)))
+     (use-package ruby-mode
+       :mode ("\\.rb$" "Capfile" "Gemfile" "Schemafile")
+       :config
+       (setq-default ruby-insert-encoding-magic-comment nil))
    #+END_SRC
-** docker-compose-mode
-   #+begin_src emacs-lisp
-     (use-package docker-compose-mode
-       :mode (("docker-compose*" . docker-compose-mode)))
-   #+end_src
 ** rust-mode
    #+BEGIN_SRC emacs-lisp
      (use-package rust-mode
        :mode (("\\.rs$" . rust-mode)))
    #+END_SRC
+** scala-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package scala-mode
+       :mode (("\\.scala$" . scala-mode)))
+   #+END_SRC
 ** scheme-mode
    #+BEGIN_SRC emacs-lisp
-     (setq gosh-program-name "/usr/local/bin/gosh -i")
-     (add-hook 'inferior-scheme-mode-hook '(lambda()
-                                             (define-key inferior-scheme-mode-map "\C-p" 'comint-previous-input)
-                                             (define-key inferior-scheme-mode-map "\C-n" 'comint-next-input)))
+     (setq-default gosh-program-name "/usr/local/bin/gosh -i")
 
+     (general-def inferior-scheme-mode-map
+       "C-p" 'comint-previous-input
+       "C-n" 'comint-next-input)
    #+END_SRC
-* Refactor
-** emr
+** slim-mode
    #+BEGIN_SRC emacs-lisp
-     (use-package emr
-       :bind (("M-RET" . 'emr-show-refactor-menu)))
+     (use-package slim-mode
+       :mode (("\\.slim$" . slim-mode)))
    #+END_SRC
-** js2-refactor
+** ssh-config-mode
    #+BEGIN_SRC emacs-lisp
-     (use-package js2-refactor
-       :ensure t
+     (use-package ssh-config-mode
+       :mode (("/path-to-your-ssh/config\\$" . ssh-config-mode)))
+   #+END_SRC
+** terraform-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package terraform-mode
+       :mode (("\\.tf$" . terraform-mode)))
+   #+END_SRC
+** toml-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package toml-mode
+       :mode (("\\.toml$" . toml-mode)))
+   #+END_SRC
+** typescript-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package typescript-mode
+       :mode (("\\.ts$" . typescript-mode)))
+   #+END_SRC
+** TODO vue-mode
+   #+BEGIN_SRC emacs-lisp
+     ;; (use-package vue-mode
+     ;;   :mode (("\\.vue$" . vue-mode))
+     ;;   :config
+     ;;   (setq mmm-js-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
+     ;;   (setq mmm-typescript-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
+     ;;   (setq indent-tabs-mode nil
+     ;;         js-indent-level 2))
+   #+END_SRC
+** TODO web-mode
+   #+BEGIN_SRC emacs-lisp
+     ;; (use-package web-mode
+     ;;   :mode (("\\.html?\\'" . web-mode)
+     ;;          ("\\.erb\\'" . web-mode)
+     ;;          ("\\.gsp\\'" . web-mode)
+     ;;          ("\\.tsx\\'" . web-mode))
+     ;;   :init
+     ;;   (add-hook 'web-mode-hook
+     ;;             (lambda ()
+     ;;               (when (string-equal "tsx" (file-name-extension buffer-file-name))
+     ;;                 (my/setup-tide-mode))))
+     ;;   :config
+     ;;   (setq web-mode-auto-close-style t)
+     ;;   (setq web-mode-tag-auto-close-style t))
+   #+END_SRC
+** yaml-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package yaml-mode
+       :mode (("\\.ya?ml$" . yaml-mode)))
+   #+END_SRC
+* Awesome Package
+** Theme
+*** all-the-icons
+    #+BEGIN_SRC emacs-lisp
+      (use-package all-the-icons
+        :init
+        (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+    #+END_SRC
+*** TODO all-the-icons-ivy
+    #+BEGIN_SRC emacs-lisp
+      ;; (use-package all-the-icons-ivy
+      ;;   :config
+      ;;   (all-the-icons-ivy-setup))
+    #+END_SRC
+*** doom-modeline
+    #+BEGIN_SRC emacs-lisp
+      (use-package doom-modeline
+        :custom
+        (doom-modeline-buffer-file-name-style 'truncate-with-project)
+        (doom-modeline-icon t)
+        (doom-modeline-major-mode-icon nil)
+        (doom-modeline-minor-modes nil)
+        :hook
+        (after-init . doom-modeline-mode)
+        :config
+        (line-number-mode 0)
+        (column-number-mode 0))
+    #+END_SRC
+*** doom-theme
+    #+BEGIN_SRC emacs-lisp
+      (use-package doom-themes
+        :custom
+        (doom-themes-enable-italic t)
+        (doom-themes-enable-bold t)
+        :custom-face
+        (doom-modeline-bar ((t (:background "#6272a4"))))
+        :config
+        (load-theme 'tango-dark t)
+        (doom-themes-neotree-config)
+        (doom-themes-org-config))
+   #+END_SRC
+*** hl-line
+    #+BEGIN_SRC emacs-lisp
+      (use-package hl-line
+        :init
+        (global-hl-line-mode)
+        :config
+        (set-face-background 'hl-line "#444642")
+        (set-face-attribute 'hl-line nil :inherit nil))
+    #+END_SRC
+*** hl-todo
+    #+BEGIN_SRC emacs-lisp
+      (use-package hl-todo
+        :init
+        (global-hl-todo-mode 1)
+        :config
+        (setq hl-todo-keyword-faces
+              '(("HOLD" . "#d0bf8f")
+                ("WAIT" . "#d0bf8f")
+                ("TODO" . "#cc9393")
+                ("NEXT" . "#dca3a3")
+                ("THEM" . "#dc8cc3")
+                ("REMIND" . "#dc8cc3")
+                ("PROG" . "#7cb8bb")
+                ("OKAY" . "#7cb8bb")
+                ("DONT" . "#5f7f5f")
+                ("FAIL" . "#8c5353")
+                ("SOMEDAY" . "#8c5353")
+                ("DONE" . "#afd8af")
+                ("FIXME" . "#cc9393")
+                ("???"   . "#cc9393"))))
+    #+END_SRC
+*** neotree
+    #+BEGIN_SRC emacs-lisp
+      (use-package neotree
+        :after (all-the-icons)
+        :config
+        (setq-default neo-show-hidden-files t
+                      neo-window-fixed-size nil)
+        (defun neo-buffer--insert-fold-symbol (name &optional file-name)
+          (or (and (equal name 'open)  (insert (all-the-icons-icon-for-dir file-name "down")))
+              (and (equal name 'close) (insert (all-the-icons-icon-for-dir file-name "right")))
+              (and (equal name 'leaf)  (insert (format "\t\t\t%s\t" (all-the-icons-icon-for-file file-name))))))
+        (general-def "C-q"
+          (defun takeokunn/neotree-toggle ()
+            (interactive)
+            (let ((default-directory (locate-dominating-file default-directory ".git")))
+              (neotree-toggle))))
+        :custom
+        (neo-theme 'nerd2))
+    #+END_SRC
+*** nyan-mode
+    #+BEGIN_SRC emacs-lisp
+      (use-package nyan-mode
+        :custom
+        (nyan-cat-face-number 4)
+        (nyan-animate-nyancat t)
+        :hook
+        (doom-modeline-mode . nyan-mode))
+   #+END_SRC
+** Refactor
+*** TODO emr
+    #+BEGIN_SRC emacs-lisp
+      ;; (use-package emr
+      ;;   :commands (emr-show-refactor-menu)
+      ;;   :bind (("M-RET" . 'emr-show-refactor-menu)))
+    #+END_SRC
+** Completion
+*** yasnippet
+    #+BEGIN_SRC emacs-lisp
+      (use-package yasnippet
+        :diminish yas-minor-mode)
+
+      (use-package yasnippet-snippets
+        :after (yasnippet)
+        :config
+        (yas-global-mode 1))
+    #+END_SRC
+*** company
+   #+BEGIN_SRC emacs-lisp
+     (use-package company
        :init
-       (add-hook 'js2-mode-hook #'js2-refactor-mode)
-       (add-hook 'typescript-mode-hook #'js2-refactor-mode)
+       (global-company-mode)
        :config
-       (js2r-add-keybindings-with-prefix "C-c C-m"))
+       (define-key company-active-map (kbd "C-n") 'company-select-next)
+       (define-key company-active-map (kbd "C-p") 'company-select-previous))
    #+END_SRC
-** ruby-refactor
+*** company-glsl
+    #+BEGIN_SRC emacs-lisp
+      (use-package company-glsl
+        :after (company)
+        :config
+        (add-to-list 'company-backends 'company-glsl))
+    #+END_SRC
+*** company-lsp
+    #+BEGIN_SRC emacs-lisp
+      (use-package company-lsp
+        :after (company)
+        :config
+        (push 'company-lsp company-backends))
+    #+END_SRC
+** LSP
+*** lsp-mode
+    #+BEGIN_SRC emacs-lisp
+      (use-package lsp-mode)
+      (use-package lsp-java)
+      (use-package lsp-haskell)
+    #+END_SRC
+*** TODO lsp-ui
+    #+BEGIN_SRC emacs-lisp
+      (use-package lsp-ui
+        :after (lsp)
+        :init
+        (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+        ;; :bind (("M-." . 'lsp-ui-peek-find-definitions)
+        ;;        ("M-?" . 'lsp-ui-peek-find-implementation))
+        :config
+        (setq-default lsp-ui-doc-enable t
+                      lsp-ui-doc-max-height 15
+                      lsp-ui-sideline-enable nil
+                      lsp-ui-imenu-enable nil
+                      lsp-ui-sideline-enable nil))
+    #+END_SRC
+*** TODO dap-mode
+    #+BEGIN_SRC emacs-lisp
+      ;; (use-package dap-mode
+      ;;   :bind
+      ;;   (("C-c d" . 'dap-breakpoint-toggle))
+      ;;   :config
+      ;;   (dap-mode 1)
+      ;;   (dap-ui-mode 1))
+      ;; (use-package dap-php
+      ;;   :ensure t
+      ;; (use-package dap-node
+      ;;   :ensure t
+      ;; (use-package dap-ruby
+      ;;   :ensure t
+      ;; (use-package dap-chrome
+      ;;   :ensure t
+   #+END_SRC
+** Git
+*** magit
+    #+BEGIN_SRC emacs-lisp
+      (use-package magit)
+    #+END_SRC
+*** git-gutter
+    #+BEGIN_SRC emacs-lisp
+      (use-package git-gutter-fringe
+        :config
+        (global-git-gutter-mode +1))
+    #+END_SRC
+** Search
+*** TODO counsel
+    #+BEGIN_SRC emacs-lisp
+      ;; (use-package counsel
+      ;;   :config
+      ;;   (setq ivy-use-virtual-buffers t)
+      ;;   (setq counsel-ag-base-command "ag --nocolor --nogroup -u %s")
+      ;;   (ivy-mode 1)
+      ;;   (counsel-mode 1)
+      ;;   (defun my/counsel-ag ()
+      ;;     (interactive)
+      ;;     (let ((symbol (thing-at-point 'symbol 'no-properties))
+      ;;           (default-directory (locate-dominating-file default-directory ".git")))
+      ;;       (counsel-ag symbol)))
+      ;;   :bind
+      ;;   (("C-x m" . counsel-compile)))
+    #+END_SRC
+*** TODO ivy-ghq
+    #+BEGIN_SRC emacs-lisp
+      ;; (use-package ivy-ghq
+      ;;   :commands (ivy-ghq-open)
+      ;;   :bind
+      ;;   ("M-o" . ivy-ghq-open-and-fzf)
+      ;;   :custom
+      ;;   (ivy-ghq-short-list t)
+      ;;   :preface
+      ;;   (defun ivy-ghq-open-and-fzf ()
+      ;;     (interactive)
+      ;;     (ivy-ghq-open)
+      ;;     (counsel-fzf)))
+    #+END_SRC
+*** TODO ivy-rich
+    #+BEGIN_SRC emacs-lisp
+      ;; (use-package ivy-rich
+      ;;   :config
+      ;;   (ivy-rich-mode 1))
+    #+END_SRC
+*** TODO swoop
+    #+BEGIN_SRC emacs-lisp
+      ;; (use-package swoop
+      ;;   :config
+      ;;   (setq swoop-minibuffer-input-dilay 0.4)
+      ;;   (defun my/swoop-from-isearch ()
+      ;;     (interactive)
+      ;;     (let* ((symbol (thing-at-point 'symbol 'no-properties)))
+      ;;       (swoop symbol))))
+
+      ;; (define-key ivy-mode-map (kbd "C-o") 'my/swoop-from-isearch)
+    #+END_SRC
+
+** Shell
+*** aweshell
+    #+BEGIN_SRC emacs-lisp
+      (use-package aweshell)
+    #+END_SRC
+
+*** TODO exec-path-from-shell
+    #+BEGIN_SRC emacs-lisp
+      ;; (use-package exec-path-from-shell
+      ;;   :init
+      ;;   (add-hook 'after-init-hook 'my-exec-path-from-shell-initialize)
+      ;;   :config
+      ;;   (defun my-exec-path-from-shell-initialize ()
+      ;;     (when (memq window-system '(mac ns x))
+      ;;       (exec-path-from-shell-copy-envs '("PATH" "GEM_HOME" "GOPATH"))
+      ;;       (exec-path-from-shell-initialize))))
+    #+END_SRC
+
+** Rust
+*** racer
+    #+BEGIN_SRC emacs-lisp
+      (use-package racer
+        :after (rust-mode)
+        :init
+        (add-hook 'rust-mode-hook #'racer-mode)
+        (add-hook 'racer-mode-hook #'eldoc-mode))
+    #+END_SRC
+*** rastic
+    #+BEGIN_SRC emacs-lisp
+      (use-package rustic
+        :after (rust-mode)
+        :init
+        (add-hook 'rust-mode-hook #'rustic-mode)
+        (add-hook 'rustic-mode-hook #'eldoc-mode))
+    #+END_SRC
+** C#
+*** omnisharp
+    #+BEGIN_SRC emacs-lisp
+      (use-package omnisharp
+        :after (flycheck company)
+        :init
+        (add-hook 'csharp-mode-hook 'omnisharp-mode)
+        (add-hook 'csharp-mode-hook #'flycheck-mode)
+        :config
+        (add-to-list 'company-backends 'company-omnisharp))
+    #+END_SRC
+** JavaScript
+*** TODO js2-refactor
+    #+BEGIN_SRC emacs-lisp
+      ;; (use-package js2-refactor
+      ;;   :init
+      ;;   (add-hook 'js2-mode-hook #'js2-refactor-mode)
+      ;;   (add-hook 'typescript-mode-hook #'js2-refactor-mode)
+      ;;   :config
+      ;;   (js2r-add-keybindings-with-prefix "C-c C-m"))
+    #+END_SRC
+*** TODO tide
+    #+BEGIN_SRC emacs-lisp
+      ;; (use-package tide
+      ;;   :after (typescript-mode)
+      ;;   :init
+      ;;   (defun my/setup-tide-mode ()
+      ;;     (interactive)
+      ;;     (tide-setup)
+      ;;     (tide-hl-identifier-mode +1))
+      ;;   (add-hook 'typescript-mode-hook #'my/setup-tide-mode))
+    #+END_SRC
+** Haskell
+*** hindent
+    #+BEGIN_SRC emacs-lisp
+      ;; (use-package hindent
+      ;;   :after (haskell-mode)
+      ;;   :init
+      ;;   (add-hook 'haskell-mode-hook #'hindent-mode)
+      ;;   :config
+      ;;   (setq hindent-style "johan-tibell"))
+    #+END_SRC
+** Ruby
+*** robe
+    #+begin_src emacs-lisp
+      (use-package robe
+        :after (company ruby-mode)
+        :init
+        (add-hook 'ruby-mode-hook 'robe-mode)
+        :config
+        (push 'company-robe company-backends))
+    #+end_src
+*** rubocop
+    #+begin_src emacs-lisp
+      (use-package rubocop
+        :after (ruby-mode)
+        :init
+        (add-hook 'ruby-mode-hook 'rubocop-mode))
+    #+end_src
+*** ruby-refactor
+    #+BEGIN_SRC emacs-lisp
+      (use-package ruby-refactor
+        :init
+        (add-hook 'ruby-mode-hook 'ruby-refactor-mode-launch))
+    #+END_SRC
+** SQL
+*** sql-indent
+    #+BEGIN_SRC emacs-lisp
+      (use-package sql-indent
+        :after (sql-mode)
+        :init
+        (add-hook 'sql-mode-hook 'sqlind-minor-mode))
+    #+END_SRC
+** Lisp
+*** TODO ac-slime
+*** TODO cider
+*** TODO elisp-slime-nav
+*** nameless
+    #+BEGIN_SRC emacs-lisp
+      (use-package nameless
+        :init
+        (add-hook 'emacs-lisp-mode-hook 'nameless-mode))
+    #+END_SRC
+*** TODO paredit
+*** TODO rainbow-delimiters
+** File
+*** recentf
+    #+BEGIN_SRC emacs-lisp
+      (use-package recentf
+        :config
+        (setq-default recentf-max-saved-items 10000
+                      recentf-auto-cleanup 'never
+                      recentf-save-file "~/.emacs.d/.recentf"
+                      recentf-exclude '(".recentf"))
+        (recentf-mode 1))
+    #+END_SRC
+*** open-junk-file
+    #+BEGIN_SRC emacs-lisp
+      (use-package open-junk-file
+        :config
+        (setq open-junk-file-format "~/.emacs.d/.junk/%Y-%m%d-%H%M%S."))
+    #+END_SRC
+** Syntax
+*** flycheck
+    #+begin_src emacs-lisp
+      (use-package flycheck
+        :after (ruby-mode)
+        :init
+        (add-hook 'ruby-mode-hook 'flycheck-mode))
+    #+end_src
+** Cursor
+*** smartrep/multiple-cursors
+    #+BEGIN_SRC emacs-lisp
+      (use-package smartrep)
+
+      (use-package multiple-cursors
+        :after (smartrep)
+        :config
+        (declare-function smartrep-define-key "smartrep")
+        (global-unset-key (kbd "C-t"))
+        (smartrep-define-key global-map "C-t"
+          '(("C-t" . 'mc/mark-next-like-this)
+            ("n"   . 'mc/mark-next-like-this)
+            ("p"   . 'mc/mark-previous-like-this)
+            ("m"   . 'mc/mark-more-like-this-extended)
+            ("u"   . 'mc/unmark-next-like-this)
+            ("U"   . 'mc/unmark-previous-like-this)
+            ("s"   . 'mc/skip-to-next-like-this)
+            ("S"   . 'mc/skip-to-previous-like-this)
+            ("*"   . 'mc/mark-all-like-this)
+            ("d"   . 'mc/mark-all-like-this-dwim)
+            ("i"   . 'mc/insert-numbers)
+            ("o"   . 'mc/sort-regions)
+            ("O"   . 'mc/reverse-regions))))
+    #+END_SRC
+*** smooth-scroll
+    #+BEGIN_SRC emacs-lisp
+      (use-package smooth-scroll
+        :commands (smooth-scroll-mode)
+        :config
+        (smooth-scroll-mode 1))
+    #+END_SRC
+** Other
+*** ace-window
+    #+BEGIN_SRC emacs-lisp
+      (use-package ace-window
+        :config
+        (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+    #+END_SRC
+*** dashboard
+    #+BEGIN_SRC emacs-lisp
+      (use-package dashboard
+        :config
+        (dashboard-setup-startup-hook))
+    #+END_SRC
+*** editorconfig
+    #+BEGIN_SRC emacs-lisp
+      (use-package editorconfig
+        :config
+        (editorconfig-mode 1))
+    #+END_SRC
+*** esup
+    #+BEGIN_SRC emacs-lisp
+      (use-package esup)
+    #+END_SRC
+*** TODO font-lock-studio
+*** TODO google-this
+*** goto-addr
+    #+BEGIN_SRC emacs-lisp
+      (use-package goto-addr
+        :hook ((prog-mode . goto-address-prog-mode)
+               (text-mode . goto-address-mode)))
+    #+END_SRC
+*** TODO helpful
+    #+BEGIN_SRC emacs-lisp
+      ;; (use-package helpful
+      ;;   :bind
+      ;;   (("C-? f" . #'helpful-callable)
+      ;;    ("C-? v" . #'helpful-variable)
+      ;;    ("C-? k" . #'helpful-key)
+      ;;    ("C-c C-d" . #'helpful-at-point)
+      ;;    ("C-? F" . #'helpful-function)
+      ;;    ("C-? C" . #'helpful-command))
+      ;;   :config
+      ;;   (setq counsel-describe-function-function #'helpful-callable
+      ;;         counsel-describe-variable-function #'helpful-variable))
+    #+END_SRC
+*** TODO smartparens
+*** TODO smex
+*** whitespace
+    #+BEGIN_SRC emacs-lisp
+      (use-package whitespace
+        :config
+        (setq whitespace-style '(face tabs tab-mark spaces space-mark)
+              whitespace-display-mappings '((space-mark ?\u3000 [?\u25a1])
+                                            (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t]))
+              whitespace-space-regexp "\\(\u3000+\\)")
+        (set-face-foreground 'whitespace-tab "#adff2f")
+        (set-face-background 'whitespace-tab 'nil)
+        (set-face-underline  'whitespace-tab t)
+        (set-face-foreground 'whitespace-space "#7cfc00")
+        (set-face-background 'whitespace-space 'nil)
+        (global-whitespace-mode 1))
+    #+END_SRC
+* Org Mode
+** Settinngs
    #+BEGIN_SRC emacs-lisp
-     (use-package ruby-refactor
-       :ensure t
-       :init
-       (add-hook 'ruby-mode-hook 'ruby-refactor-mode-launch))
+     (setq-default org-use-speed-commands t
+                   org-agenda-todo-ignore-with-date t
+                   org-directory "~/org"
+                   org-agenda-files '("~/org/todo.org")
+                   org-todo-keywords '((sequence "TODO(t)" "WAIT(w)" "|" "DONE(d)"))
+                   org-capture-templates '(("t" "Todo" entry (file+datetree "~/org/todo.org")
+                                            "* TODO %?")
+                                           ("b" "Blog" entry (file "~/org/blog.org")
+                                            "* %?")
+                                           ("m" "Memo" entry (file "~/org/memo.org")
+                                            "* %?")))
+   #+END_SRC
+** Keybind
+   #+BEGIN_SRC emacs-lisp
+     (general-define-key
+      "C-c c" 'org-capture
+      "C-c a" 'org-agenda)
+
+     (general-def org-mode-map
+       "C-m" nil)
    #+END_SRC
 * MyFunc
 ** my/beginning-of-intendation
@@ -1079,34 +840,6 @@
        "move to beginning of line, or indentation"
        (interactive)
        (back-to-indentation))
-   #+END_SRC
-** my/ido-recentf
-   #+BEGIN_SRC emacs-lisp
-     (defun my/ido-recentf ()
-       (interactive)
-       (find-file (ido-completing-read "Find recent file: " recentf-list)))
-   #+END_SRC
-** my/suspend
-   #+BEGIN_SRC emacs-lisp
-     (defun my/suspend ()
-       (interactive)
-       (shell-command-to-string "systemctl suspend"))
-   #+END_SRC
-** my/counsel-fd
-   #+BEGIN_SRC emacs-lisp
-     (defun my/counsel-fd ()
-       (interactive)
-       (let* ((current-directory (file-name-directory (or buffer-file-name default-directory)))
-              (default-directory (expand-file-name (or (locate-dominating-file default-directory ".git")
-                                                       current-directory)))
-              (files (split-string (shell-command-to-string "fd -L -I --hidden -a --color never"))))
-         (ivy-read "Choose: " files
-                   :action (lambda (x)
-                             (let ((expanded-name (expand-file-name x)))
-                               (if (file-directory-p expanded-name)
-                                   (counsel-find-file (concat expanded-name "/"))
-                                 (find-file expanded-name))))
-                   :caller 'my/counsel-fd)))
    #+END_SRC
 ** my/before-set-auto-mode
    #+BEGIN_SRC emacs-lisp
@@ -1119,21 +852,21 @@
 
      (advice-add 'set-auto-mode :before-until 'my/before-set-auto-mode)
    #+END_SRC
-** my/exec-npm-script
+** TODO my/exec-npm-script
    #+BEGIN_SRC emacs-lisp
-     (defun my/exec-npm-script ()
-       (interactive)
-       (let* ((npm-root (and default-directory (locate-dominating-file default-directory "package.json")))
-              (default-directory (or npm-root default-directory))
-              choice scripts command-names)
-         (unless npm-root
-           (user-error "package.json not found..."))
-         (setq scripts (cdr-safe (assq 'scripts (json-read-file (file-relative-name "package.json" default-directory)))))
-         (setq command-names (mapcar #'(lambda (s) (symbol-name (car s))) scripts))
-         (setq choice (intern (completing-read "choice command: " command-names)))
-         (setq command (cdr-safe (assq choice scripts)))
-         (when command
-           (compile command))))
+     ;; (defun my/exec-npm-script ()
+     ;;   (interactive)
+     ;;   (let* ((npm-root (and default-directory (locate-dominating-file default-directory "package.json")))
+     ;;          (default-directory (or npm-root default-directory))
+     ;;          choice scripts command-names)
+     ;;     (unless npm-root
+     ;;       (user-error "package.json not found..."))
+     ;;     (setq scripts (cdr-safe (assq 'scripts (json-read-file (file-relative-name "package.json" default-directory)))))
+     ;;     (setq command-names (mapcar #'(lambda (s) (symbol-name (car s))) scripts))
+     ;;     (setq choice (intern (completing-read "choice command: " command-names)))
+     ;;     (setq command (cdr-safe (assq choice scripts)))
+     ;;     (when command
+     ;;       (compile command))))
    #+END_SRC
 ** my/slime-history
    #+BEGIN_SRC emacs-lisp
@@ -1157,7 +890,7 @@
                (push (ring-ref comint-input-ring index) history))
              history)))))
    #+END_SRC
-** my/irb-history
+** TODO my/irb-history
    #+BEGIN_SRC emacs-lisp
      (defun my/irb-history ()
        (interactive)
@@ -1174,33 +907,17 @@
        (interactive)
        (let ((default-directory (locate-dominating-file default-directory ".git")))
          (neotree-toggle)))
+
+     (general-define-key
+      "C-q" 'my/neotree-toggle)
    #+END_SRC
-* Keybind
-** 基本設定
+** my/reload-major-mode
    #+BEGIN_SRC emacs-lisp
-     (keyboard-translate ?\C-h ?\C-?)
-     (progn
-       (bind-key "C-a" 'my/beginning-of-intendation)
-       (bind-key "C-z" 'undo)
-       (bind-key "C-h" 'delete-backward-char)
-       (bind-key "C-?" 'help-command)
-       (bind-key "C-m" 'set-mark-command)
-       (bind-key "C-q" 'my/neotree-toggle)
-       (bind-key "C-x j" 'open-junk-file)
-       (bind-key "C-c i" 'find-function)
-       (bind-key "C-c c" 'org-capture)
-       (bind-key "C-c a" 'org-agenda)
-       (bind-key "C-x o" 'ace-window)
-       (bind-key "C-x C-o" 'ace-window)
-       (bind-key "C-x g" 'magit-status)
-       (bind-key "C-c l" 'magit-blame)
-       (bind-key "C-c j" 'counsel-git)
-       (bind-key "C-c k" 'my/counsel-ag)
-       (bind-key "C-x C-r" 'counsel-recentf)
-       (bind-key "C-x C-f" 'counsel-find-file)
-       (bind-key "M-x" 'counsel-M-x)
-       (bind-key "M-p" 'my/counsel-fd)
-       (bind-key "M-g" 'google-this)
-       (bind-key "C-x m" 'counsel-compile)
-       (bind-key "C-x C-k" nil))
+     (defun reload-major-mode ()
+       "Reload current major mode."
+       (interactive)
+       (let ((current-mode major-mode))
+         (fundamental-mode)
+         (funcall current-mode)
+         current-mode))
    #+END_SRC
