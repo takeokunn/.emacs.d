@@ -263,7 +263,7 @@
 ** ruby-mode
    #+BEGIN_SRC emacs-lisp
      (use-package ruby-mode
-       :mode ("\\.rb$" "Capfile" "Gemfile" "Schemafile")
+       :mode ("\\.rb$" "Capfile" "Gemfile" "Schemafile" ".pryrc")
        :config
        (setq-default ruby-insert-encoding-magic-comment nil))
    #+END_SRC
@@ -750,6 +750,7 @@
 *** swoop
     #+BEGIN_SRC emacs-lisp
       (use-package swoop
+        :disabled t
         :preface
         (defun takeokunn/swoop-from-isearch ()
           (interactive)
@@ -761,6 +762,13 @@
         :config
         (setq swoop-minibuffer-input-dilay 0.4))
     #+END_SRC
+*** helm-swoop
+    #+begin_src emacs-lisp
+      (use-package helm-swoop
+        :init
+        (general-define-key
+         "C-o" 'helm-swoop))
+    #+end_src
 ** Shell
 *** aweshell
     #+BEGIN_SRC emacs-lisp
@@ -1065,7 +1073,7 @@
        (insert
         (completing-read
          "choose history: "
-         (-map #'list (-distinct (s-lines (f-read-text "~/.irb_history")))))))
+         (-map #'list (-distinct (s-lines (f-read-text "~/.irb-history")))))))
 
      (general-def inf-ruby-mode-map
        "C-c C-r" 'takeokunn/irb-history)

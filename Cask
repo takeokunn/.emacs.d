@@ -92,6 +92,7 @@
 (depends-on "ivy-ghq" :git "https://github.com/analyticd/ivy-ghq.git")
 (depends-on "ivy-rich")
 (depends-on "swoop")
+(depends-on "helm-swoop")
 
 ;; shell
 (depends-on "aweshell" :git "https://github.com/manateelazycat/aweshell")
