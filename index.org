@@ -126,6 +126,10 @@
    #+begin_src emacs-lisp
      (setq ring-bell-function 'ignore)
    #+end_src
+** 初期起動warningを消す
+   #+begin_src emacs-lisp
+     (setq display-warning-minimum-level :error)
+   #+end_src
 * Major/Minor Mode
 ** clojure-mode
    #+BEGIN_SRC emacs-lisp
@@ -347,11 +351,13 @@
         :init
         (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
         (add-hook 'lisp-mode-hook 'enable-paredit-mode)
-        (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+        (add-hook 'lisp-interacton-mode-hook 'enable-paredit-mode)
         (add-hook 'scheme-mode-hook 'enable-paredit-mode)
         (general-define-key
          :keymaps 'paredit-mode-map
+         "C-<right>" 'paredit-forward-slurp-sexp
          "C-c f" 'paredit-forward-slurp-sexp
+         "C-<left>" 'paredit-forward-barf-sexp
          "C-c b" 'paredit-forward-barf-sexp)
         :config
         (autoload 'enable-paredit-mode "paredit" t))
@@ -428,8 +434,7 @@
 *** slime
     #+BEGIN_SRC emacs-lisp
       (with-eval-after-load 'slime
-        (load (expand-file-name "~/quicklisp/slime-helper.el"))
-        (setq inferior-lisp-program "sbcl")
+        (load (expand-file-name "~/.roswell/helper.el"))
         (add-hook 'slime-mode-hook 'set-up-slime-ac)
         (add-hook 'slime-repl-mode-hook 'set-up-slime-ac))
     #+END_SRC
