@@ -84,6 +84,7 @@
 (depends-on "lsp-ui")
 
 ;; git
+(depends-on "git-gutter")
 (depends-on "git-gutter-fringe")
 (depends-on "magit")
 

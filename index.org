@@ -468,7 +468,7 @@
         (add-hook 'emacs-lisp-mode-hook 'nameless-mode))
     #+END_SRC
 *** ielm
-*** takeokunn/ielm-history
+*** TODO takeokunn/ielm-history
     #+BEGIN_SRC emacs-lisp
       ;; (defun takeokunn/ielm-history ()
       ;;   (interactive)
@@ -701,10 +701,15 @@
     #+END_SRC
 *** git-gutter
     #+BEGIN_SRC emacs-lisp
-      (use-package git-gutter-fringe
+      (use-package git-gutter
         :config
         (global-git-gutter-mode +1))
     #+END_SRC
+*** git-gutter-fringe
+    #+begin_src emacs-lisp
+      (use-package git-gutter-fringe
+        :after (git-gutter))
+    #+end_src
 ** Search
 *** counsel
     #+BEGIN_SRC emacs-lisp
@@ -1024,7 +1029,8 @@
 * Org Mode
 ** Settinngs
    #+BEGIN_SRC emacs-lisp
-     (require 'org-tempo)
+     (if (version< emacs-version "27")
+         (require 'org-tempo))
 
      (setq-default org-use-speed-commands t
                    org-agenda-todo-ignore-with-date t
