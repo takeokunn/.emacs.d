@@ -43,11 +43,11 @@
 * Basic
 ** early-init
    #+BEGIN_SRC emacs-lisp
-     ;; (if (version< emacs-version "27")
-     ;;     (progn
-     ;;       (menu-bar-mode -1)
-     ;;       (tool-bar-mode -1)
-     ;;       (toggle-scroll-bar -1)))
+     (if (version< emacs-version "27")
+         (progn
+           (menu-bar-mode -1)
+           (tool-bar-mode -1)
+           (toggle-scroll-bar -1)))
    #+END_SRC
 ** スタートアップメッセージを非表示
    #+BEGIN_SRC emacs-lisp
@@ -119,6 +119,7 @@
       "C-?" 'help-command
       "C-m" 'set-mark-command
       "C-a" 'back-to-indentation
+      "C-c i" 'find-function
       "C-x C-o" 'other-window
       "C-x C-k" nil)
    #+END_SRC
@@ -699,9 +700,9 @@
       (use-package magit
         :defer t)
     #+END_SRC
-*** git-gutter
+*** git-gutter-fringe
     #+BEGIN_SRC emacs-lisp
-      (use-package git-gutter
+      (use-package git-gutter-fringe
         :config
         (global-git-gutter-mode +1))
     #+END_SRC
@@ -749,25 +750,26 @@
     #+END_SRC
 *** swoop
     #+BEGIN_SRC emacs-lisp
-      (use-package swoop
-        :disabled t
-        :preface
-        (defun takeokunn/swoop-from-isearch ()
-          (interactive)
-          (let* ((symbol (thing-at-point 'symbol 'no-properties)))
-            (swoop symbol)))
-        :init
-        (general-define-key
-         "C-o" 'takeokunn/swoop-from-isearch)
-        :config
-        (setq swoop-minibuffer-input-dilay 0.4))
+      ;; (use-package swoop
+      ;;   :disabled t
+      ;;   :preface
+      ;;   (defun takeokunn/swoop-from-isearch ()
+      ;;     (interactive)
+      ;;     (let* ((symbol (thing-at-point 'symbol 'no-properties)))
+      ;;       (swoop symbol)))
+      ;;   :init
+      ;;   (general-define-key
+      ;;    "C-o" 'takeokunn/swoop-from-isearch)
+      ;;   :config
+      ;;   (setq swoop-minibuffer-input-dilay 0.4))
     #+END_SRC
 *** helm-swoop
     #+begin_src emacs-lisp
-      (use-package helm-swoop
-        :init
-        (general-define-key
-         "C-o" 'helm-swoop))
+      ;; (use-package helm-swoop
+      ;;   :disabled t
+      ;;   :init
+      ;;   (general-define-key
+      ;;    "C-o" 'helm-swoop))
     #+end_src
 ** Shell
 *** aweshell

@@ -84,15 +84,15 @@
 (depends-on "lsp-ui")
 
 ;; git
-(depends-on "git-gutter")
+(depends-on "git-gutter-fringe")
 (depends-on "magit")
 
 ;; search
 (depends-on "counsel")
 (depends-on "ivy-ghq" :git "https://github.com/analyticd/ivy-ghq.git")
 (depends-on "ivy-rich")
-(depends-on "swoop")
-(depends-on "helm-swoop")
+;; (depends-on "swoop")
+;; (depends-on "helm-swoop")
 
 ;; shell
 (depends-on "aweshell" :git "https://github.com/manateelazycat/aweshell")
