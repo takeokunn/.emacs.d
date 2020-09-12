@@ -40,6 +40,7 @@
 (depends-on "php-mode")
 (depends-on "plantuml-mode")
 (depends-on "processing-mode")
+(depends-on "python-mode")
 (depends-on "rust-mode")
 (depends-on "scala-mode")
 (depends-on "slim-mode")
@@ -70,6 +71,7 @@
 (depends-on "emr")
 
 ;; completion
+(depends-on "ac-slime")
 (depends-on "company")
 (depends-on "company-glsl")
 (depends-on "company-lsp")
@@ -91,8 +93,7 @@
 (depends-on "counsel")
 (depends-on "ivy-ghq" :git "https://github.com/analyticd/ivy-ghq.git")
 (depends-on "ivy-rich")
-;; (depends-on "swoop")
-;; (depends-on "helm-swoop")
+(depends-on "helm-swoop")
 
 ;; shell
 (depends-on "aweshell" :git "https://github.com/manateelazycat/aweshell")
@@ -121,7 +122,6 @@
 (depends-on "sql-indent")
 
 ;; lisp
-(depends-on "ac-slime")
 (depends-on "cider")
 (depends-on "elisp-slime-nav")
 (depends-on "nameless")
