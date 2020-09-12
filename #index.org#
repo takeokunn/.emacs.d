@@ -9,7 +9,7 @@
 
 * はじめに
 ** 基本情報
-  - repo: [[http://github.com/takeokunn/.emacs.d][takeokunn/.emacs.d]]
+   p  - repo: [[http://github.com/takeokunn/.emacs.d][takeokunn/.emacs.d]]
   - twitter: [[https://twitter.com/takeokunn][たけてぃ@takeokunn]]
 * Initialize
 ** leaf
@@ -928,175 +928,165 @@
     #+end_src
 *** ruby-refactor
     #+BEGIN_SRC emacs-lisp
-      (leaf ruby-refactor
-	:ensure t
-Process *esup-child* abort trap: 6
-	:hook ((ruby-mode-hook . ruby-refactor-mode-launch)))
+      (use-package ruby-refactor
+        :defer t
+        :init
+        (add-hook 'ruby-mode-hook 'ruby-refactor-mode-launch))
     #+END_SRC
 ** SQL
 *** sql-indent
     #+BEGIN_SRC emacs-lisp
-      (leaf sql-indent
-	:ensure t
-	:after sql-mode
-	:hook ((sql-mode-hook . sqlind-minor-mode)))
+      (use-package sql-indent
+        :after (sql-mode)
+        :init
+        (add-hook 'sql-mode-hook 'sqlind-minor-mode))
     #+END_SRC
 ** File
 *** recentf
     #+BEGIN_SRC emacs-lisp
-      (leaf recentf
-	:ensure t
-	:setq-default ((recentf-max-saved-items . 10000)
-		       (recentf-auto-cleanup quote never)
-		       (recentf-save-file . "~/.emacs.d/.recentf")
-		       (recentf-exclude quote
-					(".recentf")))
-	:config
-	(recentf-mode 1))
+      (use-package recentf
+        :config
+        (setq-default recentf-max-saved-items 10000
+                      recentf-auto-cleanup 'never
+                      recentf-save-file "~/.emacs.d/.recentf"
+                      recentf-exclude '(".recentf"))
+        (recentf-mode 1))
     #+END_SRC
 *** open-junk-file
     #+BEGIN_SRC emacs-lisp
-      (leaf open-junk-file
-	:ensure  t
-	:bind
-	("C-x j" . open-junk-file)
-	:setq ((open-junk-file-format . "~/.emacs.d/.junk/%Y-%m%d-%H%M%S.")))
+      (use-package open-junk-file
+        :init
+        (general-define-key
+         "C-x j" 'open-junk-file)
+        :config
+        (setq open-junk-file-format "~/.emacs.d/.junk/%Y-%m%d-%H%M%S."))
     #+END_SRC
 ** Syntax
 *** flycheck
     #+begin_src emacs-lisp
-      (leaf flycheck
-	:ensure t
-	:after ruby-mode
-	:hook (ruby-mode-hook))
+      (use-package flycheck
+        :defer t
+        :after (ruby-mode)
+        :init
+        (add-hook 'ruby-mode-hook 'flycheck-mode))
     #+end_src
 ** Cursor
 *** smartrep/multiple-cursors
     #+BEGIN_SRC emacs-lisp
-      (leaf smartrep :ensure t)
+      (use-package smartrep)
 
-      (leaf multiple-cursors
-	:ensure t
-	:defun (smartrep-define-key . smartrep)
-	:after smartrep
-	:config
-	(global-unset-key (kbd "C-t"))
-	(smartrep-define-key global-map "C-t"
-			     '(("C-t" quote mc/mark-next-like-this)
-			       ("n" quote mc/mark-next-like-this)
-			       ("p" quote mc/mark-previous-like-this)
-			       ("m" quote mc/mark-more-like-this-extended)
-			       ("u" quote mc/unmark-next-like-this)
-			       ("U" quote mc/unmark-previous-like-this)
-			       ("s" quote mc/skip-to-next-like-this)
-			       ("S" quote mc/skip-to-previous-like-this)
-			       ("*" quote mc/mark-all-like-this)
-			       ("d" quote mc/mark-all-like-this-dwim)
-			       ("i" quote mc/insert-numbers)
-			       ("o" quote mc/sort-regions)
-			       ("O" quote mc/reverse-regions))))
+      (use-package multiple-cursors
+        :after (smartrep)
+        :config
+        (declare-function smartrep-define-key "smartrep")
+        (global-unset-key (kbd "C-t"))
+        (smartrep-define-key global-map "C-t"
+          '(("C-t" . 'mc/mark-next-like-this)
+            ("n"   . 'mc/mark-next-like-this)
+            ("p"   . 'mc/mark-previous-like-this)
+            ("m"   . 'mc/mark-more-like-this-extended)
+            ("u"   . 'mc/unmark-next-like-this)
+            ("U"   . 'mc/unmark-previous-like-this)
+            ("s"   . 'mc/skip-to-next-like-this)
+            ("S"   . 'mc/skip-to-previous-like-this)
+            ("*"   . 'mc/mark-all-like-this)
+            ("d"   . 'mc/mark-all-like-this-dwim)
+            ("i"   . 'mc/insert-numbers)
+            ("o"   . 'mc/sort-regions)
+            ("O"   . 'mc/reverse-regions))))
     #+END_SRC
 *** smooth-scroll
     #+BEGIN_SRC emacs-lisp
-      (leaf smooth-scroll
-	:ensure t
-	:commands smooth-scroll-mode
-	:config
-	(smooth-scroll-mode 1)
-	(with-eval-after-load 'smooth-scroll
-	  (setq smooth-scroll/hscroll-step-size 4)))
+      (use-package smooth-scroll
+        :commands (smooth-scroll-mode)
+        :init
+        (smooth-scroll-mode 1)
+        :config
+        (setq smooth-scroll/hscroll-step-size 4))
     #+END_SRC
 ** Other
 *** ace-window
     #+BEGIN_SRC emacs-lisp
-      (leaf ace-window
-	:ensure t
-	:setq ((aw-keys quote
-			(97 115 100 102 103 104 106 107 108))))
+      (use-package ace-window
+        :config
+        (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
     #+END_SRC
 *** dashboard
     #+BEGIN_SRC emacs-lisp
-      (leaf dashboard
-	:ensure t
-	:config
-	(dashboard-setup-startup-hook))
+      (use-package dashboard
+        :config
+        (dashboard-setup-startup-hook))
     #+END_SRC
 *** editorconfig
     #+BEGIN_SRC emacs-lisp
-      (leaf editorconfig
-	:ensure t
-	:config
-	(editorconfig-mode 1))
+      (use-package editorconfig
+        :config
+        (editorconfig-mode 1))
     #+END_SRC
 *** esup
     #+BEGIN_SRC emacs-lisp
-      (leaf esup :ensure t)
+      (use-package esup)
     #+END_SRC
 *** font-lock-studio
     #+BEGIN_SRC emacs-lisp
-      (leaf font-lock-studio :ensure t)
+      (use-package font-lock-studio)
     #+END_SRC
 *** google-this
     #+BEGIN_SRC emacs-lisp
-      (leaf google-this
-	:ensure t
-	:bind
-	("M-g" . google-this))
+      (use-package google-this
+        :init
+        (general-define-key
+         "M-g" 'google-this))
     #+END_SRC
 *** goto-addr
     #+BEGIN_SRC emacs-lisp
-      (leaf goto-addr
-	:ensure t
-	:commands goto-address-prog-mode goto-address-mode
-	:hook ((prog-mode-hook . goto-address-prog-mode)
-	       (text-mode-hook . goto-address-mode)))
+      (use-package goto-addr
+        :hook ((prog-mode . goto-address-prog-mode)
+               (text-mode . goto-address-mode)))
     #+END_SRC
 *** helpful
     #+BEGIN_SRC emacs-lisp
-      (leaf helpful
-	:ensure t
-	:bind
-	(("C-? f" . helpful-callable)
-	 ("C-? v" . helpful-variable)
-	 ("C-? k" . helpful-key)
-	 ("C-? C-d" . helpful-at-point)
-	 ("C-? F" . helpful-function)
-	 ("C-? C" . helpful-command))
-	:setq ((counsel-describe-function-function function helpful-callable)
-	       (counsel-describe-variable-function function helpful-variable)))
+      (use-package helpful
+        :init
+        (general-define-key
+         "C-? f" 'helpful-callable
+         "C-? v" 'helpful-variable
+         "C-? k" 'helpful-key
+         "C-? C-d" 'helpful-at-point
+         "C-? F" 'helpful-function
+         "C-? C" 'helpful-command)
+        :config
+        (setq counsel-describe-function-function #'helpful-callable
+              counsel-describe-variable-function #'helpful-variable))
     #+END_SRC
 *** smartparens
     #+BEGIN_SRC emacs-lisp
-      (leaf smartparens :ensure t)
+      (use-package smartparens)
     #+END_SRC
 *** smex
     #+BEGIN_SRC emacs-lisp
-      (leaf smex :ensure t)
+      (use-package smex)
     #+END_SRC
 *** whitespace
     #+BEGIN_SRC emacs-lisp
-      (leaf whitespace
-	:ensure t
-	:setq ((whitespace-style quote
-				 (face tabs tab-mark spaces space-mark))
-	       (whitespace-display-mappings quote
-					    ((space-mark 12288
-							 [9633])
-					     (tab-mark 9
-						       [187 9]
-						       [92 9])))
-	       (whitespace-space-regexp . "\\(　+\\)"))
-	:config
-	(set-face-foreground 'whitespace-tab "#adff2f")
-	(set-face-background 'whitespace-tab 'nil)
-	(set-face-foreground 'whitespace-space "#7cfc00")
-	(set-face-background 'whitespace-space 'nil)
-	(global-whitespace-mode 1))
+      (use-package whitespace
+        :config
+        (setq whitespace-style '(face tabs tab-mark spaces space-mark)
+              whitespace-display-mappings '((space-mark ?\u3000 [?\u25a1])
+                                            (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t]))
+              whitespace-space-regexp "\\(\u3000+\\)")
+        (set-face-foreground 'whitespace-tab "#adff2f")
+        (set-face-background 'whitespace-tab 'nil)
+        (set-face-underline  'whitespace-tab t)
+        (set-face-foreground 'whitespace-space "#7cfc00")
+        (set-face-background 'whitespace-space 'nil)
+        (global-whitespace-mode 1))
     #+END_SRC
 * Org Mode
 ** Settinngs
    #+BEGIN_SRC emacs-lisp
-     (leaf org-tempo)
+     (if (version< emacs-version "27")
+         (require 'org-tempo))
 
      (setq-default org-use-speed-commands t
                    org-agenda-todo-ignore-with-date t
@@ -1112,8 +1102,10 @@ Process *esup-child* abort trap: 6
    #+END_SRC
 ** Keybind
    #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-c c") 'org-capture)
-     (global-set-key (kbd "C-c a") 'org-agenda)
+     (general-define-key
+      "C-c c" 'org-capture
+      "C-c a" 'org-agenda)
 
-     (define-key org-mode-map "\C-m" nil)
+     (general-def org-mode-map
+       "C-m" nil)
    #+END_SRC
