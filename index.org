@@ -621,11 +621,6 @@
          "M-RET" 'emr-show-refactor-menu))
     #+END_SRC
 ** Completion
-*** ac-slime
-    #+BEGIN_SRC emacs-lisp
-      (use-package ac-slime
-        :defer t)
-    #+END_SRC
 *** company
    #+BEGIN_SRC emacs-lisp
      (use-package company
@@ -650,6 +645,13 @@
         :after (company)
         :config
         (push 'company-lsp company-backends))
+    #+END_SRC
+*** slime-company
+    #+BEGIN_SRC emacs-lisp
+      (use-package slime-company
+        :after (slime company)
+        :config (setq slime-company-completion 'fuzzy
+                      slime-company-after-completion 'slime-company-just-one-space))
     #+END_SRC
 *** yasnippet
     #+BEGIN_SRC emacs-lisp

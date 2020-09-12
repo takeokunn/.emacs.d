@@ -71,10 +71,10 @@
 (depends-on "emr")
 
 ;; completion
-(depends-on "ac-slime")
 (depends-on "company")
 (depends-on "company-glsl")
 (depends-on "company-lsp")
+(depends-on "slime-company")
 (depends-on "yasnippet")
 (depends-on "yasnippet-snippets")
 
