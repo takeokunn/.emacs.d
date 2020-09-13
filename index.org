@@ -242,10 +242,7 @@
        :ensure t
        :mode ("\\.js$")
        :hook ((js2-mode-hook . js2-refactor-mode)
-              (js2-mode-hook . lsp-mode))
-       :config
-       (with-eval-after-load 'js2-mode
-         (setq js2-skip-preprocessor-directives t)))
+              (js2-mode-hook . lsp-mode)))
    #+END_SRC
 ** json-mode
    #+BEGIN_SRC emacs-lisp
@@ -278,22 +275,26 @@
    #+END_SRC
 ** plantuml-mode
    #+BEGIN_SRC emacs-lisp
-     (use-package plantuml-mode
-       :mode (("\\.pu$" . plantuml-mode)))
+     (leaf plantuml-mode
+       :ensure t
+       :mode ("\\.pu$"))
    #+END_SRC
 ** processing-mode
    #+BEGIN_SRC emacs-lisp
-     (use-package processing-mode
-       :mode (("\\.pde$" . processing-mode))
+     (leaf processing-mode
+       :ensure t
+       :mode ("\\.pde$")
        :config
-       (setq-default processing-location "/opt/processing/processing-java")
-       (setq-default processing-output-dir "/tmp"))
+       (with-eval-after-load 'processing-mode
+         (setq-default processing-location "/opt/processing/processing-java")
+         (setq-default processing-output-dir "/tmp")))
   #+END_SRC
 ** python-mode
    #+BEGIN_SRC emacs-lisp
-     (use-package python-mode
-       :mode (("\\.py$" . python-mode))
-       :interpreter (("python" . python-mode)))
+     (leaf python-mode
+       :ensure t
+       :mode ("\\.py$")
+       :interpreter ("python"))
    #+END_SRC
 ** ruby-mode
    #+BEGIN_SRC emacs-lisp
@@ -358,25 +359,13 @@
    #+BEGIN_SRC emacs-lisp
      (leaf vue-mode
        :ensure t
-       :mode ("\\.vue$")
-       :config
-       (with-eval-after-load 'vue-mode
-         (setq mmm-js-mode-enter-hook (lambda nil
-                                        (setq syntax-ppss-table nil)))
-         (setq mmm-typescript-mode-enter-hook (lambda nil
-                                                (setq syntax-ppss-table nil)))
-         (setq indent-tabs-mode nil
-               js-indent-level 2)))
+       :mode ("\\.vue$"))
    #+END_SRC
 ** TODO web-mode
    #+BEGIN_SRC emacs-lisp
      (leaf web-mode
        :ensure t
-       ;; :after tide
-       :mode ("\\.html?\\'" "\\.erb\\'" "\\.gsp\\'" "\\.tsx\\'")
-       :config
-       (with-eval-after-load 'web-mode
-         (setq web-mode-auto-close-style t)))
+       :mode ("\\.html?\\'" "\\.erb\\'" "\\.gsp\\'" "\\.tsx\\'"))
 
      ;; (use-package web-mode
      ;;   :after (tide)
@@ -426,62 +415,62 @@
 ** CommonLisp
 *** TODO HyperSpec
     #+BEGIN_SRC emacs-lisp
-      (with-eval-after-load 'hyperspec
-        (general-define-key
-         "C-c h" 'hyperspec-lookup)
+      ;; (with-eval-after-load 'hyperspec
+      ;;   (general-define-key
+      ;;    "C-c h" 'hyperspec-lookup)
 
-        (setq common-lisp-hyperspec-root "~/.roswell/HyperSpec/")
+      ;;   (setq common-lisp-hyperspec-root "~/.roswell/HyperSpec/")
 
-        (defun common-lisp-hyperspec (symbol-name)
-          (interactive (list (common-lisp-hyperspec-read-symbol-name)))
-          (let ((name (common-lisp-hyperspec--strip-cl-package
-                       (downcase symbol-name))))
-            (cl-maplist (lambda (entry)
-                          (eww-open-file (concat common-lisp-hyperspec-root "Body/"
-                                                 (car entry)))
-                          (when (cdr entry)
-                            (sleep-for 1.5)))
-                        (or (common-lisp-hyperspec--find name)
-                            (error "The symbol `%s' is not defined in Common Lisp"
-                                   symbol-name)))))
+      ;;   (defun common-lisp-hyperspec (symbol-name)
+      ;;     (interactive (list (common-lisp-hyperspec-read-symbol-name)))
+      ;;     (let ((name (common-lisp-hyperspec--strip-cl-package
+      ;;                  (downcase symbol-name))))
+      ;;       (cl-maplist (lambda (entry)
+      ;;                     (eww-open-file (concat common-lisp-hyperspec-root "Body/"
+      ;;                                            (car entry)))
+      ;;                     (when (cdr entry)
+      ;;                       (sleep-for 1.5)))
+      ;;                   (or (common-lisp-hyperspec--find name)
+      ;;                       (error "The symbol `%s' is not defined in Common Lisp"
+      ;;                              symbol-name)))))
 
-        (defun common-lisp-hyperspec-lookup-reader-macro (macro)
-          (interactive
-           (list
-            (let ((completion-ignore-case t))
-              (completing-read "Look up reader-macro: "
-                               common-lisp-hyperspec--reader-macros nil t
-                               (common-lisp-hyperspec-reader-macro-at-point)))))
-          (eww-open-file
-           (concat common-lisp-hyperspec-root "Body/"
-                   (gethash macro common-lisp-hyperspec--reader-macros))))
+      ;;   (defun common-lisp-hyperspec-lookup-reader-macro (macro)
+      ;;     (interactive
+      ;;      (list
+      ;;       (let ((completion-ignore-case t))
+      ;;         (completing-read "Look up reader-macro: "
+      ;;                          common-lisp-hyperspec--reader-macros nil t
+      ;;                          (common-lisp-hyperspec-reader-macro-at-point)))))
+      ;;     (eww-open-file
+      ;;      (concat common-lisp-hyperspec-root "Body/"
+      ;;              (gethash macro common-lisp-hyperspec--reader-macros))))
 
-        (defun common-lisp-hyperspec-format (character-name)
-          (interactive (list (common-lisp-hyperspec--read-format-character)))
-          (cl-maplist (lambda (entry)
-                        (eww-open-file (common-lisp-hyperspec-section (car entry))))
-                      (or (gethash character-name
-                                   common-lisp-hyperspec--format-characters)
-                          (error "The symbol `%s' is not defined in Common Lisp"
-                                 character-name))))
+      ;;   (defun common-lisp-hyperspec-format (character-name)
+      ;;     (interactive (list (common-lisp-hyperspec--read-format-character)))
+      ;;     (cl-maplist (lambda (entry)
+      ;;                   (eww-open-file (common-lisp-hyperspec-section (car entry))))
+      ;;                 (or (gethash character-name
+      ;;                              common-lisp-hyperspec--format-characters)
+      ;;                     (error "The symbol `%s' is not defined in Common Lisp"
+      ;;                            character-name))))
 
-        (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
-          (let ((buf (current-buffer)))
-            ad-do-it
-            (switch-to-buffer buf)
-            (pop-to-buffer "*eww*")))
+      ;;   (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
+      ;;     (let ((buf (current-buffer)))
+      ;;       ad-do-it
+      ;;       (switch-to-buffer buf)
+      ;;       (pop-to-buffer "*eww*")))
 
-        (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
-          (let ((buf (current-buffer)))
-            ad-do-it
-            (switch-to-buffer buf)
-            (pop-to-buffer "*eww*")))
+      ;;   (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
+      ;;     (let ((buf (current-buffer)))
+      ;;       ad-do-it
+      ;;       (switch-to-buffer buf)
+      ;;       (pop-to-buffer "*eww*")))
 
-        (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
-          (let ((buf (current-buffer)))
-            ad-do-it
-            (switch-to-buffer buf)
-            (pop-to-buffer "*eww*"))))
+      ;;   (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
+      ;;     (let ((buf (current-buffer)))
+      ;;       ad-do-it
+      ;;       (switch-to-buffer buf)
+      ;;       (pop-to-buffer "*eww*"))))
     #+END_SRC
 *** TODO slime
     #+BEGIN_SRC emacs-lisp
@@ -492,12 +481,12 @@
     #+END_SRC
 *** TODO takeokunn/slime-history
     #+BEGIN_SRC emacs-lisp
-      (defun takeokunn/slime-history ()
-        (interactive)
-        (insert
-         (completing-read
-          "choice history: "
-          (-distinct (read (f-read-text "~/.slime-history.eld"))))))
+      ;; (defun takeokunn/slime-history ()
+      ;;   (interactive)
+      ;;   (insert
+      ;;    (completing-read
+      ;;     "choice history: "
+      ;;     (-distinct (read (f-read-text "~/.slime-history.eld"))))))
 
       ;; (general-define-key
       ;;  :keymaps 'slime-repl-mode-map
@@ -619,21 +608,20 @@
         :ensure t
         :init
         (global-hl-todo-mode 1)
-        :setq ((hl-todo-keyword-faces quote
-                                      (("HOLD" . "#d0bf8f")
-                                       ("WAIT" . "#d0bf8f")
-                                       ("TODO" . "#cc9393")
-                                       ("NEXT" . "#dca3a3")
-                                       ("THEM" . "#dc8cc3")
-                                       ("REMIND" . "#dc8cc3")
-                                       ("PROG" . "#7cb8bb")
-                                       ("OKAY" . "#7cb8bb")
-                                       ("DONT" . "#5f7f5f")
-                                       ("FAIL" . "#8c5353")
-                                       ("SOMEDAY" . "#8c5353")
-                                       ("DONE" . "#afd8af")
-                                       ("FIXME" . "#cc9393")
-                                       ("???" . "#cc9393")))))
+        :custom ((hl-todo-keyword-faces '(("HOLD" . "#d0bf8f")
+                                        ("WAIT" . "#d0bf8f")
+                                        ("TODO" . "#cc9393")
+                                        ("NEXT" . "#dca3a3")
+                                        ("THEM" . "#dc8cc3")
+                                        ("REMIND" . "#dc8cc3")
+                                        ("PROG" . "#7cb8bb")
+                                        ("OKAY" . "#7cb8bb")
+                                        ("DONT" . "#5f7f5f")
+                                        ("FAIL" . "#8c5353")
+                                        ("SOMEDAY" . "#8c5353")
+                                        ("DONE" . "#afd8af")
+                                        ("FIXME" . "#cc9393")
+                                        ("???" . "#cc9393")))))
     #+END_SRC
 *** neotree
     #+BEGIN_SRC emacs-lisp
@@ -687,6 +675,7 @@
    #+BEGIN_SRC emacs-lisp
      (leaf company
        :ensure t
+       :defvar company-backends
        :init
        (global-company-mode)
        :bind
@@ -710,15 +699,15 @@
         :config
         (push 'company-lsp company-backends))
     #+END_SRC
-*** slime-company
+*** TODO slime-company
     #+BEGIN_SRC emacs-lisp
-      (leaf slime-company
-        :ensure t
-        :after company slime
-        :setq ((slime-company-completion quote fuzzy)
-               (slime-company-after-completion quote slime-company-just-one-space)))
+      ;; (leaf slime-company
+      ;;   :ensure t
+      ;;   :after company slime
+      ;;   :setq ((slime-company-completion quote fuzzy)
+      ;;          (slime-company-after-completion quote slime-company-just-one-space)))
     #+END_SRC
-*** yasnippet
+*** TODO yasnippet
     #+BEGIN_SRC emacs-lisp
       ;; (leaf yasnippet
       ;;   :ensure t
@@ -779,23 +768,25 @@
 ** Search
 *** counsel
     #+BEGIN_SRC emacs-lisp
-      (leaf counsel
-	:ensure t
-	:init
-	(eval-and-compile
-	  (defun takeokunn/counsel-ag nil
-	    (interactive)
-	    (let ((symbol (thing-at-point 'symbol 'no-properties))
-		  (default-directory (locate-dominating-file default-directory ".git")))
-	      (counsel-ag symbol))))
-	:bind
-	("C-x m" . counsel-compile)
-	("C-c k" . takeokunn/counsel-ag)
-	:setq ((ivy-use-virtual-buffers . t)
-	       (counsel-ag-base-command . "ag --nocolor --nogroup -u %s"))
-	:config
-	(ivy-mode 1)
-	(counsel-mode 1))
+      (leaf ivy
+        :ensure t
+        :custom (ivy-use-virtual-buffers . t)
+        :config (ivy-mode 1)
+        (leaf counsel
+          :ensure t
+          :init
+          (eval-and-compile
+            (defun takeokunn/counsel-ag nil
+              (interactive)
+              (let ((symbol (thing-at-point 'symbol 'no-properties))
+                    (default-directory (locate-dominating-file default-directory ".git")))
+                (counsel-ag symbol))))
+          :bind
+          ("C-x m" . counsel-compile)
+          ("C-c k" . takeokunn/counsel-ag)
+          :custom (counsel-ag-base-command . "ag --nocolor --nogroup -u %s")
+          :config
+          (counsel-mode 1)))
     #+END_SRC
 *** TODO ivy-ghq
     #+BEGIN_SRC emacs-lisp
@@ -823,15 +814,15 @@
 *** helm-swoop
     #+begin_src emacs-lisp
       (leaf helm-swoop
-	:ensure t
-	:bind
-	("C-o" . heml-swoop)
-	:setq ((helm-swoop-split-direction quote split-window-vertically)))
+        :ensure t
+        :bind
+        ("C-o" . heml-swoop)
+        :custom (helm-swoop-split-direction 'split-window-vertically))
     #+end_src
 ** Shell
 *** aweshell
     #+BEGIN_SRC emacs-lisp
-      (leaf aweshell :ensure t)
+      ;; (leaf aweshell :ensure t)
     #+END_SRC
 *** exec-path-from-shell
     #+BEGIN_SRC emacs-lisp
@@ -929,9 +920,8 @@
 *** ruby-refactor
     #+BEGIN_SRC emacs-lisp
       (leaf ruby-refactor
-	:ensure t
-Process *esup-child* abort trap: 6
-	:hook ((ruby-mode-hook . ruby-refactor-mode-launch)))
+        :ensure t
+        :hook ((ruby-mode-hook . ruby-refactor-mode-launch)))
     #+END_SRC
 ** SQL
 *** sql-indent
@@ -957,10 +947,10 @@ Process *esup-child* abort trap: 6
 *** open-junk-file
     #+BEGIN_SRC emacs-lisp
       (leaf open-junk-file
-	:ensure  t
-	:bind
-	("C-x j" . open-junk-file)
-	:setq ((open-junk-file-format . "~/.emacs.d/.junk/%Y-%m%d-%H%M%S.")))
+        :ensure t
+        :bind
+        ("C-x j" . open-junk-file)
+        :custom (open-junk-file-format . "~/.emacs.d/.junk/%Y-%m%d-%H%M%S."))
     #+END_SRC
 ** Syntax
 *** flycheck
@@ -999,20 +989,17 @@ Process *esup-child* abort trap: 6
 *** smooth-scroll
     #+BEGIN_SRC emacs-lisp
       (leaf smooth-scroll
-	:ensure t
-	:commands smooth-scroll-mode
-	:config
-	(smooth-scroll-mode 1)
-	(with-eval-after-load 'smooth-scroll
-	  (setq smooth-scroll/hscroll-step-size 4)))
+        :ensure t
+        :commands smooth-scroll-mode
+        :config
+        (smooth-scroll-mode 1))
     #+END_SRC
 ** Other
 *** ace-window
     #+BEGIN_SRC emacs-lisp
       (leaf ace-window
-	:ensure t
-	:setq ((aw-keys quote
-			(97 115 100 102 103 104 106 107 108))))
+        :ensure t
+        :custom ((aw-keys '(97 115 100 102 103 104 106 107 108))))
     #+END_SRC
 *** dashboard
     #+BEGIN_SRC emacs-lisp
@@ -1054,16 +1041,17 @@ Process *esup-child* abort trap: 6
 *** helpful
     #+BEGIN_SRC emacs-lisp
       (leaf helpful
-	:ensure t
-	:bind
-	(("C-? f" . helpful-callable)
-	 ("C-? v" . helpful-variable)
-	 ("C-? k" . helpful-key)
-	 ("C-? C-d" . helpful-at-point)
-	 ("C-? F" . helpful-function)
-	 ("C-? C" . helpful-command))
-	:setq ((counsel-describe-function-function function helpful-callable)
-	       (counsel-describe-variable-function function helpful-variable)))
+        :ensure t
+        :after counsel
+        :bind
+        (("C-? f" . helpful-callable)
+         ("C-? v" . helpful-variable)
+         ("C-? k" . helpful-key)
+         ("C-? C-d" . helpful-at-point)
+         ("C-? F" . helpful-function)
+         ("C-? C" . helpful-command))
+        :custom ((counsel-describe-function-function function helpful-callable)
+                 (counsel-describe-variable-function function helpful-variable)))
     #+END_SRC
 *** smartparens
     #+BEGIN_SRC emacs-lisp
@@ -1076,30 +1064,14 @@ Process *esup-child* abort trap: 6
 *** whitespace
     #+BEGIN_SRC emacs-lisp
       (leaf whitespace
-	:ensure t
-	:setq ((whitespace-style quote
-				 (face tabs tab-mark spaces space-mark))
-	       (whitespace-display-mappings quote
-					    ((space-mark 12288
-							 [9633])
-					     (tab-mark 9
-						       [187 9]
-						       [92 9])))
-                                                       	       (whitespace-space-regexp . "\\(　+\\)"))
-	:config
-	(set-face-foreground 'whitespace-tab "#adff2f")
-	(set-face-background 'whitespace-tab 'nil)
-	(set-face-foreground 'whitespace-space "#7cfc00")
-	(set-face-background 'whitespace-space 'nil)
-	(global-whitespace-mode 1))
+        :ensure t
+        :config
+        (global-whitespace-mode 1))
     #+END_SRC
 * Org Mode
 ** Settinngs
    #+BEGIN_SRC emacs-lisp
-     (leaf org
-       :mode ("\\.org")
-       :config
-       (setq-default org-use-speed-commands t
+     (setq-default org-use-speed-commands t
                      org-agenda-todo-ignore-with-date t
                      org-directory "~/org"
                      org-agenda-files '("~/org/todo.org")
@@ -1109,14 +1081,13 @@ Process *esup-child* abort trap: 6
                                              ("b" "Blog" entry (file "~/org/blog.org")
                                               "* %?")
                                              ("m" "Memo" entry (file "~/org/memo.org")
-                                              "* %?"))))
-
+                                              "* %?")))
      (leaf org-temp)
    #+END_SRC
-** Keybind
+** TODO Keybind
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "C-c c") 'org-capture)
      (global-set-key (kbd "C-c a") 'org-agenda)
 
-     (define-key org-mode-map "\C-m" nil)
+     ;; (define-key org-mode-map "\C-m" nil)
    #+END_SRC
