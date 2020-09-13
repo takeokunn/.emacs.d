@@ -720,15 +720,15 @@
     #+END_SRC
 *** yasnippet
     #+BEGIN_SRC emacs-lisp
-      (leaf yasnippet
-        :ensure t
-        :diminish yas-minor-mode)
+      ;; (leaf yasnippet
+      ;;   :ensure t
+      ;;   :diminish yas-minor-mode)
 
-      (leaf yasnippet-snippets
-        :ensure t
-        :after yasnippet
-        :config
-        (yas-global-mode 1))
+      ;; (leaf yasnippet-snippets
+      ;;   :ensure t
+      ;;   :after yasnippet
+      ;;   :config
+      ;;   (yas-global-mode 1))
     #+END_SRC
 ** LSP
 *** lsp-mode
@@ -1085,7 +1085,7 @@ Process *esup-child* abort trap: 6
 					     (tab-mark 9
 						       [187 9]
 						       [92 9])))
-	       (whitespace-space-regexp . "\\(　+\\)"))
+                                                       	       (whitespace-space-regexp . "\\(　+\\)"))
 	:config
 	(set-face-foreground 'whitespace-tab "#adff2f")
 	(set-face-background 'whitespace-tab 'nil)
@@ -1096,19 +1096,22 @@ Process *esup-child* abort trap: 6
 * Org Mode
 ** Settinngs
    #+BEGIN_SRC emacs-lisp
-     (leaf org-tempo)
+     (leaf org
+       :mode ("\\.org")
+       :config
+       (setq-default org-use-speed-commands t
+                     org-agenda-todo-ignore-with-date t
+                     org-directory "~/org"
+                     org-agenda-files '("~/org/todo.org")
+                     org-todo-keywords '((sequence "TODO(t)" "WAIT(w)" "|" "DONE(d)"))
+                     org-capture-templates '(("t" "Todo" entry (file+datetree "~/org/todo.org")
+                                              "* %?")
+                                             ("b" "Blog" entry (file "~/org/blog.org")
+                                              "* %?")
+                                             ("m" "Memo" entry (file "~/org/memo.org")
+                                              "* %?"))))
 
-     (setq-default org-use-speed-commands t
-                   org-agenda-todo-ignore-with-date t
-                   org-directory "~/org"
-                   org-agenda-files '("~/org/todo.org")
-                   org-todo-keywords '((sequence "TODO(t)" "WAIT(w)" "|" "DONE(d)"))
-                   org-capture-templates '(("t" "Todo" entry (file+datetree "~/org/todo.org")
-                                            "* %?")
-                                           ("b" "Blog" entry (file "~/org/blog.org")
-                                            "* %?")
-                                           ("m" "Memo" entry (file "~/org/memo.org")
-                                            "* %?")))
+     (leaf org-temp)
    #+END_SRC
 ** Keybind
    #+BEGIN_SRC emacs-lisp
