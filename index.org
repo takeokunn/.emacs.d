@@ -1,4 +1,4 @@
-nnnn#+title: Configurations for GNU Emacs
+#+title: Configurations for GNU Emacs
 #+author: takeounn
 #+email: bararararatty@gmail.com
 #+startup: content
@@ -37,16 +37,19 @@ nnnn#+title: Configurations for GNU Emacs
          (leaf hydra :ensure t)
          (leaf el-get :ensure t)
          (leaf blackout :ensure t)
-         (leaf dash :ensure t)
-         (leaf dash-functional :ensure t)
-         (leaf s :ensure t)
-         (leaf f :ensure t)
-         (leaf ht :ensure t)
-         (leaf general :ensure t)
 
          :config
          ;; initialize leaf-keywords.el
          (leaf-keywords-init)))
+   #+END_SRC
+** utility
+   #+BEGIN_SRC emacs-lisp
+     (leaf dash :ensure t)
+     (leaf dash-functional :ensure t)
+     (leaf s :ensure t)
+     (leaf f :ensure t)
+     (leaf ht :ensure t)
+     (leaf general :ensure t)
    #+END_SRC
 * Basic
 ** early-init
@@ -393,62 +396,61 @@ nnnn#+title: Configurations for GNU Emacs
 ** CommonLisp
 *** TODO HyperSpec
     #+BEGIN_SRC emacs-lisp
-      ;; (with-eval-after-load 'hyperspec
-      ;;   (general-define-key
-      ;;    "C-c h" 'hyperspec-lookup)
+      (with-eval-after-load 'hyperspec
+        (general-define-key "C-c h" 'hyperspec-lookup)
 
-      ;;   (setq common-lisp-hyperspec-root "~/.roswell/HyperSpec/")
+        (setq common-lisp-hyperspec-root "~/.roswell/HyperSpec/")
 
-      ;;   (defun common-lisp-hyperspec (symbol-name)
-      ;;     (interactive (list (common-lisp-hyperspec-read-symbol-name)))
-      ;;     (let ((name (common-lisp-hyperspec--strip-cl-package
-      ;;                  (downcase symbol-name))))
-      ;;       (cl-maplist (lambda (entry)
-      ;;                     (eww-open-file (concat common-lisp-hyperspec-root "Body/"
-      ;;                                            (car entry)))
-      ;;                     (when (cdr entry)
-      ;;                       (sleep-for 1.5)))
-      ;;                   (or (common-lisp-hyperspec--find name)
-      ;;                       (error "The symbol `%s' is not defined in Common Lisp"
-      ;;                              symbol-name)))))
+        (defun common-lisp-hyperspec (symbol-name)
+          (interactive (list (common-lisp-hyperspec-read-symbol-name)))
+          (let ((name (common-lisp-hyperspec--strip-cl-package
+                       (downcase symbol-name))))
+            (cl-maplist (lambda (entry)
+                          (eww-open-file (concat common-lisp-hyperspec-root "Body/"
+                                                 (car entry)))
+                          (when (cdr entry)
+                            (sleep-for 1.5)))
+                        (or (common-lisp-hyperspec--find name)
+                            (error "The symbol `%s' is not defined in Common Lisp"
+                                   symbol-name)))))
 
-      ;;   (defun common-lisp-hyperspec-lookup-reader-macro (macro)
-      ;;     (interactive
-      ;;      (list
-      ;;       (let ((completion-ignore-case t))
-      ;;         (completing-read "Look up reader-macro: "
-      ;;                          common-lisp-hyperspec--reader-macros nil t
-      ;;                          (common-lisp-hyperspec-reader-macro-at-point)))))
-      ;;     (eww-open-file
-      ;;      (concat common-lisp-hyperspec-root "Body/"
-      ;;              (gethash macro common-lisp-hyperspec--reader-macros))))
+        (defun common-lisp-hyperspec-lookup-reader-macro (macro)
+          (interactive
+           (list
+            (let ((completion-ignore-case t))
+              (completing-read "Look up reader-macro: "
+                               common-lisp-hyperspec--reader-macros nil t
+                               (common-lisp-hyperspec-reader-macro-at-point)))))
+          (eww-open-file
+           (concat common-lisp-hyperspec-root "Body/"
+                   (gethash macro common-lisp-hyperspec--reader-macros))))
 
-      ;;   (defun common-lisp-hyperspec-format (character-name)
-      ;;     (interactive (list (common-lisp-hyperspec--read-format-character)))
-      ;;     (cl-maplist (lambda (entry)
-      ;;                   (eww-open-file (common-lisp-hyperspec-section (car entry))))
-      ;;                 (or (gethash character-name
-      ;;                              common-lisp-hyperspec--format-characters)
-      ;;                     (error "The symbol `%s' is not defined in Common Lisp"
-      ;;                            character-name))))
+        (defun common-lisp-hyperspec-format (character-name)
+          (interactive (list (common-lisp-hyperspec--read-format-character)))
+          (cl-maplist (lambda (entry)
+                        (eww-open-file (common-lisp-hyperspec-section (car entry))))
+                      (or (gethash character-name
+                                   common-lisp-hyperspec--format-characters)
+                          (error "The symbol `%s' is not defined in Common Lisp"
+                                 character-name))))
 
-      ;;   (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
-      ;;     (let ((buf (current-buffer)))
-      ;;       ad-do-it
-      ;;       (switch-to-buffer buf)
-      ;;       (pop-to-buffer "*eww*")))
+        (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
+          (let ((buf (current-buffer)))
+            ad-do-it
+            (switch-to-buffer buf)
+            (pop-to-buffer "*eww*")))
 
-      ;;   (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
-      ;;     (let ((buf (current-buffer)))
-      ;;       ad-do-it
-      ;;       (switch-to-buffer buf)
-      ;;       (pop-to-buffer "*eww*")))
+        (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
+          (let ((buf (current-buffer)))
+            ad-do-it
+            (switch-to-buffer buf)
+            (pop-to-buffer "*eww*")))
 
-      ;;   (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
-      ;;     (let ((buf (current-buffer)))
-      ;;       ad-do-it
-      ;;       (switch-to-buffer buf)
-      ;;       (pop-to-buffer "*eww*"))))
+        (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
+          (let ((buf (current-buffer)))
+            ad-do-it
+            (switch-to-buffer buf)
+            (pop-to-buffer "*eww*"))))
     #+END_SRC
 *** slime
     #+BEGIN_SRC emacs-lisp
@@ -457,7 +459,7 @@ nnnn#+title: Configurations for GNU Emacs
         (add-hook 'slime-mode-hook 'set-up-slime-ac)
         (add-hook 'slime-repl-mode-hook 'set-up-slime-ac))
     #+END_SRC
-*** TODO takeokunn/slime-history
+*** takeokunn/slime-history
     #+BEGIN_SRC emacs-lisp
       (defun takeokunn/slime-history ()
         (interactive)
@@ -481,43 +483,41 @@ nnnn#+title: Configurations for GNU Emacs
         :ensure t
         :hook (emacs-lisp-mode-hook))
     #+END_SRC
-*** ielm
-*** TODO takeokunn/ielm-history
+*** takeokunn/ielm-history
     #+BEGIN_SRC emacs-lisp
-      ;; (defun takeokunn/ielm-history ()
-      ;;   (interactive)
-      ;;   (insert
-      ;;    (completing-read
-      ;;     "choice history: "
-      ;;     (progn
-      ;;       (let ((history nil))
-      ;;         (dotimes (index (ring-length comint-input-ring))
-      ;;           (push (ring-ref comint-input-ring index) history))
-      ;;         history)))))
+      (defun takeokunn/ielm-history ()
+        (interactive)
+        (insert
+         (completing-read
+          "choice history: "
+          (progn
+            (let ((history nil))
+              (dotimes (index (ring-length comint-input-ring))
+                (push (ring-ref comint-input-ring index) history))
+              history)))))
 
-      ;; (defun takeokunn/ielm-write-history-on-exit (process event)
-      ;;   (comint-write-input-ring)
-      ;;   (let ((buf (process-buffer process)))
-      ;;     (when (buffer-live-p buf)
-      ;;       (with-current-buffer buf
-      ;;         (insert (format "\nProcess %s %s" process event))))))
+      (defun takeokunn/ielm-write-history-on-exit (process event)
+        (comint-write-input-ring)
+        (let ((buf (process-buffer process)))
+          (when (buffer-live-p buf)
+            (with-current-buffer buf
+              (insert (format "\nProcess %s %s" process event))))))
 
-      ;; (defun takeokunn/ielm-turn-on-history ()
-      ;;   (let ((process (get-buffer-process (current-buffer))))
-      ;;     (when process
-      ;;       (setq comint-input-ring-file-name (concat (file-remote-p default-directory) "~/.ielm-history"))
-      ;;       (setq comint-input-ring-size 100000)
-      ;;       (setq comint-input-ignoredups t)
-      ;;       (comint-read-input-ring)
-      ;;       (add-hook 'kill-buffer-hook #'comint-write-input-ring)
-      ;;       (define-key ielm-map (kbd "C-c C-r") 'takeokunn/ielm-history)
-      ;;       (general-define-key
-      ;;        :keymaps 'ielm-map
-      ;;        "C-c C-r" 'takeokunn/ielm-history)
+      (defun takeokunn/ielm-turn-on-history ()
+        (let ((process (get-buffer-process (current-buffer))))
+          (when process
+            (setq comint-input-ring-file-name (concat (file-remote-p default-directory) "~/.ielm-history"))
+            (setq comint-input-ring-size 100000)
+            (setq comint-input-ignoredups t)
+            (comint-read-input-ring)
+            (add-hook 'kill-buffer-hook #'comint-write-input-ring)
+            (general-define-key
+             :keymaps 'ielm-map
+             "C-c C-r" 'takeokunn/ielm-history)
 
-      ;;       (set-process-sentinel process #'takeokunn/ielm-write-history-on-exit))))
+            (set-process-sentinel process #'takeokunn/ielm-write-history-on-exit))))
 
-      ;; (add-hook 'ielm-mode-hook 'takeokunn/ielm-turn-on-history)
+      (add-hook 'ielm-mode-hook 'takeokunn/ielm-turn-on-history)
     #+END_SRC
 ** Clojure
 *** cider
@@ -754,20 +754,20 @@ nnnn#+title: Configurations for GNU Emacs
           :config
           (counsel-mode 1)))
     #+END_SRC
-*** TODO ivy-ghq
+*** ivy-ghq
     #+BEGIN_SRC emacs-lisp
-      ;; (leaf ivy-ghq
-      ;;   :ensure t
-      ;;   :preface
-      ;;   (defun takeokunn/ivy-ghq-open-and-fzf nil
-      ;;     (interactive)
-      ;;     (ivy-ghq-open)
-      ;;     (counsel-fzf))
-      ;;   :after counsel
-      ;;   :commands ivy-ghq-open
-      ;;   :custom ((ivy-ghq-short-list . t))
-      ;;   :bind
-      ;;   ("M-o" . takeokunn/ivy-ghq-open-and-fzf))
+      (leaf ivy-ghq
+        :el-get (ivy-ghq :url "https://raw.githubusercontent.com/analyticd/ivy-ghq.git")
+        :preface
+        (defun takeokunn/ivy-ghq-open-and-fzf nil
+          (interactive)
+          (ivy-ghq-open)
+          (counsel-fzf))
+        :after counsel
+        :commands ivy-ghq-open
+        :custom ((ivy-ghq-short-list . t))
+        :bind
+        ("M-o" . takeokunn/ivy-ghq-open-and-fzf))
     #+END_SRC
 *** ivy-rich
     #+BEGIN_SRC emacs-lisp
