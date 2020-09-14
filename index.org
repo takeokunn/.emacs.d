@@ -1,4 +1,4 @@
-#+title: Configurations for GNU Emacs
+nnnn#+title: Configurations for GNU Emacs
 #+author: takeounn
 #+email: bararararatty@gmail.com
 #+startup: content
@@ -22,9 +22,9 @@
 
      (eval-and-compile
        (customize-set-variable
-        'package-archives '(("gnu"   . "https://elpa.gnu.org/packages/")
+        'package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                             ("melpa" . "https://melpa.org/packages/")
-                            ("org"   . "https://orgmode.org/elpa/")))
+                            ("org" . "https://orgmode.org/elpa/")))
        (package-initialize)
        (unless (package-installed-p 'leaf)
          (package-refresh-contents)
@@ -37,25 +37,16 @@
          (leaf hydra :ensure t)
          (leaf el-get :ensure t)
          (leaf blackout :ensure t)
+         (leaf dash :ensure t)
+         (leaf dash-functional :ensure t)
+         (leaf s :ensure t)
+         (leaf f :ensure t)
+         (leaf ht :ensure t)
+         (leaf general :ensure t)
 
          :config
          ;; initialize leaf-keywords.el
          (leaf-keywords-init)))
-
-     (leaf leaf
-       :config
-       (leaf leaf-convert
-         :ensure t
-         :config (leaf use-package :ensure t)))
-   #+END_SRC
-** utility
-   #+BEGIN_SRC emacs-lisp
-     (leaf dash :ensure t)
-     (leaf dash-functional :ensure t)
-     (leaf s :ensure t)
-     (leaf f :ensure t)
-     (leaf ht :ensure t)
-     (leaf general :ensure t)
    #+END_SRC
 * Basic
 ** early-init
@@ -131,15 +122,15 @@
    #+BEGIN_SRC emacs-lisp
      (keyboard-translate ?\C-h ?\C-?)
 
-     (progn
-      (global-set-key (kbd "C-h") 'backward-delete-char)
-      (global-set-key (kbd "C-z") 'undo)
-      (global-set-key (kbd "C-?") 'help-command)
-      (global-set-key (kbd "C-m") 'set-mark-command)
-      (global-set-key (kbd "C-a") 'back-to-indentation)
-      (global-set-key (kbd "C-c i") 'find-function)
-      (global-set-key (kbd "C-x C-o") 'other-window)
-      (global-set-key (kbd "C-x C-k") nil))
+     (general-define-key
+      "C-h" 'backward-delete-char
+      "C-z" 'undo
+      "C-?" 'help-command
+      "C-m" 'set-mark-command
+      "C-a" 'back-to-indentation
+      "C-c i" 'find-function
+      "C-x C-o"  'other-window
+      "C-x C-k" nil)
    #+END_SRC
 ** ビープ音を消す
    #+begin_src emacs-lisp
@@ -317,13 +308,13 @@
        :ensure t
        :mode ("\\.scala$"))
    #+END_SRC
-** TODO scheme-mode
+** scheme-mode
    #+BEGIN_SRC emacs-lisp
-     ;; (setq-default gosh-program-name "/usr/local/bin/gosh -i")
+     (setq-default gosh-program-name "/usr/local/bin/gosh -i")
 
-     ;; (general-def inferior-scheme-mode-map
-     ;;   "C-p" 'comint-previous-input
-     ;;   "C-n" 'comint-next-input)
+     (general-def inferior-scheme-mode-map
+       "C-p" 'comint-previous-input
+       "C-n" 'comint-next-input)
    #+END_SRC
 ** slim-mode
    #+BEGIN_SRC emacs-lisp
@@ -361,27 +352,14 @@
        :ensure t
        :mode ("\\.vue$"))
    #+END_SRC
-** TODO web-mode
+** web-mode
    #+BEGIN_SRC emacs-lisp
      (leaf web-mode
        :ensure t
-       :mode ("\\.html?\\'" "\\.erb\\'" "\\.gsp\\'" "\\.tsx\\'"))
-
-     ;; (use-package web-mode
-     ;;   :after (tide)
-     ;;   :mode (("\\.html?\\'" . web-mode)
-     ;;          ("\\.erb\\'" . web-mode)
-     ;;          ("\\.gsp\\'" . web-mode)
-     ;;          ("\\.tsx\\'" . web-mode))
-     ;;   :init
-     ;;   ;; (add-hook 'web-mode-hook
-     ;;   ;;           (lambda ()
-     ;;   ;;             (when (string-equal "tsx" (file-name-extension buffer-file-name))
-     ;;   ;;               (my/setup-tide-mode))))
-     ;;   :config
-     ;;   (setq web-mode-auto-close-style t)
-     ;;   ;; (setq web-mode-tag-auto-close-style t)
-     ;;   )
+       :mode ("\\.html?\\'" "\\.erb\\'" "\\.gsp\\'" "\\.tsx\\'")
+       :custom
+       ((web-mode-auto-close-style . t)
+        (web-mode-tag-auto-close-style . t)))
    #+END_SRC
 ** yaml-mode
    #+BEGIN_SRC emacs-lisp
@@ -472,7 +450,7 @@
       ;;       (switch-to-buffer buf)
       ;;       (pop-to-buffer "*eww*"))))
     #+END_SRC
-*** TODO slime
+*** slime
     #+BEGIN_SRC emacs-lisp
       (with-eval-after-load 'slime
         (load (expand-file-name "~/.roswell/helper.el"))
@@ -481,16 +459,16 @@
     #+END_SRC
 *** TODO takeokunn/slime-history
     #+BEGIN_SRC emacs-lisp
-      ;; (defun takeokunn/slime-history ()
-      ;;   (interactive)
-      ;;   (insert
-      ;;    (completing-read
-      ;;     "choice history: "
-      ;;     (-distinct (read (f-read-text "~/.slime-history.eld"))))))
+      (defun takeokunn/slime-history ()
+        (interactive)
+        (insert
+         (completing-read
+          "choice history: "
+          (-distinct (read (f-read-text "~/.slime-history.eld"))))))
 
-      ;; (general-define-key
-      ;;  :keymaps 'slime-repl-mode-map
-      ;;  "C-c C-r" 'takeokunn/slime-history)
+      (general-define-key
+       :keymaps 'slime-repl-mode-map
+       "C-c C-r" 'takeokunn/slime-history)
     #+END_SRC
 ** EmacsLisp
 *** elisp-slime-nav
@@ -699,25 +677,13 @@
         :config
         (push 'company-lsp company-backends))
     #+END_SRC
-*** TODO slime-company
+*** slime-company
     #+BEGIN_SRC emacs-lisp
-      ;; (leaf slime-company
-      ;;   :ensure t
-      ;;   :after company slime
-      ;;   :setq ((slime-company-completion quote fuzzy)
-      ;;          (slime-company-after-completion quote slime-company-just-one-space)))
-    #+END_SRC
-*** TODO yasnippet
-    #+BEGIN_SRC emacs-lisp
-      ;; (leaf yasnippet
-      ;;   :ensure t
-      ;;   :diminish yas-minor-mode)
-
-      ;; (leaf yasnippet-snippets
-      ;;   :ensure t
-      ;;   :after yasnippet
-      ;;   :config
-      ;;   (yas-global-mode 1))
+      (leaf slime-company
+        :ensure t
+        :after company slime
+        :custom ((slime-company-completion . 'fuzzy)
+                 (slime-company-after-completion . 'slime-company-just-one-space)))
     #+END_SRC
 ** LSP
 *** lsp-mode
@@ -813,11 +779,15 @@
     #+END_SRC
 *** helm-swoop
     #+begin_src emacs-lisp
-      (leaf helm-swoop
+      (leaf helm
         :ensure t
-        :bind
-        ("C-o" . heml-swoop)
-        :custom (helm-swoop-split-direction 'split-window-vertically))
+        :config
+        (leaf helm-swoop
+          :ensure t
+          :bind
+          ("C-o" . heml-swoop)
+          :bind (helm-swoop-map  ("C-o" . helm-swoop))
+          :custom (helm-swoop-split-direction 'split-window-vertically)))
     #+end_src
 ** Shell
 *** aweshell
@@ -847,7 +817,7 @@
 	:hook (rust-mode-hook
 	       (racer-mode-hook . eldoc-mode)))
     #+END_SRC
-*** TODO rastic
+*** TODO rustic
     #+BEGIN_SRC emacs-lisp
       ;; (leaf rustic
       ;;   :ensure t
@@ -861,44 +831,40 @@
       ;; (leaf omnisharp
       ;;   :ensure t
       ;;   :after company flycheck
-      ;;   :hook (csharp-mode-hook
-      ;; 	 (csharp-mode-hook . flycheck-mode))
+      ;;   :hook (csharp-mode-hook . flycheck-mode)
       ;;   :config
       ;;   (add-to-list 'company-backends 'company-omnisharp))
     #+END_SRC
 ** JavaScript
-*** TODO js2-refactor
+*** js2-refactor
     #+BEGIN_SRC emacs-lisp
-      ;; (use-package js2-refactor
-      ;;   :after (js2-mode typescript-mode)
-      ;;   :init
-      ;;   (add-hook 'js2-mode-hook #'js2-refactor-mode)
-      ;;   (add-hook 'typescript-mode-hook #'js2-refactor-mode)
-      ;;   :config
-      ;;   (js2r-add-keybindings-with-prefix "C-c C-m"))
+      (leaf js2-refactor
+        :ensure t
+        :after typescript-mode js2-mode
+        :hook (js2-mode-hook typescript-mode-hook))
     #+END_SRC
-*** TODO tide
+*** tide
     #+BEGIN_SRC emacs-lisp
-      ;; (use-package tide
-      ;;   :after (typescript-mode)
-      ;;   :preface
-      ;;   (defun takeokunn/setup-tide-mode ()
-      ;;     (interactive)
-      ;;     (tide-setup)
-      ;;     (tide-hl-identifier-mode +1))
-      ;;   :init
-      ;;   (add-hook 'typescript-mode-hook #'takeokunn/setup-tide-mode))
+      (leaf tide
+        :ensure t
+        :config
+        (eval-and-compile
+          (defun takeokunn/setup-tide-mode nil
+            (interactive)
+            (tide-setup)
+            (tide-hl-identifier-mode 1)))
+
+        (with-eval-after-load 'typescript-mode
+          (add-hook 'typescript-mode-hook #'takeokunn/setup-tide-mode)
+          (require 'tide nil nil)))
     #+END_SRC
 ** Haskell
-*** TODO hindent
+*** hindent
     #+BEGIN_SRC emacs-lisp
-      ;; (use-package hindent
-      ;;   :after (haskell-mode)
-      ;;   :init
-      ;;   (add-hook 'haskell-mode-hook #'hindent-mode)
-      ;;   :config
-      ;;   ;; (setq hindent-style "johan-tibell")
-      ;;   )
+      (leaf hindent
+        :ensure t
+        :after haskell-mode
+        :hook (haskell-mode-hook))
     #+END_SRC
 ** Ruby
 *** robe
@@ -1065,6 +1031,10 @@
     #+BEGIN_SRC emacs-lisp
       (leaf whitespace
         :ensure t
+        :custom
+        ((whitespace-style '(face tabs tab-mark spaces space-mark))
+         (whitespace-display-mappings '((space-mark ?\u3000 [?\u25a1])
+                                            (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t]))))
         :config
         (global-whitespace-mode 1))
     #+END_SRC
@@ -1084,10 +1054,13 @@
                                               "* %?")))
      (leaf org-temp)
    #+END_SRC
-** TODO Keybind
+** Keybind
    #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-c c") 'org-capture)
-     (global-set-key (kbd "C-c a") 'org-agenda)
+     (general-define-key
+      :prefix "C-c"
+      "a" 'org-agenda
+      "b" 'counsel-bookmark
+      "c" 'org-capture)
 
-     ;; (define-key org-mode-map "\C-m" nil)
+     (general-def org-mode-map "\C-m" nil)
    #+END_SRC
