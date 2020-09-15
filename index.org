@@ -69,15 +69,15 @@
    #+BEGIN_SRC emacs-lisp
      (setq-default show-trailing-whitespace t)
 
-     ;; (eval-and-compile
-     ;;   (--map (add-hook (intern (concat (symbol-name it) "-hook"))
-                      ;; '(lambda () (setq show-trailing-whitespace nil)))
-            ;; '(comint-mode
-              ;; eshell-mode
-              ;; eww-mode
-              ;; term-mode
-              ;; twittering-mode
-              ;; minibuffer-inactive-mode)))
+     (dolist
+         (mode '(comint-mode
+                 eshell-mode
+                 eww-mode
+                 term-mode
+                 twittering-mode
+                 minibuffer-inactive-mode))
+       (add-hook (intern (concat (symbol-name mode) "-hook"))
+                 '(lambda () (setq show-trailing-whitespace nil))))
    #+END_SRC
 ** 行番号を表示する
    #+BEGIN_SRC emacs-lisp
@@ -111,7 +111,7 @@
    #+BEGIN_SRC emacs-lisp
      (set-fontset-font t 'japanese-jisx0208 "TakaoPGothic")
      (add-to-list 'face-font-rescale-alist '(".*Takao P.*" . 0.85))
-   #+END_SRC
+   #+END_SRC
 ** GC
    #+BEGIN_SRC emacs-lisp
      (setq gc-cons-threshold (* 128 1024 1024)) ;; 128MB
@@ -132,7 +132,7 @@
       "C-m" 'set-mark-command
       "C-a" 'back-to-indentation
       "C-c i" 'find-function
-      "C-x C-o"  'other-window
+      "C-x C-o" 'other-window
       "C-x C-k" nil)
    #+END_SRC
 ** ビープ音を消す
@@ -185,6 +185,11 @@
      (leaf dockerfile-mode
        :ensure t
        :mode ("Dockerfile\\'"))
+   #+END_SRC
+** emacs-lisp-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf emacs-lisp-mode
+       :mode ("\\.skk$"))
    #+END_SRC
 ** emmet-mode
    #+BEGIN_SRC emacs-lisp
@@ -483,7 +488,7 @@
         :ensure t
         :hook (emacs-lisp-mode-hook))
     #+END_SRC
-*** takeokunn/ielm-history
+*** TODO takeokunn/ielm-history
     #+BEGIN_SRC emacs-lisp
       (defun takeokunn/ielm-history ()
         (interactive)
@@ -531,7 +536,8 @@
     #+BEGIN_SRC emacs-lisp
       (leaf all-the-icons
         :ensure t
-        :hook ((dired-mode-hook . all-the-icons-dired-mode)))
+        ;; :hook ((dired-mode-hook . all-the-icons-dired-mode))
+        )
     #+END_SRC
 *** all-the-icons-ivy
     #+BEGIN_SRC emacs-lisp
@@ -560,8 +566,6 @@
       (leaf doom-themes
         :ensure t
         :after neotree
-        :custom ((doom-themes-enable-italic . t)
-                 (doom-themes-enable-bold . t))
         :custom-face ((doom-modeline-bar quote
                                          ((t
                                            (:background "#6272a4")))))
@@ -606,7 +610,7 @@
       (leaf neotree
         :ensure t
         :preface
-        (defun takeokunn/neotree-toggle nil
+        (defun takeokunn/neotree-toggle ()
           (interactive)
           (let ((default-directory (locate-dominating-file default-directory ".git")))
             (neotree-toggle)))
@@ -649,6 +653,19 @@
         :bind ("M-RET" . emr-show-refactor-menu))
     #+END_SRC
 ** Completion
+*** ac-slime
+    #+BEGIN_SRC emacs-lisp
+      (leaf auto-complete
+        :ensure t
+        :config
+        (leaf ac-slime
+          :ensure t
+          :hook ((slime-mode-hook . set-up-slime-ac)
+                 (slime-repl-mode-hook . set-up-slime-ac))
+          :config
+          (add-to-list 'ac-modes 'slime-repl-mode)))
+
+    #+END_SRC
 *** company
    #+BEGIN_SRC emacs-lisp
      (leaf company
@@ -676,14 +693,6 @@
         :after company
         :config
         (push 'company-lsp company-backends))
-    #+END_SRC
-*** slime-company
-    #+BEGIN_SRC emacs-lisp
-      (leaf slime-company
-        :ensure t
-        :after company slime
-        :custom ((slime-company-completion . 'fuzzy)
-                 (slime-company-after-completion . 'slime-company-just-one-space)))
     #+END_SRC
 ** LSP
 *** lsp-mode
@@ -757,17 +766,20 @@
 *** ivy-ghq
     #+BEGIN_SRC emacs-lisp
       (leaf ivy-ghq
-        :el-get (ivy-ghq :url "https://github.com/analyticd/ivy-ghq.git")
+        :el-get (ivy-ghq
+                 :url "https://github.com/analyticd/ivy-ghq.git"
+                 :features ivy-ghq)
         :preface
         (defun takeokunn/ivy-ghq-open-and-fzf ()
           (interactive)
           (ivy-ghq-open)
           (counsel-fzf))
         :after counsel
-        :defun takeokunn/ivy-ghq-open-and-fzf
         :custom ((ivy-ghq-short-list . t))
-        :bind
-        (("M-o" . takeokunn/ivy-ghq-open-and-fzf)))
+        :defun ivy-ghq-open takeokunn/ivy-ghq-open-and-fzf)
+
+      (general-define-key
+       "M-o" 'takeokunn/ivy-ghq-open-and-fzf)
     #+END_SRC
 *** ivy-rich
     #+BEGIN_SRC emacs-lisp
@@ -786,7 +798,7 @@
           :ensure t
           :defun helm-swoop
           :bind ("C-o" . helm-swoop)
-          :custom (helm-swoop-split-direction . 'split-window-vertically)))
+          :custom (helm-swoop-split-direction . 'split-window-horizontally)))
     #+end_src
 ** Shell
 *** aweshell
@@ -1071,4 +1083,61 @@
      (general-define-key
       :keymaps 'org-mode-map
       "C-m" nil)
+   #+END_SRC
+* MyFunc
+** takeokunn/beginning-of-intendation
+   #+BEGIN_SRC emacs-lisp
+     (defun takeokunn/beginning-of-intendation ()
+       "move to beginning of line, or indentation"
+       (interactive)
+       (back-to-indentation))
+   #+END_SRC
+** takeokunn/before-set-auto-mode
+   #+BEGIN_SRC emacs-lisp
+     (defun takeokunn/before-set-auto-mode ()
+       (when (or (and buffer-file-name
+                      (> (file-attribute-size (file-attributes buffer-file-name)) 100000))
+                 (> (line-number-at-pos (point-max)) 10000))
+         (prog1 t
+           (prog-mode))))
+
+     (advice-add 'set-auto-mode :before-until 'takeokunn/before-set-auto-mode)
+   #+END_SRC
+** takeokunn/irb-history
+   #+BEGIN_SRC emacs-lisp
+      (defun takeokunn/irb-history ()
+        (interactive)
+        (insert
+         (completing-read
+          "choose history: "
+          (mapcar #'list (-distinct (s-lines (f-read-text "~/.irb-history")))))))
+
+      (general-def inf-ruby-mode-map
+        "C-c C-r" 'takeokunn/irb-history)
+   #+END_SRC
+** takeokunn/reload-major-mode
+   #+BEGIN_SRC emacs-lisp
+     (defun takeokunn/reload-major-mode ()
+       "Reload current major mode."
+       (interactive)
+       (let ((current-mode major-mode))
+         (fundamental-mode)
+         (funcall current-mode)
+         current-mode))
+   #+END_SRC
+** TODO takeokunn/exec-npm-script
+   #+BEGIN_SRC emacs-lisp
+     ;; (defun my/exec-npm-script ()
+     ;;   (interactive)
+     ;;   (let* ((npm-root (and default-directory (locate-dominating-file default-directory "package.json")))
+     ;;          (default-directory (or npm-root default-directory))
+     ;;          choice scripts command-names)
+     ;;     (unless npm-root
+     ;;       (user-error "package.json not found..."))
+     ;;     (setq scripts (cdr-safe (assq 'scripts (json-read-file (file-relative-name "package.json" default-directory)))))
+     ;;     (setq command-names (mapcar #'(lambda (s) (symbol-name (car s))) scripts))
+     ;;     (setq choice (intern (completing-read "choice command: " command-names)))
+     ;;     (setq command (cdr-safe (assq choice scripts)))
+     ;;     (when command
+     ;;       (compile command))))
    #+END_SRC
