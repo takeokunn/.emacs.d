@@ -34,9 +34,9 @@
          :ensure t
          :init
          ;; optional packages if you want to use :hydra, :el-get, :blackout,,,
-         (leaf hydra :ensure t)
+         ;; (leaf hydra :ensure t)
          (leaf el-get :ensure t)
-         (leaf blackout :ensure t)
+         ;; (leaf blackout :ensure t)
 
          :config
          ;; initialize leaf-keywords.el
@@ -313,11 +313,11 @@
    #+END_SRC
 ** scheme-mode
    #+BEGIN_SRC emacs-lisp
-     (setq-default gosh-program-name "/usr/local/bin/gosh -i")
+     ;; (setq-default gosh-program-name "/usr/local/bin/gosh -i")
 
-     (general-def inferior-scheme-mode-map
-       "C-p" 'comint-previous-input
-       "C-n" 'comint-next-input)
+     ;; (general-def inferior-scheme-mode-map
+     ;;   "C-p" 'comint-previous-input
+     ;;   "C-n" 'comint-next-input)
    #+END_SRC
 ** slim-mode
    #+BEGIN_SRC emacs-lisp
@@ -757,17 +757,17 @@
 *** ivy-ghq
     #+BEGIN_SRC emacs-lisp
       (leaf ivy-ghq
-        :el-get (ivy-ghq :url "https://raw.githubusercontent.com/analyticd/ivy-ghq.git")
+        :el-get (ivy-ghq :url "https://github.com/analyticd/ivy-ghq.git")
         :preface
-        (defun takeokunn/ivy-ghq-open-and-fzf nil
+        (defun takeokunn/ivy-ghq-open-and-fzf ()
           (interactive)
           (ivy-ghq-open)
           (counsel-fzf))
         :after counsel
-        :commands ivy-ghq-open
+        :defun takeokunn/ivy-ghq-open-and-fzf
         :custom ((ivy-ghq-short-list . t))
         :bind
-        ("M-o" . takeokunn/ivy-ghq-open-and-fzf))
+        (("M-o" . takeokunn/ivy-ghq-open-and-fzf)))
     #+END_SRC
 *** ivy-rich
     #+BEGIN_SRC emacs-lisp
@@ -784,10 +784,9 @@
         :config
         (leaf helm-swoop
           :ensure t
-          :bind
-          ("C-o" . heml-swoop)
-          :bind (helm-swoop-map  ("C-o" . helm-swoop))
-          :custom (helm-swoop-split-direction 'split-window-vertically)))
+          :defun helm-swoop
+          :bind ("C-o" . helm-swoop)
+          :custom (helm-swoop-split-direction . 'split-window-vertically)))
     #+end_src
 ** Shell
 *** aweshell
@@ -974,6 +973,13 @@
 	:config
 	(dashboard-setup-startup-hook))
     #+END_SRC
+*** ddskk
+    #+BEGIN_SRC emacs-lisp
+      (leaf ddskk
+        :ensure t
+        :bind
+        ("C-x C-j" . skk-mode))
+    #+END_SRC
 *** editorconfig
     #+BEGIN_SRC emacs-lisp
       (leaf editorconfig
@@ -1062,5 +1068,7 @@
       "b" 'counsel-bookmark
       "c" 'org-capture)
 
-     (general-def org-mode-map "\C-m" nil)
+     (general-define-key
+      :keymaps 'org-mode-map
+      "C-m" nil)
    #+END_SRC
