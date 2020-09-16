@@ -188,8 +188,8 @@
    #+END_SRC
 ** emacs-lisp-mode
    #+BEGIN_SRC emacs-lisp
-     (leaf emacs-lisp-mode
-       :mode ("\\.skk$"))
+     ;; (leaf emacs-lisp-mode
+     ;;   :mode ("\\.skk$"))
    #+END_SRC
 ** emmet-mode
    #+BEGIN_SRC emacs-lisp
@@ -364,10 +364,8 @@
    #+BEGIN_SRC emacs-lisp
      (leaf web-mode
        :ensure t
-       :mode ("\\.html?\\'" "\\.erb\\'" "\\.gsp\\'" "\\.tsx\\'")
-       :custom
-       ((web-mode-auto-close-style . t)
-        (web-mode-tag-auto-close-style . t)))
+       :preface
+       :mode ("\\.html?\\'" "\\.erb\\'" "\\.gsp\\'" "\\.tsx\\'"))
    #+END_SRC
 ** yaml-mode
    #+BEGIN_SRC emacs-lisp
@@ -990,7 +988,12 @@
       (leaf ddskk
         :ensure t
         :bind
-        ("C-x C-j" . skk-mode))
+        ("C-x C-j" . skk-mode)
+        :setq
+        (skk-byte-compile-init-file . t)
+        (skk-preload . t)
+        (skk-isearch-mode-enable . 'always)
+        (default-input-method . "japanese-skk"))
     #+END_SRC
 *** editorconfig
     #+BEGIN_SRC emacs-lisp
