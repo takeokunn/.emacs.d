@@ -195,9 +195,9 @@
    #+BEGIN_SRC emacs-lisp
      (leaf emmet-mode
        :ensure t
-       :after vue-mode web-mode
+       :after web-mode
        :bind (("C-j" . nil))
-       :hook (web-mode-hook vue-mode))
+       :hook (web-mode-hook))
    #+END_SRC
 ** fish-mode
    #+BEGIN_SRC emacs-lisp
@@ -364,7 +364,6 @@
    #+BEGIN_SRC emacs-lisp
      (leaf web-mode
        :ensure t
-       :preface
        :mode ("\\.html?\\'" "\\.erb\\'" "\\.gsp\\'" "\\.tsx\\'"))
    #+END_SRC
 ** yaml-mode
@@ -858,14 +857,12 @@
         :ensure t
         :config
         (eval-and-compile
-          (defun takeokunn/setup-tide-mode nil
+          (defun takeokunn/setup-tide-mode ()
             (interactive)
             (tide-setup)
             (tide-hl-identifier-mode 1)))
-
         (with-eval-after-load 'typescript-mode
-          (add-hook 'typescript-mode-hook #'takeokunn/setup-tide-mode)
-          (require 'tide nil nil)))
+          (add-hook 'typescript-mode-hook #'takeokunn/setup-tide-mode)))
     #+END_SRC
 ** Haskell
 *** hindent
@@ -1048,6 +1045,12 @@
     #+BEGIN_SRC emacs-lisp
       (leaf smex :ensure t)
     #+END_SRC
+*** undo
+    #+begin_src emacs-lisp
+      (leaf undo-tree
+        :ensure t
+        :config (global-undo-tree-mode))
+    #+end_src
 *** whitespace
     #+BEGIN_SRC emacs-lisp
       (leaf whitespace
