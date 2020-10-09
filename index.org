@@ -691,6 +691,14 @@
         :config
         (push 'company-lsp company-backends))
     #+END_SRC
+*** company-irony
+    #+begin_src emacs-lisp
+      (leaf company-irony
+        :ensure t
+        :after (company irony)
+        :config
+        (push 'company-backends 'company-irony))
+    #+end_src
 ** LSP
 *** lsp-mode
     #+BEGIN_SRC emacs-lisp
@@ -743,22 +751,23 @@
       (leaf ivy
         :ensure t
         :custom (ivy-use-virtual-buffers . t)
-        :config (ivy-mode 1)
-        (leaf counsel
-          :ensure t
-          :init
-          (eval-and-compile
-            (defun takeokunn/counsel-ag nil
-              (interactive)
-              (let ((symbol (thing-at-point 'symbol 'no-properties))
-                    (default-directory (locate-dominating-file default-directory ".git")))
-                (counsel-ag symbol))))
-          :bind
-          ("C-x m" . counsel-compile)
-          ("C-c k" . takeokunn/counsel-ag)
-          :custom (counsel-ag-base-command . "ag --nocolor --nogroup -u %s")
-          :config
-          (counsel-mode 1)))
+        :config (ivy-mode 1))
+
+      (leaf counsel
+        :ensure t
+        :init
+        (eval-and-compile
+          (defun takeokunn/counsel-ag nil
+            (interactive)
+            (let ((symbol (thing-at-point 'symbol 'no-properties))
+                  (default-directory (locate-dominating-file default-directory ".git")))
+              (counsel-ag symbol))))
+        :bind
+        ("C-x m" . counsel-compile)
+        ("C-c k" . takeokunn/counsel-ag)
+        :custom (counsel-ag-base-command . "ag --nocolor --nogroup -u %s")
+        :config
+        (counsel-mode 1))
     #+END_SRC
 *** ivy-ghq
     #+BEGIN_SRC emacs-lisp
@@ -798,10 +807,6 @@
           :custom (helm-swoop-split-direction . 'split-window-horizontally)))
     #+end_src
 ** Shell
-*** aweshell
-    #+BEGIN_SRC emacs-lisp
-      ;; (leaf aweshell :ensure t)
-    #+END_SRC
 *** exec-path-from-shell
     #+BEGIN_SRC emacs-lisp
       (leaf exec-path-from-shell
@@ -903,6 +908,14 @@
 	:after sql-mode
 	:hook ((sql-mode-hook . sqlind-minor-mode)))
     #+END_SRC
+** CLang
+*** irony-mode
+    #+begin_src emacs-lisp
+      (leaf irony
+        :ensure t
+        :hook ((c-mode-common-hook . irony-mode)
+               (irony-mode-hook . irony-cdb-autosetup-compile-options)))
+    #+end_src
 ** File
 *** recentf
     #+BEGIN_SRC emacs-lisp
@@ -1062,6 +1075,54 @@
         :config
         (global-whitespace-mode 1))
     #+END_SRC
+* Eshell
+** basic
+   #+begin_src emacs-lisp
+     (leaf eshell
+       :after (counsel)
+       :config
+       (with-eval-after-load 'eshell
+         ;; function
+         (defun eshell/ff (&rest args)
+           (find-file (car args)))
+
+         ;; config
+         (setq eshell-cmpl-ignore-case t)
+         (setq eshell-glob-include-dot-dot nil)
+         (setq eshell-ask-to-save-history (quote always))
+         (setq eshell-history-size 100000)
+         (setq eshell-hist-ignoredups t)
+
+         ;; alias
+         (defvar *shell-alias* '(("ll" "ls -la")
+                                 ("cdd" "cd ~/Desktop")))
+         (defvar eshell-command-aliases-list (append *shell-alias*))))
+   #+end_src
+** aweshell
+    #+BEGIN_SRC emacs-lisp
+      (defun takeokunn/aweshell-setup ()
+        (shell-command-to-string "ghq get https://github.com/takeokunn/aweshell.git"))
+
+      (when (file-directory-p "~/.ghq/github.com/takeokunn/aweshell")
+        (add-to-list 'load-path (expand-file-name "~/.ghq/github.com/takeokunn/aweshell"))
+        (require 'aweshell)
+        (with-eval-after-load 'aweshell
+          (defun takeokunn/counsel-aweshell-history ()
+            (interactive)
+            (ivy-read "Aweshell history: " (aweshell-parse-shell-history)))
+
+          (add-hook 'eshell-mode-hook
+                    (lambda () (define-key eshell-mode-map (kbd "C-c C-r") 'takeokunn/counsel-aweshell-history)))
+          (setq aweshell-auto-suggestion-p nil
+                eshell-highlight-prompt t
+                eshell-prompt-function 'epe-theme-lambda)))
+    #+END_SRC
+** eshell-z
+   #+begin_src emacs-lisp
+     (leaf eshell-z
+       :ensure t
+       :bind (("C-c C-q" . eshell-z)))
+   #+end_src
 * Org Mode
 ** Settinngs
    #+BEGIN_SRC emacs-lisp
