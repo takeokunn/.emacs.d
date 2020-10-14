@@ -126,6 +126,7 @@
      (keyboard-translate ?\C-h ?\C-?)
 
      (general-define-key
+      "M-¥" (lambda () (interactive) (insert "\\"))
       "C-h" 'backward-delete-char
       "C-z" 'undo
       "C-?" 'help-command
@@ -360,6 +361,12 @@
        :ensure t
        :mode ("\\.vue$"))
    #+END_SRC
+** vimrc-mode
+   #+begin_src emacs-lisp
+     (leaf vimrc-mode
+       :ensure t
+       :mode ("\\.vim\\(rc\\)?\\'"))
+   #+end_src
 ** web-mode
    #+BEGIN_SRC emacs-lisp
      (leaf web-mode
@@ -697,7 +704,7 @@
         :ensure t
         :after (company irony)
         :config
-        (push 'company-backends 'company-irony))
+        (push 'company-irony company-backends))
     #+end_src
 ** LSP
 *** lsp-mode
@@ -908,7 +915,7 @@
 	:after sql-mode
 	:hook ((sql-mode-hook . sqlind-minor-mode)))
     #+END_SRC
-** CLang
+** C/C++
 *** irony-mode
     #+begin_src emacs-lisp
       (leaf irony
