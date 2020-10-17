@@ -677,6 +677,8 @@
        :defvar company-backends
        :init
        (global-company-mode)
+       :config
+       (add-to-list 'company-backends 'company-yasnippet)
        :bind
        (:company-active-map
         ("C-n" . company-select-next)
@@ -705,6 +707,22 @@
         :after (company irony)
         :config
         (push 'company-irony company-backends))
+    #+end_src
+** Snippet
+*** yasnippet
+    #+begin_src emacs-lisp
+      (leaf yasnippet
+        :ensure t
+        :init (yas-global-mode 1)
+        :custom
+        (yas-snippet-dirs . '("~/.emacs.d/snippets")))
+    #+end_src
+*** ivy-yasnippet
+    #+begin_src emacs-lisp
+      (leaf ivy-yasnippet
+        :ensure t
+        :after (yasnippet yasnippet-snippets)
+        :bind (("C-c y" . ivy-yasnippet)))
     #+end_src
 ** LSP
 *** lsp-mode
@@ -772,6 +790,7 @@
         :bind
         ("C-x m" . counsel-compile)
         ("C-c k" . takeokunn/counsel-ag)
+        ("M-p" . counsel-fzf)
         :custom (counsel-ag-base-command . "ag --nocolor --nogroup -u %s")
         :config
         (counsel-mode 1))
@@ -1134,17 +1153,16 @@
 ** Settinngs
    #+BEGIN_SRC emacs-lisp
      (setq-default org-use-speed-commands t
-                     org-agenda-todo-ignore-with-date t
-                     org-directory "~/org"
-                     org-agenda-files '("~/org/todo.org")
-                     org-todo-keywords '((sequence "TODO(t)" "WAIT(w)" "|" "DONE(d)"))
-                     org-capture-templates '(("t" "Todo" entry (file+datetree "~/org/todo.org")
-                                              "* %?")
-                                             ("b" "Blog" entry (file "~/org/blog.org")
-                                              "* %?")
-                                             ("m" "Memo" entry (file "~/org/memo.org")
-                                              "* %?")))
-     (leaf org-temp)
+                   org-agenda-todo-ignore-with-date t
+                   org-directory "~/org"
+                   org-agenda-files '("~/org/todo.org")
+                   org-todo-keywords '((sequence "TODO(t)" "WAIT(w)" "|" "DONE(d)"))
+                   org-capture-templates '(("t" "Todo" entry (file+datetree "~/org/todo.org")
+                                            "* %?")
+                                           ("b" "Blog" entry (file "~/org/blog.org")
+                                            "* %?")
+                                           ("m" "Memo" entry (file "~/org/memo.org")
+                                            "* %?")))
    #+END_SRC
 ** Keybind
    #+BEGIN_SRC emacs-lisp
@@ -1158,6 +1176,11 @@
       :keymaps 'org-mode-map
       "C-m" nil)
    #+END_SRC
+** org-babel
+   #+begin_src emacs-lisp
+     (org-babel-do-load-languages 'org-babel-load-languages
+                                  '((lisp . t)))
+   #+end_src
 * MyFunc
 ** takeokunn/beginning-of-intendation
    #+BEGIN_SRC emacs-lisp
