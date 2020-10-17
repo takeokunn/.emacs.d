@@ -259,7 +259,8 @@
    #+BEGIN_SRC emacs-lisp
      (leaf markdown-mode
        :ensure t
-       :mode ("\\.md$" "\\.markdown$"))
+       :mode ("\\.md$" "\\.markdown$")
+       :bind ("C-j" . electric-newline-and-maybe-indent))
    #+END_SRC
 ** nginx-mode
    #+BEGIN_SRC emacs-lisp
@@ -1076,6 +1077,14 @@
         :custom ((counsel-describe-function-function function helpful-callable)
                  (counsel-describe-variable-function function helpful-variable)))
     #+END_SRC
+*** htmlize
+    #+begin_src emacs-lisp
+      (leaf htmlize
+        :ensure t
+        :el-get (htmlize
+                 :url "https://github.com/hniksic/emacs-htmlize.git"
+                 :features htmlize))
+    #+end_src
 *** smartparens
     #+BEGIN_SRC emacs-lisp
       (leaf smartparens :ensure t)
