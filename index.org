@@ -354,7 +354,8 @@
    #+BEGIN_SRC emacs-lisp
      (leaf typescript-mode
        :ensure t
-       :mode ("\\.ts$"))
+       :bind ("C-j" . electric-newline-and-maybe-indent)
+       :mode ("\\.ts$" "\\.tsx$"))
    #+END_SRC
 ** vue-mode
    #+BEGIN_SRC emacs-lisp
@@ -716,7 +717,7 @@
         :ensure t
         :init (yas-global-mode 1)
         :custom
-        (yas-snippet-dirs . '("~/.emacs.d/snippets")))
+        (yas-snippet-dirs . '("~/.emacs.d/yasnippets")))
     #+end_src
 *** ivy-yasnippet
     #+begin_src emacs-lisp
@@ -789,9 +790,9 @@
                   (default-directory (locate-dominating-file default-directory ".git")))
               (counsel-ag symbol))))
         :bind
-        ("C-x m" . counsel-compile)
-        ("C-c k" . takeokunn/counsel-ag)
-        ("M-p" . counsel-fzf)
+        (("C-x m" . counsel-compile)
+         ("C-c k" . takeokunn/counsel-ag)
+         ("M-p" . counsel-fzf))
         :custom (counsel-ag-base-command . "ag --nocolor --nogroup -u %s")
         :config
         (counsel-mode 1))
@@ -865,6 +866,14 @@
       ;;   :hook (rust-mode-hook
       ;; 	 (rustic-mode-hook . eldoc-mode))
     #+END_SRC
+** Cpp
+*** inferior-cling
+    #+begin_src emacs-lisp
+      (leaf inferior-cling
+        :el-get (inferior-cling
+                 :url "https://github.com/brianqq/inferior-cling.git"
+                 :features cling))
+    #+end_src
 ** C#
 *** TODO omnisharp
     #+BEGIN_SRC emacs-lisp
@@ -962,7 +971,7 @@
         :ensure t
         :bind
         ("C-x j" . open-junk-file)
-        :custom (open-junk-file-format . "~/.emacs.d/.junk/%Y-%m%d-%H%M%S."))
+        :custom (open-junk-file-format . `,(locate-user-emacs-file ".junk/%Y-%m%d-%H%M%S.")))
     #+END_SRC
 ** Syntax
 *** flycheck
@@ -1079,11 +1088,7 @@
     #+END_SRC
 *** htmlize
     #+begin_src emacs-lisp
-      (leaf htmlize
-        :ensure t
-        :el-get (htmlize
-                 :url "https://github.com/hniksic/emacs-htmlize.git"
-                 :features htmlize))
+      (leaf htmlize :ensure t)
     #+end_src
 *** smartparens
     #+BEGIN_SRC emacs-lisp
@@ -1189,6 +1194,13 @@
    #+begin_src emacs-lisp
      (org-babel-do-load-languages 'org-babel-load-languages
                                   '((lisp . t)))
+   #+end_src
+** org-generate
+   #+begin_src emacs-lisp
+     (leaf org-generate
+       :ensure t
+       :custom
+       (org-generate-file . `,(locate-user-emacs-file "yasnippets.org")))
    #+end_src
 * MyFunc
 ** takeokunn/beginning-of-intendation

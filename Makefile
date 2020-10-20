@@ -24,3 +24,4 @@ $(HTMLIZE_FILE):
 .PHONY: org-to-html
 org-to-html: $(HTMLIZE_FILE)
 	$(EMACS) index.org -Q --batch --eval "(progn (load \""$(HTMLIZE_FILE)"\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
+	$(EMACS) yasnippets.org -Q --batch --eval "(progn (load \""$(HTMLIZE_FILE)"\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
