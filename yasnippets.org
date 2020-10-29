@@ -2213,24 +2213,23 @@ $0
 #+END_SRC
 *** makefile-mode/
 **** all
-#+BEGIN_SRC snippet
-# name: all
-# key: all
-# --
-all:
-        $0
-#+END_SRC
-**** clean
-#+BEGIN_SRC snippet
-# name: clean
-# contributor: gbalats
-# expand-env: ((yas-indent-line 'fixed))
-# key: cl
-# --
-clean:
-	${1:rm -r ${2:\$(${3:OUTDIR})}}
-$0
-#+END_SRC
+     #+BEGIN_SRC snippet
+       # name: all
+       # key: all
+       # --
+       .PHONY: all
+       all:
+               $0
+     #+END_SRC
+**** phony
+     #+BEGIN_SRC snippet
+       # name: phony
+       # --
+       .PHONY: $1
+       $1:
+               ${1:rm -r ${2:\$(${3:OUTDIR})}}
+               $0
+     #+END_SRC
 *** markdown-mode/
 **** back-quote
 #+BEGIN_SRC snippet

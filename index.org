@@ -260,7 +260,7 @@
      (leaf markdown-mode
        :ensure t
        :mode ("\\.md$" "\\.markdown$")
-       :bind ("C-j" . electric-newline-and-maybe-indent))
+       :bind (("C-j" . electric-newline-and-maybe-indent)))
    #+END_SRC
 ** nginx-mode
    #+BEGIN_SRC emacs-lisp
@@ -496,39 +496,40 @@
     #+END_SRC
 *** TODO takeokunn/ielm-history
     #+BEGIN_SRC emacs-lisp
-      (defun takeokunn/ielm-history ()
-        (interactive)
-        (insert
-         (completing-read
-          "choice history: "
-          (progn
-            (let ((history nil))
-              (dotimes (index (ring-length comint-input-ring))
-                (push (ring-ref comint-input-ring index) history))
-              history)))))
+      (with-eval-after-load 'ielm
+        (defun takeokunn/ielm-history ()
+          (interactive)
+          (insert
+           (completing-read
+            "choice history: "
+            (progn
+              (let ((history nil))
+                (dotimes (index (ring-length comint-input-ring))
+                  (push (ring-ref comint-input-ring index) history))
+                history)))))
 
-      (defun takeokunn/ielm-write-history-on-exit (process event)
-        (comint-write-input-ring)
-        (let ((buf (process-buffer process)))
-          (when (buffer-live-p buf)
-            (with-current-buffer buf
-              (insert (format "\nProcess %s %s" process event))))))
+        (defun takeokunn/ielm-write-history-on-exit (process event)
+          (comint-write-input-ring)
+          (let ((buf (process-buffer process)))
+            (when (buffer-live-p buf)
+              (with-current-buffer buf
+                (insert (format "\nProcess %s %s" process event))))))
 
-      (defun takeokunn/ielm-turn-on-history ()
-        (let ((process (get-buffer-process (current-buffer))))
-          (when process
-            (setq comint-input-ring-file-name (concat (file-remote-p default-directory) "~/.ielm-history"))
-            (setq comint-input-ring-size 100000)
-            (setq comint-input-ignoredups t)
-            (comint-read-input-ring)
-            (add-hook 'kill-buffer-hook #'comint-write-input-ring)
-            (general-define-key
-             :keymaps 'ielm-map
-             "C-c C-r" 'takeokunn/ielm-history)
+        (defun takeokunn/ielm-turn-on-history ()
+          (let ((process (get-buffer-process (current-buffer))))
+            (when process
+              (setq comint-input-ring-file-name (concat (file-remote-p default-directory) "~/.ielm-history"))
+              (setq comint-input-ring-size 100000)
+              (setq comint-input-ignoredups t)
+              (comint-read-input-ring)
+              (add-hook 'kill-buffer-hook #'comint-write-input-ring)
+              (general-define-key
+               :keymaps 'ielm-map
+               "C-c C-r" 'takeokunn/ielm-history)
 
-            (set-process-sentinel process #'takeokunn/ielm-write-history-on-exit))))
+              (set-process-sentinel process #'takeokunn/ielm-write-history-on-exit))))
 
-      (add-hook 'ielm-mode-hook 'takeokunn/ielm-turn-on-history)
+        (add-hook 'ielm-mode-hook 'takeokunn/ielm-turn-on-history))
     #+END_SRC
 ** Clojure
 *** cider
@@ -663,9 +664,11 @@
     #+BEGIN_SRC emacs-lisp
       (leaf auto-complete
         :ensure t
+        :defvar ac-modes
         :config
         (leaf ac-slime
           :ensure t
+          :after (auto-complete)
           :hook ((slime-mode-hook . set-up-slime-ac)
                  (slime-repl-mode-hook . set-up-slime-ac))
           :config
@@ -775,7 +778,7 @@
         (global-git-gutter-mode 1))
     #+END_SRC
 ** Search
-*** counsel
+*** swiper
     #+BEGIN_SRC emacs-lisp
       (leaf ivy
         :ensure t
@@ -798,6 +801,16 @@
         :custom (counsel-ag-base-command . "ag --nocolor --nogroup -u %s")
         :config
         (counsel-mode 1))
+
+      (leaf swiper
+        :ensure t
+        :init
+        (eval-and-compile
+          (defun takeokunn/swiper ()
+            (interactive)
+            (let ((word (thing-at-point 'word 'no-properties)))
+              (swiper word))))
+        :bind (("C-o" . takeokunn/swiper)))
     #+END_SRC
 *** ivy-ghq
     #+BEGIN_SRC emacs-lisp
@@ -825,17 +838,6 @@
 	:config
 	(ivy-rich-mode 1))
     #+END_SRC
-*** helm-swoop
-    #+begin_src emacs-lisp
-      (leaf helm
-        :ensure t
-        :config
-        (leaf helm-swoop
-          :ensure t
-          :defun helm-swoop
-          :bind ("C-o" . helm-swoop)
-          :custom (helm-swoop-split-direction . 'split-window-horizontally)))
-    #+end_src
 ** Shell
 *** exec-path-from-shell
     #+BEGIN_SRC emacs-lisp
