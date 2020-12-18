@@ -187,17 +187,11 @@
        :ensure t
        :mode ("Dockerfile\\'"))
    #+END_SRC
-** emacs-lisp-mode
-   #+BEGIN_SRC emacs-lisp
-     ;; (leaf emacs-lisp-mode
-     ;;   :mode ("\\.skk$"))
-   #+END_SRC
 ** emmet-mode
    #+BEGIN_SRC emacs-lisp
      (leaf emmet-mode
        :ensure t
        :after web-mode
-       :bind (("C-j" . nil))
        :hook (web-mode-hook))
    #+END_SRC
 ** fish-mode
@@ -302,6 +296,7 @@
      (leaf ruby-mode
        :ensure t
        :mode ("\\.rb$" "Capfile" "Gemfile" "Schemafile" ".pryrc")
+       :hook ((ruby-mode-hook . lsp))
        :config
        (with-eval-after-load 'ruby-mode
          (setq-default ruby-insert-encoding-magic-comment nil)))
@@ -373,6 +368,7 @@
    #+BEGIN_SRC emacs-lisp
      (leaf web-mode
        :ensure t
+       :bind ("C-j" . web-mode-comment-indent-new-line)
        :mode ("\\.html?\\'" "\\.erb\\'" "\\.gsp\\'" "\\.tsx\\'"))
    #+END_SRC
 ** yaml-mode
@@ -783,7 +779,9 @@
       (leaf ivy
         :ensure t
         :custom (ivy-use-virtual-buffers . t)
-        :config (ivy-mode 1))
+        :config
+        (ivy-mode 1)
+        (ivy-configure 'counsel-M-x :sort-fn 'ivy--sort-by-length))
 
       (leaf counsel
         :ensure t
@@ -953,9 +951,22 @@
     #+begin_src emacs-lisp
       (leaf irony
         :ensure t
-        :hook ((c-mode-common-hook . irony-mode)
+        :init
+        (eval-and-compile
+          (defun my-irony-mode-on ()
+            (when (member major-mode irony-supported-major-modes)
+              (irony-mode 1))))
+        :hook ((c-mode-common-hook . my-irony-mode-on)
                (irony-mode-hook . irony-cdb-autosetup-compile-options)))
     #+end_src
+** Markdown
+*** poly-markdown
+    #+begin_src emacs-lisp
+      (leaf poly-markdown
+        :ensure t
+        :config
+        (add-to-list 'auto-mode-alist '("\\.md" . poly-markdown-mode)))
+     #+end_src
 ** File
 *** recentf
     #+BEGIN_SRC emacs-lisp
@@ -1056,6 +1067,49 @@
     #+BEGIN_SRC emacs-lisp
       (leaf esup :ensure t)
     #+END_SRC
+*** elfeed
+    #+begin_src emacs-lisp
+      (leaf elfeed
+        :ensure t
+        :bind
+        ("C-x w" . elfeed)
+        :setq-default ((elfeed-search-filter . "@3-days-ago +unread"))
+        :setq
+        (elfeed-feeds . '("https://takeokunn.xyz/blog/rss.xml"
+                          "https://planet.emacslife.com/atom.xml"
+                          "https://sachachua.com/blog/feed/"
+                          "https://www.suzukikenichi.com/blog/feed/"
+                          "https://blogs.unity3d.com/jp/feed"
+                          "https://b.hatena.ne.jp/efcl/bookmark.rss"
+                          "https://efcl.info/feed/"
+                          "http://api.slack.com/changelog.rss"
+                          "https://cloudplatform-jp.googleblog.com/feeds/posts/default"
+                          "https://aws.amazon.com/jp/blogs/news/feed/"
+                          "https://html5experts.jp/feed/"
+                          "https://moneyforward.com/engineers_blog/feed/"
+                          "http://system.blog.uuum.jp/feed"
+                          "https://engineering.linecorp.com/ja/blog/rss2"
+                          "http://acro-engineer.hatenablog.com/feed"
+                          "http://www.infiniteloop.co.jp/blog/feed/"
+                          "http://www.publickey1.jp/atom.xml"
+                          "http://heartbeats.jp/hbblog/atom.xml"
+                          "https://cloudpack.media/feed"
+                          "http://techracho.bpsinc.jp/feed"
+                          "http://engineer.blog.lancers.jp/feed/"
+                          "http://dev.classmethod.jp/feed/"
+                          "http://klabgames.tech.blog.jp.klab.com/atom.xml"
+                          "http://tech.innovator.jp.net/feed"
+                          "http://engineer.recruit-lifestyle.co.jp/techblog/feed.xml"
+                          "https://tech.mercari.com/feed"
+                          "http://techlife.cookpad.com/feed/"
+                          "http://blog.serverworks.co.jp/tech/feed/"
+                          "http://tech.connehito.com/feed"
+                          "http://tech.vasily.jp/feed"
+                          "http://lab.aratana.jp/rss"
+                          "https://inside.dmm.com/rss"
+                          "https://news.ycombinator.com/rss"
+                          "http://b.hatena.ne.jp/hotentry/it.rss")))
+    #+end_src
 *** font-lock-studio
     #+BEGIN_SRC emacs-lisp
       (leaf font-lock-studio :ensure t)
