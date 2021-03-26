@@ -11,7 +11,7 @@ clean:
 
 .PHONY: link
 link:
-	ln -nfs $(TOP_DIR) ~/.emacs.d
+	ln -nfs $(TOP_DIR) ~/
 
 .PHONY: compile
 compile:
@@ -25,3 +25,7 @@ $(HTMLIZE_FILE):
 org-to-html: $(HTMLIZE_FILE)
 	$(EMACS) index.org -Q --batch --eval "(progn (load \""$(HTMLIZE_FILE)"\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
 	$(EMACS) yasnippets.org -Q --batch --eval "(progn (load \""$(HTMLIZE_FILE)"\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
+
+.PHONY: org-generate
+org-generate:
+	$(EMACS) -Q --batch --eval "(progn (require 'org-generate) (org-generate \"./yasnippets.org\"))"

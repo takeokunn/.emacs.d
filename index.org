@@ -144,6 +144,11 @@
    #+begin_src emacs-lisp
      (setq ring-bell-function 'ignore)
    #+end_src
+** デフォルトのpathをかえる
+   #+begin_src emacs-lisp
+     (setq default-directory "~/")
+     (setq command-line-default-directory "~/")
+   #+end_src
 * Major/Minor Mode
 ** clojure-mode
    #+BEGIN_SRC emacs-lisp
@@ -220,7 +225,7 @@
    #+BEGIN_SRC emacs-lisp
      (leaf go-mode
        :ensure t
-       :hook ((go-mode-hook . lsp-mode))
+       :hook ((go-mode-hook . lsp))
        :mode ("\\.go$"))
    #+END_SRC
 ** gradle-mode
@@ -410,7 +415,6 @@
     #+BEGIN_SRC emacs-lisp
       (with-eval-after-load 'hyperspec
         (general-define-key "C-c h" 'hyperspec-lookup)
-
         (setq common-lisp-hyperspec-root "~/.roswell/HyperSpec/")
 
         (defun common-lisp-hyperspec (symbol-name)
@@ -510,6 +514,7 @@
                 history)))))
 
         (defun takeokunn/ielm-write-history-on-exit (process event)
+          (interactive)
           (comint-write-input-ring)
           (let ((buf (process-buffer process)))
             (when (buffer-live-p buf)
@@ -698,14 +703,6 @@
         :config
         (add-to-list 'company-backends 'company-glsl))
     #+END_SRC
-*** company-lsp
-    #+BEGIN_SRC emacs-lisp
-      (leaf company-lsp
-        :ensure t
-        :after company
-        :config
-        (push 'company-lsp company-backends))
-    #+END_SRC
 *** company-irony
     #+begin_src emacs-lisp
       (leaf company-irony
@@ -713,6 +710,14 @@
         :after (company irony)
         :config
         (push 'company-irony company-backends))
+    #+end_src
+*** company-go
+    #+begin_src emacs-lisp
+      (leaf company-go
+        :ensure t
+        :after (company go-mode)
+        :config
+        (push 'company-go company-backends))
     #+end_src
 ** Snippet
 *** yasnippet
@@ -845,16 +850,13 @@
 *** exec-path-from-shell
     #+BEGIN_SRC emacs-lisp
       (leaf exec-path-from-shell
-	:ensure t
-	:hook ((after-init-hook . my-exec-path-from-shell-initialize))
-	:init
-	(eval-and-compile
-	  (defun my-exec-path-from-shell-initialize nil
-	    (when (memq window-system
-			'(mac ns x))
-	      (exec-path-from-shell-copy-envs
-	       '("PATH" "GEM_HOME" "GOPATH"))
-	      (exec-path-from-shell-initialize)))))
+        :ensure t
+        :defun (exec-path-from-shell-initialize)
+        :hook ((after-init-hook . exec-path-from-shell-initialize))
+        :custom
+        (exec-path-from-shell-variables . '("PATH"
+                                            "GEM_HOME"
+                                            "GOPATH")))
     #+END_SRC
 ** Rust
 *** racer
@@ -947,9 +949,9 @@
 *** sql-indent
     #+BEGIN_SRC emacs-lisp
       (leaf sql-indent
-	:ensure t
-	:after sql-mode
-	:hook ((sql-mode-hook . sqlind-minor-mode)))
+        :ensure t
+        :after sql-mode
+        :hook ((sql-mode-hook . sqlind-minor-mode)))
     #+END_SRC
 ** C/C++
 *** irony-mode
