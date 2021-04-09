@@ -276,7 +276,8 @@
    #+BEGIN_SRC emacs-lisp
      (leaf php-mode
        :ensure t
-       :mode ("\\.php$"))
+       :hook ((php-mode-hook . lsp))
+       :mode ("\\.php$" "\\.phpt$"))
    #+END_SRC
 ** plantuml-mode
    #+BEGIN_SRC emacs-lisp
@@ -719,6 +720,20 @@
         :config
         (push 'company-go company-backends))
     #+end_src
+*** company-php
+    #+begin_src emacs-lisp
+      (leaf company-php
+        :ensure t
+        :after (company php-mode)
+        :config
+        (push 'company-ac-php-backend company-backends))
+    #+end_src
+*** company-phpactor
+    #+begin_src emacs-lisp
+      (leaf company-phpactor
+        :ensure t
+        :after (company phpactor))
+    #+end_src
 ** Snippet
 *** yasnippet
     snippetはこちら [https://takeokunn.github.io/.emacs.d/yasnippets.html](https://takeokunn.github.io/.emacs.d/yasnippets.html)
@@ -816,7 +831,7 @@
         (eval-and-compile
           (defun takeokunn/swiper ()
             (interactive)
-            (let ((word (thing-at-point 'word 'no-properties)))
+            (let ((word (thing-at-point 'symbol 'no-properties)))
               (swiper word))))
         :bind (("C-o" . takeokunn/swiper)))
     #+END_SRC
@@ -856,6 +871,7 @@
         :custom
         (exec-path-from-shell-variables . '("PATH"
                                             "GEM_HOME"
+                                            "GOROOT"
                                             "GOPATH")))
     #+END_SRC
 ** Rust
@@ -954,17 +970,29 @@
         :hook ((sql-mode-hook . sqlind-minor-mode)))
     #+END_SRC
 ** C/C++
-*** irony-mode
+*** TODO irony-mode
     #+begin_src emacs-lisp
-      (leaf irony
+      ;; (leaf irony
+      ;;   :ensure t
+      ;;   :init
+      ;;   (eval-and-compile
+      ;;     (defun my-irony-mode-on ()
+      ;;       (when (member major-mode irony-supported-major-modes)
+      ;;         (irony-mode 1))))
+      ;;   :hook ((c-mode-common-hook . my-irony-mode-on)
+      ;;          (irony-mode-hook . irony-cdb-autosetup-compile-options)))
+    #+end_src
+** php
+*** phpactor
+    #+begin_src emacs-lisp
+      (leaf phpactor
+        :ensure t)
+    #+end_src
+*** psysh
+    #+begin_src emacs-lisp
+      (leaf psysh
         :ensure t
-        :init
-        (eval-and-compile
-          (defun my-irony-mode-on ()
-            (when (member major-mode irony-supported-major-modes)
-              (irony-mode 1))))
-        :hook ((c-mode-common-hook . my-irony-mode-on)
-               (irony-mode-hook . irony-cdb-autosetup-compile-options)))
+        :after (php-mode))
     #+end_src
 ** Markdown
 *** poly-markdown
@@ -1180,6 +1208,13 @@
         :config
         (global-whitespace-mode 1))
     #+END_SRC
+*** wanderlust
+    #+begin_src emacs-lisp
+      (leaf wanderlust
+        :ensure t
+        :setq
+        (ssl-certificate-verification-policy . 1))
+    #+end_src
 * Eshell
 ** basic
    #+begin_src emacs-lisp
@@ -1206,6 +1241,7 @@
 ** aweshell
     #+BEGIN_SRC emacs-lisp
       (defun takeokunn/aweshell-setup ()
+        (interactive)
         (shell-command-to-string "ghq get https://github.com/takeokunn/aweshell.git"))
 
       (when (file-directory-p "~/.ghq/github.com/takeokunn/aweshell")
@@ -1231,41 +1267,54 @@
 * Org Mode
 ** Settinngs
    #+BEGIN_SRC emacs-lisp
-     (setq-default org-use-speed-commands t
-                   org-agenda-todo-ignore-with-date t
-                   org-directory "~/org"
-                   org-agenda-files '("~/org/todo.org")
-                   org-todo-keywords '((sequence "TODO(t)" "WAIT(w)" "|" "DONE(d)"))
-                   org-capture-templates '(("t" "Todo" entry (file+datetree "~/org/todo.org")
-                                            "* %?")
-                                           ("b" "Blog" entry (file "~/org/blog.org")
-                                            "* %?")
-                                           ("m" "Memo" entry (file "~/org/memo.org")
-                                            "* %?")))
+     (leaf org
+       :config
+       (org-babel-do-load-languages 'org-babel-load-languages
+                                    '((lisp . t)))
+       :setq-default
+       ((org-use-speed-commands . t)
+        (org-agenda-todo-ignore-with-date . t)
+        (org-directory . "~/org")
+        (org-agenda-files . '("~/org/todo.org"))
+        (org-todo-keywords . '((sequence "TODO(t)" "WAIT(w)" "|" "DONE(d)")))
+        (org-capture-templates . '(("t" "Todo" entry (file+datetree "~/org/todo.org")
+                                    "* %?")
+                                   ("b" "Blog" entry (file "~/org/blog.org")
+                                    "* %?")
+                                   ("m" "Memo" entry (file "~/org/memo.org")
+                                    "* %?"))))
+       :bind (("C-c a" . org-agenda)
+              ("C-c b" . counsel-bookmark)
+              ("C-c c" . org-capture)
+              (:org-mode-map ("C-m" . nil))))
    #+END_SRC
-** Keybind
-   #+BEGIN_SRC emacs-lisp
-     (general-define-key
-      :prefix "C-c"
-      "a" 'org-agenda
-      "b" 'counsel-bookmark
-      "c" 'org-capture)
-
-     (general-define-key
-      :keymaps 'org-mode-map
-      "C-m" nil)
-   #+END_SRC
-** org-babel
-   #+begin_src emacs-lisp
-     (org-babel-do-load-languages 'org-babel-load-languages
-                                  '((lisp . t)))
-   #+end_src
 ** org-generate
    #+begin_src emacs-lisp
      (leaf org-generate
        :ensure t
+       :after (org)
        :custom
        (org-generate-file . `,(locate-user-emacs-file "yasnippets.org")))
+   #+end_src
+** org-roam
+   #+begin_src emacs-lisp
+     (leaf org-roam
+       :ensure t
+       :hook (after-init-hook . org-roam-mode)
+       :custom ((org-roam-db-update-method . 'immediate)
+                (org-roam-db-location . "~/org/roam/org-roam.db")
+                (org-roam-directory . "~/org/roam")
+                (org-roam-index-file . "~/org/roam/index.org"))
+       :setq
+       (org-roam-graph-viewer . #'eww-open-file)
+       :bind
+       (("C-c n l" . org-roam)
+        ("C-c n f" . org-roam-find-file)
+        ("C-c n g" . org-roam-graph)
+        (:org-mode-map
+         (("C-c n i" . org-roam-insert)
+          ("C-c n I" . org-roam-insert-immediate)))))
+
    #+end_src
 * MyFunc
 ** takeokunn/beginning-of-intendation
