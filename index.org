@@ -225,8 +225,10 @@
    #+BEGIN_SRC emacs-lisp
      (leaf go-mode
        :ensure t
-       :hook ((go-mode-hook . lsp))
-       :mode ("\\.go$"))
+       :hook ((go-mode-hook . lsp)
+              (before-save-hook . gofmt-before-save))
+       :mode ("\\.go$")
+       :setq ((gofmt-command . "goimports")))
    #+END_SRC
 ** gradle-mode
    #+BEGIN_SRC emacs-lisp
@@ -561,6 +563,18 @@
         :config
         (all-the-icons-ivy-setup))
     #+END_SRC
+*** doom-theme
+    #+BEGIN_SRC emacs-lisp
+      (leaf doom-themes
+        :ensure t
+        :after neotree
+        :custom-face ((doom-modeline-bar quote ((t (:background "#6272a4")))))
+        :config
+        ;; (load-theme 'doom-dracula t)
+        (load-theme 'tango-dark t)
+        (doom-themes-neotree-config)
+        (doom-themes-org-config))
+   #+END_SRC
 *** doom-modeline
     #+BEGIN_SRC emacs-lisp
       (leaf doom-modeline
@@ -575,19 +589,6 @@
           (line-number-mode 0)
           (column-number-mode 0)))
     #+END_SRC
-*** doom-theme
-    #+BEGIN_SRC emacs-lisp
-      (leaf doom-themes
-        :ensure t
-        :after neotree
-        :custom-face ((doom-modeline-bar quote
-                                         ((t
-                                           (:background "#6272a4")))))
-        :config
-        (load-theme 'tango-dark t)
-        (doom-themes-neotree-config)
-        (doom-themes-org-config))
-   #+END_SRC
 *** hl-line
     #+BEGIN_SRC emacs-lisp
       (leaf hl-line
@@ -757,6 +758,12 @@
     #+BEGIN_SRC emacs-lisp
       (leaf lsp-mode :ensure t)
     #+END_SRC
+*** lsp-ivy
+    #+begin_src emacs-lisp
+      (leaf lsp-ivy
+        :ensure t
+        :after (lsp-mode counsel))
+    #+end_src
 *** lsp-ui
     #+BEGIN_SRC emacs-lisp
       (leaf lsp-ui
@@ -773,17 +780,24 @@
                         lsp-ui-imenu-enable nil
                         lsp-ui-sideline-enable nil)))
     #+END_SRC
+** DAP
 *** dap-mode
     #+BEGIN_SRC emacs-lisp
       (leaf dap-mode
         :ensure t
+        :after lsp-mode
         :bind
         (:dap-mode-map
          ("C-c d" . dap-breakpoint-toggle))
+        ;; :hook (dap-stopped-hook . (lambda (arg) (call-interactively #'dap-hydra))
         :config
+        (add-hook 'dap-stopped-hook
+                (lambda (arg) (call-interactively #'dap-hydra)))
         (with-eval-after-load 'dap-mode
           (dap-mode 1)
-          (dap-ui-mode 1)))
+          (dap-ui-mode 1)
+          (dap-auto-configure-mode 1)
+          (require 'dap-go)))
    #+END_SRC
 ** Git
 *** magit
@@ -964,10 +978,10 @@
 ** SQL
 *** sql-indent
     #+BEGIN_SRC emacs-lisp
-      (leaf sql-indent
-        :ensure t
-        :after sql-mode
-        :hook ((sql-mode-hook . sqlind-minor-mode)))
+      ;; (leaf sql-indent
+      ;;   :ensure t
+      ;;   :after sql-mode
+      ;;   :hook ((sql-mode-hook . sqlind-minor-mode)))
     #+END_SRC
 ** C/C++
 *** TODO irony-mode
@@ -1070,8 +1084,10 @@
     #+BEGIN_SRC emacs-lisp
       (leaf ace-window
         :ensure t
-        :custom ((aw-keys '(97 115 100 102 103 104 106 107 108))))
+        :custom ((aw-keys '(97 115 100 102 103 104 106 107 108)))
+        :bind ("C-x C-q" . ace-window))
     #+END_SRC
+*** aspell
 *** dashboard
     #+BEGIN_SRC emacs-lisp
       (leaf dashboard
@@ -1183,6 +1199,12 @@
     #+begin_src emacs-lisp
       (leaf htmlize :ensure t)
     #+end_src
+*** origami
+    #+begin_src emacs-lisp
+      (leaf origami
+        :ensure t
+        :bind (("C-c C-t" . origami-toggle-node)))
+    #+end_src
 *** smartparens
     #+BEGIN_SRC emacs-lisp
       (leaf smartparens :ensure t)
@@ -1265,7 +1287,7 @@
        :bind (("C-c C-q" . eshell-z)))
    #+end_src
 * Org Mode
-** Settinngs
+** basic
    #+BEGIN_SRC emacs-lisp
      (leaf org
        :config
@@ -1283,11 +1305,28 @@
                                     "* %?")
                                    ("m" "Memo" entry (file "~/org/memo.org")
                                     "* %?"))))
+       :custom-face
+       ((org-link '(t (:foreground "#ebe087" :underline t))))
+       ;; (org-list-dt . '((t (:foreground "#bd93f9"))))
+       ;; (org-special-keyword . '((t (:foreground "#6272a4"))))
+       ;; (org-todo . '((t (:background "#272934" :foreground "#51fa7b" :weight bold))))
+       ;; (org-document-title . '((t (:foreground "#f1fa8c" :weight bold))))
+       ;; (org-done . '((t (:background "#373844" :foreground "#216933" :strike-through nil :weight bold))))
+       ;; (org-footnote . '((t (:foreground "#76e0f3"))))
        :bind (("C-c a" . org-agenda)
               ("C-c b" . counsel-bookmark)
               ("C-c c" . org-capture)
               (:org-mode-map ("C-m" . nil))))
    #+END_SRC
+** org-superstar
+   #+begin_src emacs-lisp
+     (leaf org-superstar
+       :ensure t
+       :hook ((org-mode-hook . org-superstar-mode))
+       :custom
+       ((org-superstar-headline-bullets-list . '("◉" "○" "✸" "✿"))
+        (org-superstar-leading-bullet . " ")))
+   #+end_src
 ** org-generate
    #+begin_src emacs-lisp
      (leaf org-generate
