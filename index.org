@@ -475,8 +475,7 @@
     #+BEGIN_SRC emacs-lisp
       (with-eval-after-load 'slime
         (load (expand-file-name "~/.roswell/helper.el"))
-        (add-hook 'slime-mode-hook 'set-up-slime-ac)
-        (add-hook 'slime-repl-mode-hook 'set-up-slime-ac))
+        (setq slime-net-coding-system 'utf-8-unix))
     #+END_SRC
 *** takeokunn/slime-history
     #+BEGIN_SRC emacs-lisp
@@ -668,21 +667,6 @@
         :bind ("M-RET" . emr-show-refactor-menu))
     #+END_SRC
 ** Completion
-*** ac-slime
-    #+BEGIN_SRC emacs-lisp
-      (leaf auto-complete
-        :ensure t
-        :defvar ac-modes
-        :config
-        (leaf ac-slime
-          :ensure t
-          :after (auto-complete)
-          :hook ((slime-mode-hook . set-up-slime-ac)
-                 (slime-repl-mode-hook . set-up-slime-ac))
-          :config
-          (add-to-list 'ac-modes 'slime-repl-mode)))
-
-    #+END_SRC
 *** company
    #+BEGIN_SRC emacs-lisp
      (leaf company
@@ -734,6 +718,15 @@
       (leaf company-phpactor
         :ensure t
         :after (company phpactor))
+        #+end_src
+*** company-slime
+    #+begin_src emacs-lisp
+      (leaf slime-company
+        :ensure t
+        :after (company slime)
+        :setq ((slime-company-completion . 'fuzzy)
+               (slime-company-after-completion . 'slime-company-just-one-space))
+        :config (slime-setup '(slime-fancy slime-banner slime-company)))
     #+end_src
 ** Snippet
 *** yasnippet
@@ -1367,7 +1360,7 @@
    #+BEGIN_SRC emacs-lisp
      (defun takeokunn/before-set-auto-mode ()
        (when (or (and buffer-file-name
-                      (> (file-attribute-size (file-attributes buffer-file-name)) 100000))
+                      (> (or (file-attribute-size (file-attributes buffer-file-name)) 0) 100000))
                  (> (line-number-at-pos (point-max)) 10000))
          (prog1 t
            (prog-mode))))
