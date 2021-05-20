@@ -400,7 +400,8 @@
         :hook ((emacs-lisp-mode-hook . enable-paredit-mode)
                (lisp-mode-hook . enable-paredit-mode)
                (lisp-interacton-mode-hook . enable-paredit-mode)
-               (scheme-mode-hook . enable-paredit-mode))
+               (scheme-mode-hook . enable-paredit-mode)
+               (slime-mode-hook . enable-paredit-mode))
         :bind
         ("C-<right>" . paredit-forward-slurp-sexp)
         ("C-c f" . paredit-forward-slurp-sexp)
@@ -795,7 +796,9 @@
 ** Git
 *** magit
     #+BEGIN_SRC emacs-lisp
-      (leaf magit :ensure t)
+      (leaf magit
+        :ensure t
+        :setq (magit-display-buffer-function . #'magit-display-buffer-fullframe-status-v1))
     #+END_SRC
 *** git-gutter-fringe
     #+BEGIN_SRC emacs-lisp
@@ -1031,12 +1034,29 @@
         :custom (open-junk-file-format . `,(locate-user-emacs-file ".junk/%Y-%m%d-%H%M%S.")))
     #+END_SRC
 ** Syntax
-*** flycheck
+*** aspell
     #+begin_src emacs-lisp
-      (leaf flycheck
-	:ensure t
-	:after ruby-mode
-	:hook (ruby-mode-hook))
+      (leaf ispell
+        :setq-default
+        (ispell-program-name . "aspell")
+        :config
+        (add-to-list 'ispell-skip-region-alist '("[^\000-\377]+")))
+    #+end_src
+*** flycheck
+     #+begin_src emacs-lisp
+       (leaf flycheck
+	 :ensure t
+	 :after ruby-mode
+	 :hook (ruby-mode-hook))
+     #+end_src
+*** flycheck-aspell
+    #+begin_src emacs-lisp
+      (leaf flycheck-aspell
+        :ensure t
+        :after (flycheck ispell)
+        :setq (ispell-program-name . "aspell")
+        :config
+        (add-to-list 'flycheck-checkers 'tex-aspell-dynamic))
     #+end_src
 ** Cursor
 *** smartrep/multiple-cursors
@@ -1080,7 +1100,6 @@
         :custom ((aw-keys '(97 115 100 102 103 104 106 107 108)))
         :bind ("C-x C-q" . ace-window))
     #+END_SRC
-*** aspell
 *** dashboard
     #+BEGIN_SRC emacs-lisp
       (leaf dashboard

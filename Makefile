@@ -28,4 +28,4 @@ org-to-html: $(HTMLIZE_FILE)
 
 .PHONY: org-generate
 org-generate:
-	$(EMACS) -Q --batch --eval "(progn (require 'org-generate) (org-generate \"./yasnippets.org\"))"
+	$(EMACS) -Q --batch --eval "(progn (require 'org-generate) (org-generate \"~/.emacs.d/yasnippets.org\"))"
