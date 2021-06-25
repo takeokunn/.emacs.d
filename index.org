@@ -228,7 +228,7 @@
        :hook ((go-mode-hook . lsp)
               (before-save-hook . gofmt-before-save))
        :mode ("\\.go$")
-       :setq ((gofmt-command . "goimports")))
+       :custom ((gofmt-command . "goimports")))
    #+END_SRC
 ** gradle-mode
    #+BEGIN_SRC emacs-lisp
@@ -415,11 +415,13 @@
         :hook (prog-mode-hook))
     #+END_SRC
 ** CommonLisp
-*** TODO HyperSpec
+*** HyperSpec
     #+BEGIN_SRC emacs-lisp
       (with-eval-after-load 'hyperspec
         (general-define-key "C-c h" 'hyperspec-lookup)
-        (setq common-lisp-hyperspec-root "~/.roswell/HyperSpec/")
+        (defvar common-lisp-hyperspec-root "~/.roswell/HyperSpec/")
+        (defvar common-lisp-hyperspec--reader-macros nil)
+        (defvar common-lisp-hyperspec--format-characters nil)
 
         (defun common-lisp-hyperspec (symbol-name)
           (interactive (list (common-lisp-hyperspec-read-symbol-name)))
@@ -476,7 +478,7 @@
     #+BEGIN_SRC emacs-lisp
       (with-eval-after-load 'slime
         (load (expand-file-name "~/.roswell/helper.el"))
-        (setq slime-net-coding-system 'utf-8-unix))
+        (defvar slime-net-coding-system 'utf-8-unix))
     #+END_SRC
 *** takeokunn/slime-history
     #+BEGIN_SRC emacs-lisp
@@ -502,7 +504,7 @@
         :ensure t
         :hook (emacs-lisp-mode-hook))
     #+END_SRC
-*** TODO takeokunn/ielm-history
+*** takeokunn/ielm-history
     #+BEGIN_SRC emacs-lisp
       (with-eval-after-load 'ielm
         (defun takeokunn/ielm-history ()
@@ -511,7 +513,8 @@
            (completing-read
             "choice history: "
             (progn
-              (let ((history nil))
+              (let ((history nil)
+                    (comint-input-ring nil))
                 (dotimes (index (ring-length comint-input-ring))
                   (push (ring-ref comint-input-ring index) history))
                 history)))))
@@ -527,9 +530,10 @@
         (defun takeokunn/ielm-turn-on-history ()
           (let ((process (get-buffer-process (current-buffer))))
             (when process
-              (setq comint-input-ring-file-name (concat (file-remote-p default-directory) "~/.ielm-history"))
-              (setq comint-input-ring-size 100000)
-              (setq comint-input-ignoredups t)
+              (defvar comint-input-ring nil)
+              (defvar comint-input-ring-file-name (concat (file-remote-p default-directory) "~/.ielm-history"))
+              (defvar comint-input-ring-size 100000)
+              (defvar comint-input-ignoredups t)
               (comint-read-input-ring)
               (add-hook 'kill-buffer-hook #'comint-write-input-ring)
               (general-define-key
@@ -725,7 +729,7 @@
       (leaf slime-company
         :ensure t
         :after (company slime)
-        :setq ((slime-company-completion . 'fuzzy)
+        :custom ((slime-company-completion . 'fuzzy)
                (slime-company-after-completion . 'slime-company-just-one-space))
         :config (slime-setup '(slime-fancy slime-banner slime-company)))
     #+end_src
@@ -798,7 +802,7 @@
     #+BEGIN_SRC emacs-lisp
       (leaf magit
         :ensure t
-        :setq (magit-display-buffer-function . #'magit-display-buffer-fullframe-status-v1))
+        :custom (magit-display-buffer-function . #'magit-display-buffer-fullframe-status-v1))
     #+END_SRC
 *** git-gutter-fringe
     #+BEGIN_SRC emacs-lisp
@@ -897,9 +901,7 @@
     #+BEGIN_SRC emacs-lisp
       ;; (leaf rustic
       ;;   :ensure t
-      ;;   :after rust-mode
-      ;;   :hook (rust-mode-hook
-      ;; 	 (rustic-mode-hook . eldoc-mode))
+      ;;   :after (rust-mode))
     #+END_SRC
 ** Cpp
 *** inferior-cling
@@ -1054,6 +1056,7 @@
       (leaf flycheck-aspell
         :ensure t
         :after (flycheck ispell)
+        :defvar (ispell-program-name flycheck-checkers)
         :setq (ispell-program-name . "aspell")
         :config
         (add-to-list 'flycheck-checkers 'tex-aspell-dynamic))
@@ -1113,10 +1116,11 @@
         :ensure t
         :bind
         ("C-x C-j" . skk-mode)
-        :setq
+        :custom
         (skk-byte-compile-init-file . t)
-        (skk-preload . t)
         (skk-isearch-mode-enable . 'always)
+        :setq
+        (skk-preload . t)
         (default-input-method . "japanese-skk"))
     #+END_SRC
 *** editorconfig
@@ -1136,8 +1140,8 @@
         :ensure t
         :bind
         ("C-x w" . elfeed)
-        :setq-default ((elfeed-search-filter . "@3-days-ago +unread"))
-        :setq
+        :custom
+        (elfeed-search-filter . "@3-days-ago +unread")
         (elfeed-feeds . '("https://takeokunn.xyz/blog/rss.xml"
                           "https://planet.emacslife.com/atom.xml"
                           "https://sachachua.com/blog/feed/"
@@ -1246,8 +1250,9 @@
     #+begin_src emacs-lisp
       (leaf wanderlust
         :ensure t
-        :setq
-        (ssl-certificate-verification-policy . 1))
+        ;; :setq
+        ;; (ssl-certificate-verification-policy . 1)
+        )
     #+end_src
 * Eshell
 ** basic
@@ -1261,11 +1266,11 @@
            (find-file (car args)))
 
          ;; config
-         (setq eshell-cmpl-ignore-case t)
-         (setq eshell-glob-include-dot-dot nil)
-         (setq eshell-ask-to-save-history (quote always))
-         (setq eshell-history-size 100000)
-         (setq eshell-hist-ignoredups t)
+         (defvar eshell-cmpl-ignore-case t)
+         (defvar eshell-glob-include-dot-dot nil)
+         (defvar eshell-ask-to-save-history (quote always))
+         (defvar eshell-history-size 100000)
+         (defvar eshell-hist-ignoredups t)
 
          ;; alias
          (defvar *shell-alias* '(("ll" "ls -la")
@@ -1280,17 +1285,20 @@
 
       (when (file-directory-p "~/.ghq/github.com/takeokunn/aweshell")
         (add-to-list 'load-path (expand-file-name "~/.ghq/github.com/takeokunn/aweshell"))
+        (require 'esh-mode)
         (require 'aweshell)
         (with-eval-after-load 'aweshell
           (defun takeokunn/counsel-aweshell-history ()
             (interactive)
             (ivy-read "Aweshell history: " (aweshell-parse-shell-history)))
 
+          (defvar eshell-mode-map nil)
+          (defvar aweshell-auto-suggestion-p nil)
+          (defvar eshell-highlight-prompt t)
+          (defvar eshell-prompt-function 'epe-theme-lambda)
+
           (add-hook 'eshell-mode-hook
-                    (lambda () (define-key eshell-mode-map (kbd "C-c C-r") 'takeokunn/counsel-aweshell-history)))
-          (setq aweshell-auto-suggestion-p nil
-                eshell-highlight-prompt t
-                eshell-prompt-function 'epe-theme-lambda)))
+                    (lambda () (define-key eshell-mode-map (kbd "C-c C-r") 'takeokunn/counsel-aweshell-history)))))
     #+END_SRC
 ** eshell-z
    #+begin_src emacs-lisp
@@ -1356,7 +1364,7 @@
                 (org-roam-db-location . "~/org/roam/org-roam.db")
                 (org-roam-directory . "~/org/roam")
                 (org-roam-index-file . "~/org/roam/index.org"))
-       :setq
+       :custom
        (org-roam-graph-viewer . #'eww-open-file)
        :bind
        (("C-c n l" . org-roam)
@@ -1407,20 +1415,4 @@
          (fundamental-mode)
          (funcall current-mode)
          current-mode))
-   #+END_SRC
-** TODO takeokunn/exec-npm-script
-   #+BEGIN_SRC emacs-lisp
-     ;; (defun my/exec-npm-script ()
-     ;;   (interactive)
-     ;;   (let* ((npm-root (and default-directory (locate-dominating-file default-directory "package.json")))
-     ;;          (default-directory (or npm-root default-directory))
-     ;;          choice scripts command-names)
-     ;;     (unless npm-root
-     ;;       (user-error "package.json not found..."))
-     ;;     (setq scripts (cdr-safe (assq 'scripts (json-read-file (file-relative-name "package.json" default-directory)))))
-     ;;     (setq command-names (mapcar #'(lambda (s) (symbol-name (car s))) scripts))
-     ;;     (setq choice (intern (completing-read "choice command: " command-names)))
-     ;;     (setq command (cdr-safe (assq choice scripts)))
-     ;;     (when command
-     ;;       (compile command))))
    #+END_SRC

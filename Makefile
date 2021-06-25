@@ -16,7 +16,7 @@ link:
 .PHONY: compile
 compile:
 	$(EMACS) -Q --batch --eval "(progn (require 'ob-tangle) (org-babel-tangle-file \"./index.org\" \"./init.el\" \"emacs-lisp\"))"
-	$(EMACS) -Q --batch -f batch-byte-compile init.el
+	$(EMACS) -Q --batch --eval "(progn (setq byte-compile-warnings '(cl-functions)) (batch-byte-compile \"init.el\"))"
 
 $(HTMLIZE_FILE):
 	wget https://raw.githubusercontent.com/hniksic/emacs-htmlize/master/htmlize.el
