@@ -118,7 +118,7 @@
    #+END_SRC
 ** GC
    #+BEGIN_SRC emacs-lisp
-     (setq gc-cons-threshold (* 128 1024 1024)) ;; 128MB
+     (setq gc-cons-threshold (* 128 1024 1024))
      (setq garbage-collection-messages t)
    #+END_SRC
 ** indent
@@ -148,6 +148,14 @@
    #+begin_src emacs-lisp
      (setq default-directory "~/")
      (setq command-line-default-directory "~/")
+   #+end_src
+** coding system
+   #+begin_src emacs-lisp
+     (set-coding-system-priority 'utf-8)
+     (set-terminal-coding-system 'utf-8-unix)
+     (set-keyboard-coding-system 'utf-8-unix)
+     (setq-default buffer-file-coding-system 'utf-8-unix)
+     (setq-default default-process-coding-system '(utf-8 . utf-8))
    #+end_src
 * Major/Minor Mode
 ** clojure-mode
@@ -605,24 +613,24 @@
     #+END_SRC
 *** hl-todo
     #+BEGIN_SRC emacs-lisp
-      (leaf hl-todo
-        :ensure t
-        :init
-        (global-hl-todo-mode 1)
-        :custom ((hl-todo-keyword-faces '(("HOLD" . "#d0bf8f")
-                                        ("WAIT" . "#d0bf8f")
-                                        ("TODO" . "#cc9393")
-                                        ("NEXT" . "#dca3a3")
-                                        ("THEM" . "#dc8cc3")
-                                        ("REMIND" . "#dc8cc3")
-                                        ("PROG" . "#7cb8bb")
-                                        ("OKAY" . "#7cb8bb")
-                                        ("DONT" . "#5f7f5f")
-                                        ("FAIL" . "#8c5353")
-                                        ("SOMEDAY" . "#8c5353")
-                                        ("DONE" . "#afd8af")
-                                        ("FIXME" . "#cc9393")
-                                        ("???" . "#cc9393")))))
+      ;; (leaf hl-todo
+      ;;   :ensure t
+      ;;   :init
+      ;;   (global-hl-todo-mode 1)
+      ;;   :custom ((hl-todo-keyword-faces '(("HOLD" . "#d0bf8f")
+      ;;                                   ("WAIT" . "#d0bf8f")
+      ;;                                   ("TODO" . "#cc9393")
+      ;;                                   ("NEXT" . "#dca3a3")
+      ;;                                   ("THEM" . "#dc8cc3")
+      ;;                                   ("REMIND" . "#dc8cc3")
+      ;;                                   ("PROG" . "#7cb8bb")
+      ;;                                   ("OKAY" . "#7cb8bb")
+      ;;                                   ("DONT" . "#5f7f5f")
+      ;;                                   ("FAIL" . "#8c5353")
+      ;;                                   ("SOMEDAY" . "#8c5353")
+      ;;                                   ("DONE" . "#afd8af")
+      ;;                                   ("FIXME" . "#cc9393")
+      ;;                                   ("???" . "#cc9393")))))
     #+END_SRC
 *** neotree
     #+BEGIN_SRC emacs-lisp
@@ -1357,23 +1365,33 @@
    #+end_src
 ** org-roam
    #+begin_src emacs-lisp
-     (leaf org-roam
-       :ensure t
-       :hook (after-init-hook . org-roam-mode)
-       :custom ((org-roam-db-update-method . 'immediate)
-                (org-roam-db-location . "~/org/roam/org-roam.db")
-                (org-roam-directory . "~/org/roam")
-                (org-roam-index-file . "~/org/roam/index.org"))
-       :custom
-       (org-roam-graph-viewer . #'eww-open-file)
-       :bind
-       (("C-c n l" . org-roam)
-        ("C-c n f" . org-roam-find-file)
-        ("C-c n g" . org-roam-graph)
-        (:org-mode-map
-         (("C-c n i" . org-roam-insert)
-          ("C-c n I" . org-roam-insert-immediate)))))
+     ;; (leaf org-roam
+     ;;   :ensure t
+     ;;   :hook (after-init-hook . org-roam-mode)
+     ;;   :custom ((org-roam-db-update-method . 'immediate)
+     ;;            (org-roam-db-location . "~/org/roam/org-roam.db")
+     ;;            (org-roam-directory . "~/org/roam")
+     ;;            (org-roam-index-file . "~/org/roam/index.org"))
+     ;;   :custom
+     ;;   (org-roam-graph-viewer . #'eww-open-file)
+     ;;   :setq
+     ;;   (org-roam-v2-ack . t)
+     ;;   :bind
+     ;;   (("C-c n l" . org-roam)
+     ;;    ("C-c n f" . org-roam-find-file)
+     ;;    ("C-c n g" . org-roam-graph)
+     ;;    (:org-mode-map
+     ;;     (("C-c n i" . org-roam-insert)
+     ;;      ("C-c n I" . org-roam-insert-immediate)))))
 
+   #+end_src
+** org-tree-slide
+   #+begin_src emacs-lisp
+     (leaf org-tree-slide
+       :ensure t
+       :bind
+       (("<f8>" . org-tree-slide-mode)
+        ("S-<f8>" . org-tree-slide-skip-done-toggle)))
    #+end_src
 * MyFunc
 ** takeokunn/beginning-of-intendation
