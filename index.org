@@ -157,7 +157,16 @@
      (setq-default buffer-file-coding-system 'utf-8-unix)
      (setq-default default-process-coding-system '(utf-8 . utf-8))
    #+end_src
+** yes/no to y/n
+   #+begin_src emacs-lisp
+     (fset 'yes-or-no-p 'y-or-n-p)
+   #+end_src
 * Major/Minor Mode
+** c-mode
+   #+begin_src emacs-lisp
+     (leaf c-mode
+       :hook (c-mode-hook . lsp))
+   #+end_src
 ** clojure-mode
    #+BEGIN_SRC emacs-lisp
      (leaf clojure-mode
@@ -209,7 +218,10 @@
      (leaf emmet-mode
        :ensure t
        :after web-mode
-       :hook (web-mode-hook))
+       :hook (web-mode-hook . emmet-mode)
+       :bind (:emmet-mode-keymap
+              ("C-j" . newline-and-indent)
+              ("M-j" . emmet-expand-line)))
    #+END_SRC
 ** fish-mode
    #+BEGIN_SRC emacs-lisp
@@ -254,6 +266,8 @@
    #+BEGIN_SRC emacs-lisp
      (leaf js2-mode
        :ensure t
+       :custom
+       (js2-strict-missing-semi-warning . nil)
        :mode ("\\.js$")
        :hook ((js2-mode-hook . js2-refactor-mode)
               (js2-mode-hook . lsp-mode)))
@@ -276,6 +290,26 @@
        :mode ("\\.md$" "\\.markdown$")
        :bind (("C-j" . electric-newline-and-maybe-indent)))
    #+END_SRC
+** mmm-mode
+   #+begin_src emacs-lisp
+     (leaf mmm-mode
+       :ensure t
+       ;; :el-get (mmm-mode
+       ;;          :url "https://github.com/purcell/mmm-mode.git"
+       ;;          :features mmm-mode)
+       :after typescript-mode
+       :hook
+       ((after-save-hook . mmm-mode))
+       :setq
+       (mmm-global-mode . 'maybe)
+       :config
+       (mmm-add-classes
+        '((mmm-jsx-mode
+           :submode web-mode
+           :front "\\(return\s\\|n\s\\|(\n\s*\\)<"
+           :back ">\n?\s*)\n}\n")))
+       (mmm-add-mode-ext-class 'typescript-mode nil 'mmm-jsx-mode))
+   #+end_src
 ** nginx-mode
    #+BEGIN_SRC emacs-lisp
      (leaf nginx-mode
@@ -370,8 +404,8 @@
    #+BEGIN_SRC emacs-lisp
      (leaf typescript-mode
        :ensure t
-       :bind ("C-j" . electric-newline-and-maybe-indent)
-       :mode ("\\.ts$" "\\.tsx$"))
+       :mode ("\\.ts$" "\\.tsx$")
+       :hook (typescript-mode-hook . lsp))
    #+END_SRC
 ** vue-mode
    #+BEGIN_SRC emacs-lisp
@@ -389,8 +423,7 @@
    #+BEGIN_SRC emacs-lisp
      (leaf web-mode
        :ensure t
-       :bind ("C-j" . web-mode-comment-indent-new-line)
-       :mode ("\\.html?\\'" "\\.erb\\'" "\\.gsp\\'" "\\.tsx\\'"))
+       :mode ("\\.html?\\'" "\\.erb\\'" "\\.gsp\\'"))
    #+END_SRC
 ** yaml-mode
    #+BEGIN_SRC emacs-lisp
@@ -582,7 +615,6 @@
         :after neotree
         :custom-face ((doom-modeline-bar quote ((t (:background "#6272a4")))))
         :config
-        ;; (load-theme 'doom-dracula t)
         (load-theme 'tango-dark t)
         (doom-themes-neotree-config)
         (doom-themes-org-config))
@@ -611,7 +643,7 @@
         (set-face-background 'hl-line "#444642")
         (set-face-attribute 'hl-line nil :inherit nil))
     #+END_SRC
-*** hl-todo
+*** TODO hl-todo
     #+BEGIN_SRC emacs-lisp
       ;; (leaf hl-todo
       ;;   :ensure t
@@ -694,6 +726,13 @@
         ("C-n" . company-select-next)
         ("C-p" . company-select-previous)))
    #+END_SRC
+*** company-box
+    #+begin_src emacs-lisp
+      (leaf company-box
+        :ensure t
+        :after company
+        :hook (company-mode . company-box-mode))
+    #+end_src
 *** company-glsl
     #+BEGIN_SRC emacs-lisp
       (leaf company-glsl
@@ -702,14 +741,6 @@
         :config
         (add-to-list 'company-backends 'company-glsl))
     #+END_SRC
-*** company-irony
-    #+begin_src emacs-lisp
-      (leaf company-irony
-        :ensure t
-        :after (company irony)
-        :config
-        (push 'company-irony company-backends))
-    #+end_src
 *** company-go
     #+begin_src emacs-lisp
       (leaf company-go
@@ -741,6 +772,15 @@
                (slime-company-after-completion . 'slime-company-just-one-space))
         :config (slime-setup '(slime-fancy slime-banner slime-company)))
     #+end_src
+*** company-c-headers
+    #+begin_src emacs-lisp
+      (leaf company-c-headers
+        :ensure t
+        :after company
+        :defvar company-backends
+        :config
+        (push 'company-c-headers company-backends))
+    #+end_src
 ** Snippet
 *** yasnippet
     snippetはこちら [https://takeokunn.github.io/.emacs.d/yasnippets.html](https://takeokunn.github.io/.emacs.d/yasnippets.html)
@@ -762,7 +802,12 @@
 ** LSP
 *** lsp-mode
     #+BEGIN_SRC emacs-lisp
-      (leaf lsp-mode :ensure t)
+      (leaf lsp-mode
+        :ensure t
+        :after (company)
+        :custom (lsp-prefer-capf . t)
+        :config
+        (push 'company-capf company-backends))
     #+END_SRC
 *** lsp-ivy
     #+begin_src emacs-lisp
@@ -834,16 +879,19 @@
         :ensure t
         :init
         (eval-and-compile
-          (defun takeokunn/counsel-ag nil
+          (defun takeokunn/counsel-rg ()
             (interactive)
             (let ((symbol (thing-at-point 'symbol 'no-properties))
                   (default-directory (locate-dominating-file default-directory ".git")))
-              (counsel-ag symbol))))
+              (counsel-rg symbol)))
+          (defun takeokunn/counsel-fzf ()
+            (interactive)
+            (let ((default-directory (locate-dominating-file default-directory ".git")))
+              (counsel-fzf))))
         :bind
         (("C-x m" . counsel-compile)
-         ("C-c k" . takeokunn/counsel-ag)
-         ("M-p" . counsel-fzf))
-        :custom (counsel-ag-base-command . "ag --nocolor --nogroup -u %s")
+         ("C-c k" . takeokunn/counsel-rg)
+         ("M-p" . takeokunn/counsel-fzf))
         :config
         (counsel-mode 1))
 
@@ -912,6 +960,14 @@
       ;;   :after (rust-mode))
     #+END_SRC
 ** Cpp
+*** clang-format
+    #+begin_src emacs-lisp
+      (leaf clang-format
+        :ensure t
+        :hook (before-save-hook . (lambda ()
+                                    (when (eq major-mode 'c-mode)
+                                      (clang-format-buffer)))))
+    #+end_src
 *** inferior-cling
     #+begin_src emacs-lisp
       (leaf inferior-cling
@@ -989,19 +1045,6 @@
       ;;   :after sql-mode
       ;;   :hook ((sql-mode-hook . sqlind-minor-mode)))
     #+END_SRC
-** C/C++
-*** TODO irony-mode
-    #+begin_src emacs-lisp
-      ;; (leaf irony
-      ;;   :ensure t
-      ;;   :init
-      ;;   (eval-and-compile
-      ;;     (defun my-irony-mode-on ()
-      ;;       (when (member major-mode irony-supported-major-modes)
-      ;;         (irony-mode 1))))
-      ;;   :hook ((c-mode-common-hook . my-irony-mode-on)
-      ;;          (irony-mode-hook . irony-cdb-autosetup-compile-options)))
-    #+end_src
 ** php
 *** phpactor
     #+begin_src emacs-lisp
@@ -1111,6 +1154,21 @@
         :custom ((aw-keys '(97 115 100 102 103 104 106 107 108)))
         :bind ("C-x C-q" . ace-window))
     #+END_SRC
+*** amx
+    #+BEGIN_SRC emacs-lisp
+      (leaf smex :ensure t)
+    #+END_SRC
+*** avy
+    #+begin_src emacs-lisp
+      (leaf avy
+        :ensure t
+        :bind (("C-:" . avy-goto-char-timer)))
+
+      (leaf avy-zap
+        :ensure t
+        :after avy
+        :bind (("M-z" . avy-zap-up-to-char-dwim)))
+    #+end_src
 *** dashboard
     #+BEGIN_SRC emacs-lisp
       (leaf dashboard
@@ -1223,25 +1281,71 @@
     #+begin_src emacs-lisp
       (leaf htmlize :ensure t)
     #+end_src
+*** keyfreq
+    #+begin_src emacs-lisp
+      (leaf keyfreq
+        :ensure t
+        :config
+        (keyfreq-mode 1)
+        (keyfreq-autosave-mode 1))
+    #+end_src
 *** origami
     #+begin_src emacs-lisp
       (leaf origami
         :ensure t
-        :bind (("C-c C-t" . origami-toggle-node)))
+        :hook (prog-mode-hook . origami-mode)
+        :bind (("C-c C-t" . origami-recursively-toggle-node)
+               ("C-c t" . origami-recursively-toggle-node))
+        :init
+        (global-origami-mode))
+    #+end_src
+*** popwin
+    #+begin_src emacs-lisp
+      (leaf popwin
+        :ensure t
+        :custom (display-buffer-function . 'popwin:display-buffer))
     #+end_src
 *** smartparens
     #+BEGIN_SRC emacs-lisp
       (leaf smartparens :ensure t)
     #+END_SRC
-*** smex
-    #+BEGIN_SRC emacs-lisp
-      (leaf smex :ensure t)
-    #+END_SRC
+*** subword
+    #+begin_src emacs-lisp
+      (leaf subword
+        :config
+        (defun takeokunn/delete-forward-block ()
+          (interactive)
+          (if (eobp)
+              (message "End of buffer")
+            (let* ((syntax-move-point
+                    (save-excursion
+                      (skip-syntax-forward (string (char-syntax (char-after))))
+                      (point)))
+                   (subword-move-point
+                    (save-excursion
+                      (subword-forward)
+                      (point))))
+              (kill-region (point) (min syntax-move-point subword-move-point)))))
+        :bind (("M-d" . takeokunn/delete-forward-block)))
+
+    #+end_src
 *** undo
     #+begin_src emacs-lisp
       (leaf undo-tree
         :ensure t
         :config (global-undo-tree-mode))
+    #+end_src
+*** uuid
+    #+begin_src emacs-lisp
+      (leaf uuid
+        :ensure t
+        :el-get (uuid
+                 :url "https://github.com/nicferrier/emacs-uuid.git"
+                 :features uuid)
+        :config
+        (defun takeokunn/uuid ()
+          (interactive)
+          (insert (uuid-string))))
     #+end_src
 *** whitespace
     #+BEGIN_SRC emacs-lisp
@@ -1261,6 +1365,12 @@
         ;; :setq
         ;; (ssl-certificate-verification-policy . 1)
         )
+    #+end_src
+*** zoom
+    #+begin_src emacs-lisp
+      (leaf zoom
+        :ensure t
+        :bind (("C-x 1" . zoom-window)))
     #+end_src
 * Eshell
 ** basic
@@ -1298,13 +1408,12 @@
         (with-eval-after-load 'aweshell
           (defun takeokunn/counsel-aweshell-history ()
             (interactive)
-            (ivy-read "Aweshell history: " (aweshell-parse-shell-history)))
+            (insert (ivy-read "Aweshell history: " (aweshell-parse-shell-history))))
 
           (defvar eshell-mode-map nil)
           (defvar aweshell-auto-suggestion-p nil)
           (defvar eshell-highlight-prompt t)
-          (defvar eshell-prompt-function 'epe-theme-lambda)
-
+          (setq eshell-prompt-function 'epe-theme-lambda)
           (add-hook 'eshell-mode-hook
                     (lambda () (define-key eshell-mode-map (kbd "C-c C-r") 'takeokunn/counsel-aweshell-history)))))
     #+END_SRC
@@ -1394,7 +1503,7 @@
         ("S-<f8>" . org-tree-slide-skip-done-toggle)))
    #+end_src
 * MyFunc
-** takeokunn/beginning-of-intendation
+** takeokun/bneginning-of-intendation
    #+BEGIN_SRC emacs-lisp
      (defun takeokunn/beginning-of-intendation ()
        "move to beginning of line, or indentation"
