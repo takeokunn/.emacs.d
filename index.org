@@ -219,9 +219,9 @@
        :ensure t
        :after web-mode
        :hook (web-mode-hook . emmet-mode)
-       :bind (:emmet-mode-keymap
-              ("C-j" . newline-and-indent)
-              ("M-j" . emmet-expand-line)))
+       :config
+       (define-key emmet-mode-keymap (kbd "C-j") nil)
+       (define-key emmet-mode-keymap (kbd "M-j") emmet-expand-line))
    #+END_SRC
 ** fish-mode
    #+BEGIN_SRC emacs-lisp
@@ -294,9 +294,6 @@
    #+begin_src emacs-lisp
      (leaf mmm-mode
        :ensure t
-       ;; :el-get (mmm-mode
-       ;;          :url "https://github.com/purcell/mmm-mode.git"
-       ;;          :features mmm-mode)
        :after typescript-mode
        :hook
        ((after-save-hook . mmm-mode))
@@ -304,11 +301,11 @@
        (mmm-global-mode . 'maybe)
        :config
        (mmm-add-classes
-        '((mmm-jsx-mode
+        '((tsx-embed-web-mode
            :submode web-mode
            :front "\\(return\s\\|n\s\\|(\n\s*\\)<"
            :back ">\n?\s*)\n}\n")))
-       (mmm-add-mode-ext-class 'typescript-mode nil 'mmm-jsx-mode))
+       (mmm-add-mode-ext-class 'typescript-mode nil 'tsx-embed-web-mode))
    #+end_src
 ** nginx-mode
    #+BEGIN_SRC emacs-lisp
@@ -350,7 +347,7 @@
    #+BEGIN_SRC emacs-lisp
      (leaf ruby-mode
        :ensure t
-       :mode ("\\.rb$" "Capfile" "Gemfile" "Schemafile" ".pryrc")
+       :mode ("\\.rb$" "Capfile" "Gemfile" "Schemafile" ".pryrc" "Fastfile" "Matchfile")
        :hook ((ruby-mode-hook . lsp))
        :config
        (with-eval-after-load 'ruby-mode
@@ -388,6 +385,11 @@
        :ensure t
        :mode ("/path-to-your-ssh/config\\$"))
    #+END_SRC
+** swift-mode
+   #+begin_src emacs-lisp
+     (leaf swift-mode
+       :ensure t)
+   #+end_src
 ** terraform-mode
    #+BEGIN_SRC emacs-lisp
      (leaf terraform-mode
@@ -795,7 +797,7 @@
     #+begin_src emacs-lisp
       (leaf ivy-yasnippet
         :ensure t
-        :after (yasnippet)
+        :after (yasnippet ivy)
         :bind (("C-c y" . ivy-yasnippet)
                ("C-c C-y" . ivy-yasnippet)))
     #+end_src
@@ -1040,10 +1042,10 @@
 ** SQL
 *** sql-indent
     #+BEGIN_SRC emacs-lisp
-      ;; (leaf sql-indent
-      ;;   :ensure t
-      ;;   :after sql-mode
-      ;;   :hook ((sql-mode-hook . sqlind-minor-mode)))
+      (leaf sql-indent
+        :ensure t
+        :after sql-mode
+        :hook ((sql-mode-hook . sqlind-minor-mode)))
     #+END_SRC
 ** php
 *** phpactor
@@ -1254,6 +1256,15 @@
 	:bind
 	("M-g" . google-this))
     #+END_SRC
+*** grugru
+    #+begin_src emacs-lisp
+      (leaf grugru
+        :ensure t
+        :bind
+        ("C-;" . grugru)
+        :config
+        (grugru-default-setup))
+    #+end_src
 *** goto-addr
     #+BEGIN_SRC emacs-lisp
       (leaf goto-addr
@@ -1303,7 +1314,10 @@
     #+begin_src emacs-lisp
       (leaf popwin
         :ensure t
-        :custom (display-buffer-function . 'popwin:display-buffer))
+        :setq
+        (pop-up-windows . nil)
+        :config
+        (popwin-mode 1))
     #+end_src
 *** smartparens
     #+BEGIN_SRC emacs-lisp
@@ -1339,7 +1353,7 @@
     #+begin_src emacs-lisp
       (leaf uuid
         :ensure t
-        :el-get (uuid
+        :el-get (emacs-uuid
                  :url "https://github.com/nicferrier/emacs-uuid.git"
                  :features uuid)
         :config
@@ -1365,12 +1379,6 @@
         ;; :setq
         ;; (ssl-certificate-verification-policy . 1)
         )
-    #+end_src
-*** zoom
-    #+begin_src emacs-lisp
-      (leaf zoom
-        :ensure t
-        :bind (("C-x 1" . zoom-window)))
     #+end_src
 * Eshell
 ** basic
