@@ -1188,14 +1188,14 @@
         :custom ((aw-keys '(97 115 100 102 103 104 106 107 108)))
         :bind ("C-x C-q" . ace-window))
     #+END_SRC
-*** TODO auto-save-buffers-enhanced
+*** auto-save-buffers-enhanced
     #+begin_src emacs-lisp
-      ;; (leaf auto-save-buffers-enhanced
-      ;;   :ensure t
-      ;;   :setq
-      ;;   (auto-save-buffers-enhanced-interval . 30)
-      ;;   :config
-      ;;   (auto-save-buffers-enhanced t))
+      (leaf auto-save-buffers-enhanced
+        :ensure t
+        :setq
+        (auto-save-buffers-enhanced-interval . 10)
+        :config
+        (auto-save-buffers-enhanced t))
     #+end_src
 *** amx
     #+BEGIN_SRC emacs-lisp
@@ -1522,23 +1522,31 @@
        :el-get (ob-php
                 :url "https://github.com/stardiviner/ob-php.git"))
 
-     (leaf ob-go
-       :el-get (ob-go
-                :url "https://github.com/pope/ob-go.git"))
-
      (leaf ob-fish
        :el-get (ob-fish
                 :url "https://github.com/takeokunn/ob-fish.git"))
 
+
+     (leaf ob-go :ensure t)
+     (leaf ob-rust :ensure t)
+     (leaf ob-typescript :ensure t)
+
      (leaf ob-babel
-       :after (ob-php ob-go ob-fish)
+       :after (ob-php
+               ob-fish
+               ob-go
+               ob-rust
+               ob-typescript)
        :config
        (org-babel-do-load-languages 'org-babel-load-languages
                                     '((shell . t)
-                                      (php . t)
-                                      (go . t)
                                       (emacs-lisp . t)
-                                      (fish . t))))
+                                      (ruby . t)
+                                      (php . t)
+                                      (fish . t)
+                                      (go . t)
+                                      (rust . t)
+                                      (typescript . t))))
    #+end_src
 ** org-superstar
    #+begin_src emacs-lisp
@@ -1558,26 +1566,27 @@
        :custom
        (org-generate-file . `,(locate-user-emacs-file "yasnippets.org")))
    #+end_src
-** TODO org-roam
+** org-roam
    #+begin_src emacs-lisp
-     ;; (leaf org-roam
-     ;;   :ensure t
-     ;;   :hook (after-init-hook . org-roam-mode)
-     ;;   :custom ((org-roam-db-update-method . 'immediate)
-     ;;            (org-roam-db-location . "~/org/roam/org-roam.db")
-     ;;            (org-roam-directory . "~/org/roam")
-     ;;            (org-roam-index-file . "~/org/roam/index.org"))
-     ;;   :custom
-     ;;   (org-roam-graph-viewer . #'eww-open-file)
-     ;;   :setq
-     ;;   (org-roam-v2-ack . t)
-     ;;   :bind
-     ;;   (("C-c n l" . org-roam)
-     ;;    ("C-c n f" . org-roam-find-file)
-     ;;    ("C-c n g" . org-roam-graph)
-     ;;    (:org-mode-map
-     ;;     (("C-c n i" . org-roam-insert)
-     ;;      ("C-c n I" . org-roam-insert-immediate)))))
+     (leaf org-roam
+       :disabled t
+       :ensure t
+       :hook (after-init-hook . org-roam-mode)
+       :custom ((org-roam-db-update-method . 'immediate)
+                (org-roam-db-location . "~/org/roam/org-roam.db")
+                (org-roam-directory . "~/org/roam")
+                (org-roam-index-file . "~/org/roam/index.org"))
+       :custom
+       (org-roam-graph-viewer . #'eww-open-file)
+       :setq
+       ((org-roam-v2-ack . nil))
+       :bind
+       (("C-c n l" . org-roam)
+        ("C-c n f" . org-roam-find-file)
+        ("C-c n g" . org-roam-graph)
+        (:org-mode-map
+         (("C-c n i" . org-roam-insert)
+          ("C-c n I" . org-roam-insert-immediate)))))
    #+end_src
 ** org-tree-slide
    #+begin_src emacs-lisp
