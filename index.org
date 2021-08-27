@@ -158,11 +158,20 @@
      (setq-default buffer-file-coding-system 'utf-8-unix)
      (setq-default default-process-coding-system '(utf-8 . utf-8))
    #+end_src
+** global-auto-revert-mode
+   #+begin_src emacs-lisp
+     (global-auto-revert-mode t)
+   #+end_src
 ** yes/no to y/n
    #+begin_src emacs-lisp
      (fset 'yes-or-no-p 'y-or-n-p)
    #+end_src
 * Major/Minor Mode
+** c++-mode
+   #+begin_src emacs-lisp
+     (leaf c++-mode
+       :hook (c++-mode-hook . lsp))
+   #+end_src
 ** c-mode
    #+begin_src emacs-lisp
      (leaf c-mode
@@ -349,7 +358,7 @@
      (leaf ruby-mode
        :ensure t
        :mode ("\\.rb$" "Capfile" "Gemfile" "Schemafile" ".pryrc" "Fastfile" "Matchfile")
-       :hook ((ruby-mode-hook . lsp))
+       ;; :hook ((ruby-mode-hook . lsp))
        :config
        (with-eval-after-load 'ruby-mode
          (setq-default ruby-insert-encoding-magic-comment nil)))
@@ -990,7 +999,7 @@
       (leaf clang-format
         :ensure t
         :hook (before-save-hook . (lambda ()
-                                    (when (eq major-mode 'c-mode)
+                                    (when (member major-mode '(c-mode c++-mode))
                                       (clang-format-buffer)))))
     #+end_src
 *** inferior-cling
@@ -1043,18 +1052,18 @@
 *** robe
     #+begin_src emacs-lisp
       (leaf robe
-	:ensure t
-	:after ruby-mode company
-	:hook (ruby-mode-hook)
-	:config
-	(push 'company-robe company-backends))
+        :ensure t
+        :after ruby-mode company
+        :hook (ruby-mode-hook)
+        :config
+        (push 'company-robe company-backends))
     #+end_src
 *** rubocop
     #+begin_src emacs-lisp
       (leaf rubocop
-	:ensure t
-	:after ruby-mode
-	:hook (ruby-mode-hook))
+        :ensure t
+        :after ruby-mode
+        :hook (ruby-mode-hook))
     #+end_src
 *** ruby-refactor
     #+BEGIN_SRC emacs-lisp
@@ -1123,9 +1132,9 @@
 *** flycheck
      #+begin_src emacs-lisp
        (leaf flycheck
-	 :ensure t
-	 :after ruby-mode
-	 :hook (ruby-mode-hook))
+         :ensure t
+         :after ruby-mode
+         :hook (ruby-mode-hook))
      #+end_src
 *** flycheck-aspell
     #+begin_src emacs-lisp
@@ -1179,6 +1188,15 @@
         :custom ((aw-keys '(97 115 100 102 103 104 106 107 108)))
         :bind ("C-x C-q" . ace-window))
     #+END_SRC
+*** TODO auto-save-buffers-enhanced
+    #+begin_src emacs-lisp
+      ;; (leaf auto-save-buffers-enhanced
+      ;;   :ensure t
+      ;;   :setq
+      ;;   (auto-save-buffers-enhanced-interval . 30)
+      ;;   :config
+      ;;   (auto-save-buffers-enhanced t))
+    #+end_src
 *** amx
     #+BEGIN_SRC emacs-lisp
       (leaf smex :ensure t)
@@ -1283,6 +1301,7 @@
     #+begin_src emacs-lisp
       (leaf grugru
         :ensure t
+        :disabled t
         :bind
         ("C-;" . grugru)
         :config
@@ -1391,6 +1410,12 @@
           (interactive)
           (insert (uuid-string))))
     #+end_src
+*** which-key
+    #+begin_src emacs-lisp
+      (leaf which-key
+        :ensure t
+        :hook (after-init . which-key-mode))
+    #+end_src
 *** whitespace
     #+BEGIN_SRC emacs-lisp
       (leaf whitespace
@@ -1465,9 +1490,6 @@
 ** basic
    #+BEGIN_SRC emacs-lisp
      (leaf org
-       :config
-       (org-babel-do-load-languages 'org-babel-load-languages
-                                    '((lisp . t)))
        :setq-default
        ((org-use-speed-commands . t)
         (org-agenda-todo-ignore-with-date . t)
@@ -1480,23 +1502,49 @@
                                     "* %?")
                                    ("m" "Memo" entry (file "~/org/memo.org")
                                     "* %?"))))
+       :custom
+       (org-clock-out-remove-zero-time-clocks . t)
        :custom-face
        ((org-link '(t (:foreground "#ebe087" :underline t))))
-       ;; (org-list-dt . '((t (:foreground "#bd93f9"))))
-       ;; (org-special-keyword . '((t (:foreground "#6272a4"))))
-       ;; (org-todo . '((t (:background "#272934" :foreground "#51fa7b" :weight bold))))
-       ;; (org-document-title . '((t (:foreground "#f1fa8c" :weight bold))))
-       ;; (org-done . '((t (:background "#373844" :foreground "#216933" :strike-through nil :weight bold))))
-       ;; (org-footnote . '((t (:foreground "#76e0f3"))))
-       :bind (("C-c a" . org-agenda)
-              ("C-c b" . counsel-bookmark)
-              ("C-c c" . org-capture)
-              (:org-mode-map ("C-m" . nil))))
+       :bind
+       (("C-c a" . org-agenda)
+        ("C-c b" . counsel-bookmark)
+        ("C-c c" . org-capture)
+        (:org-mode-map ("C-m" . nil))))
    #+END_SRC
+** org-babel
+   #+begin_src emacs-lisp
+     (leaf ob-core
+       :custom
+       (org-confirm-babel-evaluate . nil))
+
+     (leaf ob-php
+       :el-get (ob-php
+                :url "https://github.com/stardiviner/ob-php.git"))
+
+     (leaf ob-go
+       :el-get (ob-go
+                :url "https://github.com/pope/ob-go.git"))
+
+     (leaf ob-fish
+       :el-get (ob-fish
+                :url "https://github.com/takeokunn/ob-fish.git"))
+
+     (leaf ob-babel
+       :after (ob-php ob-go ob-fish)
+       :config
+       (org-babel-do-load-languages 'org-babel-load-languages
+                                    '((shell . t)
+                                      (php . t)
+                                      (go . t)
+                                      (emacs-lisp . t)
+                                      (fish . t))))
+   #+end_src
 ** org-superstar
    #+begin_src emacs-lisp
      (leaf org-superstar
        :ensure t
+       :after (org)
        :hook ((org-mode-hook . org-superstar-mode))
        :custom
        ((org-superstar-headline-bullets-list . '("◉" "○" "✸" "✿"))
@@ -1510,7 +1558,7 @@
        :custom
        (org-generate-file . `,(locate-user-emacs-file "yasnippets.org")))
    #+end_src
-** org-roam
+** TODO org-roam
    #+begin_src emacs-lisp
      ;; (leaf org-roam
      ;;   :ensure t
@@ -1530,7 +1578,6 @@
      ;;    (:org-mode-map
      ;;     (("C-c n i" . org-roam-insert)
      ;;      ("C-c n I" . org-roam-insert-immediate)))))
-
    #+end_src
 ** org-tree-slide
    #+begin_src emacs-lisp
@@ -1539,6 +1586,11 @@
        :bind
        (("<f8>" . org-tree-slide-mode)
         ("S-<f8>" . org-tree-slide-skip-done-toggle)))
+   #+end_src
+** org-pomodoro
+   #+begin_src emacs-lisp
+     (leaf org-pomodoro
+       :ensure t)
    #+end_src
 * MyFunc
 ** takeokun/bneginning-of-intendation
@@ -1552,12 +1604,12 @@
    #+BEGIN_SRC emacs-lisp
      (defun takeokunn/before-set-auto-mode ()
        (when (or (and buffer-file-name
-                      (> (or (file-attribute-size (file-attributes buffer-file-name)) 0) 100000))
-                 (> (line-number-at-pos (point-max)) 10000))
+                      (> (or (file-attribute-size (file-attributes buffer-file-name)) 0) 1000000))
+                 (> (line-number-at-pos (point-max)) 100000))
          (prog1 t
            (prog-mode))))
 
-     (advice-add 'set-auto-mode :before-until 'takeokunn/before-set-auto-mode)
+     ;; (advice-add 'set-auto-mode :before-until 'takeokunn/before-set-auto-mode)
    #+END_SRC
 ** takeokunn/irb-history
    #+BEGIN_SRC emacs-lisp
