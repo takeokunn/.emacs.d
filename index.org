@@ -231,7 +231,7 @@
        :hook (web-mode-hook . emmet-mode)
        :config
        (define-key emmet-mode-keymap (kbd "C-j") nil)
-       (define-key emmet-mode-keymap (kbd "M-j") emmet-expand-line))
+       (define-key emmet-mode-keymap (kbd "M-j") 'emmet-expand-line))
    #+END_SRC
 ** fish-mode
    #+BEGIN_SRC emacs-lisp
@@ -1215,9 +1215,9 @@
 *** dashboard
     #+BEGIN_SRC emacs-lisp
       (leaf dashboard
-	:ensure t
-	:config
-	(dashboard-setup-startup-hook))
+        :ensure t
+        :config
+        (dashboard-setup-startup-hook))
     #+END_SRC
 *** ddskk
     #+BEGIN_SRC emacs-lisp
@@ -1235,9 +1235,9 @@
 *** editorconfig
     #+BEGIN_SRC emacs-lisp
       (leaf editorconfig
-	:ensure t
-	:config
-	(editorconfig-mode 1))
+        :ensure t
+        :config
+        (editorconfig-mode 1))
     #+END_SRC
 *** esup
     #+BEGIN_SRC emacs-lisp
@@ -1249,42 +1249,16 @@
         :ensure t
         :bind
         ("C-x w" . elfeed)
+        :setq
+        (elfeed-search-filter . "@3-days-ago +unread"))
+
+      (leaf elfeed-org
+        :ensure t
+        :after elfeed
         :custom
-        (elfeed-search-filter . "@3-days-ago +unread")
-        (elfeed-feeds . '("https://takeokunn.xyz/blog/rss.xml"
-                          "https://planet.emacslife.com/atom.xml"
-                          "https://sachachua.com/blog/feed/"
-                          "https://www.suzukikenichi.com/blog/feed/"
-                          "https://blogs.unity3d.com/jp/feed"
-                          "https://b.hatena.ne.jp/efcl/bookmark.rss"
-                          "https://efcl.info/feed/"
-                          "http://api.slack.com/changelog.rss"
-                          "https://cloudplatform-jp.googleblog.com/feeds/posts/default"
-                          "https://aws.amazon.com/jp/blogs/news/feed/"
-                          "https://html5experts.jp/feed/"
-                          "https://moneyforward.com/engineers_blog/feed/"
-                          "http://system.blog.uuum.jp/feed"
-                          "https://engineering.linecorp.com/ja/blog/rss2"
-                          "http://acro-engineer.hatenablog.com/feed"
-                          "http://www.infiniteloop.co.jp/blog/feed/"
-                          "http://www.publickey1.jp/atom.xml"
-                          "http://heartbeats.jp/hbblog/atom.xml"
-                          "https://cloudpack.media/feed"
-                          "http://techracho.bpsinc.jp/feed"
-                          "http://engineer.blog.lancers.jp/feed/"
-                          "http://dev.classmethod.jp/feed/"
-                          "http://klabgames.tech.blog.jp.klab.com/atom.xml"
-                          "http://tech.innovator.jp.net/feed"
-                          "http://engineer.recruit-lifestyle.co.jp/techblog/feed.xml"
-                          "https://tech.mercari.com/feed"
-                          "http://techlife.cookpad.com/feed/"
-                          "http://blog.serverworks.co.jp/tech/feed/"
-                          "http://tech.connehito.com/feed"
-                          "http://tech.vasily.jp/feed"
-                          "http://lab.aratana.jp/rss"
-                          "https://inside.dmm.com/rss"
-                          "https://news.ycombinator.com/rss"
-                          "http://b.hatena.ne.jp/hotentry/it.rss")))
+        (rmh-elfeed-org-files . '("~/.emacs.d/elfeed.org"))
+        :config
+        (elfeed-org))
     #+end_src
 *** font-lock-studio
     #+BEGIN_SRC emacs-lisp
@@ -1293,9 +1267,9 @@
 *** google-this
     #+BEGIN_SRC emacs-lisp
       (leaf google-this
-	:ensure t
-	:bind
-	("M-g" . google-this))
+        :ensure t
+        :bind
+        ("M-g" . google-this))
     #+END_SRC
 *** grugru
     #+begin_src emacs-lisp
@@ -1490,20 +1464,24 @@
 ** basic
    #+BEGIN_SRC emacs-lisp
      (leaf org
+       :after (org-ql)
        :setq-default
        ((org-use-speed-commands . t)
         (org-agenda-todo-ignore-with-date . t)
         (org-directory . "~/org")
-        (org-agenda-files . '("~/org/todo.org"))
-        (org-todo-keywords . '((sequence "TODO(t)" "WAIT(w)" "|" "DONE(d)")))
+        (org-agenda-files . '("~/org/agenda"))
+        (org-todo-keywords . '((sequence "TODO(t)" "TODAY" "WAIT(w)" "|" "DONE(d)")))
         (org-capture-templates . '(("t" "Todo" entry (file+datetree "~/org/todo.org")
-                                    "* %?")
-                                   ("b" "Blog" entry (file "~/org/blog.org")
                                     "* %?")
                                    ("m" "Memo" entry (file "~/org/memo.org")
                                     "* %?"))))
        :custom
+       (org-archive-location . `,(format "~/org/archive/%s.org"
+                                       (format-time-string "%Y" (current-time))))
        (org-clock-out-remove-zero-time-clocks . t)
+       (org-agenda-custom-commands . `(("i" "Today's agenda"
+                                        ((org-ql-block '(and (todo "TODAY"))
+                                                       ((org-ql-block-header "TODAY's agenda")))))))
        :custom-face
        ((org-link '(t (:foreground "#ebe087" :underline t))))
        :bind
@@ -1512,6 +1490,10 @@
         ("C-c c" . org-capture)
         (:org-mode-map ("C-m" . nil))))
    #+END_SRC
+** org-ql
+   #+begin_src emacs-lisp
+     (leaf org-ql :ensure t)
+   #+end_src
 ** org-babel
    #+begin_src emacs-lisp
      (leaf ob-core
