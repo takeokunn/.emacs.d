@@ -3,7 +3,6 @@
 #+email: bararararatty@gmail.com
 #+startup: content
 #+startup: nohideblocks
-#+options: num:t auto-id:t
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://www.pirilampo.org/styles/readtheorg/css/htmlize.css"/>
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://www.pirilampo.org/styles/readtheorg/css/readtheorg.css"/>
 #+HTML_HEAD: <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
@@ -800,19 +799,6 @@
         :config
         (push 'company-c-headers company-backends))
     #+end_src
-*** company-tabnine
-    #+begin_src emacs-lisp
-      (leaf company-tabnine
-        :ensure t
-        :after company
-        :defvar company-backends
-        :hook (after-init-hook . takeokunn/company-tabnine-initialize)
-        :config
-        (push 'company-tabnine company-backends)
-        (defun takeokunn/company-tabnine-initialize ()
-          (unless (file-directory-p company-tabnine-binaries-folder)
-            (company-tabnine-install-binary))))
-    #+end_src
 ** Snippet
 *** yasnippet
     snippetはこちら [https://takeokunn.github.io/.emacs.d/yasnippets.html](https://takeokunn.github.io/.emacs.d/yasnippets.html)
@@ -1533,6 +1519,7 @@
        (org-clock-out-remove-zero-time-clocks . t)
        :custom-face
        ((org-link '(t (:foreground "#ebe087" :underline t))))
+       :hook (auto-save-hook . org-lint)
        :bind
        (("C-c a" . org-agenda)
         ("C-c b" . counsel-bookmark)
