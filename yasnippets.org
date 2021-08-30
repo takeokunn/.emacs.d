@@ -11,7 +11,6 @@
 #+HTML_HEAD: <script type="text/javascript" src="https://www.pirilampo.org/styles/lib/js/jquery.stickytableheaders.min.js"></script>
 #+HTML_HEAD: <script type="text/javascript" src="https://www.pirilampo.org/styles/readtheorg/js/readtheorg.js"></script>
 
-
 * yasnippet
 ** default
 *** dockerfile-mode/
@@ -1484,10 +1483,10 @@ begin
 end
 
 #+END_SRC
-**** bp
+**** breakpoint
 #+BEGIN_SRC snippet
 # name: breakpoint
-# key: bp
+# key: breakpoint
 # --
 breakpoint
 $0
@@ -1514,18 +1513,8 @@ end
 #+END_SRC
 **** if
 #+BEGIN_SRC snippet
-# name: if ... end
-# key: if
-# --
-if ${1:[ -f file ]}
-    ${2:do}
-end
-$0
-#+END_SRC
-**** ife
-#+BEGIN_SRC snippet
 # name: if ... ... else ... end
-# key: ife
+# key: if
 # --
 if ${1:cond}
     ${2:stuff}
@@ -1535,10 +1524,10 @@ end
 $0
 
 #+END_SRC
-**** sw
+**** switch
 #+BEGIN_SRC snippet
 # name: switch
-# key: sw
+# key: switch
 # --
 switch ${1:condition}
     case ${2:*}
@@ -1600,33 +1589,12 @@ references #${1:100}
 ${1:$$(yas-choose-value '("fix" "hotfix" "add" "update" "change" "clean" "disable" "remove" "upgrade" "revert"))} $0
 #+END_SRC
 *** js-mode/
-**** al
+**** alert
 #+BEGIN_SRC snippet
-# name: alert
-# --
-alert($0);
-#+END_SRC
-**** anfn
-#+BEGIN_SRC snippet
-# uuid: 289f0557-4e11-47c5-bcbf-1105bbec41ce
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: anonymousFunction
-# key: anfn
-# --
-
-(${1:params}) => {
-  ${2}
-}
-#+END_SRC
-**** bnd
-#+BEGIN_SRC snippet
-# uuid: 6788dcb5-8d8e-4e30-a97b-83029ecaf89b
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: bindThis
-# key: bnd
-# --
-
-this.${1:methodName} = this.${1:methodName}.bind(this)$0
+  # name: alert
+  # key: alert
+  # --
+  alert($0);
 #+END_SRC
 **** class
 #+BEGIN_SRC snippet
@@ -1642,61 +1610,42 @@ class ${1:Class}${2: extends ${3:ParentClass}} {
   $0
 }
 #+END_SRC
-**** cmmb
+**** comment
 #+BEGIN_SRC snippet
-# uuid: 983d648f-a7de-4e22-bab9-bca5cd6188a6
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: Comment Big Block
-# key: cmmb
-# --
+  # name: comment (/* ... */)
+  # key: comment
+  # --
+  /*
+   ,* $0
+   ,*/
+#+END_SRC
+**** comment-big-block
+#+BEGIN_SRC snippet
+  # name: Comment Big Block
+  # key: comment-big-block
+  # --
 
-/**
-|--------------------------------------------------
-| $1
-|--------------------------------------------------
-*/
+  /**
+  |--------------------------------------------------
+  | $1
+  |--------------------------------------------------
+  ,*/
 #+END_SRC
-**** com
-#+BEGIN_SRC snippet
-# name: comment (/* ... */)
-# --
-/*
- * $0
- */
-#+END_SRC
+**** comment-multiline
+ #+BEGIN_SRC snippet
+ # name: comment-multiline
+ # key: /**
+ # --
+ /**
+  * $0
+  */
+ #+END_SRC
 **** const
 #+BEGIN_SRC snippet
 # name: const declaration
 # key: const
 # --
 const ${1:name} = ${2:initial};
-#+END_SRC
-**** dar
-#+BEGIN_SRC snippet
-# uuid: 1867e4d6-1042-422e-b114-174969b9325e
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: destructingArray
-# key: dar
-# --
-
-const [${1:propertyName}] = ${2:arrayToDestruct}
-#+END_SRC
-**** debugger
-#+BEGIN_SRC snippet
-# name: debugger
-# key: dbg
-# --
-debugger;
-#+END_SRC
-**** dob
-#+BEGIN_SRC snippet
-# uuid: 0a552742-2fa3-4d23-8fe6-fe7f211b642a
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: destructingObject
-# key: dob
-# --
-
-const {${1:propertyName}} = ${2:objectToDestruct}
 #+END_SRC
 **** each
 #+BEGIN_SRC snippet
@@ -1706,27 +1655,16 @@ ${1:collection}.forEach(function (${2:elem}) {
   $0
 });
 #+END_SRC
-**** edf
+**** else
 #+BEGIN_SRC snippet
-# uuid: 45f3a8b4-7ed0-4d80-aa77-1cf79339b6b6
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: exportDefaultFunction
-# key: edf
-# --
-
-export default (${1:params}) => {
-  $0
-}
+  # name: else
+  # key: else
+  # --
+  else {
+    $0
+  }
 #+END_SRC
-**** el
-#+BEGIN_SRC snippet
-# name: else
-# --
-else {
-  $0
-}
-#+END_SRC
-**** enf
+**** export-const
 #+BEGIN_SRC snippet
 # uuid: 095f24bf-5c76-4d0b-862e-a1f0ab1e1b95
 # contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
@@ -1738,66 +1676,43 @@ export const ${1:functionName} = (${2:params}) => {
   $0
 }
 #+END_SRC
-**** exa
+**** export-default
 #+BEGIN_SRC snippet
-# uuid: 1391f808-8044-4878-b551-9f129330507c
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: exportAs
-# key: exa
-# --
+  # name: exportDefault
+  # key: export-default
+  # --
 
-export { ${2:originalName} as ${3:alias} } from '${1:module}'$0
+  export default $1$0
 #+END_SRC
-**** exd
+**** export-default-function
 #+BEGIN_SRC snippet
-# uuid: b9a77d53-af00-4acc-90e5-0259edef0326
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: exportDestructing
-# key: exd
-# --
+  # name: exportDefaultFunction
+  # key: export-default-function
+  # --
 
-export { $2 } from '${1:module}'$0
+  export default (${1:params}) => {
+    $0
+  }
 #+END_SRC
-**** exp
+**** for-in
 #+BEGIN_SRC snippet
-# uuid: 19643fe0-3063-41cd-b384-9f0a51b2f809
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: exportDefault
-# key: exp
-# --
+  # name: for-in
+  # key: for-in
+  # --
 
-export default $1$0
+  for(const ${1:item} in ${2:object}) {
+    ${0}
+  }
 #+END_SRC
-**** fin
+**** for-of
 #+BEGIN_SRC snippet
-# uuid: 8d343f0b-28ae-4e2c-84a4-2e557603f28b
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: forIn
-# key: fin
-# --
+  # name: for-of
+  # key: fof-of
+  # --
 
-for(let ${1:item} in ${2:object}) {
-  ${0}
-}
-#+END_SRC
-**** flow
-#+BEGIN_SRC snippet
-# name: /* @flow */
-# key: flow
-# --
-/* @flow */
-#+END_SRC
-**** fof
-#+BEGIN_SRC snippet
-# uuid: eec73b34-fb19-4d4c-b4fd-853b2eca6f19
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: forOf
-# key: fof
-# --
-
-for(let ${1:item} of ${2:object}) {
-  ${0}
-}
+  for(const ${1:item} of ${2:object}) {
+    ${0}
+  }
 #+END_SRC
 **** for
 #+BEGIN_SRC snippet
@@ -1807,26 +1722,14 @@ for (var ${1:i} = ${2:0}; $1 < ${3:collection}.length; $1++) {
   $0
 }
 #+END_SRC
-**** fre
-#+BEGIN_SRC snippet
-# uuid: a59f3383-a176-4f60-a992-0d2b983eaa5c
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: forEach
-# key: fre
-# --
-
-${1:array}.forEach(${2:currentItem} => {
-  ${0}
-})
-#+END_SRC
 **** function
 #+BEGIN_SRC snippet
-# name: function
-# key: f
-# --
-function ${1:name}(${2:arg}) {
-         $0
-}
+  # name: function
+  # key: function
+  # --
+  function ${1:name}(${2:arg}) {
+           $0
+  }
 
 #+END_SRC
 **** if
@@ -1849,68 +1752,17 @@ if (${1:condition}) {
 **** log
 #+BEGIN_SRC snippet
   # name: log (console.log)
+  # key: log
   # --
   console.log("$1: ", $1)
 #+END_SRC
-**** ima
+**** import
 #+BEGIN_SRC snippet
-# uuid: 7c3ddd59-68e7-456c-a906-4241cdaeaf9e
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: importAs
-# key: ima
-# --
+  # name: import
+  # key: import
+  # --
 
-import { ${2:originalName} as ${3:alias} } from '${1:module}'$0
-#+END_SRC
-**** imd
-#+BEGIN_SRC snippet
-# uuid: 851254b3-d70e-4024-a557-2629d3d73507
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: importDestructing
-# key: imd
-# --
-
-import { $2 } from '${1:module}'$0
-#+END_SRC
-**** ime
-#+BEGIN_SRC snippet
-# uuid: 13efbfa8-12d3-4570-9602-6d64717d75e3
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: importEverything
-# key: ime
-# --
-
-import * as ${2:alias} from '${1:module}'$0
-#+END_SRC
-**** imn
-#+BEGIN_SRC snippet
-# uuid: 39b0065c-1dd5-4214-a612-1fead18dd677
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: importNoModuleName
-# key: imn
-# --
-
-import '${1:module}'$0
-#+END_SRC
-**** imp
-#+BEGIN_SRC snippet
-# uuid: fb07fe1d-4cf7-47e9-bca8-51a6438c5d6f
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: import
-# key: imp
-# --
-
-import ${2:moduleName} from '${1:module}'$0
-#+END_SRC
-**** init
-#+BEGIN_SRC snippet
-# name: constructor
-# key: init
-# --
-constructor(${1:arg}) {
-  ${2:super(${3:arg});}
-  $0
-}
+  import ${2:moduleName} from '${1:module}'$0
 #+END_SRC
 **** let
 #+BEGIN_SRC snippet
@@ -1919,118 +1771,20 @@ constructor(${1:arg}) {
 # --
 let ${1:name} = ${2:initial};
 #+END_SRC
-**** met
+**** setInterval
 #+BEGIN_SRC snippet
-# name: method
-# key: met
-# --
-${1:name}(${2:arg}) {
-  $0
-}
-#+END_SRC
-**** metb
-#+BEGIN_SRC snippet
-# uuid: b8f2656b-94d0-40fc-baf2-d335073ecd54
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: bound method
-# key: metb
-# --
-
-${1:methodName} = (${2:params}) => {
-  ${0}
-}
-#+END_SRC
-**** multiline-comment
-#+BEGIN_SRC snippet
-# name: multiline-comment
-# key: /**
-# --
-/**
- * $0
- */
-#+END_SRC
-**** nfn
-#+BEGIN_SRC snippet
-# uuid: 4650c619-bbd9-4496-955a-1d626fdf8bcb
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: namedFunction
-# key: nfn
-# --
-
-const ${1:name} = (${2:params}) => {
-  ${3}
-}
-#+END_SRC
-**** param-comment
-#+BEGIN_SRC snippet
-  # name: param-comment
-  # key: *@p
-  #condition: (= (js2-node-type (js2-node-at-point)) js2-COMMENT)
-  # --
-  ,* @param {${type}} ${comment}.n
-#+END_SRC
-**** pge
-#+BEGIN_SRC snippet
-# uuid: 4d26710e-cad0-4584-8099-87403d4c43cb
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: propertyGet
-# key: pge
-# --
-
-get ${1:propertyName}() {
-  return this.${0}
-}
-#+END_SRC
-**** prom
-#+BEGIN_SRC snippet
-# uuid: 1f2ca8a4-dda2-4b88-9377-23ec10760aec
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: promise
-# key: prom
-# --
-
-return new Promise((resolve, reject) => {
-  ${1}
-})
-#+END_SRC
-**** pse
-#+BEGIN_SRC snippet
-# uuid: b33dbf56-f2ad-489e-bc7b-1b4c2d1657ea
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: propertyset
-# key: pse
-# --
-
-set ${1:propertyName}(${2:value}) {
-  ${0}
-}
-#+END_SRC
-**** return-comment
-#+BEGIN_SRC snippet
-  # name: return-comment
-  # key: *@r
-  #condition: (= (js2-node-type (js2-node-at-point)) js2-COMMENT)
-  # --
-  ,* @return {${type}}
-#+END_SRC
-**** sti
-#+BEGIN_SRC snippet
-  # uuid: 596c0e05-ee02-4d02-85e0-64252296629d
-  # contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
   # name: setInterval
-  # key: sti
+  # key: setInterval
   # --
 
   setInterval(() => {
     ${2}
   }, ${0:intervalInms})
 #+END_SRC
-**** sto
+**** setTimeout
 #+BEGIN_SRC snippet
-  # uuid: 6ead1d1a-bf84-4a3d-94fb-59ad97d55414
-  # contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
   # name: setTimeOut
-  # key: sto
+  # key: setTimeOut
   # --
 
   setTimeout(() => {
@@ -2050,7 +1804,7 @@ set ${1:propertyName}(${2:value}) {
 **** switch
 #+BEGIN_SRC snippet
   # name: switch
-  # key: sw
+  # key: switch
   # --
   switch (${1:condition}) {
     case ${2:expression}:
@@ -2071,22 +1825,6 @@ set ${1:propertyName}(${2:value}) {
   }${3: finally {
     $4
   }}
-#+END_SRC
-**** type-inline-comment
-#+BEGIN_SRC snippet
-  # name: type-inline-comment
-  # key: @ty
-  #condition: (not (= (js2-node-type (js2-node-at-point)) js2-COMMENT))
-  # --
-  /** @type {${type}} */
-#+END_SRC
-**** type-multiline-comment
-#+BEGIN_SRC snippet
-  # name: type-inline-comment
-  # key: *ty
-  #condition: (= (js2-node-type (js2-node-at-point)) js2-COMMENT)
-  # --
-  ,* @type {${type}}
 #+END_SRC
 *** js2-mode/
 **** .yas-parents
@@ -3913,6 +3651,18 @@ rust-mode
 # --
 \${${1:${2:n}:}$3${4:\$(${5:lisp-fn})}\}$0
 #+END_SRC
+**** header
+#+BEGIN_SRC snippet
+  # name: header
+  # key: header
+  # --
+
+  # name: ${1:name}
+  # key: ${2:key}
+  # --
+
+  $0
+#+END_SRC
 **** group
 #+BEGIN_SRC snippet
 # name: group
@@ -4094,6 +3844,25 @@ fundamental-mode
 #+BEGIN_SRC snippet
 js-mode
 #+END_SRC
+**** namespace
+#+begin_src snippet
+  # name: namespace
+  # key: namespace
+  # --
+
+  namespace $1 {
+    $0
+  }
+#+end_src
+**** type
+#+begin_src snippet
+  # name: type
+  # key: type
+  # --
+  type $1 = {
+    $0
+  }
+#+end_src
 *** yaml-mode/
 **** entry
 #+BEGIN_SRC snippet
