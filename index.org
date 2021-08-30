@@ -806,8 +806,12 @@
         :ensure t
         :after company
         :defvar company-backends
+        :hook (after-init-hook . takeokunn/company-tabnine-initialize)
         :config
-        (push 'company-c-headers company-backends))
+        (push 'company-tabnine company-backends)
+        (defun takeokunn/company-tabnine-initialize ()
+          (unless (file-directory-p company-tabnine-binaries-folder)
+            (company-tabnine-install-binary))))
     #+end_src
 ** Snippet
 *** yasnippet
@@ -1219,6 +1223,40 @@
         :config
         (dashboard-setup-startup-hook))
     #+END_SRC
+*** define-word
+    #+begin_src emacs-lisp
+      (leaf define-word
+        :ensure t
+        :custom
+        (define-word-default-service . 'wordnik)
+        (define-word-displayfn-alist
+          '((wordnik . takeokunn/define-word--display-in-buffer)
+            (openthesaurus . takeokunn/define-word--display-in-buffer)
+            (webster . takeokunn/define-word--display-in-buffer)
+            (weblio . takeokunn/define-word--display-in-buffer)))
+        :config
+        (defun takeokunn/define-word--display-in-buffer (definition)
+          "docstring"
+          (let* ((buf-name "*DEFINE WORD*")
+                 (buffer (get-buffer-create buf-name))
+                 (display-buffer-alist
+                  `((,buf-name
+                     (display-buffer-same-window)))))
+            (with-current-buffer buffer
+              (read-only-mode -1)
+              (erase-buffer)
+              (insert definition)
+              (goto-char (point-min))
+              (save-excursion (xml-parse-string))
+              (read-only-mode 1)
+              (buffer-face-set 'woman-buffer))
+            (display-buffer buffer)))
+        (defun takeokunn/define-word ()
+          (interactive)
+          (if (use-region-p)
+              (call-interactively #'define-word-at-point)
+            (call-interactively #'define-word))))
+    #+end_src
 *** ddskk
     #+BEGIN_SRC emacs-lisp
       (leaf ddskk
@@ -1250,7 +1288,8 @@
         :bind
         ("C-x w" . elfeed)
         :setq
-        (elfeed-search-filter . "@3-days-ago +unread"))
+        (elfeed-search-filter . "@3-days-ago +unread")
+        (browse-url-browser-function . 'eww-browse-url))
 
       (leaf elfeed-org
         :ensure t
@@ -1409,6 +1448,20 @@
         ;; (ssl-certificate-verification-policy . 1)
         )
     #+end_src
+*** xah-lookup
+    #+begin_src emacs-lisp
+      (leaf xah-lookup
+        :ensure t
+        :after (eww define-word)
+        :setq
+        (xah-lookup-browser-function . 'eww)
+        (xah-lookup-dictionary-browser-function . 'eww)
+        (xah-lookup-dictionary-list . ["http://www.google.com/search?q=define:+word02051"])
+        :config
+        (put 'xah-lookup-google 'xah-lookup-browser-function 'eww)
+        (put 'xah-lookup-wikipedia 'xah-lookup-url "http://ja.wikipedia.org/wiki/word02051")
+        (put 'xah-lookup-wikipedia 'xah-lookup-browser-function 'eww))
+    #+end_src
 * Eshell
 ** basic
    #+begin_src emacs-lisp
@@ -1464,7 +1517,6 @@
 ** basic
    #+BEGIN_SRC emacs-lisp
      (leaf org
-       :after (org-ql)
        :setq-default
        ((org-use-speed-commands . t)
         (org-agenda-todo-ignore-with-date . t)
@@ -1479,9 +1531,6 @@
        (org-archive-location . `,(format "~/org/archive/%s.org"
                                        (format-time-string "%Y" (current-time))))
        (org-clock-out-remove-zero-time-clocks . t)
-       (org-agenda-custom-commands . `(("i" "Today's agenda"
-                                        ((org-ql-block '(and (todo "TODAY"))
-                                                       ((org-ql-block-header "TODAY's agenda")))))))
        :custom-face
        ((org-link '(t (:foreground "#ebe087" :underline t))))
        :bind
@@ -1492,7 +1541,12 @@
    #+END_SRC
 ** org-ql
    #+begin_src emacs-lisp
-     (leaf org-ql :ensure t)
+     (leaf org-ql
+       :ensure t
+       :custom
+       (org-agenda-custom-commands . `(("i" "Today's agenda"
+                                        ((org-ql-block '(and (todo "TODAY"))
+                                                       ((org-ql-block-header "TODAY's agenda"))))))))
    #+end_src
 ** org-babel
    #+begin_src emacs-lisp
