@@ -116,10 +116,14 @@
      (set-fontset-font t 'japanese-jisx0208 "TakaoPGothic")
      (add-to-list 'face-font-rescale-alist '(".*Takao P.*" . 0.85))
    #+END_SRC
-** GC
+** GC/Memory
    #+BEGIN_SRC emacs-lisp
+     ;;; gcc
      (setq gc-cons-threshold (* 128 1024 1024))
      (setq garbage-collection-messages t)
+
+     ;;; memory
+     (setq read-process-output-max (* 4 1024 1024))
    #+END_SRC
 ** indent
    #+BEGIN_SRC emacs-lisp
@@ -303,17 +307,24 @@
    #+begin_src emacs-lisp
      (leaf mmm-mode
        :ensure t
-       :after typescript-mode
-       :hook
-       ((after-save-hook . mmm-mode))
+       :after (emmet-mode typescript-mode)
+       :hook (mmm-mode-hook . emmet-mode)
        :setq
        (mmm-global-mode . 'maybe)
+       (mmm-submode-decoration-level . 0)
+       :hook (after-save-hook . (lambda ()
+                                  (when (string-match-p "\\.tsx?" buffer-file-name)
+                                    (mmm-mode-off)
+                                    (mmm-mode-on))))
        :config
+       (require 'mmm-mode)
        (mmm-add-classes
         '((tsx-embed-web-mode
            :submode web-mode
            :front "\\(return\s\\|n\s\\|(\n\s*\\)<"
-           :back ">\n?\s*)\n}\n")))
+           :front-offset -1
+           :back ">\n?\s*)\n}\n"
+           :back-offset 1)))
        (mmm-add-mode-ext-class 'typescript-mode nil 'tsx-embed-web-mode))
    #+end_src
 ** nginx-mode
@@ -423,7 +434,8 @@
      (leaf typescript-mode
        :ensure t
        :mode ("\\.ts$" "\\.tsx$")
-       :hook (typescript-mode-hook . lsp))
+       :hook
+       (typescript-mode-hook . lsp))
    #+END_SRC
 ** vue-mode
    #+BEGIN_SRC emacs-lisp
@@ -614,10 +626,15 @@
 *** all-the-icons
     #+BEGIN_SRC emacs-lisp
       (leaf all-the-icons
-        :ensure t
-        ;; :hook ((dired-mode-hook . all-the-icons-dired-mode))
-        )
+        :ensure t)
     #+END_SRC
+*** all-the-icons-dired
+    #+begin_src emacs-lisp
+      (leaf all-the-icons-dired
+        :after (all-the-icons)
+        :ensure t
+        :hook (dired-mode-hook . all-the-icons-dired-mode))
+    #+end_src
 *** all-the-icons-ivy
     #+BEGIN_SRC emacs-lisp
       (leaf all-the-icons-ivy
@@ -625,6 +642,13 @@
         :after all-the-icons
         :config
         (all-the-icons-ivy-setup))
+    #+END_SRC
+*** dashboard
+    #+BEGIN_SRC emacs-lisp
+      (leaf dashboard
+        :ensure t
+        :config
+        (dashboard-setup-startup-hook))
     #+END_SRC
 *** doom-theme
     #+BEGIN_SRC emacs-lisp
@@ -642,14 +666,13 @@
       (leaf doom-modeline
         :ensure t
         :hook (after-init-hook)
-        :custom ((doom-modeline-buffer-file-name-style quote truncate-with-project)
+        :custom ((doom-modeline-buffer-file-name-style . 'truncate-with-project)
                  (doom-modeline-icon . t)
-                 (doom-modeline-major-mode-icon)
-                 (doom-modeline-minor-modes))
+                 (doom-modeline-major-mode-icon . nil)
+                 (doom-modeline-minor-modes . nil))
         :config
-        (with-eval-after-load 'doom-modeline
-          (line-number-mode 0)
-          (column-number-mode 0)))
+        (line-number-mode 0)
+        (column-number-mode 0))
     #+END_SRC
 *** hl-line
     #+BEGIN_SRC emacs-lisp
@@ -661,32 +684,15 @@
         (set-face-background 'hl-line "#444642")
         (set-face-attribute 'hl-line nil :inherit nil))
     #+END_SRC
-*** TODO hl-todo
-    #+BEGIN_SRC emacs-lisp
-      ;; (leaf hl-todo
-      ;;   :ensure t
-      ;;   :init
-      ;;   (global-hl-todo-mode 1)
-      ;;   :custom ((hl-todo-keyword-faces '(("HOLD" . "#d0bf8f")
-      ;;                                   ("WAIT" . "#d0bf8f")
-      ;;                                   ("TODO" . "#cc9393")
-      ;;                                   ("NEXT" . "#dca3a3")
-      ;;                                   ("THEM" . "#dc8cc3")
-      ;;                                   ("REMIND" . "#dc8cc3")
-      ;;                                   ("PROG" . "#7cb8bb")
-      ;;                                   ("OKAY" . "#7cb8bb")
-      ;;                                   ("DONT" . "#5f7f5f")
-      ;;                                   ("FAIL" . "#8c5353")
-      ;;                                   ("SOMEDAY" . "#8c5353")
-      ;;                                   ("DONE" . "#afd8af")
-      ;;                                   ("FIXME" . "#cc9393")
-      ;;                                   ("???" . "#cc9393")))))
-    #+END_SRC
 *** neotree
     #+BEGIN_SRC emacs-lisp
       (leaf neotree
         :ensure t
-        :preface
+        :after all-the-icons
+        :custom (neo-theme quote nerd2)
+        :setq-default ((neo-show-hidden-files . t)
+                       (neo-window-fixed-size))
+        :config
         (defun takeokunn/neotree-toggle ()
           (interactive)
           (let ((default-directory (locate-dominating-file default-directory ".git")))
@@ -706,11 +712,6 @@
             (insert
              (format "			%s	"
                      (all-the-icons-icon-for-file file-name))))))
-
-        :after all-the-icons
-        :custom ((neo-theme quote nerd2))
-        :setq-default ((neo-show-hidden-files . t)
-                       (neo-window-fixed-size))
         :bind ("C-q" . takeokunn/neotree-toggle))
     #+END_SRC
 *** nyan-mode
@@ -840,14 +841,13 @@
         :after lsp
         :bind (("M-." . lsp-ui-peek-find-definitions)
                ("M-?" . lsp-ui-peek-find-implementation))
-        :hook (lsp-mode-hook)
-        :config
-        (with-eval-after-load 'lsp-ui
-          (setq-default lsp-ui-doc-enable t
-                        lsp-ui-doc-max-height 15
-                        lsp-ui-sideline-enable nil
-                        lsp-ui-imenu-enable nil
-                        lsp-ui-sideline-enable nil)))
+        :hook (lsp-mode-hook . lsp-ui)
+        :setq-default
+        ((lsp-ui-doc-enable . t)
+         (lsp-ui-doc-max-height . 15)
+         (lsp-ui-sideline-enable . nil)
+         (lsp-ui-imenu-enable . nil)
+         (lsp-ui-sideline-enable . nil)))
     #+END_SRC
 ** DAP
 *** dap-mode
@@ -879,7 +879,9 @@
     #+begin_src emacs-lisp
       (leaf forge
         :ensure t
-        :after magit)
+        :after magit
+        :setq
+        (browse-url-browser-function . 'browse-url-default-browser))
     #+end_src
 *** git-gutter-fringe
     #+BEGIN_SRC emacs-lisp
@@ -1061,6 +1063,19 @@
         :ensure t
         :hook ((ruby-mode-hook . ruby-refactor-mode-launch)))
     #+END_SRC
+*** takeokunn/irb-history
+    #+BEGIN_SRC emacs-lisp
+       (defun takeokunn/irb-history ()
+         (interactive)
+         (insert
+          (completing-read
+           "choose history: "
+           (mapcar #'list (-distinct (s-lines (f-read-text "~/.irb-history")))))))
+
+       (general-def inf-ruby-mode-map
+         "C-c C-r" 'takeokunn/irb-history)
+    #+END_SRC
+
 ** SQL
 *** sql-indent
     #+BEGIN_SRC emacs-lisp
@@ -1202,13 +1217,6 @@
         :after avy
         :bind (("M-z" . avy-zap-up-to-char-dwim)))
     #+end_src
-*** dashboard
-    #+BEGIN_SRC emacs-lisp
-      (leaf dashboard
-        :ensure t
-        :config
-        (dashboard-setup-startup-hook))
-    #+END_SRC
 *** define-word
     #+begin_src emacs-lisp
       (leaf define-word
@@ -1519,7 +1527,6 @@
        (org-clock-out-remove-zero-time-clocks . t)
        :custom-face
        ((org-link '(t (:foreground "#ebe087" :underline t))))
-       :hook (auto-save-hook . org-lint)
        :bind
        (("C-c a" . org-agenda)
         ("C-c b" . counsel-bookmark)
@@ -1564,6 +1571,7 @@
        (org-babel-do-load-languages 'org-babel-load-languages
                                     '((shell . t)
                                       (emacs-lisp . t)
+                                      (lisp . t)
                                       (ruby . t)
                                       (php . t)
                                       (fish . t)
@@ -1643,18 +1651,6 @@
 
      ;; (advice-add 'set-auto-mode :before-until 'takeokunn/before-set-auto-mode)
    #+END_SRC
-** takeokunn/irb-history
-   #+BEGIN_SRC emacs-lisp
-      (defun takeokunn/irb-history ()
-        (interactive)
-        (insert
-         (completing-read
-          "choose history: "
-          (mapcar #'list (-distinct (s-lines (f-read-text "~/.irb-history")))))))
-
-      (general-def inf-ruby-mode-map
-        "C-c C-r" 'takeokunn/irb-history)
-   #+END_SRC
 ** takeokunn/reload-major-mode
    #+BEGIN_SRC emacs-lisp
      (defun takeokunn/reload-major-mode ()
@@ -1665,3 +1661,27 @@
          (funcall current-mode)
          current-mode))
    #+END_SRC
+** takeokunn/move-line
+   #+begin_src emacs-lisp
+     (defun takeokunn/move-line (arg)
+       (interactive)
+       (let ((col (current-column)))
+         (unless (eq col 0)
+           (move-to-column 0))
+         (save-excursion
+           (forward-line)
+           (transpose-lines arg))
+         (forward-line arg)))
+
+     (defun takeokunn/move-line-down ()
+       (interactive)
+       (takeokunn/move-line 1))
+
+     (defun takeokunn/move-line-up ()
+       (interactive)
+       (takeokunn/move-line -1))
+
+     (general-define-key
+      "M-N" 'takeokunn/move-line-down
+      "M-P" 'takeokunn/move-line-up)
+   #+end_src
