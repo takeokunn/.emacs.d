@@ -79,7 +79,8 @@
                  eww-mode
                  term-mode
                  twittering-mode
-                 minibuffer-inactive-mode))
+                 minibuffer-inactive-mode
+                 dashboard-mode))
        (add-hook (intern (concat (symbol-name mode) "-hook"))
                  '(lambda () (setq show-trailing-whitespace nil))))
    #+END_SRC
@@ -424,16 +425,27 @@
    #+BEGIN_SRC emacs-lisp
      (leaf typescript-mode
        :ensure t
-       :after (emmet-mode)
-       :init
-       (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
+       ;; :init
+       ;; (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
        :hook ((typescript-mode-hook . lsp)
-              (typescript-tsx-mode-hook . lsp)
+              ;; (typescript-tsx-mode-hook . lsp)
               ;; (typescript-tsx-mode-hook . emmet-mode)
               )
        :mode (("\\.ts$")
-              ("\\.tsx$" . typescript-tsx-mode)))
+              ;; ("\\.tsx$" . typescript-tsx-mode)
+              ))
    #+END_SRC
+** typescript-tsx-mode
+   #+begin_src emacs-lisp
+     (leaf typescript-tsx-mode
+       :after (emmet-mode typescript-mode)
+       :init
+       (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
+       :hook
+       (typescript-tsx-mode . lsp)
+       :mode
+       ("\\.tsx$" . typescript-tsx-mode))
+   #+end_src
 ** vue-mode
    #+BEGIN_SRC emacs-lisp
      (leaf vue-mode
@@ -624,11 +636,13 @@
 *** all-the-icons
     #+BEGIN_SRC emacs-lisp
       (leaf all-the-icons
+        :if window-system
         :ensure t)
     #+END_SRC
 *** all-the-icons-dired
     #+begin_src emacs-lisp
       (leaf all-the-icons-dired
+        :if window-system
         :after (all-the-icons)
         :ensure t
         :hook (dired-mode-hook . all-the-icons-dired-mode))
@@ -636,6 +650,7 @@
 *** all-the-icons-ivy
     #+BEGIN_SRC emacs-lisp
       (leaf all-the-icons-ivy
+        :if window-system
         :ensure t
         :after all-the-icons
         :config
@@ -695,21 +710,22 @@
           (interactive)
           (let ((default-directory (locate-dominating-file default-directory ".git")))
             (neotree-toggle)))
-        (defun neo-buffer--insert-fold-symbol (name &optional file-name)
-          (or
-           (and
-            (equal name 'open)
-            (insert
-             (all-the-icons-icon-for-dir file-name "down")))
-           (and
-            (equal name 'close)
-            (insert
-             (all-the-icons-icon-for-dir file-name "right")))
-           (and
-            (equal name 'leaf)
-            (insert
-             (format "			%s	"
-                     (all-the-icons-icon-for-file file-name))))))
+        (if window-system
+            (defun neo-buffer--insert-fold-symbol (name &optional file-name)
+              (or
+               (and
+                (equal name 'open)
+                (insert
+                 (all-the-icons-icon-for-dir file-name "down")))
+               (and
+                (equal name 'close)
+                (insert
+                 (all-the-icons-icon-for-dir file-name "right")))
+               (and
+                (equal name 'leaf)
+                (insert
+                 (format "			%s	"
+                         (all-the-icons-icon-for-file file-name)))))))
         :bind ("C-q" . takeokunn/neotree-toggle))
     #+END_SRC
 *** nyan-mode
@@ -1027,6 +1043,7 @@
     #+begin_src emacs-lisp
       (leaf tree-sitter
         :ensure (t tree-sitter-langs)
+        :after typescript-tsx-mode
         :require tree-sitter-langs
         :hook (tree-sitter-after-on-hook . tree-sitter-hl-mode)
         :config
