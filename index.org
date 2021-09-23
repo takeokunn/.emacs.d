@@ -208,6 +208,21 @@
    #+BEGIN_SRC emacs-lisp
      (leaf csv-mode :ensure t)
    #+END_SRC
+** dart-mode
+   #+begin_src emacs-lisp
+     (leaf dart-mode
+       :ensure t
+       :after reformatter
+       :hook
+       (dart-mode-hook . lsp)
+       :bind
+       (:dart-mode-map
+        ("C-c C-o" . dart-format-buffer))
+       :config
+       (reformatter-define dart-format
+         :program "dart"
+         :args '("format")))
+   #+end_src
 ** dhall-mode
    #+BEGIN_SRC emacs-lisp
      (leaf dhall-mode
@@ -303,30 +318,6 @@
        :mode ("\\.md$" "\\.markdown$")
        :bind (("C-j" . electric-newline-and-maybe-indent)))
    #+END_SRC
-** mmm-mode
-   #+begin_src emacs-lisp
-     (leaf mmm-mode
-       :ensure t
-       :after (emmet-mode typescript-mode)
-       :hook (mmm-mode-hook . emmet-mode)
-       :setq
-       (mmm-global-mode . 'maybe)
-       (mmm-submode-decoration-level . 0)
-       :hook (after-save-hook . (lambda ()
-                                  (when (string-match-p "\\.tsx?" buffer-file-name)
-                                    (mmm-mode-off)
-                                    (mmm-mode-on))))
-       :config
-       (require 'mmm-mode)
-       (mmm-add-classes
-        '((tsx-embed-web-mode
-           :submode web-mode
-           :front "\\(return\s\\|n\s\\|(\n\s*\\)<"
-           :front-offset -1
-           :back ">\n?\s*)\n}\n"
-           :back-offset 1)))
-       (mmm-add-mode-ext-class 'typescript-mode nil 'tsx-embed-web-mode))
-   #+end_src
 ** nginx-mode
    #+BEGIN_SRC emacs-lisp
      (leaf nginx-mode
@@ -433,9 +424,15 @@
    #+BEGIN_SRC emacs-lisp
      (leaf typescript-mode
        :ensure t
-       :mode ("\\.ts$" "\\.tsx$")
-       :hook
-       (typescript-mode-hook . lsp))
+       :after (emmet-mode)
+       :init
+       (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
+       :hook ((typescript-mode-hook . lsp)
+              (typescript-tsx-mode-hook . lsp)
+              ;; (typescript-tsx-mode-hook . emmet-mode)
+              )
+       :mode (("\\.ts$")
+              ("\\.tsx$" . typescript-tsx-mode)))
    #+END_SRC
 ** vue-mode
    #+BEGIN_SRC emacs-lisp
@@ -447,7 +444,8 @@
    #+begin_src emacs-lisp
      (leaf vimrc-mode
        :ensure t
-       :mode ("\\.vim\\(rc\\)?\\'"))
+       :mode ("\\.vim\\(rc\\)?\\'")
+       :hook (vimrc-mode-hook . lsp))
    #+end_src
 ** web-mode
    #+BEGIN_SRC emacs-lisp
@@ -828,6 +826,12 @@
         :config
         (push 'company-capf company-backends))
     #+END_SRC
+*** lsp-dart
+    #+begin_src emacs-lisp
+      (leaf lsp-dart
+        :ensure t
+        :after lsp)
+    #+end_src
 *** lsp-ivy
     #+begin_src emacs-lisp
       (leaf lsp-ivy
@@ -1011,7 +1015,7 @@
       ;;   :config
       ;;   (add-to-list 'company-backends 'company-omnisharp))
     #+END_SRC
-** JavaScript
+** JavaScript/TypeScript
 *** js2-refactor
     #+BEGIN_SRC emacs-lisp
       (leaf js2-refactor
@@ -1019,19 +1023,67 @@
         :after typescript-mode js2-mode
         :hook (js2-mode-hook typescript-mode-hook))
     #+END_SRC
-*** tide
-    #+BEGIN_SRC emacs-lisp
-      (leaf tide
-        :ensure t
+*** tree-sitter
+    #+begin_src emacs-lisp
+      (leaf tree-sitter
+        :ensure (t tree-sitter-langs)
+        :require tree-sitter-langs
+        :hook (tree-sitter-after-on-hook . tree-sitter-hl-mode)
         :config
-        (eval-and-compile
-          (defun takeokunn/setup-tide-mode ()
-            (interactive)
-            (tide-setup)
-            (tide-hl-identifier-mode 1)))
-        (with-eval-after-load 'typescript-mode
-          (add-hook 'typescript-mode-hook #'takeokunn/setup-tide-mode)))
-    #+END_SRC
+        (global-tree-sitter-mode)
+
+        ;; for tsx
+        (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx))
+        (tree-sitter-hl-add-patterns 'tsx
+          [(call_expression
+            ;; styled.div``
+            function: (member_expression
+                       object: (identifier) @function.call
+                       (.eq? @function.call "styled"))
+            arguments: ((template_string) @property.definition
+                        (.offset! @property.definition 0 1 0 -1)))
+           (call_expression
+            ;; styled(Component)``
+            function: (call_expression
+                       function: (identifier) @function.call
+                       (.eq? @function.call "styled"))
+            arguments: ((template_string) @property.definition
+                        (.offset! @property.definition 0 1 0 -1)))]))
+    #+end_src
+*** styled-components
+    #+begin_src emacs-lisp
+      ;; (leaf fence-edit
+      ;;   ;; :ensure t
+      ;;   :after (css-mode rx ov)
+      ;;   :el-get (fence-edit
+      ;;            :url "https://github.com/aaronbieber/fence-edit.el.git"
+      ;;            :features fence-edit)
+      ;;   :setq
+      ;;   ((styled-component-start . (rx-to-string '(: (1+ (and (+ word) (0+ "\.") (0+ "(" (+ alpha) ")"))) "`" eol)))
+      ;;    (styled-component-end . (rx-to-string '(: "`;" eol)))
+      ;;    (styled-component-region . (rx-to-string '(: (minimal-match
+      ;;                                                  (seq
+      ;;                                                   (and (1+ (and (+ word) (0+ "\.") (0+ "(" (+ alpha) ")"))) "`")
+      ;;                                                   (or "\n" "\r")
+      ;;                                                   (0+ (+ any) (or "\n" "\r"))
+      ;;                                                   (and "`;" eol))))))
+      ;;    (fence-edit-blocks . `((,styled-component-start ,styled-component-end)))
+      ;;    (fence-edit-default-mode . 'css-mode))
+      ;;   :config
+      ;;   (defun takeokunn/get-component ()
+      ;;     "Get current buffer styled components."
+      ;;     (interactive)
+      ;;     (let (matches match beg end)
+      ;;       (save-match-data
+      ;;         (save-excursion
+      ;;           (goto-char (point-min))
+      ;;           (while (search-forward-regexp styled-component-region nil t 1)
+      ;;             (setq match (match-string-no-properties 0))
+      ;;             (setq beg (match-beginning 0))
+      ;;             (setq end (match-end 0))
+      ;;             (push (list beg end match) matches))))
+      ;;       (reverse matches))))
+    #+end_src
 ** Haskell
 *** hindent
     #+BEGIN_SRC emacs-lisp
@@ -1063,17 +1115,19 @@
         :ensure t
         :hook ((ruby-mode-hook . ruby-refactor-mode-launch)))
     #+END_SRC
-*** takeokunn/irb-history
+*** inf-ruby
     #+BEGIN_SRC emacs-lisp
-       (defun takeokunn/irb-history ()
-         (interactive)
-         (insert
-          (completing-read
-           "choose history: "
-           (mapcar #'list (-distinct (s-lines (f-read-text "~/.irb-history")))))))
-
-       (general-def inf-ruby-mode-map
-         "C-c C-r" 'takeokunn/irb-history)
+      (leaf inf-ruby
+        :config
+        (defun takeokunn/irb-history ()
+          (interactive)
+          (insert
+           (completing-read
+            "choose history: "
+            (mapcar #'list (-distinct (s-lines (f-read-text "~/.irb_history")))))))
+        :bind
+        (:inf-ruby-mode-map
+         ("C-c C-r" . takeokunn/irb-history)))
     #+END_SRC
 
 ** SQL
@@ -1204,7 +1258,7 @@
     #+end_src
 *** amx
     #+BEGIN_SRC emacs-lisp
-      (leaf smex :ensure t)
+      (leaf amx :ensure t)
     #+END_SRC
 *** avy
     #+begin_src emacs-lisp
@@ -1595,7 +1649,9 @@
        :ensure t
        :after (org)
        :custom
-       (org-generate-file . `,(locate-user-emacs-file "yasnippets.org")))
+       (org-generate-file . `,(locate-user-emacs-file "yasnippets.org"))
+       :setq
+       (org-generate-root . "yasnippets"))
    #+end_src
 ** org-roam
    #+begin_src emacs-lisp
