@@ -170,6 +170,13 @@
    #+begin_src emacs-lisp
      (fset 'yes-or-no-p 'y-or-n-p)
    #+end_src
+** killできないようにする
+   #+begin_src emacs-lisp
+     (with-current-buffer "*scratch*"
+       (emacs-lock-mode 'kill))
+     (with-current-buffer "*Messages*"
+       (emacs-lock-mode 'kill))
+   #+end_src
 * Major/Minor Mode
 ** c++-mode
    #+begin_src emacs-lisp
@@ -256,6 +263,8 @@
    #+BEGIN_SRC emacs-lisp
      (leaf fish-mode
        :ensure t
+       :setq
+       (fish-enable-auto-indent . t)
        :mode ("\\.fish$"))
    #+END_SRC
 ** gitignore-mode
@@ -299,7 +308,7 @@
        (js2-strict-missing-semi-warning . nil)
        :mode ("\\.js$")
        :hook ((js2-mode-hook . js2-refactor-mode)
-              (js2-mode-hook . lsp-mode)))
+              (js2-mode-hook . lsp)))
    #+END_SRC
 ** json-mode
    #+BEGIN_SRC emacs-lisp
@@ -329,7 +338,7 @@
    #+BEGIN_SRC emacs-lisp
      (leaf php-mode
        :ensure t
-       :hook ((php-mode-hook . lsp))
+       :hook (php-mode-hook . lsp)
        :mode ("\\.php$" "\\.phpt$"))
    #+END_SRC
 ** plantuml-mode
@@ -613,6 +622,9 @@
 
         (add-hook 'ielm-mode-hook 'takeokunn/ielm-turn-on-history))
     #+END_SRC
+*** takeounn/el-slime
+    #+begin_src emacs-lisp
+    #+end_src
 ** Clojure
 *** cider
     #+BEGIN_SRC emacs-lisp
@@ -648,6 +660,10 @@
     #+BEGIN_SRC emacs-lisp
       (leaf dashboard
         :ensure t
+        :custom
+        (dashboard-after-initialize-hook . (lambda ()
+                                             (with-current-buffer "*dashboard*"
+                                               (emacs-lock-mode 'kill))))
         :config
         (dashboard-setup-startup-hook))
     #+END_SRC
@@ -856,8 +872,9 @@
     #+BEGIN_SRC emacs-lisp
       (leaf lsp-mode
         :ensure t
-        :after (company)
-        :custom (lsp-prefer-capf . t)
+        :after (f company phpactor)
+        :custom
+        ((lsp-prefer-capf . t))
         :config
         (push 'company-capf company-backends))
     #+END_SRC
@@ -1178,7 +1195,17 @@
 *** phpactor
     #+begin_src emacs-lisp
       (leaf phpactor
-        :ensure t)
+        :ensure t
+        :after (f php-mode smart-jump)
+        :bind
+        (:php-mode-map
+         ("M-." . phpactor-goto-definition)
+         ("M-?" . phpactor-find-references))
+        :setq
+        ((eldoc-documentation-function . 'phpactor-hover)
+         (phpactor-history-size . 100000))
+        :config
+        (phpactor-smart-jump-register))
     #+end_src
 *** psysh
     #+begin_src emacs-lisp
@@ -1476,6 +1503,11 @@
     #+BEGIN_SRC emacs-lisp
       (leaf smartparens :ensure t)
     #+END_SRC
+*** smart-jump
+    #+begin_src emacs-lisp
+      (leaf smart-jump
+        :ensure t)
+    #+end_src
 *** subword
     #+begin_src emacs-lisp
       (leaf subword
