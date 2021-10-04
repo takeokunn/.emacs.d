@@ -29,6 +29,156 @@
        </body>
        </html>
      #+end_src
+*** php-mode/
+**** _call
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # contributor: USAMI Kenta <tadsan@zonu.me>
+       # name: __call()
+       # key: __call
+       # group: Magic Methods
+       # --
+       public function __call($name, $args)
+       {
+           $0
+       }
+     #+end_src
+**** class
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # contributor: USAMI Kenta <tadsan@zonu.me>
+       # name: class
+       # key: cls
+       # group: definitions
+       # --
+       class ${1:`(yas-php-get-class-name-by-file-name)`}
+       {
+         $0
+       }
+     #+end_src
+**** const
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # contributor: USAMI Kenta <tadsan@zonu.me>
+       # name: const
+       # key: const
+       # group: definitions
+       # --
+       const ${1:NAME} = ${2:value};
+     #+end_src
+**** doc
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # contributor: USAMI Kenta <tadsan@zonu.me>
+       # name: PHPDoc (multi-line)
+       # key: /**
+       # group: annotation
+       # --
+       /**
+        ,* ${1:Summary}
+        ,*
+        ,* $0
+        ,*/
+     #+end_src
+**** enum
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # contributor: takeo obara<bararararatty@gmail.com>
+       # name: enum
+       # key: enum
+       # group : definitions
+       # --
+       enum ${1:Name}
+       {
+           case: ${2:One};
+           case: ${2:Two};
+       $0
+       }
+     #+end_src
+**** foreach
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # contributor: USAMI Kenta <tadsan@zonu.me>
+       # name: foreach
+       # key: foreach
+       # group : control structure
+       # --
+       foreach (${1:$expression} as \$${2:value}) {
+           $0
+       }
+     #+end_src
+**** function
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # contributor: USAMI Kenta <tadsan@zonu.me>
+       # name: function :type
+       # key: function
+       # group : control structure
+       # --
+       ${4:public }function ${1:name}(${2:$arg, ...}): ${3:type}
+       {
+           $0
+       }
+     #+end_src
+**** interface
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # contributor: USAMI Kenta <tadsan@zonu.me>
+       # name: interface
+       # key: interface
+       # group : definitions
+       # --
+       interface ${1:`(yas-php-get-class-name-by-file-name)`}
+       {
+           $0
+       }
+     #+end_src
+**** psysh
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # contributor: USAMI Kenta <tadsan@zonu.me>
+       # name: psysh
+       # key: psysh
+       # group: generic
+       # --
+       eval(\Psy\sh());
+     #+end_src
+**** match
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # contributor: takeo obara<bararararatty@gmail.com>
+       # name: match
+       # key: match
+       # group : control structure
+       # --
+       match (${1:$var}) {
+           ${2:$cond} => ${3:$return},
+       $0
+       };
+     #+end_src
+**** trait
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # contributor: USAMI Kenta <tadsan@zonu.me>
+       # name: trait
+       # key: trait
+       # group : definitions
+       # --
+       trait ${1:`(yas-php-get-class-name-by-file-name)`}
+       {
+           $0
+       }
+     #+end_src
+**** vd
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # contributor: USAMI Kenta <tadsan@zonu.me>
+       # name: var_dump()
+       # key: vd
+       # group: generic
+       # --
+       var_dump(${1:$var});
+     #+end_src
 *** emacs-lisp-mode/
 **** cond
 #+BEGIN_SRC snippet
@@ -524,7 +674,7 @@ if (${1:condition}) {
   # name: log (console.log)
   # key: log
   # --
-  console.log("$1: ", $1)
+  console.log("$1: ", ${1:var})
 #+END_SRC
 **** import
 #+BEGIN_SRC snippet
