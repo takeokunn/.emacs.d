@@ -19,7 +19,7 @@ link:
 .PHONY: compile
 compile:
 	$(EMACS) -Q --batch --eval "(progn (require 'ob-tangle) (org-babel-tangle-file \"./index.org\" \"./init.el\" \"emacs-lisp\"))"
-	$(EMACS) -Q --batch --eval "(progn (setq byte-compile-warnings '(cl-functions)) (batch-byte-compile \"init.el\"))"
+	$(EMACS) -Q --batch -f batch-byte-compile init.el
 
 .PHONY: org-to-html
 org-to-html: $(HTMLIZE_FILE)
