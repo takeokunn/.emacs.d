@@ -409,6 +409,12 @@
        :ensure t
        :mode ("\\.slim$"))
    #+END_SRC
+** solidity-mode
+   #+begin_src emacs-lisp
+     (leaf solidity-mode
+       :ensure t
+       :mode ("\\.sol$"))
+   #+end_src
 ** ssh-config-mode
    #+BEGIN_SRC emacs-lisp
      (leaf ssh-config-mode
@@ -816,6 +822,7 @@
     #+begin_src emacs-lisp
       (leaf company-php
         :ensure t
+        :disabled t
         :after (company php-mode)
         :config
         (push 'company-ac-php-backend company-backends))
@@ -855,6 +862,16 @@
         (push 'company-shell company-backends)
         (push 'company-shell-env company-backends)
         (push 'company-fish-shell company-backends))
+    #+end_src
+*** company-solidity
+    #+begin_src emacs-lisp
+      (leaf company-solidity
+        :el-get (company-solidity
+                 :url "https://github.com/takeokunn/company-solidity.git"
+                 :features company-solidity)
+        :after solidity-mode
+        :config
+        (push 'company-solidity company-backends))
     #+end_src
 ** Snippet
 *** yasnippet
