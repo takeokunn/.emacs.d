@@ -269,12 +269,12 @@
        :config
        (setq fish-enable-auto-indent t))
    #+END_SRC
-** gitignore-mode
-   #+BEGIN_SRC emacs-lisp
-     (leaf gitignore-mode
+** git-modes
+   #+begin_src emacs-lisp
+     (leaf git-modes
        :ensure t
        :mode ("\\.dockerignore$"))
-   #+END_SRC
+   #+end_src
 ** glsl-mode
    #+BEGIN_SRC emacs-lisp
      (leaf glsl-mode
@@ -412,8 +412,7 @@
 ** solidity-mode
    #+begin_src emacs-lisp
      (leaf solidity-mode
-       :ensure t
-       :mode ("\\.sol$"))
+       :ensure t)
    #+end_src
 ** ssh-config-mode
    #+BEGIN_SRC emacs-lisp
@@ -436,8 +435,7 @@
 ** terraform-mode
    #+BEGIN_SRC emacs-lisp
      (leaf terraform-mode
-       :ensure t
-       :mode ("\\.tf$"))
+       :ensure t)
    #+END_SRC
 ** toml-mode
    #+BEGIN_SRC emacs-lisp
@@ -866,12 +864,10 @@
 *** company-solidity
     #+begin_src emacs-lisp
       (leaf company-solidity
-        :el-get (company-solidity
-                 :url "https://github.com/takeokunn/company-solidity.git"
-                 :features company-solidity)
-        :after solidity-mode
-        :config
-        (push 'company-solidity company-backends))
+          :ensure t
+          :after company
+          :config
+          (add-to-list 'company-backends 'company-solidity))
     #+end_src
 ** Snippet
 *** yasnippet
@@ -1299,6 +1295,16 @@
                     line-end))
           :modes (text-mode markdown-mode))
         (add-to-list 'flycheck-checkers 'textlint))
+    #+end_src
+*** flycheck-solidity
+    #+begin_src emacs-lisp
+      (leaf solidity-flycheck
+        :ensure t
+        :after (solidity-mode flycheck)
+        :hook
+        (solidity-mode-hook . flycheck-mode)
+        :custom
+        (solidity-flycheck-solc-checker-active . t))
     #+end_src
 ** Cursor
 *** smartrep/multiple-cursors
