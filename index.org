@@ -356,6 +356,13 @@
        :ensure t
        :mode ("\\.pu$"))
    #+END_SRC
+** prisma-mode
+   #+begin_src emacs-lisp
+     (leaf prisma-mode
+       :el-get (prisma-mode
+                :url "https://github.com/pimeys/emacs-prisma-mode.git"
+                :features prisma-mode))
+   #+end_src
 ** processing-mode
    #+BEGIN_SRC emacs-lisp
      (leaf processing-mode
@@ -473,6 +480,8 @@
    #+BEGIN_SRC emacs-lisp
      (leaf web-mode
        :ensure t
+       :setq
+       (web-mode-engines-alist . '(("blade" . "\\.blade\\.php\\.")))
        :mode ("\\.html?\\'" "\\.erb\\'" "\\.gsp\\'"))
    #+END_SRC
 ** yaml-mode
@@ -894,22 +903,11 @@
         :ensure t
         :after company
         :custom
-        (lsp-prefer-capf . t)
+        ((lsp-keymap-prefix . "C-c l")
+         (lsp-prefer-capf . t))
         :config
         (push 'company-capf company-backends))
     #+END_SRC
-*** lsp-dart
-    #+begin_src emacs-lisp
-      (leaf lsp-dart
-        :ensure t
-        :after lsp)
-    #+end_src
-*** lsp-ivy
-    #+begin_src emacs-lisp
-      (leaf lsp-ivy
-        :ensure t
-        :after (lsp-mode counsel))
-    #+end_src
 *** lsp-ui
     #+BEGIN_SRC emacs-lisp
       (leaf lsp-ui
@@ -925,6 +923,18 @@
          (lsp-ui-imenu-enable . nil)
          (lsp-ui-sideline-enable . nil)))
     #+END_SRC
+*** lsp-dart
+    #+begin_src emacs-lisp
+      (leaf lsp-dart
+        :ensure t
+        :after lsp)
+    #+end_src
+*** lsp-ivy
+    #+begin_src emacs-lisp
+      (leaf lsp-ivy
+        :ensure t
+        :after (lsp-mode counsel))
+    #+end_src
 ** DAP
 *** dap-mode
     #+BEGIN_SRC emacs-lisp
