@@ -143,7 +143,8 @@
       "C-a" 'back-to-indentation
       "C-c i" 'find-function
       "C-x C-o" 'other-window
-      "C-x C-k" nil)
+      "C-x C-k" nil
+      "C-x C-c" nil)
    #+END_SRC
 ** ビープ音を消す
    #+begin_src emacs-lisp
@@ -877,6 +878,14 @@
           :after company
           :config
           (add-to-list 'company-backends 'company-solidity))
+    #+end_src
+*** company-terraform
+    #+begin_src emacs-lisp
+      (leaf company-terraform
+        :ensure t
+        :after company
+        :config
+        (add-to-list 'company-backends 'company-terraform))
     #+end_src
 ** Snippet
 *** yasnippet
@@ -1700,8 +1709,9 @@
                                    ("m" "Memo" entry (file "~/org/memo.org")
                                     "* %?"))))
        :custom
-       (org-archive-location . `,(format "~/org/archive/%s.org"
-                                       (format-time-string "%Y" (current-time))))
+       ((org-startup-folded . 'fold)
+        (org-archive-location . `,(format "~/org/archive/%s.org"
+                                          (format-time-string "%Y" (current-time)))))
        (org-clock-out-remove-zero-time-clocks . t)
        :custom-face
        ((org-link '(t (:foreground "#ebe087" :underline t))))
