@@ -12,9 +12,9 @@
 
 * はじめに
 ** 基本情報
-  - repo: [[http://github.com/takeokunn/.emacs.d][takeokunn/.emacs.d]]
-  - twitter: [[https://twitter.com/takeokunn][たけてぃ@takeokunn]]
-  - blog: [[https://takeokunn.xyz][https://takeokunn.xyz]]
+   - repo: [[http://github.com/takeokunn/.emacs.d][takeokunn/.emacs.d]]
+   - twitter: [[https://twitter.com/takeokunn][たけてぃ@takeokunn]]
+   - blog: [[https://takeokunn.xyz][https://takeokunn.xyz]]
 * Initialize
 ** leaf
    #+BEGIN_SRC emacs-lisp
@@ -294,7 +294,7 @@
 ** gradle-mode
    #+BEGIN_SRC emacs-lisp
      (leaf gradle-mode
-     :ensure t
+       :ensure t
        :mode (("\\.gradle$" . java-mode)))
    #+END_SRC
 ** haskell-mode
@@ -373,7 +373,7 @@
        (with-eval-after-load 'processing-mode
          (setq-default processing-location "/opt/processing/processing-java")
          (setq-default processing-output-dir "/tmp")))
-  #+END_SRC
+   #+END_SRC
 ** python-mode
    #+BEGIN_SRC emacs-lisp
      (leaf python-mode
@@ -489,7 +489,7 @@
    #+BEGIN_SRC emacs-lisp
      (leaf yaml-mode
        :ensure t
-       :mode ("\\.ya?ml$"))
+       :mode ("\\.ya?ml$" "phpstan.neon"))
    #+END_SRC
 * Lisp
 ** Basic
@@ -697,7 +697,7 @@
         (load-theme 'tango-dark t)
         (doom-themes-neotree-config)
         (doom-themes-org-config))
-   #+END_SRC
+    #+END_SRC
 *** doom-modeline
     #+BEGIN_SRC emacs-lisp
       (leaf doom-modeline
@@ -760,7 +760,7 @@
         :hook (doom-modeline-mode-hook)
         :custom ((nyan-cat-face-number . 4)
                  (nyan-animate-nyancat . t)))
-   #+END_SRC
+    #+END_SRC
 *** tab-mode
     #+begin_src emacs-lisp
       (leaf tab-bar-mode
@@ -790,19 +790,19 @@
     #+END_SRC
 ** Completion
 *** company
-   #+BEGIN_SRC emacs-lisp
-     (leaf company
-       :ensure t
-       :defvar company-backends
-       :init
-       (global-company-mode)
-       :config
-       (add-to-list 'company-backends 'company-yasnippet)
-       :bind
-       (:company-active-map
-        ("C-n" . company-select-next)
-        ("C-p" . company-select-previous)))
-   #+END_SRC
+    #+BEGIN_SRC emacs-lisp
+      (leaf company
+        :ensure t
+        :defvar company-backends
+        :init
+        (global-company-mode)
+        :config
+        (add-to-list 'company-backends 'company-yasnippet)
+        :bind
+        (:company-active-map
+         ("C-n" . company-select-next)
+         ("C-p" . company-select-previous)))
+    #+END_SRC
 *** company-box
     #+begin_src emacs-lisp
       (leaf company-box
@@ -841,14 +841,14 @@
         :ensure t
         :disabled t
         :after (company phpactor))
-        #+end_src
+    #+end_src
 *** company-slime
     #+begin_src emacs-lisp
       (leaf slime-company
         :ensure t
         :after (company slime)
         :custom ((slime-company-completion . 'fuzzy)
-               (slime-company-after-completion . 'slime-company-just-one-space))
+                 (slime-company-after-completion . 'slime-company-just-one-space))
         :config (slime-setup '(slime-fancy slime-banner slime-company)))
     #+end_src
 *** company-c-headers
@@ -874,10 +874,10 @@
 *** company-solidity
     #+begin_src emacs-lisp
       (leaf company-solidity
-          :ensure t
-          :after company
-          :config
-          (add-to-list 'company-backends 'company-solidity))
+        :ensure t
+        :after company
+        :config
+        (add-to-list 'company-backends 'company-solidity))
     #+end_src
 *** company-terraform
     #+begin_src emacs-lisp
@@ -956,13 +956,13 @@
         ;; :hook (dap-stopped-hook . (lambda (arg) (call-interactively #'dap-hydra))
         :config
         (add-hook 'dap-stopped-hook
-                (lambda (arg) (call-interactively #'dap-hydra)))
+                  (lambda (arg) (call-interactively #'dap-hydra)))
         (with-eval-after-load 'dap-mode
           (dap-mode 1)
           (dap-ui-mode 1)
           (dap-auto-configure-mode 1)
           (require 'dap-go)))
-   #+END_SRC
+    #+END_SRC
 ** Git
 *** magit
     #+BEGIN_SRC emacs-lisp
@@ -1049,10 +1049,10 @@
 *** ivy-rich
     #+BEGIN_SRC emacs-lisp
       (leaf ivy-rich
-	:ensure t
-	:after counsel
-	:config
-	(ivy-rich-mode 1))
+        :ensure t
+        :after counsel
+        :config
+        (ivy-rich-mode 1))
     #+END_SRC
 ** Shell
 *** exec-path-from-shell
@@ -1071,10 +1071,10 @@
 *** racer
     #+BEGIN_SRC emacs-lisp
       (leaf racer
-	:ensure t
-	:after rust-mode
-	:hook (rust-mode-hook
-	       (racer-mode-hook . eldoc-mode)))
+        :ensure t
+        :after rust-mode
+        :hook (rust-mode-hook
+               (racer-mode-hook . eldoc-mode)))
     #+END_SRC
 *** TODO rustic
     #+BEGIN_SRC emacs-lisp
@@ -1262,7 +1262,7 @@
         :ensure t
         :config
         (add-to-list 'auto-mode-alist '("\\.md" . poly-markdown-mode)))
-     #+end_src
+    #+end_src
 ** Fish
 *** fish-repl
     #+begin_src emacs-lisp
@@ -1274,14 +1274,14 @@
 *** recentf
     #+BEGIN_SRC emacs-lisp
       (leaf recentf
-	:ensure t
-	:setq-default ((recentf-max-saved-items . 10000)
-		       (recentf-auto-cleanup quote never)
-		       (recentf-save-file . "~/.emacs.d/.recentf")
-		       (recentf-exclude quote
-					(".recentf")))
-	:config
-	(recentf-mode 1))
+        :ensure t
+        :setq-default ((recentf-max-saved-items . 10000)
+                       (recentf-auto-cleanup quote never)
+                       (recentf-save-file . "~/.emacs.d/.recentf")
+                       (recentf-exclude quote
+                                        (".recentf")))
+        :config
+        (recentf-mode 1))
     #+END_SRC
 *** open-junk-file
     #+BEGIN_SRC emacs-lisp
@@ -1293,13 +1293,13 @@
     #+END_SRC
 ** Check
 *** flycheck
-     #+begin_src emacs-lisp
-       (leaf flycheck
-         :ensure t
-         :after ruby-mode
-         :hook ((ruby-mode-hook . flycheck-mode)
-                (org-mode-hook . flycheck-mode)))
-     #+end_src
+    #+begin_src emacs-lisp
+      (leaf flycheck
+        :ensure t
+        :after ruby-mode
+        :hook ((ruby-mode-hook . flycheck-mode)
+               (org-mode-hook . flycheck-mode)))
+    #+end_src
 *** flycheck-textlint
     #+begin_src emacs-lisp
       (leaf flycheck-textlint
@@ -1333,25 +1333,25 @@
       (leaf smartrep :ensure t)
 
       (leaf multiple-cursors
-	:ensure t
-	:defun (smartrep-define-key . smartrep)
-	:after smartrep
-	:config
-	(global-unset-key (kbd "C-t"))
-	(smartrep-define-key global-map "C-t"
-			     '(("C-t" quote mc/mark-next-like-this)
-			       ("n" quote mc/mark-next-like-this)
-			       ("p" quote mc/mark-previous-like-this)
-			       ("m" quote mc/mark-more-like-this-extended)
-			       ("u" quote mc/unmark-next-like-this)
-			       ("U" quote mc/unmark-previous-like-this)
-			       ("s" quote mc/skip-to-next-like-this)
-			       ("S" quote mc/skip-to-previous-like-this)
-			       ("*" quote mc/mark-all-like-this)
-			       ("d" quote mc/mark-all-like-this-dwim)
-			       ("i" quote mc/insert-numbers)
-			       ("o" quote mc/sort-regions)
-			       ("O" quote mc/reverse-regions))))
+        :ensure t
+        :defun (smartrep-define-key . smartrep)
+        :after smartrep
+        :config
+        (global-unset-key (kbd "C-t"))
+        (smartrep-define-key global-map "C-t"
+          '(("C-t" quote mc/mark-next-like-this)
+            ("n" quote mc/mark-next-like-this)
+            ("p" quote mc/mark-previous-like-this)
+            ("m" quote mc/mark-more-like-this-extended)
+            ("u" quote mc/unmark-next-like-this)
+            ("U" quote mc/unmark-previous-like-this)
+            ("s" quote mc/skip-to-next-like-this)
+            ("S" quote mc/skip-to-previous-like-this)
+            ("*" quote mc/mark-all-like-this)
+            ("d" quote mc/mark-all-like-this-dwim)
+            ("i" quote mc/insert-numbers)
+            ("o" quote mc/sort-regions)
+            ("O" quote mc/reverse-regions))))
     #+END_SRC
 *** smooth-scroll
     #+BEGIN_SRC emacs-lisp
@@ -1495,10 +1495,10 @@
 *** goto-addr
     #+BEGIN_SRC emacs-lisp
       (leaf goto-addr
-	:ensure t
-	:commands goto-address-prog-mode goto-address-mode
-	:hook ((prog-mode-hook . goto-address-prog-mode)
-	       (text-mode-hook . goto-address-mode)))
+        :ensure t
+        :commands goto-address-prog-mode goto-address-mode
+        :hook ((prog-mode-hook . goto-address-prog-mode)
+               (text-mode-hook . goto-address-mode)))
     #+END_SRC
 *** helpful
     #+BEGIN_SRC emacs-lisp
@@ -1613,7 +1613,7 @@
         :custom
         ((whitespace-style '(face tabs tab-mark spaces space-mark))
          (whitespace-display-mappings '((space-mark ?\u3000 [?\u25a1])
-                                            (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t]))))
+                                        (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t]))))
         :config
         (global-whitespace-mode 1))
     #+END_SRC
@@ -1663,7 +1663,7 @@
          (defvar eshell-command-aliases-list (append *shell-alias*))))
    #+end_src
 ** aweshell
-    #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp
       (leaf aweshell
         :after eshell
         :config
@@ -1836,7 +1836,6 @@
                  (> (line-number-at-pos (point-max)) 100000))
          (prog1 t
            (prog-mode))))
-
      ;; (advice-add 'set-auto-mode :before-until 'takeokunn/before-set-auto-mode)
    #+END_SRC
 ** takeokunn/reload-major-mode
@@ -1872,4 +1871,26 @@
      (general-define-key
       "M-N" 'takeokunn/move-line-down
       "M-P" 'takeokunn/move-line-up)
+   #+end_src
+** takeokunn/toggle-read-only-mode
+   #+begin_src emacs-lisp
+     (defun takeokunn/toggle-read-only-mode ()
+       (interactive)
+       (toggle-read-only))
+
+     (general-define-key
+      "C-x C-q" 'takeokunn/toggle-read-only-mode)
+   #+end_src
+** takeokunn/ghq-get
+   #+begin_src emacs-lisp
+     (defun takeokunn/ghq-get ()
+       (interactive)
+       (let ((url (read-string "url > ")))
+         (message
+          (shell-command-to-string
+           (mapconcat #'shell-quote-argument
+                      (list "ghq" "get" url)
+                      " ")))))
+
+     (defalias 'ghq-get 'takeokunn/ghq-get)
    #+end_src
