@@ -157,11 +157,21 @@
    #+end_src
 ** coding system
    #+begin_src emacs-lisp
-     (set-coding-system-priority 'utf-8)
+     ;; language and locale
+     (set-language-environment "Japanese")
+     (setq system-time-locale "C")
+
+     ;; coding system
+     (set-default-coding-systems 'utf-8-unix)
+     (prefer-coding-system 'utf-8-unix)
+     (set-selection-coding-system 'utf-8-unix)
+
+     ;; prefer-coding-system take effect equally to follows
+     (set-buffer-file-coding-system 'utf-8-unix)
+     (set-file-name-coding-system 'utf-8-unix)
      (set-terminal-coding-system 'utf-8-unix)
      (set-keyboard-coding-system 'utf-8-unix)
-     (setq-default buffer-file-coding-system 'utf-8-unix)
-     (setq-default default-process-coding-system '(utf-8 . utf-8))
+     (setq locale-coding-system 'utf-8-unix)
    #+end_src
 ** global-auto-revert-mode
    #+begin_src emacs-lisp
@@ -242,7 +252,7 @@
    #+begin_src emacs-lisp
      (leaf docker-compose-mode
        :ensure t
-       :mode ("docker-compose*"))
+       :mode ("\\docker-compose*"))
    #+end_src
 ** dockerfile-mode
    #+BEGIN_SRC emacs-lisp
@@ -297,6 +307,11 @@
        :ensure t
        :mode (("\\.gradle$" . java-mode)))
    #+END_SRC
+** graphql-mode
+   #+begin_src emacs-lisp
+     (leaf graphql-mode
+       :ensure t)
+   #+end_src
 ** haskell-mode
    #+BEGIN_SRC emacs-lisp
      (leaf haskell-mode
@@ -810,6 +825,15 @@
         :after company
         :hook (company-mode . company-box-mode))
     #+end_src
+*** company-dockerfile
+    #+begin_src emacs-lisp
+      (leaf company-dockerfile
+        :el-get (company-dockerfile
+                 :url "https://github.com/takeokunn/company-dockerfile.git"
+                 :features company-dockerfile)
+        :config
+        (push 'company-dockerfile company-backends))
+    #+end_src
 *** company-glsl
     #+BEGIN_SRC emacs-lisp
       (leaf company-glsl
@@ -875,6 +899,7 @@
     #+begin_src emacs-lisp
       (leaf company-solidity
         :ensure t
+        :disabled t
         :after company
         :config
         (add-to-list 'company-backends 'company-solidity))
@@ -1664,29 +1689,29 @@
    #+end_src
 ** aweshell
    #+BEGIN_SRC emacs-lisp
-      (leaf aweshell
-        :after eshell
-        :config
-        (defun takeokunn/aweshell-setup ()
-          (interactive)
-          (shell-command-to-string "ghq get https://github.com/takeokunn/aweshell.git"))
+     (leaf aweshell
+       :after eshell
+       :config
+       (defun takeokunn/aweshell-setup ()
+         (interactive)
+         (shell-command-to-string "ghq get https://github.com/takeokunn/aweshell.git"))
 
-        (when (file-directory-p "~/.ghq/github.com/takeokunn/aweshell")
-          (add-to-list 'load-path (expand-file-name "~/.ghq/github.com/takeokunn/aweshell"))
-          (require 'esh-mode)
-          (require 'aweshell)
-          (with-eval-after-load 'aweshell
-            (defun takeokunn/counsel-aweshell-history ()
-              (interactive)
-              (insert (ivy-read "Aweshell history: " (aweshell-parse-shell-history))))
+       (when (file-directory-p "~/.ghq/github.com/takeokunn/aweshell")
+         (add-to-list 'load-path (expand-file-name "~/.ghq/github.com/takeokunn/aweshell"))
+         (require 'esh-mode)
+         (require 'aweshell)
+         (with-eval-after-load 'aweshell
+           (defun takeokunn/counsel-aweshell-history ()
+             (interactive)
+             (insert (ivy-read "Aweshell history: " (aweshell-parse-shell-history))))
 
-            (defvar eshell-mode-map nil)
-            (defvar aweshell-auto-suggestion-p nil)
-            (defvar eshell-highlight-prompt t)
-            (setq eshell-prompt-function 'epe-theme-lambda)
-            (add-hook 'eshell-mode-hook
-                      (lambda () (define-key eshell-mode-map (kbd "C-c C-r") 'takeokunn/counsel-aweshell-history))))))
-    #+END_SRC
+           (defvar eshell-mode-map nil)
+           (defvar aweshell-auto-suggestion-p nil)
+           (defvar eshell-highlight-prompt t)
+           (setq eshell-prompt-function 'epe-theme-lambda)
+           (add-hook 'eshell-mode-hook
+                     (lambda () (define-key eshell-mode-map (kbd "C-c C-r") 'takeokunn/counsel-aweshell-history))))))
+   #+END_SRC
 ** eshell-z
    #+begin_src emacs-lisp
      (leaf eshell-z
@@ -1712,15 +1737,24 @@
        ((org-startup-folded . 'fold)
         (org-archive-location . `,(format "~/org/archive/%s.org"
                                           (format-time-string "%Y" (current-time)))))
-       (org-clock-out-remove-zero-time-clocks . t)
        :custom-face
-       ((org-link '(t (:foreground "#ebe087" :underline t))))
+       (org-link '(t (:foreground "#ebe087" :underline t)))
        :bind
        (("C-c a" . org-agenda)
         ("C-c b" . counsel-bookmark)
         ("C-c c" . org-capture)
         (:org-mode-map ("C-m" . nil))))
    #+END_SRC
+** org-journal
+   #+begin_src emacs-lisp
+     (leaf org-journal
+       :ensure t
+       :setq
+       (org-journal-dir . "~/org/journal")
+       :custom
+       (org-journal-file-type . 'weekly)
+       (org-journal-prefix-key . "C-c j"))
+   #+end_src
 ** org-ql
    #+begin_src emacs-lisp
      (leaf org-ql
