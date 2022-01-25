@@ -755,7 +755,7 @@
 *** el-get
     #+begin_src emacs-lisp
       (eval-and-compile
-        ;; theme
+        (el-get-bundle 'dashboard)
         (el-get-bundle 'all-the-icons)
         (el-get-bundle 'all-the-icons-dired)
         ;; (el-get-bundle 'all-the-icons-ivy)
@@ -765,15 +765,20 @@
         ;; (el-get-bundle 'tab-mode)
         )
     #+end_src
+*** dashboard
+    #+begin_src emacs-lisp
+      (when (autoload-if-found '() 'dashboard nil t)
+        (dashboard-setup-startup-hook))
+    #+end_src
 *** all-the-icons
     #+BEGIN_SRC emacs-lisp
-      (when (autoload-if-found '() "all-the-icons" nil t)
+      (when (autoload-if-found '() 'all-the-icons nil t)
         ;; do something
         )
     #+END_SRC
 *** all-the-icons-dired
     #+begin_src emacs-lisp
-      (when (autoload-if-found '() "all-the-icons-dired" nil t)
+      (when (autoload-if-found '() 'all-the-icons-dired nil t)
         (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
     #+end_src
 *** TODO all-the-icons-ivy
