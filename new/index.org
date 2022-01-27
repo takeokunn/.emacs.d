@@ -229,7 +229,7 @@
      (global-set-key (kbd "C-m") 'set-mark-command)
      (global-set-key (kbd "C-a") 'back-to-indentation)
      (global-set-key (kbd "C-c i") 'find-function)
-     (global-set-key (kbd "C-x C-o") nil)
+     (global-set-key (kbd "C-x C-o") 'other-window)
      (global-set-key (kbd "C-x C-k") nil)
      ;; (global-set-key (kbd "C-x C-c") 'confirm-save-buffers-kill-emacs)
    #+END_SRC
@@ -1003,36 +1003,39 @@
       ;;     ;; (keypression-mode 1) ;; To start, M-x keypression-mode
       ;;     ))
     #+end_src
-** Search
+** TODO Search
+*** el-get
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        ;; (el-get-bundle 'swiper)
+        ;; (el-get-bundle 'ivy)
+        ;; (el-get-bundle 'counsel)
+        )
+    #+end_src
+*** TODO counsel
+    #+begin_src emacs-lisp
+      ;; (leaf counsel
+            ;;   :ensure t
+            ;;   :init
+            ;;   (eval-and-compile
+            ;;     (defun takeokunn/counsel-rg ()
+            ;;       (interactive)
+            ;;       (let ((symbol (thing-at-point 'symbol 'no-properties))
+            ;;             (default-directory (locate-dominating-file default-directory ".git")))
+            ;;         (counsel-rg symbol)))
+            ;;     (defun takeokunn/counsel-fzf ()
+            ;;       (interactive)
+            ;;       (let ((default-directory (locate-dominating-file default-directory ".git")))
+            ;;         (counsel-fzf))))
+            ;;   :bind
+            ;;   (("C-x m" . counsel-compile)
+            ;;    ("C-c k" . takeokunn/counsel-rg)
+            ;;    ("M-p" . takeokunn/counsel-fzf))
+            ;;   :config
+            ;;   (counsel-mode 1))
+    #+end_src
 *** TODO swiper
     #+BEGIN_SRC emacs-lisp
-      ;; (leaf ivy
-      ;;   :ensure t
-      ;;   :custom (ivy-use-virtual-buffers . t)
-      ;;   :config
-      ;;   (ivy-mode 1)
-      ;;   (ivy-configure 'counsel-M-x :sort-fn 'ivy--sort-by-length))
-
-      ;; (leaf counsel
-      ;;   :ensure t
-      ;;   :init
-      ;;   (eval-and-compile
-      ;;     (defun takeokunn/counsel-rg ()
-      ;;       (interactive)
-      ;;       (let ((symbol (thing-at-point 'symbol 'no-properties))
-      ;;             (default-directory (locate-dominating-file default-directory ".git")))
-      ;;         (counsel-rg symbol)))
-      ;;     (defun takeokunn/counsel-fzf ()
-      ;;       (interactive)
-      ;;       (let ((default-directory (locate-dominating-file default-directory ".git")))
-      ;;         (counsel-fzf))))
-      ;;   :bind
-      ;;   (("C-x m" . counsel-compile)
-      ;;    ("C-c k" . takeokunn/counsel-rg)
-      ;;    ("M-p" . takeokunn/counsel-fzf))
-      ;;   :config
-      ;;   (counsel-mode 1))
-
       ;; (leaf swiper
       ;;   :ensure t
       ;;   :init
@@ -1043,6 +1046,15 @@
       ;;         (swiper word))))
       ;;   :bind (("C-o" . takeokunn/swiper)))
     #+END_SRC
+*** TODO ivy
+    #+begin_src emacs-lisp
+      ;; (leaf ivy
+      ;;   :ensure t
+      ;;   :custom (ivy-use-virtual-buffers . t)
+      ;;   :config
+      ;;   (ivy-mode 1)
+      ;;   (ivy-configure 'counsel-M-x :sort-fn 'ivy--sort-by-length))
+    #+end_src
 *** TODO ivy-ghq
     #+BEGIN_SRC emacs-lisp
       ;; (leaf ivy-ghq
@@ -1069,18 +1081,20 @@
       ;;   :config
       ;;   (ivy-rich-mode 1))
     #+END_SRC
-** TODO Shell
-*** TODO exec-path-from-shell
+** Shell
+*** el-get
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'exec-path-from-shell))
+    #+end_src
+*** exec-path-from-shell
     #+BEGIN_SRC emacs-lisp
-      ;; (leaf exec-path-from-shell
-      ;;   :ensure t
-      ;;   :defun (exec-path-from-shell-initialize)
-      ;;   :hook ((after-init-hook . exec-path-from-shell-initialize))
-      ;;   :custom
-      ;;   (exec-path-from-shell-variables . '("PATH"
-      ;;                                       "GEM_HOME"
-      ;;                                       "GOROOT"
-      ;;                                       "GOPATH")))
+      (add-hook 'after-init-hook 'exec-path-from-shell-initialize)
+
+      (with-eval-after-load 'exec-path-from-shell
+        ;; (eval-and-compile
+        ;;   (setq exec-path-from-shell-variables '("PATH" "GEM_HOME" "GOROOT" "GOPATH")))
+        )
     #+END_SRC
 ** TODO Rust
 *** TODO racer
@@ -1303,8 +1317,8 @@
     #+end_src
 *** flycheck
     #+begin_src emacs-lisp
-      (add-hook 'ruby-mode-hook 'flycheck-mode)
-      (add-hook 'org-mode-hook 'flycheck-mode)
+      ;; (add-hook 'ruby-mode-hook 'flycheck-mode)
+      ;; (add-hook 'org-mode-hook 'flycheck-mode)
     #+end_src
 *** TODO flycheck-textlint
     #+begin_src emacs-lisp
@@ -1381,7 +1395,26 @@
         (el-get-bundle 'amx)
         (el-get-bundle 'avy)
         (el-get-bundle 'avy-zap)
-        (el-get-bundle 'esup))
+        (el-get-bundle 'define-word)
+        ;; (el-get-bundle 'ddskk)
+        (el-get-bundle 'editorconfig)
+        (el-get-bundle 'esup)
+        (el-get-bundle 'elfeed)
+        (el-get-bundle 'elfeed-org)
+        (el-get-bundle 'font-lock-studio)
+        (el-get-bundle 'google-this)
+        (el-get-bundle 'htmlize)
+        (el-get-bundle 'keyfreq)
+        (el-get-bundle 'lorem-ipsum)
+        ;; (el-get-bundle 'origami)
+        (el-get-bundle 'popwin)
+        (el-get-bundle 'smartparens)
+        (el-get-bundle 'smart-jump)
+        (el-get-bundle 'undo-tree)
+        (el-get-bundle 'uuid :url "https://github.com/nicferrier/emacs-uuid.git")
+        (el-get-bundle 'which-key)
+        (el-get-bundle 'whitespace)
+        (el-get-bundle 'wanderlust))
     #+end_src
 *** auto-save-buffers-enhanced
     #+begin_src emacs-lisp
@@ -1399,274 +1432,192 @@
       (global-set-key (kbd "C-:") 'avy-goto-char-timer)
       (global-set-key (kbd "M-z") 'avy-zap-up-to-char-dwim)
     #+end_src
-*** TODO define-word
+*** define-word
     #+begin_src emacs-lisp
-      ;; (leaf define-word
-      ;;   :ensure t
-      ;;   :custom
-      ;;   (define-word-default-service . 'wordnik)
-      ;;   (define-word-displayfn-alist
-      ;;     '((wordnik . takeokunn/define-word--display-in-buffer)
-      ;;       (openthesaurus . takeokunn/define-word--display-in-buffer)
-      ;;       (webster . takeokunn/define-word--display-in-buffer)
-      ;;       (weblio . takeokunn/define-word--display-in-buffer)))
-      ;;   :config
-      ;;   (defun takeokunn/define-word--display-in-buffer (definition)
-      ;;     "docstring"
-      ;;     (let* ((buf-name "*DEFINE WORD*")
-      ;;            (buffer (get-buffer-create buf-name))
-      ;;            (display-buffer-alist
-      ;;             `((,buf-name
-      ;;                (display-buffer-same-window)))))
-      ;;       (with-current-buffer buffer
-      ;;         (read-only-mode -1)
-      ;;         (erase-buffer)
-      ;;         (insert definition)
-      ;;         (goto-char (point-min))
-      ;;         (save-excursion (xml-parse-string))
-      ;;         (read-only-mode 1)
-      ;;         (buffer-face-set 'woman-buffer))
-      ;;       (display-buffer buffer)))
-      ;;   (defun takeokunn/define-word ()
-      ;;     (interactive)
-      ;;     (if (use-region-p)
-      ;;         (call-interactively #'define-word-at-point)
-      ;;       (call-interactively #'define-word))))
+      (defun my/define-word ()
+        (interactive)
+        (if (use-region-p)
+            (call-interactively #'define-word-at-point)
+          (call-interactively #'define-word)))
+
+      (with-eval-after-load 'define-word
+        (eval-and-compile
+          (setq define-word-displayfn-alist
+                '((wordnik . takeokunn/define-word--display-in-buffer)
+                  (openthesaurus . takeokunn/define-word--display-in-buffer)
+                  (webster . takeokunn/define-word--display-in-buffer)
+                  (weblio . takeokunn/define-word--display-in-buffer)))))
     #+end_src
 *** TODO ddskk
     #+BEGIN_SRC emacs-lisp
-      ;; (leaf ddskk
-      ;;   :ensure t
-      ;;   :bind
-      ;;   ("C-x C-j" . skk-mode)
-      ;;   :custom
-      ;;   (skk-byte-compile-init-file . t)
-      ;;   (skk-isearch-mode-enable . 'always)
-      ;;   :setq
-      ;;   (skk-preload . t)
-      ;;   (default-input-method . "japanese-skk"))
+      ;; (global-set-key (kbd "C-x C-j") 'skk-mode)
+
+      ;; (with-eval-after-load 'ddskk
+      ;;   (eval-and-compile
+      ;;     (setq skk-byte-compile-init-file t)
+      ;;     (setq skk-isearch-mode-enable 'always)
+      ;;     (setq skk-preload t)
+      ;;     (setq default-input-method "japanese-skk")))
     #+END_SRC
-*** TODO editorconfig
+*** editorconfig
     #+BEGIN_SRC emacs-lisp
-      ;; (leaf editorconfig
-      ;;   :ensure t
-      ;;   :config
-      ;;   (editorconfig-mode 1))
+      (with-eval-after-load 'editorconfig
+        (editorconfig-mode 1))
     #+END_SRC
 *** esup
     #+BEGIN_SRC emacs-lisp
       (with-eval-after-load 'esup)
     #+END_SRC
-*** TODO elfeed
+*** elfeed
     #+begin_src emacs-lisp
-      ;; (leaf elfeed
-      ;;   :ensure t
-      ;;   :bind
-      ;;   ("C-x w" . elfeed)
-      ;;   :defvar elfeed-search-filter
-      ;;   :setq
-      ;;   (elfeed-search-filter . "@3-days-ago +unread")
-      ;;   :custom
-      ;;   (browse-url-browser-function . 'eww-browse-url))
-
-      ;; (leaf elfeed-org
-      ;;   :ensure t
-      ;;   :after elfeed
-      ;;   :custom
-      ;;   (rmh-elfeed-org-files . '("~/.emacs.d/elfeed.org"))
-      ;;   :config
-      ;;   (elfeed-org))
+      (with-eval-after-load 'elfeed
+        (eval-and-compile
+          (setq elfeed-search-filter "@3-days-ago +unread")
+          (setq browse-url-browser-function 'eww-browse-url)))
     #+end_src
-*** TODO font-lock-studio
+*** elfeed-org
+    #+begin_src emacs-lisp
+      (with-eval-after-load 'elfeed-org
+        (elfeed-org)
+        (eval-and-compile
+          (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org"))))
+    #+end_src
+*** font-lock-studio
     #+BEGIN_SRC emacs-lisp
       ;; (leaf font-lock-studio :ensure t)
     #+END_SRC
-*** TODO google-this
+*** google-this
     #+BEGIN_SRC emacs-lisp
-      ;; (leaf google-this
-      ;;   :ensure t
-      ;;   :bind
-      ;;   ("M-g" . google-this))
+      (global-set-key (kbd "M-g") 'google-this)
     #+END_SRC
-*** TODO grugru
-    #+begin_src emacs-lisp
-      ;; (leaf grugru
-      ;;   :ensure t
-      ;;   :disabled t
-      ;;   :bind
-      ;;   ("C-;" . grugru)
-      ;;   :config
-      ;;   (grugru-default-setup))
-    #+end_src
-*** TODO goto-addr
+*** goto-addr
     #+BEGIN_SRC emacs-lisp
-      ;; (leaf goto-addr
-      ;;   :ensure t
-      ;;   :commands goto-address-prog-mode goto-address-mode
-      ;;   :hook ((prog-mode-hook . goto-address-prog-mode)
-      ;;          (text-mode-hook . goto-address-mode)))
+      (add-hook 'prog-mode-hook 'goto-address-prog-mode)
+      (add-hook 'text-mode-hook 'goto-address-mode)
     #+END_SRC
-*** TODO helpful
-    #+BEGIN_SRC emacs-lisp
-      ;; (leaf helpful
-      ;;   :ensure t
-      ;;   :after counsel
-      ;;   :bind
-      ;;   (("C-? f" . helpful-callable)
-      ;;    ("C-? v" . helpful-variable)
-      ;;    ("C-? k" . helpful-key)
-      ;;    ("C-? C-d" . helpful-at-point)
-      ;;    ("C-? F" . helpful-function)
-      ;;    ("C-? C" . helpful-command))
-      ;;   :custom ((counsel-describe-function-function function helpful-callable)
-      ;;            (counsel-describe-variable-function function helpful-variable)))
-    #+END_SRC
-*** TODO htmlize
+*** htmlize
     #+begin_src emacs-lisp
-      ;; (leaf htmlize :ensure t)
+      (with-eval-after-load 'htmlize)
     #+end_src
-*** TODO keyfreq
+*** keyfreq
     #+begin_src emacs-lisp
-      ;; (leaf keyfreq
-      ;;   :ensure t
-      ;;   :config
-      ;;   (keyfreq-mode 1)
-      ;;   (keyfreq-autosave-mode 1))
+      (with-eval-after-load 'keyfreq
+        (keyfreq-mode 1)
+        (keyfreq-autosave-mode 1))
     #+end_src
-*** TODO lorem ipsum
+*** lorem ipsum
     #+begin_src emacs-lisp
-      ;; (leaf lorem-ipsum
-      ;;   :ensure t
-      ;;   :bind
-      ;;   (("C-c C-l s" . lorem-ipsum-insert-sentences)
-      ;;    ("C-c C-l p" . lorem-ipsum-insert-paragraphs)
-      ;;    ("C-c C-l l" . lorem-ipsum-insert-list)))
+      (global-set-key (kbd "C-c C-l s") 'lorem-ipsum-insert-sentences)
+      (global-set-key (kbd "C-c C-l p") 'lorem-ipsum-insert-paragraphs)
+      (global-set-key (kbd "C-c C-l l") 'lorem-ipsum-insert-list)
     #+end_src
 *** TODO origami
+    Package cl is deprecated
     #+begin_src emacs-lisp
-      ;; (leaf origami
-      ;;   :ensure t
-      ;;   :hook (prog-mode-hook . origami-mode)
-      ;;   :bind (("C-c C-t" . origami-recursively-toggle-node)
-      ;;          ("C-c t" . origami-recursively-toggle-node))
-      ;;   :init
+      ;; (when (require 'origami nil t)
+      ;;   (global-set-key (kbd "C-c t") 'origami-recursively-toggle-node)
+      ;;   (global-set-key (kbd "C-c C-t") 'origami-recursively-toggle-node))
+
+      ;; (with-eval-after-load 'origami
       ;;   (global-origami-mode))
     #+end_src
-*** TODO popwin
+*** popwin
     #+begin_src emacs-lisp
-      ;; (leaf popwin
-      ;;   :ensure t
-      ;;   :init
-      ;;   (popwin-mode 1))
+      (eval-and-compile
+        (when (require 'popwin nil t)
+          (popwin-mode 1)))
     #+end_src
-*** TODO smartparens
+*** smartparens
     #+BEGIN_SRC emacs-lisp
-      ;; (leaf smartparens :ensure t)
+      (with-eval-after-load 'smartparens)
     #+END_SRC
-*** TODO smart-jump
+*** smart-jump
     #+begin_src emacs-lisp
-      ;; (leaf smart-jump
-      ;;   :ensure t)
+      (with-eval-after-load 'smart-jump)
     #+end_src
-*** TODO subword
+*** subword
     #+begin_src emacs-lisp
-      ;; (leaf subword
-      ;;   :config
-      ;;   (defun takeokunn/delete-forward-block ()
-      ;;     (interactive)
-      ;;     (if (eobp)
-      ;;         (message "End of buffer")
-      ;;       (let* ((syntax-move-point
-      ;;               (save-excursion
-      ;;                 (skip-syntax-forward (string (char-syntax (char-after))))
-      ;;                 (point)))
-      ;;              (subword-move-point
-      ;;               (save-excursion
-      ;;                 (subword-forward)
-      ;;                 (point))))
-      ;;         (kill-region (point) (min syntax-move-point subword-move-point)))))
-      ;;   :bind (("M-d" . takeokunn/delete-forward-block)))
+      (eval-and-compile
+        (when (require 'subword nil t)
+          (defun my/delete-forward-block ()
+            (interactive)
+            (if (eobp)
+                (message "End of buffer")
+              (let* ((syntax-move-point
+                      (save-excursion
+                        (skip-syntax-forward (string (char-syntax (char-after))))
+                        (point)))
+                     (subword-move-point
+                      (save-excursion
+                        (subword-forward)
+                        (point))))
+                (kill-region (point) (min syntax-move-point subword-move-point)))))))
 
+      (global-set-key (kbd "M-d") 'my/delete-forward-block)
+
+      (with-eval-after-load 'subword)
     #+end_src
-*** TODO undo
+*** undo-tree
     #+begin_src emacs-lisp
-      ;; (leaf undo-tree
-      ;;   :ensure t
-      ;;   :config (global-undo-tree-mode))
+      (eval-and-compile
+        (when (require 'undo-tree nil t)
+          (global-undo-tree-mode)))
     #+end_src
-*** TODO uuid
+*** uuid
     #+begin_src emacs-lisp
-      ;; (leaf uuid
-      ;;   :ensure t
-      ;;   :el-get (emacs-uuid
-      ;;            :url "https://github.com/nicferrier/emacs-uuid.git"
-      ;;            :features uuid)
-      ;;   :config
-      ;;   (defun takeokunn/uuid ()
+      ;; (when (and (require 'uuid nil t)
+      ;;            (boundp 'uuid-string))
+      ;;   (defun my/uuid ()
       ;;     (interactive)
-      ;;     (insert (uuid-string))))
+      ;;     (insert (uuid-string)))
+      ;;   (defalias 'my/uuid 'uuid))
     #+end_src
-*** TODO which-key
+*** which-key
     #+begin_src emacs-lisp
-      ;; (leaf which-key
-      ;;   :ensure t
-      ;;   :hook (after-init . which-key-mode))
+      (add-hook 'after-init-hook 'which-key-mode)
+
+      (with-eval-after-load 'which-key)
     #+end_src
-*** TODO whitespace
+*** whitespace
     #+BEGIN_SRC emacs-lisp
-      ;; (leaf whitespace
-      ;;   :ensure t
-      ;;   :custom
-      ;;   ((whitespace-style '(face tabs tab-mark spaces space-mark))
-      ;;    (whitespace-display-mappings '((space-mark ?\u3000 [?\u25a1])
-      ;;                                   (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t]))))
-      ;;   :config
-      ;;   (global-whitespace-mode 1))
+      (with-eval-after-load 'whitespace
+        (global-whitespace-mode 1)
+        (eval-and-compile
+          (setq whitespace-style '(face tabs tab-mark spaces space-mark))
+          (setq whitespace-display-mappings '((space-mark ?\u3000 [?\u25a1])
+                                              (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t])))))
     #+END_SRC
-*** TODO wanderlust
+*** wanderlust
     #+begin_src emacs-lisp
-      ;; (leaf wanderlust
-      ;;   :ensure t
-      ;;   ;; :setq
-      ;;   ;; (ssl-certificate-verification-policy . 1)
-      ;;   )
-    #+end_src
-*** TODO xah-lookup
-    #+begin_src emacs-lisp
-      ;; (leaf xah-lookup
-      ;;   :ensure t
-      ;;   :disabled t
-      ;;   :after (eww define-word)
-      ;;   :setq
-      ;;   (xah-lookup-browser-function . 'eww)
-      ;;   (xah-lookup-dictionary-browser-function . 'eww)
-      ;;   (xah-lookup-dictionary-list . ["http://www.google.com/search?q=define:+word02051"])
-      ;;   :config
-      ;;   (put 'xah-lookup-google 'xah-lookup-browser-function 'eww)
-      ;;   (put 'xah-lookup-wikipedia 'xah-lookup-url "http://ja.wikipedia.org/wiki/word02051")
-      ;;   (put 'xah-lookup-wikipedia 'xah-lookup-browser-function 'eww))
+      (with-eval-after-load 'wanderlust
+        (eval-and-compile
+          (setq ssl-certificate-verification-policy 1)))
     #+end_src
 * Eshell
-** TODO basic
+** el-get
    #+begin_src emacs-lisp
-     ;; (leaf eshell
-     ;;   :config
-     ;;   (with-eval-after-load 'eshell
-     ;;     ;; function
-     ;;     (defun eshell/ff (&rest args)
-     ;;       (find-file (car args)))
+     (eval-when-compile
+       (el-get-bundle 'eshell-z))
+   #+end_src
+** basic
+   #+begin_src emacs-lisp
+     (with-eval-after-load 'eshell
+       ;; function
+       (defun eshell/ff (&rest args)
+         (find-file (car args)))
 
-     ;;     ;; config
-     ;;     (defvar eshell-cmpl-ignore-case t)
-     ;;     (defvar eshell-glob-include-dot-dot nil)
-     ;;     (defvar eshell-ask-to-save-history (quote always))
-     ;;     (defvar eshell-history-size 100000)
-     ;;     (defvar eshell-hist-ignoredups t)
+       ;; config
+       (defvar eshell-cmpl-ignore-case t)
+       (defvar eshell-glob-include-dot-dot nil)
+       (defvar eshell-ask-to-save-history (quote always))
+       (defvar eshell-history-size 100000)
+       (defvar eshell-hist-ignoredups t)
 
-     ;;     ;; alias
-     ;;     (defvar *shell-alias* '(("ll" "ls -la")
-     ;;                             ("cdd" "cd ~/Desktop")))
-     ;;     (defvar eshell-command-aliases-list (append *shell-alias*))))
+
+       ;; alias
+       (defvar *shell-alias* '(("ll" "ls -la")
+                               ("cdd" "cd ~/Desktop")))
+       (defvar eshell-command-aliases-list (append *shell-alias*)))
    #+end_src
 ** TODO aweshell
    #+BEGIN_SRC emacs-lisp
@@ -1695,37 +1646,31 @@
    #+END_SRC
 ** TODO eshell-z
    #+begin_src emacs-lisp
-     ;; (leaf eshell-z
-     ;;   :ensure t
-     ;;   :after eshell
-     ;;   :bind ("C-c C-q" . eshell-z))
+     ;; (when (require 'eshell-z nil t)
+     ;;   (define-key eshell-mode-map (kbd "C-c C-q") 'eshell-z))
    #+end_src
-
 * Org Mode
-** TODO basic
+** basic
    #+BEGIN_SRC emacs-lisp
-     ;; (leaf org
-     ;;   :setq-default
-     ;;   ((org-use-speed-commands . t)
-     ;;    (org-agenda-todo-ignore-with-date . t)
-     ;;    (org-directory . "~/org")
-     ;;    (org-agenda-files . '("~/org/agenda"))
-     ;;    (org-todo-keywords . '((sequence "TODO(t)" "TODAY" "WAIT(w)" "|" "DONE(d)")))
-     ;;    (org-capture-templates . '(("t" "Todo" entry (file+datetree "~/org/todo.org")
-     ;;                                "* %?")
-     ;;                               ("m" "Memo" entry (file "~/org/memo.org")
-     ;;                                "* %?"))))
-     ;;   :custom
-     ;;   ((org-startup-folded . 'fold)
-     ;;    (org-archive-location . `,(format "~/org/archive/%s.org"
-     ;;                                      (format-time-string "%Y" (current-time)))))
-     ;;   :custom-face
-     ;;   (org-link '(t (:foreground "#ebe087" :underline t)))
-     ;;   :bind
-     ;;   (("C-c a" . org-agenda)
-     ;;    ("C-c b" . counsel-bookmark)
-     ;;    ("C-c c" . org-capture)
-     ;;    (:org-mode-map ("C-m" . nil))))
+     (global-set-key (kbd "C-c a") 'org-agenda)
+     (global-set-key (kbd "C-c c") 'org-capture)
+
+     (with-eval-after-load 'org
+       (eval-and-compile
+         (setq org-use-speed-commands t)
+         (setq org-agenda-todo-ignore-with-date t)
+         (setq org-directory "~/org")
+         (setq org-agenda-files '("~/org/agenda"))
+         (setq org-todo-keywords '((sequence "TODO(t)" "TODAY" "WAIT(w)" "|" "DONE(d)")))
+         (setq org-capture-templates '(("t" "Todo" entry (file+datetree "~/org/todo.org")
+                                        "* %?")
+                                       ("m" "Memo" entry (file "~/org/memo.org")
+                                        "* %?")))
+         (setq org-startup-folded 'fold)
+         (setq org-archive-location `,(format "~/org/archive/%s.org"
+                                              (format-time-string "%Y" (current-time))))
+         ;; face
+         (setq org-link '(t (:foreground "#ebe087" :underline t)))))
    #+END_SRC
 ** TODO org-journal
    #+begin_src emacs-lisp
@@ -1878,14 +1823,14 @@
        (interactive)
        (my/move-line -1))
 
-     (global-set-key (kbd "M-n" 'my/move-line-down))
-     (global-set-key (kbd "M-p" 'my/move-line-up))
+     (global-set-key (kbd "M-n") 'my/move-line-down)
+     (global-set-key (kbd "M-p") 'my/move-line-up)
    #+end_src
 ** my/toggle-read-only-mode
    #+begin_src emacs-lisp
      (defun my/toggle-read-only-mode ()
        (interactive)
-       (toggle-read-only))
+       (read-only-mode))
 
      (global-set-key (kbd "C-x C-q") 'my/toggle-read-only-mode)
    #+end_src
@@ -1900,5 +1845,5 @@
                       (list "ghq" "get" url)
                       " ")))))
 
-     (defalias 'ghq-get my/ghq-get)
+     (defalias 'ghq-get 'my/ghq-get)
    #+end_src
