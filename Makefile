@@ -33,7 +33,7 @@ org-generate:
 $(HTMLIZE_FILE):
 	wget $(HTMLIZE_URL)
 
-.PHONY: new-compile
-new-compile:
-	$(EMACS) -Q --batch --eval "(progn (require 'ob-tangle) (org-babel-tangle-file \"./new/index.org\" \"./init.el\" \"emacs-lisp\"))"
-	$(EMACS) -Q --batch -f batch-byte-compile new/init.el
+.PHONY: old-compile
+old-compile:
+	$(EMACS) -Q --batch --eval "(progn (require 'ob-tangle) (org-babel-tangle-file \"./old.org\" \"./init.el\" \"emacs-lisp\"))"
+	$(EMACS) -Q --batch -f batch-byte-compile init.el
