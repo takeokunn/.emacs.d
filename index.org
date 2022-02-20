@@ -102,6 +102,11 @@
            (tool-bar-mode -1)
            (toggle-scroll-bar -1)))
    #+END_SRC
+** dired-use-ls-dired
+   #+begin_src emacs-lisp
+     (when (string= system-type "darwin")
+       (setq dired-use-ls-dired nil))
+   #+end_src
 ** スタートアップメッセージを非表示
    #+BEGIN_SRC emacs-lisp
      (setq inhibit-startup-message t)
@@ -229,61 +234,47 @@
      (global-set-key (kbd "C-c i") 'find-function)
      (global-set-key (kbd "C-x C-o") 'other-window)
      (global-set-key (kbd "C-x C-k") nil)
-     (global-set-key (kbd "C-x C-c") nil)
+     ;; (global-set-key (kbd "C-x C-c") nil)
    #+END_SRC
 * Utility
 ** dash
    #+begin_src emacs-lisp
-     (eval-when-compile
+     (eval-and-compile
        (el-get-bundle 'dash))
-
-     (add-hook 'emacs-startup-hook (lambda () (require 'dash)))
    #+end_src
 ** mustache
    #+begin_src emacs-lisp
-     (eval-when-compile
+     (eval-and-compile
        (el-get-bundle 'mustache))
-
-     ;; (add-hook 'emacs-startup-hook (lambda () (require 'mustache)))
    #+end_src
 ** f
    #+begin_src emacs-lisp
-     (eval-when-compile
+     (eval-and-compile
        (el-get-bundle 'f))
-
-     (add-hook 'emacs-startup-hook (lambda () (require 'f)))
    #+end_src
 ** s
    #+begin_src emacs-lisp
-     (eval-when-compile
+     (eval-and-compile
        (el-get-bundle 's))
-
-     (add-hook 'emacs-startup-hook (lambda () (require 's)))
    #+end_src
 ** ht
    #+begin_src emacs-lisp
-     (eval-when-compile
+     (eval-and-compile
        (el-get-bundle 'ht))
-
-     (add-hook 'emacs-startup-hook (lambda () (require 'ht)))
    #+end_src
 ** lv
    #+begin_src emacs-lisp
-     (eval-when-compile
+     (eval-and-compile
        (el-get-bundle 'lv))
-
-     (add-hook 'emacs-startup-hook (lambda () (require 'lv)))
    #+end_src
 ** spinner
    #+begin_src emacs-lisp
-     (eval-when-compile
+     (eval-and-compile
        (el-get-bundle 'spinner))
-
-     (add-hook 'emacs-startup-hook (lambda () (require 'spinner)))
    #+end_src
 ** tree-mode
    #+begin_src emacs-lisp
-     (eval-when-compile
+     (eval-and-compile
        (el-get-bundle emacsorphanage/tree-mode))
 
      ;; (add-hook 'emacs-startup-hook (lambda () (require 'tree-mode)))
@@ -385,6 +376,10 @@
        (eval-and-compile
          (setq fish-enable-auto-indent t)))
    #+END_SRC
+** fundamental-mode
+   #+begin_src emacs-lisp
+     (push '("\\.~undo-tree~$" . fundamental-mode) auto-mode-alist)
+   #+end_src
 ** git-modes
    #+begin_src emacs-lisp
      (eval-when-compile
@@ -442,8 +437,9 @@
    #+END_SRC
 ** json-mode
    #+BEGIN_SRC emacs-lisp
-     (eval-when-compile
-       (el-get-bundle 'json-mode))
+     (eval-and-compile
+       (el-get-bundle "Sterlingg/json-snatcher")
+       (el-get-bundle "joshwnj/json-mode"))
 
      (push '("\\.json$" . json-mode) auto-mode-alist)
    #+END_SRC
@@ -475,6 +471,12 @@
      (push '("\\.php$" . php-mode) auto-mode-alist)
 
      (add-to-list 'load-path (locate-user-emacs-file "el-get/php-mode/lisp"))
+
+     (add-hook 'php-mode-hook 'lsp)
+     (add-hook 'emacs-startup-hook (lambda ()
+                                     (require 'php-mode)))
+
+     (with-eval-after-load 'php-mode)
    #+END_SRC
 ** phpt-mode
    #+begin_src emacs-lisp
@@ -528,6 +530,7 @@
      (push '(".pryrc" . ruby-mode) auto-mode-alist)
      (push '("Fastfile" . ruby-mode) auto-mode-alist)
      (push '("Matchfile" . ruby-mode) auto-mode-alist)
+     (push '(".git-pr-template" . ruby-mode) auto-mode-alist)
 
      (with-eval-after-load 'ruby-mode
        (eval-and-compile
@@ -547,6 +550,11 @@
 
      (push '("\\.scala$" . scala-mode) auto-mode-alist)
    #+END_SRC
+** scss-mode
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'scss-mode))
+   #+end_src
 ** slim-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
@@ -615,7 +623,9 @@
 ** vue-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
-       (el-get-bundle 'mmm-mode)
+       (el-get-bundle 'ssass-mode)
+       (el-get-bundle 'vue-html-mode)
+       (el-get-bundle "purcell/mmm-mode")
        (el-get-bundle 'vue-mode))
 
      (push '("\\.vue$" . vue-mode) auto-mode-alist)
@@ -671,65 +681,62 @@
 ** CommonLisp
 *** TODO HyperSpec
     #+BEGIN_SRC emacs-lisp
-      ;; (when (autoload-if-found
-      ;;        '(common-lisp-hyperspec--strip-cl-package)
-      ;;        "hyperspec" nil t)
-      ;;   (global-set-key "C-c h" 'hyperspec-lookup)
+      ;; (global-set-key "C-c h" 'hyperspec-lookup)
 
-      ;;   (defvar common-lisp-hyperspec-root "~/.roswell/HyperSpec/")
-      ;;   (defvar common-lisp-hyperspec--reader-macros nil)
-      ;;   (defvar common-lisp-hyperspec--format-characters nil)
+      ;; (defvar common-lisp-hyperspec-root "~/.roswell/HyperSpec/")
+      ;; (defvar common-lisp-hyperspec--reader-macros nil)
+      ;; (defvar common-lisp-hyperspec--format-characters nil)
 
-      ;;   (defun common-lisp-hyperspec (symbol-name)
-      ;;     (interactive (list (common-lisp-hyperspec-read-symbol-name)))
-      ;;     (let ((name (common-lisp-hyperspec--strip-cl-package
-      ;;                  (downcase symbol-name))))
-      ;;       (cl-maplist (lambda (entry)
-      ;;                     (eww-open-file (concat common-lisp-hyperspec-root "Body/"
-      ;;                                            (car entry)))
-      ;;                     (when (cdr entry)
-      ;;                       (sleep-for 1.5)))
-      ;;                   (or (common-lisp-hyperspec--find name)
-      ;;                       (error "The symbol `%s' is not defined in Common Lisp"
-      ;;                              symbol-name)))))
-
-      ;;   (defun common-lisp-hyperspec-lookup-reader-macro (macro)
-      ;;     (interactive
-      ;;      (list
-      ;;       (let ((completion-ignore-case t))
-      ;;         (completing-read "Look up reader-macro: "
-      ;;                          common-lisp-hyperspec--reader-macros nil t
-      ;;                          (common-lisp-hyperspec-reader-macro-at-point)))))
-      ;;     (eww-open-file
-      ;;      (concat common-lisp-hyperspec-root "Body/"
-      ;;              (gethash macro common-lisp-hyperspec--reader-macros))))
-
-      ;;   (defun common-lisp-hyperspec-format (character-name)
-      ;;     (interactive (list (common-lisp-hyperspec--read-format-character)))
+      ;; (defun common-lisp-hyperspec (symbol-name)
+      ;;   (interactive (list (common-lisp-hyperspec-read-symbol-name)))
+      ;;   (let ((name (common-lisp-hyperspec--strip-cl-package
+      ;;                (downcase symbol-name))))
       ;;     (cl-maplist (lambda (entry)
-      ;;                   (eww-open-file (common-lisp-hyperspec-section (car entry))))
-      ;;                 (or (gethash character-name
-      ;;                              common-lisp-hyperspec--format-characters)
+      ;;                   (eww-open-file (concat common-lisp-hyperspec-root "Body/"
+      ;;                                          (car entry)))
+      ;;                   (when (cdr entry)
+      ;;                     (sleep-for 1.5)))
+      ;;                 (or (common-lisp-hyperspec--find name)
       ;;                     (error "The symbol `%s' is not defined in Common Lisp"
-      ;;                            character-name))))
+      ;;                            symbol-name)))))
 
-      ;;   (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
-      ;;     (let ((buf (current-buffer)))
-      ;;       ad-do-it
-      ;;       (switch-to-buffer buf)
-      ;;       (pop-to-buffer "*eww*")))
+      ;; (defun common-lisp-hyperspec-lookup-reader-macro (macro)
+      ;;   (interactive
+      ;;    (list
+      ;;     (let ((completion-ignore-case t))
+      ;;       (completing-read "Look up reader-macro: "
+      ;;                        common-lisp-hyperspec--reader-macros nil t
+      ;;                        (common-lisp-hyperspec-reader-macro-at-point)))))
+      ;;   (eww-open-file
+      ;;    (concat common-lisp-hyperspec-root "Body/"
+      ;;            (gethash macro common-lisp-hyperspec--reader-macros))))
 
-      ;;   (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
-      ;;     (let ((buf (current-buffer)))
-      ;;       ad-do-it
-      ;;       (switch-to-buffer buf)
-      ;;       (pop-to-buffer "*eww*")))
+      ;; (defun common-lisp-hyperspec-format (character-name)
+      ;;   (interactive (list (common-lisp-hyperspec--read-format-character)))
+      ;;   (cl-maplist (lambda (entry)
+      ;;                 (eww-open-file (common-lisp-hyperspec-section (car entry))))
+      ;;               (or (gethash character-name
+      ;;                            common-lisp-hyperspec--format-characters)
+      ;;                   (error "The symbol `%s' is not defined in Common Lisp"
+      ;;                          character-name))))
 
-      ;;   (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
-      ;;     (let ((buf (current-buffer)))
-      ;;       ad-do-it
-      ;;       (switch-to-buffer buf)
-      ;;       (pop-to-buffer "*eww*"))))
+      ;; (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
+      ;;   (let ((buf (current-buffer)))
+      ;;     ad-do-it
+      ;;     (switch-to-buffer buf)
+      ;;     (pop-to-buffer "*eww*")))
+
+      ;; (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
+      ;;   (let ((buf (current-buffer)))
+      ;;     ad-do-it
+      ;;     (switch-to-buffer buf)
+      ;;     (pop-to-buffer "*eww*")))
+
+      ;; (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
+      ;;   (let ((buf (current-buffer)))
+      ;;     ad-do-it
+      ;;     (switch-to-buffer buf)
+      ;;     (pop-to-buffer "*eww*")))
     #+END_SRC
 *** slime
     #+BEGIN_SRC emacs-lisp
@@ -869,7 +876,10 @@
       (defun my/neotree-toggle ()
         (interactive)
         (let ((default-directory (locate-dominating-file default-directory ".git")))
-          (neotree-toggle)))
+          (if (and (fboundp 'neo-global--window-exists-p)
+                   (neo-global--window-exists-p))
+              (neotree-hide)
+            (neotree-dir default-directory))))
 
       (global-set-key (kbd "C-q") 'my/neotree-toggle)
 
@@ -884,17 +894,17 @@
                (and
                 (equal name 'open)
                 (insert
-                 (format "%s "
+                 (format " %s "
                          (all-the-icons-icon-for-dir file-name "down"))))
                (and
                 (equal name 'close)
                 (insert
-                 (format "%s "
+                 (format " %s "
                          (all-the-icons-icon-for-dir file-name "right"))))
                (and
                 (equal name 'leaf)
                 (insert
-                 (format "%s "
+                 (format " %s "
                          (all-the-icons-icon-for-file file-name))))))))
     #+END_SRC
 *** nyan-mode
@@ -909,6 +919,35 @@
           (setq nyan-cat-face-number 4)
           (setq nyan-animate-nyancat t)))
     #+END_SRC
+** Project
+*** projectile
+    #+begin_src emacs-lisp
+      (eval-and-compile
+        (el-get-bundle 'projectile))
+
+      (global-set-key (kbd "C-c p") 'projectile-command-map)
+
+      (autoload 'projectile-mode "projectile" nil t)
+      (autoload 'projectile-command-map "projectile" nil t)
+
+      (add-hook 'emacs-startup-hook (lambda ()
+                                      (projectile-mode +1)
+                                      (my/reaload-projectile-known-projects)))
+
+      (eval-and-compile
+        (require 'projectile)
+        (defun my/reaload-projectile-known-projects ()
+          (interactive)
+          (when (executable-find "ghq")
+            (setq projectile-known-projects (mapcar
+                                             (lambda (x)
+                                               (abbreviate-file-name (concat x "/")))
+                                             (split-string (shell-command-to-string "ghq list --full-path")))))))
+
+      (with-eval-after-load 'projectile
+        (eval-and-compile
+          (setq projectile-switch-project-action 'projectile-dired)))
+    #+end_src
 ** Refactor
 *** emr
     #+BEGIN_SRC emacs-lisp
@@ -1019,22 +1058,7 @@
     #+begin_src emacs-lisp
       (eval-and-compile
         (require 'counsel)
-
-        (defun my/counsel-fzf ()
-          (interactive)
-          (let ((default-directory (locate-dominating-file default-directory ".git")))
-            (counsel-fzf)))
-
-        (defun my/counsel-rg ()
-          (interactive)
-          (let ((symbol (thing-at-point 'symbol 'no-properties))
-                (default-directory (locate-dominating-file default-directory ".git")))
-            (counsel-rg symbol)))
-
         (global-set-key (kbd "C-x m") 'counsel-compile)
-        (global-set-key (kbd "C-c k") 'my/counsel-rg)
-        (global-set-key (kbd "M-p") 'my/counsel-fzf)
-
         (counsel-mode 1))
     #+end_src
 *** ivy
@@ -1047,23 +1071,23 @@
         (eval-and-compile
           (setq ivy-use-virtual-buffers t)))
     #+end_src
-*** ivy-ghq
+*** TODO ivy-ghq
     #+BEGIN_SRC emacs-lisp
-      (eval-and-compile
-        (el-get-bundle ivy-ghq
-          :url "https://github.com/analyticd/ivy-ghq.git"
-          :features ivy-ghq))
+      ;; (eval-and-compile
+      ;;   (el-get-bundle ivy-ghq
+      ;;     :url "https://github.com/analyticd/ivy-ghq.git"
+      ;;     :features ivy-ghq))
 
-      (defun my/ivy-ghq-open-and-fzf ()
-        (interactive)
-        (ivy-ghq-open)
-        (counsel-fzf))
+      ;; (defun my/ivy-ghq-open-and-fzf ()
+      ;;   (interactive)
+      ;;   (ivy-ghq-open)
+      ;;   (counsel-fzf))
 
-      (global-set-key (kbd "M-o") 'my/ivy-ghq-open-and-fzf)
+      ;; (global-set-key (kbd "M-o") 'my/ivy-ghq-open-and-fzf)
 
-      (with-eval-after-load 'ivy-ghq
-        (eval-and-compile
-          (setq ivy-ghq-short-list t)))
+      ;; (with-eval-after-load 'ivy-ghq
+      ;;   (eval-and-compile
+      ;;     (setq ivy-ghq-short-list t)))
     #+END_SRC
 *** ivy-rich
     #+BEGIN_SRC emacs-lisp
@@ -1103,7 +1127,7 @@
     #+END_SRC
 *** dap-mode
     #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
+      (eval-and-compile
         (el-get-bundle dap-mode))
 
       (add-hook 'dap-stopped-hook (lambda () (call-interactively #'dap-hydra)))
@@ -1465,7 +1489,7 @@
     #+end_src
 *** ddskk
     #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
+      (eval-and-compile
         (el-get-bundle 'ddskk))
 
       (autoload 'skk-mode "ddskk")
@@ -1783,7 +1807,7 @@
    #+end_src
 ** org-generate
    #+begin_src emacs-lisp
-     (eval-when-compile
+     (eval-and-compile
        (el-get-bundle 'org-generate))
 
      (with-eval-after-load 'org-generate
@@ -1791,12 +1815,12 @@
          (setq org-generate-file `,(locate-user-emacs-file "yasnippets.org"))
          (setq org-generate-root "yasnippets")))
    #+end_src
-** org-pomodoro
+** TODO org-pomodoro
    #+begin_src emacs-lisp
-     (eval-when-compile
-       (el-get-bundle "marcinkoziej/org-pomodoro"))
+     ;; (eval-when-compile
+     ;;   (el-get-bundle "marcinkoziej/org-pomodoro"))
 
-     (with-eval-after-load 'org-pomodoro)
+     ;; (with-eval-after-load 'org-pomodoro)
    #+end_src
 ** TODO org-roam
    #+begin_src emacs-lisp
@@ -1849,12 +1873,13 @@
    #+END_SRC
 ** my/before-set-auto-mode
    #+BEGIN_SRC emacs-lisp
-     (defun my/before-set-auto-mode ()
-       (when (or (and buffer-file-name
-                      (> (or (file-attribute-size (file-attributes buffer-file-name)) 0) 1000000))
-                 (> (line-number-at-pos (point-max)) 100000))
-         (prog1 t
-           (prog-mode))))
+     ;; (defun my/before-set-auto-mode ()
+     ;;   (when (or (and buffer-file-name
+     ;;                  (> (or (file-attribute-size (file-attributes buffer-file-name)) 0) 1000000))
+     ;;             (> (line-number-at-pos (point-max)) 100000))
+     ;;     (prog1 t
+     ;;       (prog-mode))))
+
      ;; (advice-add 'set-auto-mode :before-until my/before-set-auto-mode)
    #+END_SRC
 ** my/reload-major-mode
