@@ -1,0 +1,1923 @@
+#+title: Configurations for GNU Emacs
+#+author: takeokunn
+#+email: bararararatty@gmail.com
+#+startup: content
+#+startup: nohideblocks
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://www.pirilampo.org/styles/readtheorg/css/htmlize.css"/>
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://www.pirilampo.org/styles/readtheorg/css/readtheorg.css"/>
+#+HTML_HEAD: <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+#+HTML_HEAD: <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="https://www.pirilampo.org/styles/lib/js/jquery.stickytableheaders.min.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="https://www.pirilampo.org/styles/readtheorg/js/readtheorg.js"></script>
+
+* はじめに
+** 基本情報
+   - repo: [[http://github.com/takeokunn/.emacs.d][takeokunn/.emacs.d]]
+   - twitter: [[https://twitter.com/takeokunn][たけてぃ@takeokunn]]
+   - blog: [[https://takeokunn.xyz][https://takeokunn.xyz]]
+* Initialize
+** leaf
+   #+BEGIN_SRC emacs-lisp
+     (eval-and-compile
+       (when (or load-file-name byte-compile-current-file)
+         (setq user-emacs-directory
+               (expand-file-name
+                (file-name-directory (or load-file-name byte-compile-current-file))))))
+
+     (eval-and-compile
+       (customize-set-variable
+        'package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                            ("melpa" . "https://melpa.org/packages/")
+                            ("org" . "https://orgmode.org/elpa/")))
+       (package-initialize)
+       (unless (package-installed-p 'leaf)
+         (package-refresh-contents)
+         (package-install 'leaf))
+
+       (leaf leaf-keywords
+         :ensure t
+         :init
+         ;; optional packages if you want to use :hydra, :el-get, :blackout,,,
+         (leaf hydra :ensure t)
+         (leaf el-get :ensure t)
+         ;; (leaf blackout :ensure t)
+
+         :config
+         ;; initialize leaf-keywords.el
+         (leaf-keywords-init)))
+   #+END_SRC
+** utility
+   #+BEGIN_SRC emacs-lisp
+     (leaf dash :ensure t)
+     (leaf dash-functional :ensure t)
+     (leaf s :ensure t)
+     (leaf f :ensure t)
+     (leaf ht :ensure t)
+     (leaf general :ensure t)
+   #+END_SRC
+* Basic
+** early-init
+   #+BEGIN_SRC emacs-lisp
+     (if (version< emacs-version "27")
+         (progn
+           (menu-bar-mode -1)
+           (tool-bar-mode -1)
+           (toggle-scroll-bar -1)))
+   #+END_SRC
+** スタートアップメッセージを非表示
+   #+BEGIN_SRC emacs-lisp
+     (setq inhibit-startup-message t)
+   #+END_SRC
+** 末尾のスペースを可視化する
+   特定のmode以外末尾のスペースを可視化するようにした。
+   #+BEGIN_SRC emacs-lisp
+     (setq-default show-trailing-whitespace t)
+
+     (dolist
+         (mode '(comint-mode
+                 eshell-mode
+                 eww-mode
+                 term-mode
+                 twittering-mode
+                 minibuffer-inactive-mode
+                 dashboard-mode))
+       (add-hook (intern (concat (symbol-name mode) "-hook"))
+                 '(lambda () (setq show-trailing-whitespace nil))))
+   #+END_SRC
+** 行番号を表示する
+   #+BEGIN_SRC emacs-lisp
+     (global-linum-mode t)
+   #+END_SRC
+** 自動生成ファイルを無効にする
+   #+BEGIN_SRC emacs-lisp
+     (setq make-backup-files nil)
+     (setq auto-save-default nil)
+     (setq auto-save-list-file-prefix nil)
+     (setq create-lockfiles nil)
+   #+END_SRC
+** C-kで行削除
+   #+BEGIN_SRC emacs-lisp
+     (setq kill-whole-line t)
+   #+END_SRC
+** カッコの中をハイライトする
+   #+BEGIN_SRC emacs-lisp
+     (show-paren-mode t)
+     (setq-default show-paren-style 'mixed)
+   #+END_SRC
+** カッコが自動的に作られるようにする
+   #+BEGIN_SRC emacs-lisp
+     (electric-pair-mode 1)
+   #+END_SRC
+** time locale
+   #+BEGIN_SRC emacs-lisp
+     (setq system-time-locale "C")
+   #+END_SRC
+** Font
+   #+BEGIN_SRC emacs-lisp
+     (set-fontset-font t 'japanese-jisx0208 "TakaoPGothic")
+     (add-to-list 'face-font-rescale-alist '(".*Takao P.*" . 0.85))
+   #+END_SRC
+** GC/Memory
+   #+BEGIN_SRC emacs-lisp
+     ;;; gcc
+     (setq gc-cons-threshold (* 128 1024 1024))
+     (setq garbage-collection-messages t)
+
+     ;;; memory
+     (setq read-process-output-max (* 4 1024 1024))
+   #+END_SRC
+** indent
+   #+BEGIN_SRC emacs-lisp
+     (setq-default indent-tabs-mode nil)
+   #+END_SRC
+** keybind
+   #+BEGIN_SRC emacs-lisp
+     (keyboard-translate ?\C-h ?\C-?)
+
+     (general-define-key
+      "M-¥" (lambda () (interactive) (insert "\\"))
+      "C-h" 'backward-delete-char
+      "C-z" 'undo
+      "C-?" 'help-command
+      "C-m" 'set-mark-command
+      "C-a" 'back-to-indentation
+      "C-c i" 'find-function
+      "C-x C-o" 'other-window
+      "C-x C-k" nil
+      "C-x C-c" nil)
+   #+END_SRC
+** ビープ音を消す
+   #+begin_src emacs-lisp
+     (setq ring-bell-function 'ignore)
+   #+end_src
+** デフォルトのpathをかえる
+   #+begin_src emacs-lisp
+     (setq default-directory "~/")
+     (setq command-line-default-directory "~/")
+   #+end_src
+** coding system
+   #+begin_src emacs-lisp
+     ;; language and locale
+     (set-language-environment "Japanese")
+     (setq system-time-locale "C")
+
+     ;; coding system
+     (set-default-coding-systems 'utf-8-unix)
+     (prefer-coding-system 'utf-8-unix)
+     (set-selection-coding-system 'utf-8-unix)
+
+     ;; prefer-coding-system take effect equally to follows
+     (set-buffer-file-coding-system 'utf-8-unix)
+     (set-file-name-coding-system 'utf-8-unix)
+     (set-terminal-coding-system 'utf-8-unix)
+     (set-keyboard-coding-system 'utf-8-unix)
+     (setq locale-coding-system 'utf-8-unix)
+   #+end_src
+** global-auto-revert-mode
+   #+begin_src emacs-lisp
+     (global-auto-revert-mode t)
+   #+end_src
+** yes/no to y/n
+   #+begin_src emacs-lisp
+     (fset 'yes-or-no-p 'y-or-n-p)
+   #+end_src
+** killできないようにする
+   #+begin_src emacs-lisp
+     (with-current-buffer "*scratch*"
+       (emacs-lock-mode 'kill))
+     (with-current-buffer "*Messages*"
+       (emacs-lock-mode 'kill))
+   #+end_src
+* Major/Minor Mode
+** c++-mode
+   #+begin_src emacs-lisp
+     (leaf c++-mode
+       :hook (c++-mode-hook . lsp))
+   #+end_src
+** c-mode
+   #+begin_src emacs-lisp
+     (leaf c-mode
+       :hook (c-mode-hook . lsp))
+   #+end_src
+** clojure-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf clojure-mode
+       :ensure t
+       :mode ("\\.clj$" "\\.cljs$"))
+   #+END_SRC
+** cmake-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf cmake-mode
+       :ensure t
+       :mode ("\\.cmake$"))
+   #+END_SRC
+** coffee-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf coffee-mode
+       :ensure t
+       :mode ("\\.coffee$"))
+   #+END_SRC
+** csharp-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf csharp-mode
+       :ensure t
+       :mode ("\\.cs$"))
+   #+END_SRC
+** csv-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf csv-mode :ensure t)
+   #+END_SRC
+** dart-mode
+   #+begin_src emacs-lisp
+     (leaf dart-mode
+       :ensure t
+       :after reformatter
+       :hook
+       (dart-mode-hook . lsp)
+       :bind
+       (:dart-mode-map
+        ("C-c C-o" . dart-format-buffer))
+       :config
+       (reformatter-define dart-format
+         :program "dart"
+         :args '("format")))
+   #+end_src
+** dhall-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf dhall-mode
+       :ensure t
+       :mode ("\\dhall$"))
+   #+END_SRC
+** docker-compose-mode
+   #+begin_src emacs-lisp
+     (leaf docker-compose-mode
+       :ensure t
+       :mode ("\\docker-compose*"))
+   #+end_src
+** dockerfile-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf dockerfile-mode
+       :ensure t
+       :mode ("Dockerfile\\'"))
+   #+END_SRC
+** emmet-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf emmet-mode
+       :ensure t
+       :after web-mode
+       :hook (web-mode-hook . emmet-mode)
+       ;; :config
+       ;; (define-key emmet-mode-keymap (kbd "C-j") nil)
+       ;; (define-key emmet-mode-keymap (kbd "M-j") 'emmet-expand-line)
+       )
+   #+END_SRC
+** fish-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf fish-mode
+       :ensure t
+       :mode ("\\.fish$")
+       :defvar fish-enable-auto-indent
+       :config
+       (setq fish-enable-auto-indent t))
+   #+END_SRC
+** git-modes
+   #+begin_src emacs-lisp
+     (leaf git-modes
+       :ensure t
+       :mode ("\\.dockerignore$"))
+   #+end_src
+** glsl-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf glsl-mode
+       :ensure t
+       :mode ("\\.vsh$" "\\.fsh$"))
+   #+END_SRC
+** go-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf go-mode
+       :ensure t
+       :hook ((go-mode-hook . lsp)
+              (before-save-hook . gofmt-before-save))
+       :mode ("\\.go$")
+       :custom (gofmt-command . "goimports"))
+   #+END_SRC
+** gradle-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf gradle-mode
+       :ensure t
+       :mode (("\\.gradle$" . java-mode)))
+   #+END_SRC
+** graphql-mode
+   #+begin_src emacs-lisp
+     (leaf graphql-mode
+       :ensure t)
+   #+end_src
+** haskell-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf haskell-mode
+       :ensure t
+       :mode ("\\.hs$" "\\.cable$"))
+   #+END_SRC
+** js2-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf js2-mode
+       :ensure t
+       :custom
+       (js2-strict-missing-semi-warning . nil)
+       :mode ("\\.js$")
+       :hook ((js2-mode-hook . js2-refactor-mode)
+              (js2-mode-hook . lsp)))
+   #+END_SRC
+** json-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf json-mode
+       :ensure t
+       :mode ("\\.json$"))
+   #+END_SRC
+** lisp-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf lisp-mode
+       :mode ("Cask" "\\.lemrc?$"))
+   #+END_SRC
+** markdown-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf markdown-mode
+       :ensure t
+       :mode ("\\.md$" "\\.markdown$")
+       :bind (:markdown-mode-map
+              ("C-m" . nil)))
+   #+END_SRC
+** nginx-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf nginx-mode
+       :ensure t
+       :mode ("/nginx/sites-\\(?:available\\|enabled\\)/"))
+   #+END_SRC
+** php-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf php-mode
+       :ensure t
+       :hook (php-mode-hook . lsp)
+       :mode ("\\.php$"))
+   #+END_SRC
+** phpt-mode
+   #+begin_src emacs-lisp
+     (leaf phpt-mode
+       :ensure t
+       :mode ("\\.phpt$"))
+   #+end_src
+** plantuml-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf plantuml-mode
+       :ensure t
+       :mode ("\\.pu$"))
+   #+END_SRC
+** prisma-mode
+   #+begin_src emacs-lisp
+     (leaf prisma-mode
+       :el-get (prisma-mode
+                :url "https://github.com/pimeys/emacs-prisma-mode.git"
+                :features prisma-mode))
+   #+end_src
+** processing-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf processing-mode
+       :ensure t
+       :mode ("\\.pde$")
+       :config
+       (with-eval-after-load 'processing-mode
+         (setq-default processing-location "/opt/processing/processing-java")
+         (setq-default processing-output-dir "/tmp")))
+   #+END_SRC
+** python-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf python-mode
+       :ensure t
+       :mode ("\\.py$")
+       :interpreter ("python"))
+   #+END_SRC
+** ruby-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf ruby-mode
+       :ensure t
+       :mode ("\\.rb$" "Capfile" "Gemfile" "Schemafile" ".pryrc" "Fastfile" "Matchfile")
+       ;; :hook ((ruby-mode-hook . lsp))
+       :config
+       (with-eval-after-load 'ruby-mode
+         (setq-default ruby-insert-encoding-magic-comment nil)))
+   #+END_SRC
+** rust-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf rust-mode
+       :ensure t
+       :mode ("\\.rs$"))
+   #+END_SRC
+** scala-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf scala-mode
+       :ensure t
+       :mode ("\\.scala$"))
+   #+END_SRC
+** TODO scheme-mode
+   #+BEGIN_SRC emacs-lisp
+     ;; (setq-default gosh-program-name "/usr/local/bin/gosh -i")
+
+     ;; (general-def inferior-scheme-mode-map
+     ;;   "C-p" 'comint-previous-input
+     ;;   "C-n" 'comint-next-input)
+   #+END_SRC
+** slim-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf slim-mode
+       :ensure t
+       :mode ("\\.slim$"))
+   #+END_SRC
+** solidity-mode
+   #+begin_src emacs-lisp
+     (leaf solidity-mode
+       :ensure t)
+   #+end_src
+** ssh-config-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf ssh-config-mode
+       :ensure t
+       :mode ("/path-to-your-ssh/config\\$"))
+   #+END_SRC
+** sql-mode
+   #+begin_src emacs-lisp
+     (leaf sql
+       :ensure t
+       :setq
+       (sql-indent-offset . t))
+   #+end_src
+** swift-mode
+   #+begin_src emacs-lisp
+     (leaf swift-mode
+       :ensure t)
+   #+end_src
+** terraform-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf terraform-mode
+       :ensure t)
+   #+END_SRC
+** toml-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf toml-mode
+       :ensure t
+       :mode ("\\.toml$"))
+   #+END_SRC
+** typescript-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf typescript-mode
+       :ensure t
+       :init
+       (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
+       (add-to-list 'auto-mode-alist (cons (rx ".tsx" string-end) #'typescript-tsx-mode))
+       :hook
+       ((typescript-mode-hook . lsp)
+        (typescript-tsx-mode-hook . lsp))
+       :mode
+       ("\\.ts$"))
+   #+END_SRC
+** vue-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf vue-mode
+       :ensure t
+       :mode ("\\.vue$"))
+   #+END_SRC
+** vimrc-mode
+   #+begin_src emacs-lisp
+     (leaf vimrc-mode
+       :ensure t
+       :mode ("\\.vim\\(rc\\)?\\'")
+       :hook (vimrc-mode-hook . lsp))
+   #+end_src
+** web-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf web-mode
+       :ensure t
+       :setq
+       (web-mode-engines-alist . '(("blade" . "\\.blade\\.php\\.")))
+       :mode ("\\.html?\\'" "\\.erb\\'" "\\.gsp\\'"))
+   #+END_SRC
+** yaml-mode
+   #+BEGIN_SRC emacs-lisp
+     (leaf yaml-mode
+       :ensure t
+       :mode ("\\.ya?ml$" "phpstan.neon"))
+   #+END_SRC
+* Lisp
+** Basic
+*** paredit
+    #+BEGIN_SRC emacs-lisp
+      (leaf paredit
+        :ensure t
+        :commands enable-paredit-mode
+        :hook ((emacs-lisp-mode-hook . enable-paredit-mode)
+               (lisp-mode-hook . enable-paredit-mode)
+               (lisp-interacton-mode-hook . enable-paredit-mode)
+               (scheme-mode-hook . enable-paredit-mode)
+               (slime-mode-hook . enable-paredit-mode))
+        :bind
+        ("C-<right>" . paredit-forward-slurp-sexp)
+        ("C-c f" . paredit-forward-slurp-sexp)
+        ("C-<left>" . paredit-forward-barf-sexp)
+        ("C-c b" . paredit-forward-barf-sexp))
+    #+END_SRC
+*** rainbow-delimiters
+    #+BEGIN_SRC emacs-lisp
+      (leaf rainbow-delimiters
+        :ensure t
+        :hook (prog-mode-hook))
+    #+END_SRC
+** CommonLisp
+*** HyperSpec
+    #+BEGIN_SRC emacs-lisp
+      (with-eval-after-load 'hyperspec
+        (general-define-key "C-c h" 'hyperspec-lookup)
+        (defvar common-lisp-hyperspec-root "~/.roswell/HyperSpec/")
+        (defvar common-lisp-hyperspec--reader-macros nil)
+        (defvar common-lisp-hyperspec--format-characters nil)
+
+        (defun common-lisp-hyperspec (symbol-name)
+          (interactive (list (common-lisp-hyperspec-read-symbol-name)))
+          (let ((name (common-lisp-hyperspec--strip-cl-package
+                       (downcase symbol-name))))
+            (cl-maplist (lambda (entry)
+                          (eww-open-file (concat common-lisp-hyperspec-root "Body/"
+                                                 (car entry)))
+                          (when (cdr entry)
+                            (sleep-for 1.5)))
+                        (or (common-lisp-hyperspec--find name)
+                            (error "The symbol `%s' is not defined in Common Lisp"
+                                   symbol-name)))))
+
+        (defun common-lisp-hyperspec-lookup-reader-macro (macro)
+          (interactive
+           (list
+            (let ((completion-ignore-case t))
+              (completing-read "Look up reader-macro: "
+                               common-lisp-hyperspec--reader-macros nil t
+                               (common-lisp-hyperspec-reader-macro-at-point)))))
+          (eww-open-file
+           (concat common-lisp-hyperspec-root "Body/"
+                   (gethash macro common-lisp-hyperspec--reader-macros))))
+
+        (defun common-lisp-hyperspec-format (character-name)
+          (interactive (list (common-lisp-hyperspec--read-format-character)))
+          (cl-maplist (lambda (entry)
+                        (eww-open-file (common-lisp-hyperspec-section (car entry))))
+                      (or (gethash character-name
+                                   common-lisp-hyperspec--format-characters)
+                          (error "The symbol `%s' is not defined in Common Lisp"
+                                 character-name))))
+
+        (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
+          (let ((buf (current-buffer)))
+            ad-do-it
+            (switch-to-buffer buf)
+            (pop-to-buffer "*eww*")))
+
+        (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
+          (let ((buf (current-buffer)))
+            ad-do-it
+            (switch-to-buffer buf)
+            (pop-to-buffer "*eww*")))
+
+        (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
+          (let ((buf (current-buffer)))
+            ad-do-it
+            (switch-to-buffer buf)
+            (pop-to-buffer "*eww*"))))
+    #+END_SRC
+*** slime
+    #+BEGIN_SRC emacs-lisp
+      (with-eval-after-load 'slime
+        (load (expand-file-name "~/.roswell/helper.el"))
+        (defvar slime-net-coding-system 'utf-8-unix))
+    #+END_SRC
+*** takeokunn/slime-history
+    #+BEGIN_SRC emacs-lisp
+      (defun takeokunn/slime-history ()
+        (interactive)
+        (insert
+         (completing-read
+          "choice history: "
+          (-distinct (read (f-read-text "~/.slime-history.eld"))))))
+
+      (general-define-key
+       :keymaps 'slime-repl-mode-map
+       "C-c C-r" 'takeokunn/slime-history)
+    #+END_SRC
+** EmacsLisp
+*** elisp-slime-nav
+    #+BEGIN_SRC emacs-lisp
+      (leaf elisp-slime-nav :ensure t)
+    #+END_SRC
+*** nameless
+    #+BEGIN_SRC emacs-lisp
+      (leaf nameless
+        :ensure t
+        :hook (emacs-lisp-mode-hook))
+    #+END_SRC
+*** takeokunn/ielm-history
+    #+BEGIN_SRC emacs-lisp
+      (with-eval-after-load 'ielm
+        (defun takeokunn/ielm-history ()
+          (interactive)
+          (insert
+           (completing-read
+            "choice history: "
+            (progn
+              (let ((history nil)
+                    (comint-input-ring nil))
+                (dotimes (index (ring-length comint-input-ring))
+                  (push (ring-ref comint-input-ring index) history))
+                history)))))
+
+        (defun takeokunn/ielm-write-history-on-exit (process event)
+          (interactive)
+          (comint-write-input-ring)
+          (let ((buf (process-buffer process)))
+            (when (buffer-live-p buf)
+              (with-current-buffer buf
+                (insert (format "\nProcess %s %s" process event))))))
+
+        (defun takeokunn/ielm-turn-on-history ()
+          (let ((process (get-buffer-process (current-buffer))))
+            (when process
+              (defvar comint-input-ring nil)
+              (defvar comint-input-ring-file-name (concat (file-remote-p default-directory) "~/.ielm-history"))
+              (defvar comint-input-ring-size 100000)
+              (defvar comint-input-ignoredups t)
+              (comint-read-input-ring)
+              (add-hook 'kill-buffer-hook #'comint-write-input-ring)
+              (general-define-key
+               :keymaps 'ielm-map
+               "C-c C-r" 'takeokunn/ielm-history)
+
+              (set-process-sentinel process #'takeokunn/ielm-write-history-on-exit))))
+
+        (add-hook 'ielm-mode-hook 'takeokunn/ielm-turn-on-history))
+    #+END_SRC
+** Clojure
+*** cider
+    #+BEGIN_SRC emacs-lisp
+      (leaf cider
+        :ensure t)
+    #+END_SRC
+* Awesome Package
+** Theme
+*** all-the-icons
+    #+BEGIN_SRC emacs-lisp
+      (leaf all-the-icons
+        :if window-system
+        :ensure t)
+    #+END_SRC
+*** all-the-icons-dired
+    #+begin_src emacs-lisp
+      (leaf all-the-icons-dired
+        :if window-system
+        :after (all-the-icons)
+        :ensure t
+        :hook (dired-mode-hook . all-the-icons-dired-mode))
+    #+end_src
+*** all-the-icons-ivy
+    #+BEGIN_SRC emacs-lisp
+      (leaf all-the-icons-ivy
+        :if window-system
+        :ensure t
+        :after all-the-icons
+        :config
+        (all-the-icons-ivy-setup))
+    #+END_SRC
+*** dashboard
+    #+BEGIN_SRC emacs-lisp
+      (leaf dashboard
+        :ensure t
+        :custom
+        (dashboard-after-initialize-hook . (lambda ()
+                                             (with-current-buffer "*dashboard*"
+                                               (emacs-lock-mode 'kill))))
+        :config
+        (dashboard-setup-startup-hook))
+    #+END_SRC
+*** doom-theme
+    #+BEGIN_SRC emacs-lisp
+      (leaf doom-themes
+        :ensure t
+        :after neotree
+        :custom-face ((doom-modeline-bar quote ((t (:background "#6272a4")))))
+        :config
+        (load-theme 'tango-dark t)
+        (doom-themes-neotree-config)
+        (doom-themes-org-config))
+    #+END_SRC
+*** doom-modeline
+    #+BEGIN_SRC emacs-lisp
+      (leaf doom-modeline
+        :ensure t
+        :hook (after-init-hook)
+        :custom ((doom-modeline-buffer-file-name-style . 'truncate-with-project)
+                 (doom-modeline-icon . t)
+                 (doom-modeline-major-mode-icon . nil)
+                 (doom-modeline-minor-modes . nil))
+        :config
+        (line-number-mode 0)
+        (column-number-mode 0))
+    #+END_SRC
+*** hl-line
+    #+BEGIN_SRC emacs-lisp
+      (leaf hl-line
+        :ensure t
+        :init
+        (global-hl-line-mode)
+        :config
+        (set-face-background 'hl-line "#444642")
+        (set-face-attribute 'hl-line nil :inherit nil))
+    #+END_SRC
+*** neotree
+    #+BEGIN_SRC emacs-lisp
+      (leaf neotree
+        :ensure t
+        :after all-the-icons
+        :custom (neo-theme quote nerd2)
+        :setq-default ((neo-show-hidden-files . t)
+                       (neo-window-fixed-size))
+        :config
+        (defun takeokunn/neotree-toggle ()
+          (interactive)
+          (let ((default-directory (locate-dominating-file default-directory ".git")))
+            (neotree-toggle)))
+        (if window-system
+            (defun neo-buffer--insert-fold-symbol (name &optional file-name)
+              (or
+               (and
+                (equal name 'open)
+                (insert
+                 (all-the-icons-icon-for-dir file-name "down")))
+               (and
+                (equal name 'close)
+                (insert
+                 (all-the-icons-icon-for-dir file-name "right")))
+               (and
+                (equal name 'leaf)
+                (insert
+                 (format "			%s	"
+                         (all-the-icons-icon-for-file file-name)))))))
+        :bind ("C-q" . takeokunn/neotree-toggle))
+    #+END_SRC
+*** nyan-mode
+    #+BEGIN_SRC emacs-lisp
+      (leaf nyan-mode
+        :ensure t
+        :after doom-modeline
+        :hook (doom-modeline-mode-hook)
+        :custom ((nyan-cat-face-number . 4)
+                 (nyan-animate-nyancat . t)))
+    #+END_SRC
+*** tab-mode
+    #+begin_src emacs-lisp
+      (leaf tab-bar-mode
+        :after ivy
+        :bind
+        (("C-x t n" . tab-next)
+         ("C-x t b" . tab-bar-switch-to-tab))
+        :config
+        (tab-bar-mode 1)
+        ;; ivy integration
+        (defun advice-completing-read-to-ivy (orig-func &rest args)
+          (interactive
+           (let* ((recent-tabs (mapcar (lambda (tab)
+                                         (alist-get 'name tab))
+                                       (tab-bar--tabs-recent))))
+             (list (ivy-completing-read "Switch to tab by name (default recent): "
+                                        recent-tabs nil nil nil nil recent-tabs))))
+          (apply orig-func args))
+        (advice-add #'tab-bar-switch-to-tab :around #'advice-completing-read-to-ivy))
+    #+end_src
+** Refactor
+*** emr
+    #+BEGIN_SRC emacs-lisp
+      (leaf emr
+        :ensure t
+        :bind ("M-RET" . emr-show-refactor-menu))
+    #+END_SRC
+** Completion
+*** company
+    #+BEGIN_SRC emacs-lisp
+      (leaf company
+        :ensure t
+        :defvar company-backends
+        :init
+        (global-company-mode)
+        :config
+        (add-to-list 'company-backends 'company-yasnippet)
+        :bind
+        (:company-active-map
+         ("C-n" . company-select-next)
+         ("C-p" . company-select-previous)))
+    #+END_SRC
+*** company-box
+    #+begin_src emacs-lisp
+      (leaf company-box
+        :ensure t
+        :after company
+        :hook (company-mode . company-box-mode))
+    #+end_src
+*** company-dockerfile
+    #+begin_src emacs-lisp
+      (leaf company-dockerfile
+        :el-get (company-dockerfile
+                 :url "https://github.com/takeokunn/company-dockerfile.git"
+                 :features company-dockerfile)
+        :config
+        (push 'company-dockerfile company-backends))
+    #+end_src
+*** company-glsl
+    #+BEGIN_SRC emacs-lisp
+      (leaf company-glsl
+        :ensure t
+        :after company
+        :config
+        (add-to-list 'company-backends 'company-glsl))
+    #+END_SRC
+*** company-go
+    #+begin_src emacs-lisp
+      (leaf company-go
+        :ensure t
+        :after (company go-mode)
+        :config
+        (push 'company-go company-backends))
+    #+end_src
+*** company-php
+    #+begin_src emacs-lisp
+      (leaf company-php
+        :ensure t
+        :disabled t
+        :after (company php-mode)
+        :config
+        (push 'company-ac-php-backend company-backends))
+    #+end_src
+*** company-phpactor
+    #+begin_src emacs-lisp
+      (leaf company-phpactor
+        :ensure t
+        :disabled t
+        :after (company phpactor))
+    #+end_src
+*** company-slime
+    #+begin_src emacs-lisp
+      (leaf slime-company
+        :ensure t
+        :after (company slime)
+        :custom ((slime-company-completion . 'fuzzy)
+                 (slime-company-after-completion . 'slime-company-just-one-space))
+        :config (slime-setup '(slime-fancy slime-banner slime-company)))
+    #+end_src
+*** company-c-headers
+    #+begin_src emacs-lisp
+      (leaf company-c-headers
+        :ensure t
+        :after company
+        :defvar company-backends
+        :config
+        (push 'company-c-headers company-backends))
+    #+end_src
+*** company-shell
+    #+begin_src emacs-lisp
+      (leaf company-shell
+        :el-get (company-shell
+                 :url "https://github.com/takeokunn/company-shell.git"
+                 :features company-shell)
+        :config
+        (push 'company-shell company-backends)
+        (push 'company-shell-env company-backends)
+        (push 'company-fish-shell company-backends))
+    #+end_src
+*** company-solidity
+    #+begin_src emacs-lisp
+      (leaf company-solidity
+        :ensure t
+        :disabled t
+        :after company
+        :config
+        (add-to-list 'company-backends 'company-solidity))
+    #+end_src
+*** company-terraform
+    #+begin_src emacs-lisp
+      (leaf company-terraform
+        :ensure t
+        :after company
+        :config
+        (add-to-list 'company-backends 'company-terraform))
+    #+end_src
+** Snippet
+*** yasnippet
+    snippetはこちら [[https://takeokunn.github.io/.emacs.d/yasnippets.html][https://takeokunn.github.io/.emacs.d/yasnippets.html]]
+    #+begin_src emacs-lisp
+      (leaf yasnippet
+        :ensure t
+        :init (yas-global-mode 1)
+        :custom
+        (yas-snippet-dirs . '("~/.emacs.d/yasnippets")))
+    #+end_src
+*** ivy-yasnippet
+    #+begin_src emacs-lisp
+      (leaf ivy-yasnippet
+        :ensure t
+        :after (yasnippet ivy)
+        :bind (("C-c y" . ivy-yasnippet)
+               ("C-c C-y" . ivy-yasnippet)))
+    #+end_src
+** LSP
+*** lsp-mode
+    #+BEGIN_SRC emacs-lisp
+      (leaf lsp-mode
+        :ensure t
+        :after company
+        :custom
+        ((lsp-keymap-prefix . "C-c l")
+         (lsp-prefer-capf . t))
+        :config
+        (push 'company-capf company-backends))
+    #+END_SRC
+*** lsp-ui
+    #+BEGIN_SRC emacs-lisp
+      (leaf lsp-ui
+        :ensure t
+        :after lsp
+        :bind (("M-." . lsp-ui-peek-find-definitions)
+               ("M-?" . lsp-ui-peek-find-implementation))
+        :hook (lsp-mode-hook . lsp-ui)
+        :setq-default
+        ((lsp-ui-doc-enable . t)
+         (lsp-ui-doc-max-height . 15)
+         (lsp-ui-sideline-enable . nil)
+         (lsp-ui-imenu-enable . nil)
+         (lsp-ui-sideline-enable . nil)))
+    #+END_SRC
+*** lsp-dart
+    #+begin_src emacs-lisp
+      (leaf lsp-dart
+        :ensure t
+        :after lsp)
+    #+end_src
+*** lsp-ivy
+    #+begin_src emacs-lisp
+      (leaf lsp-ivy
+        :ensure t
+        :after (lsp-mode counsel))
+    #+end_src
+** DAP
+*** dap-mode
+    #+BEGIN_SRC emacs-lisp
+      (leaf dap-mode
+        :ensure t
+        :after lsp-mode
+        :bind
+        (:dap-mode-map
+         ("C-c d" . dap-breakpoint-toggle))
+        ;; :hook (dap-stopped-hook . (lambda (arg) (call-interactively #'dap-hydra))
+        :config
+        (add-hook 'dap-stopped-hook
+                  (lambda (arg) (call-interactively #'dap-hydra)))
+        (with-eval-after-load 'dap-mode
+          (dap-mode 1)
+          (dap-ui-mode 1)
+          (dap-auto-configure-mode 1)
+          (require 'dap-go)))
+    #+END_SRC
+** Git
+*** magit
+    #+BEGIN_SRC emacs-lisp
+      (leaf magit
+        :ensure t
+        :setq (magit-refresh-status-buffer . nil)
+        :custom (magit-display-buffer-function . #'magit-display-buffer-fullframe-status-v1))
+    #+END_SRC
+*** magit-forge
+    #+begin_src emacs-lisp
+      ;; (leaf forge
+      ;;   :disabled t
+      ;;   :ensure t
+      ;;   :after magit
+      ;;   :setq
+      ;;   (browse-url-browser-function . 'browse-url-default-browser))
+    #+end_src
+*** git-gutter-fringe
+    #+BEGIN_SRC emacs-lisp
+      (leaf git-gutter-fringe
+        :disabled t
+        :ensure t
+        :config
+        (global-git-gutter-mode 1))
+    #+END_SRC
+** Search
+*** swiper
+    #+BEGIN_SRC emacs-lisp
+      (leaf ivy
+        :ensure t
+        :custom (ivy-use-virtual-buffers . t)
+        :config
+        (ivy-mode 1)
+        (ivy-configure 'counsel-M-x :sort-fn 'ivy--sort-by-length))
+
+      (leaf counsel
+        :ensure t
+        :init
+        (eval-and-compile
+          (defun takeokunn/counsel-rg ()
+            (interactive)
+            (let ((symbol (thing-at-point 'symbol 'no-properties))
+                  (default-directory (locate-dominating-file default-directory ".git")))
+              (counsel-rg symbol)))
+          (defun takeokunn/counsel-fzf ()
+            (interactive)
+            (let ((default-directory (locate-dominating-file default-directory ".git")))
+              (counsel-fzf))))
+        :bind
+        (("C-x m" . counsel-compile)
+         ("C-c k" . takeokunn/counsel-rg)
+         ("M-p" . takeokunn/counsel-fzf))
+        :config
+        (counsel-mode 1))
+
+      (leaf swiper
+        :ensure t
+        :init
+        (eval-and-compile
+          (defun takeokunn/swiper ()
+            (interactive)
+            (let ((word (thing-at-point 'symbol 'no-properties)))
+              (swiper word))))
+        :bind (("C-o" . takeokunn/swiper)))
+    #+END_SRC
+*** ivy-ghq
+    #+BEGIN_SRC emacs-lisp
+      (leaf ivy-ghq
+        :el-get (ivy-ghq
+                 :url "https://github.com/analyticd/ivy-ghq.git"
+                 :features ivy-ghq)
+        :preface
+        (defun takeokunn/ivy-ghq-open-and-fzf ()
+          (interactive)
+          (ivy-ghq-open)
+          (counsel-fzf))
+        :after counsel
+        :custom ((ivy-ghq-short-list . t))
+        :defun ivy-ghq-open takeokunn/ivy-ghq-open-and-fzf)
+
+      (general-define-key
+       "M-o" 'takeokunn/ivy-ghq-open-and-fzf)
+    #+END_SRC
+*** ivy-rich
+    #+BEGIN_SRC emacs-lisp
+      (leaf ivy-rich
+        :ensure t
+        :after counsel
+        :config
+        (ivy-rich-mode 1))
+    #+END_SRC
+** Shell
+*** exec-path-from-shell
+    #+BEGIN_SRC emacs-lisp
+      (leaf exec-path-from-shell
+        :ensure t
+        :defun (exec-path-from-shell-initialize)
+        :hook ((after-init-hook . exec-path-from-shell-initialize))
+        :custom
+        (exec-path-from-shell-variables . '("PATH"
+                                            "GEM_HOME"
+                                            "GOROOT"
+                                            "GOPATH")))
+    #+END_SRC
+** Rust
+*** racer
+    #+BEGIN_SRC emacs-lisp
+      (leaf racer
+        :ensure t
+        :after rust-mode
+        :hook (rust-mode-hook
+               (racer-mode-hook . eldoc-mode)))
+    #+END_SRC
+*** TODO rustic
+    #+BEGIN_SRC emacs-lisp
+      ;; (leaf rustic
+      ;;   :ensure t
+      ;;   :after (rust-mode))
+    #+END_SRC
+** Cpp
+*** clang-format
+    #+begin_src emacs-lisp
+      (leaf clang-format
+        :ensure t
+        :hook (before-save-hook . (lambda ()
+                                    (when (member major-mode '(c-mode c++-mode))
+                                      (clang-format-buffer)))))
+    #+end_src
+*** inferior-cling
+    #+begin_src emacs-lisp
+      (leaf inferior-cling
+        :el-get (inferior-cling
+                 :url "https://github.com/brianqq/inferior-cling.git"
+                 :features cling))
+    #+end_src
+** C#
+*** TODO omnisharp
+    #+BEGIN_SRC emacs-lisp
+      ;; (leaf omnisharp
+      ;;   :ensure t
+      ;;   :after company flycheck
+      ;;   :hook (csharp-mode-hook . flycheck-mode)
+      ;;   :config
+      ;;   (add-to-list 'company-backends 'company-omnisharp))
+    #+END_SRC
+** JavaScript/TypeScript
+*** js2-refactor
+    #+BEGIN_SRC emacs-lisp
+      (leaf js2-refactor
+        :ensure t
+        :after typescript-mode js2-mode
+        :hook (js2-mode-hook typescript-mode-hook))
+    #+END_SRC
+*** tree-sitter
+    #+begin_src emacs-lisp
+      (leaf tree-sitter
+        :ensure (t tree-sitter-langs)
+        :after typescript-mode
+        :require tree-sitter-langs
+        :hook (typescript-tsx-mode-hook . tree-sitter-hl-mode)
+        :config
+        (global-tree-sitter-mode)
+
+        ;; for tsx
+        (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx))
+        (tree-sitter-hl-add-patterns 'tsx
+          [(call_expression
+            ;; styled.div``
+            function: (member_expression
+                       object: (identifier) @function.call
+                       (.eq? @function.call "styled"))
+            arguments: ((template_string) @property.definition
+                        (.offset! @property.definition 0 1 0 -1)))
+           (call_expression
+            ;; styled(Component)``
+            function: (call_expression
+                       function: (identifier) @function.call
+                       (.eq? @function.call "styled"))
+            arguments: ((template_string) @property.definition
+                        (.offset! @property.definition 0 1 0 -1)))]))
+    #+end_src
+*** TODO styled-components
+    #+begin_src emacs-lisp
+      ;; (leaf fence-edit
+      ;;   ;; :ensure t
+      ;;   :after (css-mode rx ov)
+      ;;   :el-get (fence-edit
+      ;;            :url "https://github.com/aaronbieber/fence-edit.el.git"
+      ;;            :features fence-edit)
+      ;;   :setq
+      ;;   ((styled-component-start . (rx-to-string '(: (1+ (and (+ word) (0+ "\.") (0+ "(" (+ alpha) ")"))) "`" eol)))
+      ;;    (styled-component-end . (rx-to-string '(: "`;" eol)))
+      ;;    (styled-component-region . (rx-to-string '(: (minimal-match
+      ;;                                                  (seq
+      ;;                                                   (and (1+ (and (+ word) (0+ "\.") (0+ "(" (+ alpha) ")"))) "`")
+      ;;                                                   (or "\n" "\r")
+      ;;                                                   (0+ (+ any) (or "\n" "\r"))
+      ;;                                                   (and "`;" eol))))))
+      ;;    (fence-edit-blocks . `((,styled-component-start ,styled-component-end)))
+      ;;    (fence-edit-default-mode . 'css-mode))
+      ;;   :config
+      ;;   (defun takeokunn/get-component ()
+      ;;     "Get current buffer styled components."
+      ;;     (interactive)
+      ;;     (let (matches match beg end)
+      ;;       (save-match-data
+      ;;         (save-excursion
+      ;;           (goto-char (point-min))
+      ;;           (while (search-forward-regexp styled-component-region nil t 1)
+      ;;             (setq match (match-string-no-properties 0))
+      ;;             (setq beg (match-beginning 0))
+      ;;             (setq end (match-end 0))
+      ;;             (push (list beg end match) matches))))
+      ;;       (reverse matches))))
+    #+end_src
+** Haskell
+*** hindent
+    #+BEGIN_SRC emacs-lisp
+      (leaf hindent
+        :ensure t
+        :after haskell-mode
+        :hook (haskell-mode-hook))
+    #+END_SRC
+** Ruby
+*** robe
+    #+begin_src emacs-lisp
+      (leaf robe
+        :ensure t
+        :after ruby-mode company
+        :hook (ruby-mode-hook)
+        :config
+        (push 'company-robe company-backends))
+    #+end_src
+*** rubocop
+    #+begin_src emacs-lisp
+      (leaf rubocop
+        :ensure t
+        :after ruby-mode
+        :hook (ruby-mode-hook))
+    #+end_src
+*** ruby-refactor
+    #+BEGIN_SRC emacs-lisp
+      (leaf ruby-refactor
+        :ensure t
+        :hook ((ruby-mode-hook . ruby-refactor-mode-launch)))
+    #+END_SRC
+*** inf-ruby
+    #+BEGIN_SRC emacs-lisp
+      (leaf inf-ruby
+        :config
+        (defun takeokunn/irb-history ()
+          (interactive)
+          (insert
+           (completing-read
+            "choose history: "
+            (mapcar #'list (-distinct (s-lines (f-read-text "~/.irb_history")))))))
+        :bind
+        (:inf-ruby-mode-map
+         ("C-c C-r" . takeokunn/irb-history)))
+    #+END_SRC
+
+** SQL
+*** sql-indent
+    #+BEGIN_SRC emacs-lisp
+      (leaf sql-indent
+        :ensure t
+        :after sql-mode
+        :hook (sql-mode-hook . sqlind-minor-mode))
+    #+END_SRC
+** php
+*** phpactor
+    #+begin_src emacs-lisp
+      (leaf phpactor
+        :ensure t
+        :disabled t
+        :after (f php-mode smart-jump)
+        :bind
+        (:php-mode-map
+         ("M-." . phpactor-goto-definition)
+         ("M-?" . phpactor-find-references))
+        :setq
+        ((eldoc-documentation-function . 'phpactor-hover)
+         (phpactor-history-size . 100000))
+        :config
+        (phpactor-smart-jump-register))
+    #+end_src
+*** psysh
+    #+begin_src emacs-lisp
+      (leaf psysh
+        :ensure t
+        :after (php-mode))
+    #+end_src
+** Markdown
+*** poly-markdown
+    #+begin_src emacs-lisp
+      (leaf poly-markdown
+        :ensure t
+        :config
+        (add-to-list 'auto-mode-alist '("\\.md" . poly-markdown-mode)))
+    #+end_src
+** Fish
+*** fish-repl
+    #+begin_src emacs-lisp
+      (leaf fish-repl
+        :el-get (fish-repl.el
+                 :url "https://github.com/takeokunn/fish-repl.el.git"))
+    #+end_src
+** File
+*** recentf
+    #+BEGIN_SRC emacs-lisp
+      (leaf recentf
+        :ensure t
+        :setq-default ((recentf-max-saved-items . 10000)
+                       (recentf-auto-cleanup quote never)
+                       (recentf-save-file . "~/.emacs.d/.recentf")
+                       (recentf-exclude quote
+                                        (".recentf")))
+        :config
+        (recentf-mode 1))
+    #+END_SRC
+*** open-junk-file
+    #+BEGIN_SRC emacs-lisp
+      (leaf open-junk-file
+        :ensure t
+        :bind
+        ("C-x j" . open-junk-file)
+        :custom (open-junk-file-format . `,(locate-user-emacs-file ".junk/%Y-%m%d-%H%M%S.")))
+    #+END_SRC
+** Check
+*** flycheck
+    #+begin_src emacs-lisp
+      (leaf flycheck
+        :ensure t
+        :after ruby-mode
+        :hook ((ruby-mode-hook . flycheck-mode)
+               (org-mode-hook . flycheck-mode)))
+    #+end_src
+*** flycheck-textlint
+    #+begin_src emacs-lisp
+      (leaf flycheck-textlint
+        :after flycheck
+        :config
+        (flycheck-define-checker textlint
+          "A linter for Markdown."
+          :command ("textlint" "--format" "unix" source)
+          :error-patterns
+          ((warning line-start (file-name) ":" line ":" column ": "
+                    (id (one-or-more (not (any " "))))
+                    (message (one-or-more not-newline)
+                             (zero-or-more "\n" (any " ") (one-or-more not-newline)))
+                    line-end))
+          :modes (text-mode markdown-mode))
+        (add-to-list 'flycheck-checkers 'textlint))
+    #+end_src
+*** flycheck-solidity
+    #+begin_src emacs-lisp
+      (leaf solidity-flycheck
+        :ensure t
+        :after (solidity-mode flycheck)
+        :hook
+        (solidity-mode-hook . flycheck-mode)
+        :custom
+        (solidity-flycheck-solc-checker-active . t))
+    #+end_src
+** Cursor
+*** smartrep/multiple-cursors
+    #+BEGIN_SRC emacs-lisp
+      (leaf smartrep :ensure t)
+
+      (leaf multiple-cursors
+        :ensure t
+        :defun (smartrep-define-key . smartrep)
+        :after smartrep
+        :config
+        (global-unset-key (kbd "C-t"))
+        (smartrep-define-key global-map "C-t"
+          '(("C-t" quote mc/mark-next-like-this)
+            ("n" quote mc/mark-next-like-this)
+            ("p" quote mc/mark-previous-like-this)
+            ("m" quote mc/mark-more-like-this-extended)
+            ("u" quote mc/unmark-next-like-this)
+            ("U" quote mc/unmark-previous-like-this)
+            ("s" quote mc/skip-to-next-like-this)
+            ("S" quote mc/skip-to-previous-like-this)
+            ("*" quote mc/mark-all-like-this)
+            ("d" quote mc/mark-all-like-this-dwim)
+            ("i" quote mc/insert-numbers)
+            ("o" quote mc/sort-regions)
+            ("O" quote mc/reverse-regions))))
+    #+END_SRC
+*** smooth-scroll
+    #+BEGIN_SRC emacs-lisp
+      (leaf smooth-scroll
+        :ensure t
+        :commands smooth-scroll-mode
+        :config
+        (smooth-scroll-mode 1))
+    #+END_SRC
+** Other
+*** ace-window
+    #+BEGIN_SRC emacs-lisp
+      (leaf ace-window
+        :ensure t
+        :custom ((aw-keys '(97 115 100 102 103 104 106 107 108)))
+        :bind ("C-x C-q" . ace-window))
+    #+END_SRC
+*** auto-save-buffers-enhanced
+    #+begin_src emacs-lisp
+      (leaf auto-save-buffers-enhanced
+        :ensure t
+        :setq
+        (auto-save-buffers-enhanced-interval . 10)
+        :config
+        (auto-save-buffers-enhanced t))
+    #+end_src
+*** amx
+    #+BEGIN_SRC emacs-lisp
+      (leaf amx :ensure t)
+    #+END_SRC
+*** avy
+    #+begin_src emacs-lisp
+      (leaf avy
+        :ensure t
+        :bind (("C-:" . avy-goto-char-timer)))
+
+      (leaf avy-zap
+        :ensure t
+        :after avy
+        :bind (("M-z" . avy-zap-up-to-char-dwim)))
+    #+end_src
+*** define-word
+    #+begin_src emacs-lisp
+      (leaf define-word
+        :ensure t
+        :custom
+        (define-word-default-service . 'wordnik)
+        (define-word-displayfn-alist
+          '((wordnik . takeokunn/define-word--display-in-buffer)
+            (openthesaurus . takeokunn/define-word--display-in-buffer)
+            (webster . takeokunn/define-word--display-in-buffer)
+            (weblio . takeokunn/define-word--display-in-buffer)))
+        :config
+        (defun takeokunn/define-word--display-in-buffer (definition)
+          "docstring"
+          (let* ((buf-name "*DEFINE WORD*")
+                 (buffer (get-buffer-create buf-name))
+                 (display-buffer-alist
+                  `((,buf-name
+                     (display-buffer-same-window)))))
+            (with-current-buffer buffer
+              (read-only-mode -1)
+              (erase-buffer)
+              (insert definition)
+              (goto-char (point-min))
+              (save-excursion (xml-parse-string))
+              (read-only-mode 1)
+              (buffer-face-set 'woman-buffer))
+            (display-buffer buffer)))
+        (defun takeokunn/define-word ()
+          (interactive)
+          (if (use-region-p)
+              (call-interactively #'define-word-at-point)
+            (call-interactively #'define-word))))
+    #+end_src
+*** ddskk
+    #+BEGIN_SRC emacs-lisp
+      (leaf ddskk
+        :ensure t
+        :bind
+        ("C-x C-j" . skk-mode)
+        :custom
+        (skk-byte-compile-init-file . t)
+        (skk-isearch-mode-enable . 'always)
+        :setq
+        (skk-preload . t)
+        (default-input-method . "japanese-skk"))
+    #+END_SRC
+*** editorconfig
+    #+BEGIN_SRC emacs-lisp
+      (leaf editorconfig
+        :ensure t
+        :config
+        (editorconfig-mode 1))
+    #+END_SRC
+*** esup
+    #+BEGIN_SRC emacs-lisp
+      (leaf esup :ensure t)
+    #+END_SRC
+*** elfeed
+    #+begin_src emacs-lisp
+      (leaf elfeed
+        :ensure t
+        :bind
+        ("C-x w" . elfeed)
+        :defvar elfeed-search-filter
+        :setq
+        (elfeed-search-filter . "@3-days-ago +unread")
+        :custom
+        (browse-url-browser-function . 'eww-browse-url))
+
+      (leaf elfeed-org
+        :ensure t
+        :after elfeed
+        :custom
+        (rmh-elfeed-org-files . '("~/.emacs.d/elfeed.org"))
+        :config
+        (elfeed-org))
+    #+end_src
+*** font-lock-studio
+    #+BEGIN_SRC emacs-lisp
+      (leaf font-lock-studio :ensure t)
+    #+END_SRC
+*** google-this
+    #+BEGIN_SRC emacs-lisp
+      (leaf google-this
+        :ensure t
+        :bind
+        ("M-g" . google-this))
+    #+END_SRC
+*** grugru
+    #+begin_src emacs-lisp
+      (leaf grugru
+        :ensure t
+        :disabled t
+        :bind
+        ("C-;" . grugru)
+        :config
+        (grugru-default-setup))
+    #+end_src
+*** goto-addr
+    #+BEGIN_SRC emacs-lisp
+      (leaf goto-addr
+        :ensure t
+        :commands goto-address-prog-mode goto-address-mode
+        :hook ((prog-mode-hook . goto-address-prog-mode)
+               (text-mode-hook . goto-address-mode)))
+    #+END_SRC
+*** helpful
+    #+BEGIN_SRC emacs-lisp
+      (leaf helpful
+        :ensure t
+        :after counsel
+        :bind
+        (("C-? f" . helpful-callable)
+         ("C-? v" . helpful-variable)
+         ("C-? k" . helpful-key)
+         ("C-? C-d" . helpful-at-point)
+         ("C-? F" . helpful-function)
+         ("C-? C" . helpful-command))
+        :custom ((counsel-describe-function-function function helpful-callable)
+                 (counsel-describe-variable-function function helpful-variable)))
+    #+END_SRC
+*** htmlize
+    #+begin_src emacs-lisp
+      (leaf htmlize :ensure t)
+    #+end_src
+*** keyfreq
+    #+begin_src emacs-lisp
+      (leaf keyfreq
+        :ensure t
+        :config
+        (keyfreq-mode 1)
+        (keyfreq-autosave-mode 1))
+    #+end_src
+*** lorem ipsum
+    #+begin_src emacs-lisp
+      (leaf lorem-ipsum
+        :ensure t
+        :bind
+        (("C-c C-l s" . lorem-ipsum-insert-sentences)
+         ("C-c C-l p" . lorem-ipsum-insert-paragraphs)
+         ("C-c C-l l" . lorem-ipsum-insert-list)))
+    #+end_src
+*** origami
+    #+begin_src emacs-lisp
+      (leaf origami
+        :ensure t
+        :hook (prog-mode-hook . origami-mode)
+        :bind (("C-c C-t" . origami-recursively-toggle-node)
+               ("C-c t" . origami-recursively-toggle-node))
+        :init
+        (global-origami-mode))
+    #+end_src
+*** popwin
+    #+begin_src emacs-lisp
+      (leaf popwin
+        :ensure t
+        :init
+        (popwin-mode 1))
+    #+end_src
+*** smartparens
+    #+BEGIN_SRC emacs-lisp
+      (leaf smartparens :ensure t)
+    #+END_SRC
+*** smart-jump
+    #+begin_src emacs-lisp
+      (leaf smart-jump
+        :ensure t)
+    #+end_src
+*** subword
+    #+begin_src emacs-lisp
+      (leaf subword
+        :config
+        (defun takeokunn/delete-forward-block ()
+          (interactive)
+          (if (eobp)
+              (message "End of buffer")
+            (let* ((syntax-move-point
+                    (save-excursion
+                      (skip-syntax-forward (string (char-syntax (char-after))))
+                      (point)))
+                   (subword-move-point
+                    (save-excursion
+                      (subword-forward)
+                      (point))))
+              (kill-region (point) (min syntax-move-point subword-move-point)))))
+        :bind (("M-d" . takeokunn/delete-forward-block)))
+    #+end_src
+*** undo
+    #+begin_src emacs-lisp
+      (leaf undo-tree
+        :ensure t
+        :config (global-undo-tree-mode))
+    #+end_src
+*** uuid
+    #+begin_src emacs-lisp
+      (leaf uuid
+        :ensure t
+        :el-get (emacs-uuid
+                 :url "https://github.com/nicferrier/emacs-uuid.git"
+                 :features uuid)
+        :config
+        (defun takeokunn/uuid ()
+          (interactive)
+          (insert (uuid-string))))
+    #+end_src
+*** which-key
+    #+begin_src emacs-lisp
+      (leaf which-key
+        :ensure t
+        :hook (after-init . which-key-mode))
+    #+end_src
+*** whitespace
+    #+BEGIN_SRC emacs-lisp
+      (leaf whitespace
+        :ensure t
+        :custom
+        ((whitespace-style '(face tabs tab-mark spaces space-mark))
+         (whitespace-display-mappings '((space-mark ?\u3000 [?\u25a1])
+                                        (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t]))))
+        :config
+        (global-whitespace-mode 1))
+    #+END_SRC
+*** wanderlust
+    #+begin_src emacs-lisp
+      (leaf wanderlust
+        :ensure t
+        ;; :setq
+        ;; (ssl-certificate-verification-policy . 1)
+        )
+    #+end_src
+*** xah-lookup
+    #+begin_src emacs-lisp
+      (leaf xah-lookup
+        :ensure t
+        :disabled t
+        :after (eww define-word)
+        :setq
+        (xah-lookup-browser-function . 'eww)
+        (xah-lookup-dictionary-browser-function . 'eww)
+        (xah-lookup-dictionary-list . ["http://www.google.com/search?q=define:+word02051"])
+        :config
+        (put 'xah-lookup-google 'xah-lookup-browser-function 'eww)
+        (put 'xah-lookup-wikipedia 'xah-lookup-url "http://ja.wikipedia.org/wiki/word02051")
+        (put 'xah-lookup-wikipedia 'xah-lookup-browser-function 'eww))
+    #+end_src
+* Eshell
+** basic
+   #+begin_src emacs-lisp
+     (leaf eshell
+       :config
+       (with-eval-after-load 'eshell
+         ;; function
+         (defun eshell/ff (&rest args)
+           (find-file (car args)))
+
+         ;; config
+         (defvar eshell-cmpl-ignore-case t)
+         (defvar eshell-glob-include-dot-dot nil)
+         (defvar eshell-ask-to-save-history (quote always))
+         (defvar eshell-history-size 100000)
+         (defvar eshell-hist-ignoredups t)
+
+         ;; alias
+         (defvar *shell-alias* '(("ll" "ls -la")
+                                 ("cdd" "cd ~/Desktop")))
+         (defvar eshell-command-aliases-list (append *shell-alias*))))
+   #+end_src
+** aweshell
+   #+BEGIN_SRC emacs-lisp
+     (leaf aweshell
+       :after eshell
+       :config
+       (defun takeokunn/aweshell-setup ()
+         (interactive)
+         (shell-command-to-string "ghq get https://github.com/takeokunn/aweshell.git"))
+
+       (when (file-directory-p "~/.ghq/github.com/takeokunn/aweshell")
+         (add-to-list 'load-path (expand-file-name "~/.ghq/github.com/takeokunn/aweshell"))
+         (require 'esh-mode)
+         (require 'aweshell)
+         (with-eval-after-load 'aweshell
+           (defun takeokunn/counsel-aweshell-history ()
+             (interactive)
+             (insert (ivy-read "Aweshell history: " (aweshell-parse-shell-history))))
+
+           (defvar eshell-mode-map nil)
+           (defvar aweshell-auto-suggestion-p nil)
+           (defvar eshell-highlight-prompt t)
+           (setq eshell-prompt-function 'epe-theme-lambda)
+           (add-hook 'eshell-mode-hook
+                     (lambda () (define-key eshell-mode-map (kbd "C-c C-r") 'takeokunn/counsel-aweshell-history))))))
+   #+END_SRC
+** eshell-z
+   #+begin_src emacs-lisp
+     (leaf eshell-z
+       :ensure t
+       :after eshell
+       :bind ("C-c C-q" . eshell-z))
+   #+end_src
+* Org Mode
+** basic
+   #+BEGIN_SRC emacs-lisp
+     (leaf org
+       :setq-default
+       ((org-use-speed-commands . t)
+        (org-agenda-todo-ignore-with-date . t)
+        (org-directory . "~/org")
+        (org-agenda-files . '("~/org/agenda"))
+        (org-todo-keywords . '((sequence "TODO(t)" "TODAY" "WAIT(w)" "|" "DONE(d)")))
+        (org-capture-templates . '(("t" "Todo" entry (file+datetree "~/org/todo.org")
+                                    "* %?")
+                                   ("m" "Memo" entry (file "~/org/memo.org")
+                                    "* %?"))))
+       :custom
+       ((org-startup-folded . 'fold)
+        (org-archive-location . `,(format "~/org/archive/%s.org"
+                                          (format-time-string "%Y" (current-time)))))
+       :custom-face
+       (org-link '(t (:foreground "#ebe087" :underline t)))
+       :bind
+       (("C-c a" . org-agenda)
+        ("C-c b" . counsel-bookmark)
+        ("C-c c" . org-capture)
+        (:org-mode-map ("C-m" . nil))))
+   #+END_SRC
+** org-journal
+   #+begin_src emacs-lisp
+     (leaf org-journal
+       :ensure t
+       :setq
+       (org-journal-dir . "~/org/journal")
+       :custom
+       (org-journal-file-type . 'weekly)
+       (org-journal-prefix-key . "C-c j"))
+   #+end_src
+** org-ql
+   #+begin_src emacs-lisp
+     (leaf org-ql
+       :ensure t
+       :custom
+       (org-agenda-custom-commands . `(("i" "Today's agenda"
+                                        ((org-ql-block '(and (todo "TODAY"))
+                                                       ((org-ql-block-header "TODAY's agenda"))))))))
+   #+end_src
+** org-babel
+   #+begin_src emacs-lisp
+     (leaf ob-core
+       :custom
+       (org-confirm-babel-evaluate . nil))
+
+     (leaf ob-fish
+       :el-get (ob-fish
+                :url "https://github.com/takeokunn/ob-fish.git"))
+
+
+     (leaf ob-go :ensure t)
+     (leaf ob-rust :ensure t)
+     (leaf ob-typescript :ensure t)
+
+     (leaf ob-babel
+       :after (ob-fish
+               ob-go
+               ob-rust
+               ob-typescript)
+       :config
+       (org-babel-do-load-languages 'org-babel-load-languages
+                                    '((shell . t)
+                                      (emacs-lisp . t)
+                                      (lisp . t)
+                                      (ruby . t)
+                                      (fish . t)
+                                      (go . t)
+                                      (rust . t)
+                                      (typescript . t))))
+   #+end_src
+** org-superstar
+   #+begin_src emacs-lisp
+     (leaf org-superstar
+       :ensure t
+       :hook (org-mode-hook . org-superstar-mode)
+       :custom
+       ((org-superstar-headline-bullets-list . '("◉" "○" "✸" "✿"))
+        (org-superstar-leading-bullet . " ")))
+   #+end_src
+** org-generate
+   #+begin_src emacs-lisp
+     (leaf org-generate
+       :ensure t
+       :custom
+       (org-generate-file . `,(locate-user-emacs-file "yasnippets.org"))
+       :setq
+       (org-generate-root . "yasnippets"))
+   #+end_src
+** org-roam
+   #+begin_src emacs-lisp
+     (leaf org-roam
+       :disabled t
+       :ensure t
+       :hook (after-init-hook . org-roam-mode)
+       :custom ((org-roam-db-update-method . 'immediate)
+                (org-roam-db-location . "~/org/roam/org-roam.db")
+                (org-roam-directory . "~/org/roam")
+                (org-roam-index-file . "~/org/roam/index.org"))
+       :custom
+       (org-roam-graph-viewer . #'eww-open-file)
+       :setq
+       ((org-roam-v2-ack . nil))
+       :bind
+       (("C-c n l" . org-roam)
+        ("C-c n f" . org-roam-find-file)
+        ("C-c n g" . org-roam-graph)
+        (:org-mode-map
+         (("C-c n i" . org-roam-insert)
+          ("C-c n I" . org-roam-insert-immediate)))))
+   #+end_src
+** org-tree-slide
+   #+begin_src emacs-lisp
+     (leaf org-tree-slide
+       :ensure t
+       :bind
+       (("<f8>" . org-tree-slide-mode)
+        ("S-<f8>" . org-tree-slide-skip-done-toggle)))
+   #+end_src
+** org-pomodoro
+   #+begin_src emacs-lisp
+     (leaf org-pomodoro
+       :ensure t)
+   #+end_src
+* MyFunc
+** takeokun/beginning-of-intendation
+   #+BEGIN_SRC emacs-lisp
+     (defun takeokunn/beginning-of-intendation ()
+       "move to beginning of line, or indentation"
+       (interactive)
+       (back-to-indentation))
+   #+END_SRC
+** takeokunn/before-set-auto-mode
+   #+BEGIN_SRC emacs-lisp
+     (defun takeokunn/before-set-auto-mode ()
+       (when (or (and buffer-file-name
+                      (> (or (file-attribute-size (file-attributes buffer-file-name)) 0) 1000000))
+                 (> (line-number-at-pos (point-max)) 100000))
+         (prog1 t
+           (prog-mode))))
+     ;; (advice-add 'set-auto-mode :before-until 'takeokunn/before-set-auto-mode)
+   #+END_SRC
+** takeokunn/reload-major-mode
+   #+BEGIN_SRC emacs-lisp
+     (defun takeokunn/reload-major-mode ()
+       "Reload current major mode."
+       (interactive)
+       (let ((current-mode major-mode))
+         (fundamental-mode)
+         (funcall current-mode)
+         current-mode))
+   #+END_SRC
+** takeokunn/move-line
+   #+begin_src emacs-lisp
+     (defun takeokunn/move-line (arg)
+       (interactive)
+       (let ((col (current-column)))
+         (unless (eq col 0)
+           (move-to-column 0))
+         (save-excursion
+           (forward-line)
+           (transpose-lines arg))
+         (forward-line arg)))
+
+     (defun takeokunn/move-line-down ()
+       (interactive)
+       (takeokunn/move-line 1))
+
+     (defun takeokunn/move-line-up ()
+       (interactive)
+       (takeokunn/move-line -1))
+
+     (general-define-key
+      "M-N" 'takeokunn/move-line-down
+      "M-P" 'takeokunn/move-line-up)
+   #+end_src
+** takeokunn/toggle-read-only-mode
+   #+begin_src emacs-lisp
+     (defun takeokunn/toggle-read-only-mode ()
+       (interactive)
+       (toggle-read-only))
+
+     (general-define-key
+      "C-x C-q" 'takeokunn/toggle-read-only-mode)
+   #+end_src
+** takeokunn/ghq-get
+   #+begin_src emacs-lisp
+     (defun takeokunn/ghq-get ()
+       (interactive)
+       (let ((url (read-string "url > ")))
+         (message
+          (shell-command-to-string
+           (mapconcat #'shell-quote-argument
+                      (list "ghq" "get" url)
+                      " ")))))
+
+     (defalias 'ghq-get 'takeokunn/ghq-get)
+   #+end_src

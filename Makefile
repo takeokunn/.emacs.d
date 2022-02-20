@@ -28,7 +28,7 @@ org-to-html: $(HTMLIZE_FILE)
 
 .PHONY: org-generate
 org-generate:
-	$(EMACS) -Q -l init.el --batch --eval "(progn (require 'org-generate) (setq org-generate-root \"yasnippets\") (setq org-generate-file (locate-user-emacs-file \"yasnippets.org\")) (org-generate \"yasnippet/default\"))"
+	$(EMACS) -Q -l init.el --batch --eval "(progn (require 'org-generate) (setq org-generate-root \"snippets\") (setq org-generate-file (locate-user-emacs-file \"yasnippets.org\")) (org-generate \"snippet/default\"))"
 
 $(HTMLIZE_FILE):
 	wget $(HTMLIZE_URL)

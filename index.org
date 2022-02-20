@@ -16,19 +16,20 @@
    - twitter: [[https://twitter.com/takeokunn][たけてぃ@takeokunn]]
    - blog: [[https://takeokunn.xyz][https://takeokunn.xyz]]
 * boot
-** Header
+** header
    #+begin_src emacs-lisp
      ;; init.el --- My init.el -*- lexical-binding: t -*-
      ;; Configurations for Emacs
      ;;                                         Takeo Obara  <bararararatty@gmail.com>
-     (require 'utility-autoloads nil t)
    #+end_src
 ** env
    #+begin_src emacs-lisp
      (defconst my/loading-profile-p t
        "If non-nil, use built-in profiler.el.")
 
-     (defconst my/loading-packages nil)
+     ;; (require 'utility-autoloads nil t)
+     ;; (require 'profiler)
+     ;; (profiler-start 'cpu)
    #+end_src
 ** 起動時間計測
    #+begin_src emacs-lisp
@@ -80,19 +81,20 @@
    #+begin_src emacs-lisp
      (eval-and-compile
        (add-to-list 'load-path (locate-user-emacs-file "el-get/el-get"))
+
        (with-current-buffer
            (url-retrieve-synchronously
             "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
          (goto-char (point-max))
          (eval-print-last-sexp))
 
-       (add-to-list 'el-get-recipe-path "~/.emacs.d/recipes")
+       (add-to-list 'el-get-recipe-path (locate-user-emacs-file "recipes"))
 
-       ;; config
        (setq el-get-git-shallow-clone t
              el-get-verbose nil
              el-get-silent-update t
-             el-get-default-process-sync t))
+             el-get-default-process-sync t
+             el-get-bundle-sync nil))
    #+end_src
 * Basic
 ** early-init
@@ -226,59 +228,63 @@
      (global-set-key (kbd "C-h") 'backward-delete-char)
      (global-set-key (kbd "C-z") 'undo)
      (global-set-key (kbd "C-?") 'help-command)
-     (global-set-key (kbd "C-m") 'set-mark-command)
      (global-set-key (kbd "C-a") 'back-to-indentation)
      (global-set-key (kbd "C-c i") 'find-function)
      (global-set-key (kbd "C-x C-o") 'other-window)
      (global-set-key (kbd "C-x C-k") nil)
      ;; (global-set-key (kbd "C-x C-c") 'confirm-save-buffers-kill-emacs)
    #+END_SRC
-* Language
-** el-get
+* Utility
+** dash
    #+begin_src emacs-lisp
      (eval-when-compile
-       (el-get-bundle 'clojure-mode)
-       (el-get-bundle 'cmake-mode)
-       (el-get-bundle 'coffee-mode)
-       (el-get-bundle 'csharp-mode)
-       (el-get-bundle 'csv-mode)
-       (el-get-bundle 'dart-mode)
-       (el-get-bundle 'dhall-mode)
-       (el-get-bundle 'docker-compose-mode)
-       (el-get-bundle 'dockerfile-mode)
-       (el-get-bundle 'emmet-mode)
-       (el-get-bundle 'fish-mode)
-       (el-get-bundle 'git-modes)
-       (el-get-bundle 'glsl-mode)
-       (el-get-bundle 'go-mode)
-       (el-get-bundle 'gradle-mode)
-       (el-get-bundle 'graphql-mode)
-       ;; (el-get-bundle 'haskell-mode)
-       (el-get-bundle 'js2-mode)
-       (el-get-bundle 'json-mode)
-       (el-get-bundle 'markdown-mode)
-       (el-get-bundle 'nginx-mode)
-       ;; (el-get-bundle 'php-mode)
-       (el-get-bundle 'phpt-mode)
-       (el-get-bundle 'plantuml-mode)
-       (el-get-bundle 'prisma-mode :url "https://github.com/pimeys/emacs-prisma-mode.git")
-       (el-get-bundle 'processing-mode)
-       (el-get-bundle 'python-mode)
-       (el-get-bundle 'ruby-mode)
-       (el-get-bundle 'rust-mode)
-       (el-get-bundle 'scala-mode)
-       (el-get-bundle 'slim-mode)
-       (el-get-bundle 'solidity-mode)
-       (el-get-bundle 'ssh-config-mode)
-       (el-get-bundle 'swift-mode)
-       (el-get-bundle 'terraform-mode)
-       (el-get-bundle 'toml-mode)
-       (el-get-bundle 'typescript-mode)
-       (el-get-bundle 'vue-mode)
-       (el-get-bundle 'vimrc-mode)
-       (el-get-bundle 'web-mode)
-       (el-get-bundle 'yaml-mode))
+       (el-get-bundle 'dash))
+
+     (add-hook 'emacs-startup-hook (lambda ()
+                                     (require 'dash)))
    #+end_src
+** mustache
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'mustache))
+
+     (add-hook 'emacs-startup-hook (lambda () (require 'mustache)))
+   #+end_src
+** f
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'f))
+
+     (add-hook 'emacs-startup-hook (lambda () (require 'f)))
+   #+end_src
+** s
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 's))
+
+     (add-hook 'emacs-startup-hook (lambda () (require 's)))
+   #+end_src
+** ht
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'ht))
+   #+end_src
+** lv
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'lv))
+   #+end_src
+** spinner
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'spinner))
+   #+end_src
+** tree-mode
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle emacsorphanage/tree-mode))
+   #+end_src
+* Language
 ** c++-mode
    #+begin_src emacs-lisp
      (add-hook 'c++-mode-hook 'lsp)
@@ -289,44 +295,75 @@
    #+end_src
 ** clojure-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'clojure-mode))
+
      (push '("\\.clj$" . clojure-mode) auto-mode-alist)
      (push '("\\.cljs$" . clojure-mode) auto-mode-alist)
    #+END_SRC
 ** cmake-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'cmake-mode))
+
      (push '("\\.cmake$" . cmake-mode) auto-mode-alist)
    #+END_SRC
 ** coffee-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'coffee-mode))
+
      (push '("\\.coffee$" . coffee-mode) auto-mode-alist)
    #+END_SRC
 ** csharp-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'csharp-mode))
+
      (push '("\\.cs$" . csharp-mode) auto-mode-alist)
    #+END_SRC
 ** csv-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'csv-mode))
+
      (push '("\\.csv$" . csv-mode) auto-mode-alist)
    #+END_SRC
 ** dart-mode
    #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'dart-mode))
+
      (push '("\\.dart$" . dart-mode) auto-mode-alist)
    #+end_src
 ** dhall-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'dhall-mode))
+
      (push '("\\.dhall$" . dhall-mode) auto-mode-alist)
    #+END_SRC
 ** docker-compose-mode
    #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'docker-compose-mode))
+
      (push '("\\docker-compose*" . docker-compose-mode) auto-mode-alist)
    #+end_src
 ** dockerfile-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'dockerfile-mode))
+
      (push '("Dockerfile\\'" . dockerfile-mode) auto-mode-alist)
    #+END_SRC
 ** emmet-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'emmet-mode))
+
      (add-hook 'web-mode-hook 'emmet-mode)
+     (add-hook 'css-mode-hook  'emmet-mode)
 
      (with-eval-after-load 'emmet-mode
        (when (boundp 'emmet-mode-keymap)
@@ -335,6 +372,9 @@
    #+END_SRC
 ** fish-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'fish-mode))
+
      (push '("\\.fish$" . fish-mode) auto-mode-alist)
 
      (with-eval-after-load 'fish-mode
@@ -343,43 +383,64 @@
    #+END_SRC
 ** git-modes
    #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'git-modes))
+
      (push '("\\.dockerignore$" . gitignore-mode) auto-mode-alist)
    #+end_src
 ** glsl-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'glsl-mode))
+
      (push '("\\.vsh$" . glsl-mode) auto-mode-alist)
      (push '("\\.fsh$" . glsl-mode) auto-mode-alist)
    #+END_SRC
 ** go-mode
    #+BEGIN_SRC emacs-lisp
-     (with-eval-after-load 'go-mode
-       (add-hook 'go-mode-hook 'lsp))
+     (eval-when-compile
+       (el-get-bundle 'go-mode))
+
+     (add-hook 'go-mode-hook 'lsp)
    #+END_SRC
 ** gradle-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'gradle-mode))
+
      (push '("\\.gradle$" . java-mode) auto-mode-alist)
    #+END_SRC
 ** graphql-mode
    #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'graphql-mode))
+
      (with-eval-after-load 'graphql-mode
        (eval-and-compile
          (setq graphql-indent-level 4)))
    #+end_src
-** TODO haskell-mode
+** haskell-mode
    #+BEGIN_SRC emacs-lisp
-     ;; (when (autoload-if-found '() 'haskell-mode nil t)
-     ;;   (push '("\\.hs$" . haskell-mode) auto-mode-alist)
-     ;;   (push '("\\.cable$" . haskell-mode) auto-mode-alist))
+     (eval-when-compile
+       (el-get-bundle "haskell/haskell-mode"))
+
+     (push '("\\.hs$" . haskell-mode) auto-mode-alist)
+     (push '("\\.cable$" . haskell-mode) auto-mode-alist)
    #+END_SRC
 ** js2-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'js2-mode))
+
      (push '("\\.js$" . js2-mode) auto-mode-alist)
 
-     (with-eval-after-load 'js2-mode
-       (add-hook 'js2-mode-hook 'lsp))
+     (add-hook 'js2-mode-hook 'lsp)
    #+END_SRC
 ** json-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'json-mode))
+
      (push '("\\.json$" . json-mode) auto-mode-alist)
    #+END_SRC
 ** lisp-mode
@@ -389,37 +450,54 @@
    #+END_SRC
 ** markdown-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-and-compile
+       (el-get-bundle markdown-mode))
+
      (push '("\\.md$" . markdown-mode) auto-mode-alist)
      (push '("\\.markdown$" . markdown-mode) auto-mode-alist)
-
-     (with-eval-after-load 'markdown-mode
-       (when (boundp 'markdown-mode-map)
-         (define-key markdown-mode-map (kbd "C-m") nil)))
    #+END_SRC
 ** nginx-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'nginx-mode))
+
      (push '("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode) auto-mode-alist)
    #+END_SRC
-** TODO php-mode
+** php-mode
    #+BEGIN_SRC emacs-lisp
-     ;; (push '("\\.php$" . php-mode) auto-mode-alist)
-     ;; (with-eval-after-load 'php-mode
-     ;;   )
+     (eval-when-compile
+       (el-get-bundle "emacs-php/php-mode"))
+
+     (push '("\\.php$" . php-mode) auto-mode-alist)
+
+     (add-to-list 'load-path (locate-user-emacs-file "el-get/php-mode/lisp"))
    #+END_SRC
 ** phpt-mode
    #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'phpt-mode))
+
      (push '("\\.phpt$" . phpt-mode) auto-mode-alist)
    #+end_src
 ** plantuml-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'plantuml-mode))
+
      (push '("\\.pu$" . plantuml-mode) auto-mode-alist)
    #+END_SRC
 ** prisma-mode
    #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'prisma-mode :url "https://github.com/pimeys/emacs-prisma-mode.git"))
+
      (push '("\\.prisma" . prisma-mode) auto-mode-alist)
    #+end_src
 ** processing-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'processing-mode))
+
      (push '("\\.pde$" . processing-mode) auto-mode-alist)
 
      (with-eval-after-load 'processing-mode
@@ -429,10 +507,16 @@
    #+END_SRC
 ** python-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'python-mode))
+
      (push '("\\.py$" . python-mode) auto-mode-alist)
    #+END_SRC
 ** ruby-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'ruby-mode))
+
      (push '("\\.rb$" . ruby-mode) auto-mode-alist)
      (push '("Capfile" . ruby-mode) auto-mode-alist)
      (push '("Gemfile" . ruby-mode) auto-mode-alist)
@@ -447,30 +531,37 @@
    #+END_SRC
 ** rust-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'rust-mode))
+
      (push '("\\.rs$" . rust-mode) auto-mode-alist)
    #+END_SRC
 ** scala-mode
    #+BEGIN_SRC emacs-lisp
-     (push '("\\.scala$" . scala-mode) auto-mode-alist)
-   #+END_SRC
-** TODO scheme-mode
-   #+BEGIN_SRC emacs-lisp
-     ;; (setq-default gosh-program-name "/usr/local/bin/gosh -i")
+     (eval-when-compile
+       (el-get-bundle 'scala-mode))
 
-     ;; (general-def inferior-scheme-mode-map
-     ;;   "C-p" 'comint-previous-input
-     ;;   "C-n" 'comint-next-input)
+     (push '("\\.scala$" . scala-mode) auto-mode-alist)
    #+END_SRC
 ** slim-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'slim-mode))
+
      (push '("\\.slim$" . slim-mode) auto-mode-alist)
    #+END_SRC
 ** solidity-mode
    #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'solidity-mode))
+
      (push '("\\.sol$" . solidity-mode) auto-mode-alist)
    #+end_src
 ** ssh-config-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'ssh-config-mode))
+
      (push '("/\\.ssh/config\\(\\.d/.*\\.conf\\)?\\'" . ssh-config-mode) auto-mode-alist)
      (push '("/sshd?_config\\(\\.d/.*\\.conf\\)?\\'" . ssh-config-mode) auto-mode-alist)
      (push '("/known_hosts\\'" . ssh-known-hosts-mode) auto-mode-alist)
@@ -484,18 +575,30 @@
    #+end_src
 ** swift-mode
    #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'swift-mode))
+
      (push '("\\.swift$" . swift-mode) auto-mode-alist)
    #+end_src
 ** terraform-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-and-compile
+       (el-get-bundle 'terraform-mode))
+
      (push '("\\.tf$" . terraform-mode) auto-mode-alist)
    #+END_SRC
 ** toml-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'toml-mode))
+
      (push '("\\.toml$" . toml-mode) auto-mode-alist)
    #+END_SRC
 ** typescript-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'typescript-mode))
+
      (push '("\\.ts$" . typescript-mode) auto-mode-alist)
 
      (with-eval-after-load 'typescript-mode
@@ -507,46 +610,58 @@
    #+END_SRC
 ** vue-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'vue-mode))
+
      (push '("\\.vue$" . vue-mode) auto-mode-alist)
    #+END_SRC
 ** vimrc-mode
    #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'vimrc-mode))
+
      (push '("\\.vim\\(rc\\)?\\'" . vimrc-mode) auto-mode-alist)
    #+end_src
 ** web-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'web-mode))
+
      (push '("\\.html?\\'" . web-mode) auto-mode-alist)
      (push '("\\.erb?\\'" . web-mode) auto-mode-alist)
      (push '("\\.gsp?\\'" . web-mode) auto-mode-alist)
    #+END_SRC
 ** yaml-mode
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'yaml-mode))
+
      (push '("\\.ya?ml$" . yaml-mode) auto-mode-alist)
      (push '("phpstan.neon" . yaml-mode) auto-mode-alist)
    #+END_SRC
 * Lisp
 ** Basic
-*** el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'paredit)
-        (el-get-bundle 'rainbow-delimiters))
-    #+end_src
 *** paredit
     #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'paredit))
+
       (autoload 'paredit-forward-barf-sexp "paredit")
 
       (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
       (add-hook 'lisp-interacton-mode-hook 'enable-paredit-mode)
 
-      (with-eval-after-load 'paredit)
+      (global-set-key (kbd "C-c f") 'paredit-forward-slurp-sexp)
 
-      (global-set-key (kbd "C-c f") 'paredit-forward-barf-sexp)
+      (with-eval-after-load 'paredit
+        (show-paren-mode 1))
     #+END_SRC
-*** TODO rainbow-delimiters
+*** rainbow-delimiter
     #+BEGIN_SRC emacs-lisp
-      ;; (with-eval-after-load 'rainbow-delimiters
-      ;;   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode-enable))
+      (eval-when-compile
+        (el-get-bundle 'rainbow-delimiters))
+
+      (add-hook 'prog-mode-hook 'rainbow-delimiters-mode-enable)
     #+END_SRC
 ** CommonLisp
 *** TODO HyperSpec
@@ -631,104 +746,106 @@
       ;;  "C-c C-r" 'takeokunn/slime-history)
     #+END_SRC
 ** EmacsLisp
-*** el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'elisp-slime-nav)
-        (el-get-bundle 'nameless)
-        (el-get-bundle 'cider))
-    #+end_src
 *** elisp-slime-nav
     #+BEGIN_SRC emacs-lisp
-      (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
-        (add-hook hook 'elisp-slime-nav-mode))
+      (eval-when-compile
+        (el-get-bundle 'elisp-slime-nav))
+
+      (add-hook 'emacs-lisp-mode-hook 'elisp-slime-nav-mode)
+      (add-hook 'ielm-mode-hook 'elisp-slime-nav-mode)
     #+END_SRC
 *** nameless
     #+BEGIN_SRC emacs-lisp
-      (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
-        (add-hook hook 'nameless-mode))
+      (eval-when-compile
+        (el-get-bundle 'nameless))
+
+      (add-hook 'ielm-mode-hook 'nameless-mode)
+      (add-hook 'emacs-lisp-mode-hook 'nameless-mode)
     #+END_SRC
-*** TODO my/ielm-history
+*** my/ielm-history
     #+BEGIN_SRC emacs-lisp
-      ;; (when (autoload-if-found '() "ielm" nil t)
-      ;;   ;; (defun my/ielm-history ()
-      ;;   ;;   (interactive)
-      ;;   ;;   (insert
-      ;;   ;;    (completing-read
-      ;;   ;;     "choice history: "
-      ;;   ;;     (progn
-      ;;   ;;       (let ((history nil)
-      ;;   ;;             (comint-input-ring nil))
-      ;;   ;;         (dotimes (index (ring-length comint-input-ring))
-      ;;   ;;           (push (ring-ref comint-input-ring index) history))
-      ;;   ;;         history)))))
-      ;;   )
+      (defun my/ielm-history ()
+        (interactive)
+        (insert
+         (completing-read
+          "choice history: "
+          (progn
+            (let ((history nil)
+                  (comint-input-ring nil))
+              (if (and (fboundp 'ring-length)
+                       (fboundp 'ring-ref))
+                  (dotimes (index (ring-length comint-input-ring))
+                    (push (ring-ref comint-input-ring index) history)))
+              history)))))
     #+END_SRC
 ** Clojure
-*** el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'cider))
-    #+end_src
 *** cider
     #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'cider))
+
       (with-eval-after-load 'cider)
     #+END_SRC
 * Awesome Package
 ** Theme
-*** el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'dashboard)
-        (el-get-bundle 'all-the-icons)
-        (el-get-bundle 'all-the-icons-dired)
-        ;; (el-get-bundle 'all-the-icons-ivy)
-        (el-get-bundle 'doom-theme :url "https://github.com/doomemacs/themes.git")
-        (el-get-bundle 'doom-modeline)
-        (el-get-bundle 'neotree)
-        (el-get-bundle 'nyan-mode))
-    #+end_src
 *** dashboard
     #+begin_src emacs-lisp
-      (when (require 'dashboard nil t)
-        (dashboard-setup-startup-hook))
+      (eval-and-compile
+        (el-get-bundle 'dashboard))
+
+      (add-hook 'after-init-hook 'dashboard-setup-startup-hook)
     #+end_src
 *** all-the-icons
     #+BEGIN_SRC emacs-lisp
+      (eval-and-compile
+        (el-get-bundle 'all-the-icons))
+
       (with-eval-after-load 'all-the-icons)
     #+END_SRC
 *** all-the-icons-dired
     #+begin_src emacs-lisp
+      (eval-and-compile
+        (el-get-bundle 'all-the-icons-dired))
+
       (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+
       (with-eval-after-load 'all-the-icons-dired-mode)
     #+end_src
-*** TODO all-the-icons-ivy
+*** all-the-icons-ivy
     #+BEGIN_SRC emacs-lisp
-      ;; (leaf all-the-icons-ivy
-      ;;   :if window-system
-      ;;   :ensure t
-      ;;   :after all-the-icons
-      ;;   :config
-      ;;   (all-the-icons-ivy-setup))
+      (eval-and-compile
+        (el-get-bundle 'all-the-icons-ivy))
+
+      (with-eval-after-load 'all-the-icons-ivy
+        (if window-system
+            (all-the-icons-ivy-setup)))
     #+END_SRC
 *** doom-theme
     #+BEGIN_SRC emacs-lisp
+      (eval-and-compile
+        (el-get-bundle 'doom-themes))
+
       (load-theme 'tango-dark t)
+
       (with-eval-after-load 'doom-themes)
     #+END_SRC
 *** doom-modeline
     #+BEGIN_SRC emacs-lisp
-      ;; (doom-modeline-mode 1)
+      (eval-and-compile
+        (el-get-bundle 'doom-modeline))
 
-      ;; (with-eval-after-load 'doom-modeline
-      ;;   (line-number-mode 0)
-      ;;   (column-number-mode 0)
-       ;;  (eval-and-compile
-          ;; (setq doom-modeline-buffer-file-name-style 'truncate-with-project)
-          ;; (setq doom-modeline-icon t)
-          ;; (setq doom-modeline-major-mode-icon nil)
-          ;; (setq doom-modeline-minor-modes nil)
-          ;; (setq inhibit-compacting-font-caches t)))
+      (add-hook 'after-init-hook (lambda ()
+                                   (doom-modeline-mode 1)
+                                   (line-number-mode 0)
+                                   (column-number-mode 0)))
+
+      (with-eval-after-load 'doom-modeline
+        (eval-and-compile
+          (setq doom-modeline-buffer-file-name-style 'truncate-with-project)
+          (setq doom-modeline-icon t)
+          (setq doom-modeline-major-mode-icon nil)
+          (setq doom-modeline-minor-modes nil)
+          (setq inhibit-compacting-font-caches t)))
     #+END_SRC
 *** hl-line
     #+BEGIN_SRC emacs-lisp
@@ -739,6 +856,9 @@
     #+END_SRC
 *** neotree
     #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'neotree))
+
       (autoload 'neotree-toggle "neotree")
 
       (defun my/neotree-toggle ()
@@ -753,177 +873,248 @@
           (setq neo-theme 'nerd2)
           (setq neo-show-hidden-files t)
           (setq neo-window-fixed-size nil))
-
         (if window-system
             (defun neo-buffer--insert-fold-symbol (name &optional file-name)
               (or
                (and
                 (equal name 'open)
                 (insert
-                 (all-the-icons-icon-for-dir file-name "down")))
+                 (format "%s "
+                         (all-the-icons-icon-for-dir file-name "down"))))
                (and
                 (equal name 'close)
                 (insert
-                 (all-the-icons-icon-for-dir file-name "right")))
+                 (format "%s "
+                         (all-the-icons-icon-for-dir file-name "right"))))
                (and
                 (equal name 'leaf)
                 (insert
-                 (format "			%s	"
+                 (format "%s "
                          (all-the-icons-icon-for-file file-name))))))))
     #+END_SRC
 *** nyan-mode
     #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'nyan-mode))
+
       (add-hook 'doom-modeline-mode-hook 'nyan-mode)
-      (add-hook 'doom-modeline-mode-hook (lambda ()
-                                           (message "doom-modeline-mode-hook")))
 
       (with-eval-after-load 'nyan-mode
         (eval-and-compile
           (setq nyan-cat-face-number 4)
           (setq nyan-animate-nyancat t)))
     #+END_SRC
-*** TODO tab-mode
-    #+begin_src emacs-lisp
-      ;; (leaf tab-bar-mode
-      ;;   :after ivy
-      ;;   :bind
-      ;;   (("C-x t n" . tab-next)
-      ;;    ("C-x t b" . tab-bar-switch-to-tab))
-      ;;   :config
-      ;;   (tab-bar-mode 1)
-      ;;   ;; ivy integration
-      ;;   (defun advice-completing-read-to-ivy (orig-func &rest args)
-      ;;     (interactive
-      ;;      (let* ((recent-tabs (mapcar (lambda (tab)
-      ;;                                    (alist-get 'name tab))
-      ;;                                  (tab-bar--tabs-recent))))
-      ;;        (list (ivy-completing-read "Switch to tab by name (default recent): "
-      ;;                                   recent-tabs nil nil nil nil recent-tabs))))
-      ;;     (apply orig-func args))
-      ;;   (advice-add #'tab-bar-switch-to-tab :around #'advice-completing-read-to-ivy))
-    #+end_src
 ** Refactor
-*** el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'emr))
-    #+end_src
 *** emr
     #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'emr))
+
       (with-eval-after-load 'emr
         (define-key prog-mode-map (kbd "M-RET") 'emr-show-refactor-menu))
     #+END_SRC
 ** Completion
-*** el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'company)
-        (el-get-bundle 'company-dockerfile :url "https://github.com/takeokunn/company-dockerfile.git")
-        (el-get-bundle 'company-glsl)
-        ;; (el-get-bundle 'slime-company)
-        (el-get-bundle 'company-c-headers)
-        (el-get-bundle 'company-shell :url "https://github.com/takeokunn/company-shell.git")
-        (el-get-bundle 'company-terraform))
-    #+end_src
 *** company
     #+BEGIN_SRC emacs-lisp
+      (eval-and-compile
+        (el-get-bundle 'company))
+
+      (add-hook 'after-init-hook (lambda ()
+                                   (global-company-mode)))
+
+      (autoload 'global-company-mode "company" nil t)
+
       (with-eval-after-load 'company
         (eval-and-compile
-          (global-company-mode)
-          (add-to-list 'company-backends 'company-yasnippet)
-          (define-key company-active-map (kbd "C-n") 'company-select-next)
-          (define-key company-active-map (kbd "C-p") 'company-select-previous)))
+          (when (require 'company)
+            (push 'company-capf company-backends)
+            (push 'company-yasnippet company-backends)
+            (define-key company-active-map (kbd "C-n") 'company-select-next)
+            (define-key company-active-map (kbd "C-p") 'company-select-previous))))
     #+END_SRC
 *** company-dockerfile
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'company-dockerfile :url "https://github.com/takeokunn/company-dockerfile.git"))
+
       (with-eval-after-load 'company
         (when (require 'company-dockerfile nil t)
           (push 'company-dockerfile company-backends)))
     #+end_src
 *** company-glsl
     #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'company-glsl))
+
       (with-eval-after-load 'company
         (when (require 'company-glsl nil t)
           (push 'company-glsl company-backends)))
     #+END_SRC
 *** TODO slime-company
     #+begin_src emacs-lisp
-      ;; (with-eval-after-load 'company
-      ;;   (when (require 'slime-company nil t)
-      ;;     ;; (slime-setup '(slime-fancy slime-banner slime-company))
-      ;;     (eval-and-compile
-      ;;       (setq slime-company-completion 'fuzzy)
-      ;;       (setq slime-company-after-completion 'slime-company-just-one-space))))
+      ;; (eval-when-compile
+      ;;   (el-get-bundle "anwyn/slime-company"))
+
+      ;; (with-eval-after-load 'slime-company
+      ;;   (when (require 'slime-company)
+      ;;     (push 'company-slime company-backends))
+      ;;   (eval-and-compile
+      ;;     (setq slime-company-completion 'fuzzy)
+      ;;     (setq slime-company-after-completion 'slime-company-just-one-space)))
     #+end_src
 *** company-c-headers
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'company-c-headers))
+
       (with-eval-after-load 'company
         (when (require 'company-c-headers nil t)
           (push 'company-c-headers company-backends)))
     #+end_src
 *** company-shell
     #+begin_src emacs-lisp
-      (with-eval-after-load 'company
-        (when (require 'company-shell nil t)
-          (push 'company-shell company-backends)
-          (push 'company-shell-env company-backends)
-          (push 'company-fish-shell company-backends)))
-    #+end_src
-*** TODO company-solidity
-    #+begin_src emacs-lisp
+      ;; (eval-when-compile
+      ;;   (el-get-bundle "takeokunn/company-shell"))
+
       ;; (with-eval-after-load 'company
-      ;;   (eval-and-compile
-      ;;     (require company-solidity nil t)))
+      ;;   (when (require 'company-shell nil t)
+      ;;     (push 'company-shell company-backends)
+      ;;     (push 'company-shell-env company-backends)
+      ;;     (push 'company-fish-shell company-backends)))
     #+end_src
 *** company-terraform
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'company-terraform))
+
       (with-eval-after-load 'company
         (when (require 'company-terraform nil t)
           (push 'company-terraform company-backends)))
     #+end_src
-** Snippet
+** Search
 *** el-get
     #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'yasnippet))
+      (eval-and-compile
+        (el-get-bundle abo-abo/swiper))
     #+end_src
-*** yasnippet
-    snippetはこちら [[https://takeokunn.github.io/.emacs.d/yasnippets.html][https://takeokunn.github.io/.emacs.d/yasnippets.html]]
+*** swiper
+    #+BEGIN_SRC emacs-lisp
+      (eval-and-compile
+        (require 'swiper)
+
+        (defun my/swiper ()
+          (interactive)
+          (let ((word (thing-at-point 'symbol 'no-properties)))
+            (swiper word)))
+
+        (global-set-key (kbd "C-o") 'my/swiper))
+
+    #+END_SRC
+*** counsel
     #+begin_src emacs-lisp
-      (with-eval-after-load 'yasnippet
-        (yas-global-mode 1)
+      (eval-and-compile
+        (require 'counsel)
+
+        (defun my/counsel-fzf ()
+          (interactive)
+          (let ((default-directory (locate-dominating-file default-directory ".git")))
+            (counsel-fzf)))
+
+        (defun my/counsel-rg ()
+          (interactive)
+          (let ((symbol (thing-at-point 'symbol 'no-properties))
+                (default-directory (locate-dominating-file default-directory ".git")))
+            (counsel-rg symbol)))
+
+        (global-set-key (kbd "C-x m") 'counsel-compile)
+        (global-set-key (kbd "C-c k") 'my/counsel-rg)
+        (global-set-key (kbd "M-p") 'my/counsel-fzf)
+
+        (counsel-mode 1))
+    #+end_src
+*** ivy
+    #+begin_src emacs-lisp
+      (eval-and-compile
+        (require 'ivy)
+        (ivy-mode 1))
+
+      (with-eval-after-load 'ivy
         (eval-and-compile
-          (setq yas-snippet-dirs '("~/.emacs.d/yasnippets"))))
+          (setq ivy-use-virtual-buffers t)))
     #+end_src
-*** TODO ivy-yasnippet
+*** ivy-ghq
+    #+BEGIN_SRC emacs-lisp
+      (eval-and-compile
+        (el-get-bundle ivy-ghq
+          :url "https://github.com/analyticd/ivy-ghq.git"
+          :features ivy-ghq))
+
+      (defun my/ivy-ghq-open-and-fzf ()
+        (interactive)
+        (ivy-ghq-open)
+        (counsel-fzf))
+
+      (global-set-key (kbd "M-o") 'my/ivy-ghq-open-and-fzf)
+
+      (with-eval-after-load 'ivy-ghq
+        (eval-and-compile
+          (setq ivy-ghq-short-list t)))
+    #+END_SRC
+*** ivy-rich
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'ivy-rich))
+
+      (with-eval-after-load 'ivy-rich
+        (ivy-rich-mode 1))
+    #+END_SRC
+** Snippet
+*** yasnippet
     #+begin_src emacs-lisp
-      ;; (leaf ivy-yasnippet
-      ;;   :ensure t
-      ;;   :after (yasnippet ivy)
-      ;;   :bind (("C-c y" . ivy-yasnippet)
-      ;;          ("C-c C-y" . ivy-yasnippet)))
+      (eval-and-compile
+        (el-get-bundle "yasnippet"))
+
+      (with-eval-after-load 'yasnippet
+        (yas-global-mode 1))
+    #+end_src
+*** ivy-yasnippet
+    #+begin_src emacs-lisp
+      (eval-and-compile
+        (el-get-bundle "mkcms/ivy-yasnippet"))
+
+      (global-set-key (kbd "C-c y") 'ivy-yasnippet)
+      (global-set-key (kbd "C-c C-y") 'ivy-yasnippet)
     #+end_src
 ** LSP
-*** el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'lsp-mode)
-        (el-get-bundle 'lsp-ui)
-        (el-get-bundle 'lsp-dart))
-    #+end_src
 *** lsp-mode
     #+BEGIN_SRC emacs-lisp
-      (autoload 'lsp "lsp-mode")
+      (eval-and-compile
+        (el-get-bundle lsp-mode))
 
       (with-eval-after-load 'lsp-mode
         (eval-and-compile
           (setq lsp-keymap-prefix "C-c l")
-          (setq lsp-completion-provider t))
+          (setq lsp-completion-provider t)))
+    #+END_SRC
+*** dap-mode
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle dap-mode))
 
-        (push 'company-capf company-backends))
+      (add-hook 'dap-stopped-hook (lambda () (call-interactively #'dap-hydra)))
+
+      (with-eval-after-load 'dap-mode
+        (when (require 'dap-mode)
+          ;; (define-key dap-mode-map (kbd "C-c d") 'dap-breakpoint-toggle)
+          (dap-mode 1)
+          (dap-ui-mode 1)
+          (dap-auto-configure-mode 1)))
     #+END_SRC
 *** lsp-ui
     #+BEGIN_SRC emacs-lisp
+      (eval-and-compile
+        (el-get-bundle lsp-ui))
+
       (add-hook 'lsp-mode-hook 'lsp-ui-mode)
 
       (with-eval-after-load 'lsp-mode
@@ -934,173 +1125,53 @@
           (setq lsp-ui-imenu-enable nil)
           (setq lsp-ui-sideline-enable nil)))
     #+END_SRC
-*** lsp-dart
-    #+begin_src emacs-lisp
-      (with-eval-after-load 'lsp-dart)
-    #+end_src
-** DAP
-*** el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'dap-mode))
-    #+end_src
-*** dap-mode
+** Git
+*** magit
     #+BEGIN_SRC emacs-lisp
-      (with-eval-after-load 'dap-mode
-        ;; (define-key dap-mode-map (kbd "C-c d") 'dap-breakpoint-toggle)
-        (add-hook 'dap-stopped-hook
-                  (lambda () (call-interactively #'dap-hydra)))
-        (dap-mode 1)
-        (dap-ui-mode 1)
-        (dap-auto-configure-mode 1))
-    #+END_SRC
-** TODO Git
-*** TODO el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        ;; (el-get-bundle 'magit)
-        ;; (el-get-bundle 'magit-forge)
-        )
-    #+end_src
-*** TODO magit
-    #+BEGIN_SRC emacs-lisp
-      ;; (global-set-key (kbd "C-x g") 'magit-status)
+      (eval-and-compile
+        (el-get-bundle magit/transient)
+        (el-get-bundle magit/ghub)
+        (el-get-bundle magit/magit-popup)
+        (el-get-bundle magit/magit))
 
-      ;; (autoload 'magit-status "magit")
+      (add-to-list 'load-path (locate-user-emacs-file "el-get/magit/lisp"))
 
-      ;; (with-eval-after-load 'magit
-      ;;   (eval-and-compile
-      ;;     (setq magit-refresh-status-buffer nil)))
-    #+END_SRC
-*** TODO magit-forge
-    #+begin_src emacs-lisp
-      ;; (leaf forge
-      ;;   :disabled t
-      ;;   :ensure t
-      ;;   :after magit
-      ;;   :setq
-      ;;   (browse-url-browser-function . 'browse-url-default-browser))
+      (global-set-key (kbd "C-x g") 'magit-status)
 
-      ;; (when (autoload-if-found '() "forge" nil t)
-      ;;   (with-eval-after-load "keypression"
-      ;;     (setq keypression-use-child-frame t)
-      ;;     (setq keypression-frames-maxnum 3)
-      ;;     (setq keypression-fade-out-delay 1.5)
-      ;;     (setq keypression-font "Monaco")
-      ;;     (setq keypression-font-face-attribute
-      ;;           '(:width normal :height 200 :weight bold))
-      ;;     ;; (progn
-      ;;     ;;   (setq keypression-frame-origin 'keypression-origin-top-left)
-      ;;     ;;   (setq keypression-x-offset -10)
-      ;;     ;;   (setq keypression-y-offset +10))
-      ;;     (progn
-      ;;       (setq keypression-x-offset +8)
-      ;;       (setq keypression-y-offset +16))
-      ;;     (add-hook 'keypression-mode-hook #'dimmer-permanent-off)
-      ;;     ;; (keypression-mode 1) ;; To start, M-x keypression-mode
-      ;;     ))
-    #+end_src
-** TODO Search
-*** el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        ;; (el-get-bundle 'swiper)
-        ;; (el-get-bundle 'ivy)
-        ;; (el-get-bundle 'counsel)
-        )
-    #+end_src
-*** TODO counsel
-    #+begin_src emacs-lisp
-      ;; (leaf counsel
-            ;;   :ensure t
-            ;;   :init
-            ;;   (eval-and-compile
-            ;;     (defun takeokunn/counsel-rg ()
-            ;;       (interactive)
-            ;;       (let ((symbol (thing-at-point 'symbol 'no-properties))
-            ;;             (default-directory (locate-dominating-file default-directory ".git")))
-            ;;         (counsel-rg symbol)))
-            ;;     (defun takeokunn/counsel-fzf ()
-            ;;       (interactive)
-            ;;       (let ((default-directory (locate-dominating-file default-directory ".git")))
-            ;;         (counsel-fzf))))
-            ;;   :bind
-            ;;   (("C-x m" . counsel-compile)
-            ;;    ("C-c k" . takeokunn/counsel-rg)
-            ;;    ("M-p" . takeokunn/counsel-fzf))
-            ;;   :config
-            ;;   (counsel-mode 1))
-    #+end_src
-*** TODO swiper
-    #+BEGIN_SRC emacs-lisp
-      ;; (leaf swiper
-      ;;   :ensure t
-      ;;   :init
-      ;;   (eval-and-compile
-      ;;     (defun takeokunn/swiper ()
-      ;;       (interactive)
-      ;;       (let ((word (thing-at-point 'symbol 'no-properties)))
-      ;;         (swiper word))))
-      ;;   :bind (("C-o" . takeokunn/swiper)))
-    #+END_SRC
-*** TODO ivy
-    #+begin_src emacs-lisp
-      ;; (leaf ivy
-      ;;   :ensure t
-      ;;   :custom (ivy-use-virtual-buffers . t)
-      ;;   :config
-      ;;   (ivy-mode 1)
-      ;;   (ivy-configure 'counsel-M-x :sort-fn 'ivy--sort-by-length))
-    #+end_src
-*** TODO ivy-ghq
-    #+BEGIN_SRC emacs-lisp
-      ;; (leaf ivy-ghq
-      ;;   :el-get (ivy-ghq
-      ;;            :url "https://github.com/analyticd/ivy-ghq.git"
-      ;;            :features ivy-ghq)
-      ;;   :preface
-      ;;   (defun takeokunn/ivy-ghq-open-and-fzf ()
-      ;;     (interactive)
-      ;;     (ivy-ghq-open)
-      ;;     (counsel-fzf))
-      ;;   :after counsel
-      ;;   :custom ((ivy-ghq-short-list . t))
-      ;;   :defun ivy-ghq-open takeokunn/ivy-ghq-open-and-fzf)
+      (autoload 'magit-status "magit")
 
-      ;; (general-define-key
-      ;;  "M-o" 'takeokunn/ivy-ghq-open-and-fzf)
+      (with-eval-after-load 'magit
+        (eval-and-compile
+          (setq magit-refresh-status-buffer nil)))
     #+END_SRC
-*** TODO ivy-rich
-    #+BEGIN_SRC emacs-lisp
-      ;; (leaf ivy-rich
-      ;;   :ensure t
-      ;;   :after counsel
-      ;;   :config
-      ;;   (ivy-rich-mode 1))
-    #+END_SRC
+*** magit-forge
+    #+begin_src emacs-lisp
+      ;; (eval-when-compile
+      ;;   (el-get-bundle 'magit-forge))
+
+      ;; (with-eval-after-load 'magit-forge)
+    #+end_src
 ** Shell
-*** el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'exec-path-from-shell))
-    #+end_src
 *** exec-path-from-shell
     #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle exec-path-from-shell))
+
       (add-hook 'after-init-hook 'exec-path-from-shell-initialize)
 
       (with-eval-after-load 'exec-path-from-shell
-        ;; (eval-and-compile
-        ;;   (setq exec-path-from-shell-variables '("PATH" "GEM_HOME" "GOROOT" "GOPATH")))
-        )
+        (eval-and-compile
+          (setq exec-path-from-shell-variables '("PATH" "GEM_HOME" "GOROOT" "GOPATH"))))
     #+END_SRC
-** TODO Rust
+** Rust
 *** TODO racer
     #+BEGIN_SRC emacs-lisp
-      ;; (leaf racer
-      ;;   :ensure t
-      ;;   :after rust-mode
-      ;;   :hook (rust-mode-hook
-      ;;          (racer-mode-hook . eldoc-mode)))
+      ;; (eval-and-compile
+      ;;   (el-get-bundle 'emacs-racer))
+
+      ;; ;; (when (require 'racer)
+      ;; ;;   (add-hook 'rust-mode-hook #'racer-mode)
+      ;; ;;   (add-hook 'racer-mode-hook #'eldoc-mode))
     #+END_SRC
 *** TODO rustic
     #+BEGIN_SRC emacs-lisp
@@ -1108,23 +1179,23 @@
       ;;   :ensure t
       ;;   :after (rust-mode))
     #+END_SRC
-** TODO Cpp
-*** TODO clang-format
+** Cpp
+*** clang-format
     #+begin_src emacs-lisp
-      ;; (leaf clang-format
-      ;;   :ensure t
-      ;;   :hook (before-save-hook . (lambda ()
-      ;;                               (when (member major-mode '(c-mode c++-mode))
-      ;;                                 (clang-format-buffer)))))
+      (eval-when-compile
+        (el-get-bundle 'clang-format))
+
+      (add-hook 'before-save-hook (lambda ()
+                                    (when (and (require 'clang-format)
+                                               (member major-mode '(c-mode c++-mode)))
+                                      (clang-format-buffer))))
     #+end_src
-*** TODO inferior-cling
+*** inferior-cling
     #+begin_src emacs-lisp
-      ;; (leaf inferior-cling
-      ;;   :el-get (inferior-cling
-      ;;            :url "https://github.com/brianqq/inferior-cling.git"
-      ;;            :features cling))
+      (eval-when-compile
+        (el-get-bundle "brianqq/inferior-cling"))
     #+end_src
-** TODO C#
+** C#
 *** TODO omnisharp
     #+BEGIN_SRC emacs-lisp
       ;; (leaf omnisharp
@@ -1170,25 +1241,12 @@
             arguments: ((template_string) @property.definition
                         (.offset! @property.definition 0 1 0 -1)))]))
     #+end_src
-** TODO Haskell
-*** TODO hindent
-    #+BEGIN_SRC emacs-lisp
-      ;; (leaf hindent
-      ;;   :ensure t
-      ;;   :after haskell-mode
-      ;;   :hook (haskell-mode-hook))
-    #+END_SRC
 ** Ruby
-*** el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'robe)
-        (el-get-bundle 'rubocop)
-        (el-get-bundle 'ruby-refactor)
-        (el-get-bundle 'inf-ruby))
-    #+end_src
 *** robe
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'robe))
+
       (add-hook 'ruby-mode-hook 'robe-mode)
 
       (with-eval-after-load 'company
@@ -1197,47 +1255,49 @@
     #+end_src
 *** rubocop
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'rubocop))
+
       (add-hook 'ruby-mode-hook 'rubocop-mode)
     #+end_src
 *** ruby-refactor
     #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'ruby-refactor))
+
       (add-hook 'ruby-mode-hook 'ruby-refactor-mode-launch)
     #+END_SRC
-*** TODO inf-ruby
+*** inf-ruby
     #+BEGIN_SRC emacs-lisp
-      ;; (leaf inf-ruby
-      ;;   :config
-      ;;   (defun takeokunn/irb-history ()
-      ;;     (interactive)
-      ;;     (insert
-      ;;      (completing-read
-      ;;       "choose history: "
-      ;;       (mapcar #'list (-distinct (s-lines (f-read-text "~/.irb_history")))))))
-      ;;   :bind
-      ;;   (:inf-ruby-mode-map
-      ;;    ("C-c C-r" . takeokunn/irb-history)))
-    #+END_SRC
-
-** SQL
-*** el-get
-    #+begin_src emacs-lisp
       (eval-when-compile
-        (el-get-bundle 'sql-indent))
-    #+end_src
+        (el-get-bundle 'inf-ruby))
+
+      (add-hook 'ruby-mode-hook 'inf-ruby-minor-mode)
+
+      ;; (defun takeokunn/irb-history ()
+      ;;   (interactive)
+      ;;   (require 'dash)
+      ;;   (require 's)
+      ;;   (require 'f)
+      ;;   (insert
+      ;;    (completing-read
+      ;;     "choose history: "
+      ;;     (mapcar #'list (-distinct (s-lines (f-read-text "~/.irb_history")))))))
+    #+END_SRC
+** SQL
 *** sql-indent
     #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'sql-indent))
+
       (add-hook 'sql-mode-hook 'sqlind-minor-mode)
     #+END_SRC
-** TODO PHP
-*** TODO el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        ;; (el-get-bundle 'phpactor)
-        ;; (el-get-bundle 'psysh)
-        )
-    #+end_src
+** PHP
 *** TODO phpactor
     #+begin_src emacs-lisp
+      ;; (eval-when-compile
+      ;;   (el-get-bundle 'phpactor))
+
       ;; (leaf phpactor
       ;;   :ensure t
       ;;   :disabled t
@@ -1252,38 +1312,28 @@
       ;;   :config
       ;;   (phpactor-smart-jump-register))
     #+end_src
-*** TODO psysh
+*** psysh
     #+begin_src emacs-lisp
-      ;; (leaf psysh
-      ;;   :ensure t
-      ;;   :after (php-mode))
+      (eval-when-compile
+        (el-get-bundle 'psysh))
     #+end_src
 ** Markdown
-*** el-get
+*** poly-markdown
     #+begin_src emacs-lisp
       (eval-when-compile
         (el-get-bundle 'poly-markdown))
-    #+end_src
-*** poly-markdown
-    #+begin_src emacs-lisp
+
       (add-to-list 'auto-mode-alist '("\\.md" . poly-markdown-mode))
     #+end_src
 ** Fish
-*** el-get
+*** fish-repl
     #+begin_src emacs-lisp
       (eval-when-compile
         (el-get-bundle 'fish-repl :url "https://github.com/takeokunn/fish-repl.el.git"))
-    #+end_src
-*** fish-repl
-    #+begin_src emacs-lisp
+
       (with-eval-after-load 'fish-repl)
     #+end_src
 ** File
-*** el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'open-junk-file))
-    #+end_src
 *** recentf
     #+BEGIN_SRC emacs-lisp
       (with-eval-after-load 'recentf
@@ -1296,6 +1346,9 @@
     #+END_SRC
 *** open-junk-file
     #+BEGIN_SRC emacs-lisp
+      (eval-and-compile
+        (el-get-bundle 'open-junk-file))
+
       (autoload 'open-junk-file "open-junk-file")
 
       (global-set-key (kbd "C-x j") 'open-junk-file)
@@ -1305,15 +1358,11 @@
           (setq open-junk-file-format `,(locate-user-emacs-file ".junk/%Y-%m%d-%H%M%S."))))
     #+END_SRC
 ** Check
-*** el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'flycheck)
-        ;; (el-get-bundle 'flycheck-textlint)
-        )
-    #+end_src
 *** flycheck
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'flycheck))
+
       ;; (add-hook 'ruby-mode-hook 'flycheck-mode)
       ;; (add-hook 'org-mode-hook 'flycheck-mode)
     #+end_src
@@ -1334,26 +1383,13 @@
       ;;     :modes (text-mode markdown-mode))
       ;;   (add-to-list 'flycheck-checkers 'textlint))
     #+end_src
-*** TODO flycheck-solidity
-    #+begin_src emacs-lisp
-      ;; (leaf solidity-flycheck
-      ;;   :ensure t
-      ;;   :after (solidity-mode flycheck)
-      ;;   :hook
-      ;;   (solidity-mode-hook . flycheck-mode)
-      ;;   :custom
-      ;;   (solidity-flycheck-solc-checker-active . t))
-    #+end_src
 ** Cursor
-*** el-get
-    #+begin_src emacs-lisp
-      (eval-and-compile
-        (el-get-bundle 'smartrep)
-        (el-get-bundle 'multiple-cursors)
-        (el-get-bundle 'smooth-scroll))
-    #+end_src
 *** smartrep/multiple-cursors
     #+BEGIN_SRC emacs-lisp
+      (eval-and-compile
+        (el-get-bundle 'smartrep)
+        (el-get-bundle 'multiple-cursors))
+
       (global-unset-key (kbd "C-t"))
 
       (require 'multiple-cursors nil t)
@@ -1376,45 +1412,12 @@
               ("o" quote mc/sort-regions)
               ("O" quote mc/reverse-regions)))))
     #+END_SRC
-*** smooth-scroll
-    #+BEGIN_SRC emacs-lisp
-      ;; (leaf smooth-scroll
-      ;;   :ensure t
-      ;;   :commands smooth-scroll-mode
-      ;;   :config
-      ;;   (smooth-scroll-mode 1))
-    #+END_SRC
 ** Other
-*** el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'auto-save-buffers-enhanced)
-        (el-get-bundle 'amx)
-        (el-get-bundle 'avy)
-        (el-get-bundle 'avy-zap)
-        (el-get-bundle 'define-word)
-        ;; (el-get-bundle 'ddskk)
-        (el-get-bundle 'editorconfig)
-        ;; (el-get-bundle 'esup)
-        (el-get-bundle 'elfeed)
-        (el-get-bundle 'elfeed-org)
-        (el-get-bundle 'font-lock-studio)
-        (el-get-bundle 'google-this)
-        (el-get-bundle 'htmlize)
-        (el-get-bundle 'keyfreq)
-        (el-get-bundle 'lorem-ipsum)
-        ;; (el-get-bundle 'origami)
-        (el-get-bundle 'popwin)
-        (el-get-bundle 'smartparens)
-        (el-get-bundle 'smart-jump)
-        (el-get-bundle 'undo-tree)
-        (el-get-bundle 'uuid :url "https://github.com/nicferrier/emacs-uuid.git")
-        (el-get-bundle 'which-key)
-        (el-get-bundle 'whitespace)
-        (el-get-bundle 'wanderlust))
-    #+end_src
 *** auto-save-buffers-enhanced
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'auto-save-buffers-enhanced))
+
       (with-eval-after-load 'auto-save-buffers-enhanced
         (auto-save-buffers-enhanced t)
         (eval-and-compile
@@ -1422,15 +1425,25 @@
     #+end_src
 *** amx
     #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'amx))
+
       (with-eval-after-load 'amx)
     #+END_SRC
 *** avy
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'avy)
+        (el-get-bundle 'avy-zap))
+
       (global-set-key (kbd "C-:") 'avy-goto-char-timer)
       (global-set-key (kbd "M-z") 'avy-zap-up-to-char-dwim)
     #+end_src
 *** define-word
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'define-word))
+
       (defun my/define-word ()
         (interactive)
         (if (use-region-p)
@@ -1445,28 +1458,43 @@
                   (webster . takeokunn/define-word--display-in-buffer)
                   (weblio . takeokunn/define-word--display-in-buffer)))))
     #+end_src
-*** TODO ddskk
+*** ddskk
     #+BEGIN_SRC emacs-lisp
-      ;; (global-set-key (kbd "C-x C-j") 'skk-mode)
+      (eval-when-compile
+        (el-get-bundle 'ddskk))
 
-      ;; (with-eval-after-load 'ddskk
-      ;;   (eval-and-compile
-      ;;     (setq skk-byte-compile-init-file t)
-      ;;     (setq skk-isearch-mode-enable 'always)
-      ;;     (setq skk-preload t)
-      ;;     (setq default-input-method "japanese-skk")))
+      (autoload 'skk-mode "ddskk")
+
+      (global-set-key (kbd "C-x C-j") 'skk-mode)
+
+      (with-eval-after-load 'ddskk
+        (eval-and-compile
+          (setq skk-byte-compile-init-file t)
+          (setq skk-isearch-mode-enable 'always)
+          (setq skk-preload t)
+          (setq default-input-method "japanese-skk")))
     #+END_SRC
 *** editorconfig
     #+BEGIN_SRC emacs-lisp
-      (with-eval-after-load 'editorconfig
-        (editorconfig-mode 1))
+      (eval-when-compile
+        (el-get-bundle 'editorconfig))
+
+      ;; (with-eval-after-load 'editorconfig
+      ;;   (when (require 'editorconfig)
+      ;;     (editorconfig-mode 1)))
     #+END_SRC
 *** esup
     #+BEGIN_SRC emacs-lisp
-      ;; (with-eval-after-load 'esup)
+      (eval-and-compile
+        (el-get-bundle 'esup))
+
+      (with-eval-after-load 'esup)
     #+END_SRC
 *** elfeed
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'elfeed))
+
       (with-eval-after-load 'elfeed
         (eval-and-compile
           (setq elfeed-search-filter "@3-days-ago +unread")
@@ -1474,6 +1502,9 @@
     #+end_src
 *** elfeed-org
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'elfeed-org))
+
       (with-eval-after-load 'elfeed-org
         (elfeed-org)
         (eval-and-compile
@@ -1481,10 +1512,14 @@
     #+end_src
 *** font-lock-studio
     #+BEGIN_SRC emacs-lisp
-      ;; (leaf font-lock-studio :ensure t)
+      (eval-when-compile
+        (el-get-bundle 'font-lock-studio))
     #+END_SRC
 *** google-this
     #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'google-this))
+
       (global-set-key (kbd "M-g") 'google-this)
     #+END_SRC
 *** goto-addr
@@ -1494,42 +1529,62 @@
     #+END_SRC
 *** htmlize
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'htmlize))
+
       (with-eval-after-load 'htmlize)
     #+end_src
 *** keyfreq
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'keyfreq))
+
       (with-eval-after-load 'keyfreq
         (keyfreq-mode 1)
         (keyfreq-autosave-mode 1))
     #+end_src
 *** lorem ipsum
     #+begin_src emacs-lisp
-      (global-set-key (kbd "C-c C-l s") 'lorem-ipsum-insert-sentences)
-      (global-set-key (kbd "C-c C-l p") 'lorem-ipsum-insert-paragraphs)
-      (global-set-key (kbd "C-c C-l l") 'lorem-ipsum-insert-list)
-    #+end_src
-*** TODO origami
-    Package cl is deprecated
-    #+begin_src emacs-lisp
-      ;; (when (require 'origami nil t)
-      ;;   (global-set-key (kbd "C-c t") 'origami-recursively-toggle-node)
-      ;;   (global-set-key (kbd "C-c C-t") 'origami-recursively-toggle-node))
+      (eval-when-compile
+        (el-get-bundle 'lorem-ipsum))
 
-      ;; (with-eval-after-load 'origami
-      ;;   (global-origami-mode))
+      (with-eval-after-load 'lorem-ipsum
+        (global-set-key (kbd "C-c C-l s") 'lorem-ipsum-insert-sentences)
+        (global-set-key (kbd "C-c C-l p") 'lorem-ipsum-insert-paragraphs)
+        (global-set-key (kbd "C-c C-l l") 'lorem-ipsum-insert-list))
+    #+end_src
+*** origami
+    #+begin_src emacs-lisp
+      (eval-and-compile
+        (el-get-bundle 'origami))
+
+      (global-set-key (kbd "C-c t") 'origami-recursively-toggle-node)
+      (global-set-key (kbd "C-c C-t") 'origami-recursively-toggle-node)
+
+      (with-eval-after-load 'origami
+        (global-origami-mode))
     #+end_src
 *** popwin
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'popwin))
+
       (eval-and-compile
         (when (require 'popwin nil t)
           (popwin-mode 1)))
     #+end_src
 *** smartparens
     #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'smartparens))
+
       (with-eval-after-load 'smartparens)
     #+END_SRC
 *** smart-jump
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'smart-jump))
+
       (with-eval-after-load 'smart-jump)
     #+end_src
 *** subword
@@ -1556,12 +1611,18 @@
     #+end_src
 *** undo-tree
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'undo-tree))
+
       (eval-and-compile
         (when (require 'undo-tree nil t)
           (global-undo-tree-mode)))
     #+end_src
 *** uuid
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'uuid :url "https://github.com/nicferrier/emacs-uuid.git"))
+
       ;; (when (and (require 'uuid nil t)
       ;;            (boundp 'uuid-string))
       ;;   (defun my/uuid ()
@@ -1571,31 +1632,32 @@
     #+end_src
 *** which-key
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'which-key))
+
       (add-hook 'after-init-hook 'which-key-mode)
 
       (with-eval-after-load 'which-key)
     #+end_src
 *** whitespace
     #+BEGIN_SRC emacs-lisp
-      (with-eval-after-load 'whitespace
-        (global-whitespace-mode 1)
-        (eval-and-compile
-          (setq whitespace-style '(face tabs tab-mark spaces space-mark))
-          (setq whitespace-display-mappings '((space-mark ?\u3000 [?\u25a1])
-                                              (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t])))))
+      ;; (with-eval-after-load 'whitespace
+      ;;   (global-whitespace-mode 1)
+      ;;   (eval-and-compile
+      ;;     (setq whitespace-style '(face tabs tab-mark spaces space-mark))
+      ;;     (setq whitespace-display-mappings '((space-mark ?\u3000 [?\u25a1])
+      ;;                                         (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t])))))
     #+END_SRC
 *** wanderlust
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'wanderlust))
+
       (with-eval-after-load 'wanderlust
         (eval-and-compile
           (setq ssl-certificate-verification-policy 1)))
     #+end_src
 * Eshell
-** el-get
-   #+begin_src emacs-lisp
-     (eval-when-compile
-       (el-get-bundle 'eshell-z))
-   #+end_src
 ** basic
    #+begin_src emacs-lisp
      (with-eval-after-load 'eshell
@@ -1615,6 +1677,12 @@
        (defvar *shell-alias* '(("ll" "ls -la")
                                ("cdd" "cd ~/Desktop")))
        (defvar eshell-command-aliases-list (append *shell-alias*)))
+   #+end_src
+** TODO eshell-z
+   #+begin_src emacs-lisp
+     ;; (eval-and-compile
+     ;;   (el-get-bundle xuchunyang/eshell-z
+     ;;     (define-key eshell-mode-map (kbd "C-c C-q") 'eshell-z)))
    #+end_src
 ** TODO aweshell
    #+BEGIN_SRC emacs-lisp
@@ -1641,29 +1709,7 @@
      ;;       (add-hook 'eshell-mode-hook
      ;;                 (lambda () (define-key eshell-mode-map (kbd "C-c C-r") 'takeokunn/counsel-aweshell-history))))))
    #+END_SRC
-** TODO eshell-z
-   #+begin_src emacs-lisp
-     ;; (when (require 'eshell-z nil t)
-     ;;   (define-key eshell-mode-map (kbd "C-c C-q") 'eshell-z))
-   #+end_src
 * Org Mode
-** el-get
-   #+begin_src emacs-lisp
-     (eval-when-compile
-       ;; org-babel
-       (el-get-bundle 'ob-fish :url "https://github.com/takeokunn/ob-fish.git")
-       (el-get-bundle 'ob-go)
-       (el-get-bundle 'ob-rust)
-       (el-get-bundle 'ob-typescript)
-
-       ;; plugins
-       ;; (el-get-bundle 'org-journal)
-       ;; (el-get-bundle 'org-ql)
-       (el-get-bundle 'org-superstar)
-       (el-get-bundle 'org-generate)
-       ;; (el-get-bundle 'org-pomodoro)
-       )
-   #+end_src
 ** basic
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "C-c a") 'org-agenda)
@@ -1683,11 +1729,16 @@
          (setq org-startup-folded 'fold)
          (setq org-archive-location `,(format "~/org/archive/%s.org"
                                               (format-time-string "%Y" (current-time))))
-         ;; face
          (setq org-link '(t (:foreground "#ebe087" :underline t)))))
    #+END_SRC
 ** org-babel
    #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'ob-fish :url "https://github.com/takeokunn/ob-fish.git")
+       (el-get-bundle 'ob-go)
+       (el-get-bundle 'ob-rust)
+       (el-get-bundle 'ob-typescript))
+
      (with-eval-after-load 'ob-core
        (eval-and-compile
          (setq org-confirm-babel-evaluate nil)))
@@ -1703,24 +1754,22 @@
                                       (rust . t)
                                       (typescript . t))))
    #+end_src
-** TODO org-journal
+** org-journal
    #+begin_src emacs-lisp
-     ;; (with-eval-after-load 'org-journal
-     ;;   (eval-and-compile
-     ;;     (setq org-journal-dir "~/org/journal")
-     ;;     (setq org-journal-file-type 'weekly)
-     ;;     (setq org-journal-prefix-key "C-c j")))
-   #+end_src
-** TODO org-ql
-   #+begin_src emacs-lisp
-     ;; (with-eval-after-load 'org-ql
-     ;;   (eval-and-compile
-     ;;     (setq org-agenda-custom-commands `(("i" "Today's agenda"
-     ;;                                         ((org-ql-block '(and (todo "TODAY"))
-     ;;                                                        ((org-ql-block-header "TODAY's agenda")))))))))
+     (eval-when-compile
+       (el-get-bundle 'org-journal))
+
+     (with-eval-after-load 'org-journal
+       (eval-and-compile
+         (setq org-journal-dir "~/org/journal")
+         (setq org-journal-file-type 'weekly)
+         (setq org-journal-prefix-key "C-c j")))
    #+end_src
 ** org-superstar
    #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'org-superstar))
+
      (add-hook 'org-mode-hook 'org-superstar-mode)
 
      (with-eval-after-load 'org-superstar
@@ -1728,14 +1777,22 @@
          (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿"))
          (setq org-superstar-leading-bullet " ")))
    #+end_src
-** TODO org-generate
+** org-generate
    #+begin_src emacs-lisp
-     ;; (leaf org-generate
-     ;;   :ensure t
-     ;;   :custom
-     ;;   (org-generate-file . `,(locate-user-emacs-file "yasnippets.org"))
-     ;;   :setq
-     ;;   (org-generate-root . "yasnippets"))
+     (eval-when-compile
+       (el-get-bundle 'org-generate))
+
+     (with-eval-after-load 'org-generate
+       (eval-and-compile
+         (setq org-generate-file `,(locate-user-emacs-file "yasnippets.org"))
+         (setq org-generate-root "yasnippets")))
+   #+end_src
+** org-pomodoro
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle "marcinkoziej/org-pomodoro"))
+
+     (with-eval-after-load 'org-pomodoro)
    #+end_src
 ** TODO org-roam
    #+begin_src emacs-lisp
@@ -1767,9 +1824,16 @@
      ;;   (("<f8>" . org-tree-slide-mode)
      ;;    ("S-<f8>" . org-tree-slide-skip-done-toggle)))
    #+end_src
-** org-pomodoro
+** TODO org-ql
    #+begin_src emacs-lisp
-     (with-eval-after-load 'org-pomodoro)
+     ;; (eval-when-compile
+     ;;   (el-get-bundle 'org-ql))
+
+     ;; (with-eval-after-load 'org-ql
+     ;;   (eval-and-compile
+     ;;     (setq org-agenda-custom-commands `(("i" "Today's agenda"
+     ;;                                         ((org-ql-block '(and (todo "TODAY"))
+     ;;                                                        ((org-ql-block-header "TODAY's agenda")))))))))
    #+end_src
 * MyFunc
 ** my/beginning-of-intendation
@@ -1819,8 +1883,8 @@
        (interactive)
        (my/move-line -1))
 
-     (global-set-key (kbd "M-n") 'my/move-line-down)
-     (global-set-key (kbd "M-p") 'my/move-line-up)
+     (global-set-key (kbd "M-N") 'my/move-line-down)
+     (global-set-key (kbd "M-P") 'my/move-line-up)
    #+end_src
 ** my/toggle-read-only-mode
    #+begin_src emacs-lisp
@@ -1843,3 +1907,8 @@
 
      (defalias 'ghq-get 'my/ghq-get)
    #+end_src
+** footer
+  #+begin_src emacs-lisp
+    ;; (profiler-report)
+    ;; (profiler-stop)
+  #+end_src
