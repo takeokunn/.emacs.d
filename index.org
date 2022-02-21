@@ -85,7 +85,9 @@
                         (lambda ()
                           (if my/delayed-configurations
                               (eval (pop my/delayed-configurations))
-                            (cancel-timer my/delayed-configuration-timer)))))))
+                            (progn
+                              (cancel-timer my/delayed-configuration-timer)
+                              (message "Finish!!!"))))))))
 
      (defmacro with-delayed-execution (&rest body)
        (declare (indent 0))
@@ -112,15 +114,16 @@
          (goto-char (point-max))
          (eval-print-last-sexp)))
 
-     (add-to-list 'load-path (locate-user-emacs-file "el-get/el-get"))
-
-     (when (autoload-if-found '(el-get-package-status-alist) "el-get" nil t)
-       (with-eval-after-load 'el-get
-         (eval-and-compile
-           (setq el-get-git-shallow-clone t
-                 el-get-verbose nil
-                 el-get-silent-update t
-                 el-get-default-process-sync t))))
+     (with-delayed-execution
+       (message "Install el-get...")
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/el-get"))
+       (when (autoload-if-found '(el-get-package-status-alist) "el-get" nil t)
+         (with-eval-after-load 'el-get
+           (eval-and-compile
+             (setq el-get-git-shallow-clone t
+                   el-get-verbose nil
+                   el-get-silent-update t
+                   el-get-default-process-sync t)))))
    #+end_src
 * Basic
 ** early-init
@@ -1755,7 +1758,7 @@
               (setq skk-preload t)
               (setq default-input-method "japanese-skk")))))
     #+END_SRC
-*** editorconfig
+*** TODO editorconfig
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
         (el-get-bundle 'editorconfig))
@@ -1763,8 +1766,9 @@
       (with-delayed-execution
         (message "Install editorconfig...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/editorconfig"))
-        (when (autoload-if-found '(editorconfig-mode) "editorconfig" nil t)
-          (editorconfig-mode 1)))
+        ;; (when (autoload-if-found '(editorconfig-mode) "editorconfig" nil t)
+        ;;   (editorconfig-mode 1))
+        )
     #+END_SRC
 *** esup
     #+BEGIN_SRC emacs-lisp
@@ -1942,6 +1946,7 @@
       (with-delayed-execution
         (message "Install undo-tree...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/queue"))
+        (require 'queue)
         (add-to-list 'load-path (locate-user-emacs-file "el-get/undo-tree"))
         (when (autoload-if-found '(global-undo-tree-mode) "undo-tree" nil t)
           (global-undo-tree-mode)))
