@@ -275,9 +275,7 @@
      (eval-when-compile
        (el-get-bundle 'dash))
 
-     (with-delayed-execution
-       (message "Install dash...")
-       (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/dash"))))
+     (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/dash")))
    #+end_src
 ** mustache
    #+begin_src emacs-lisp
@@ -293,18 +291,14 @@
      (eval-when-compile
        (el-get-bundle 'f))
 
-     (with-delayed-execution
-       (message "Install f...")
-       (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/f"))))
+     (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/f")))
    #+end_src
 ** s
    #+begin_src emacs-lisp
      (eval-when-compile
        (el-get-bundle 's))
 
-     (with-delayed-execution
-       (message "Install s...")
-       (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/s"))))
+     (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/s")))
    #+end_src
 ** ht
    #+begin_src emacs-lisp
@@ -338,9 +332,7 @@
      (eval-when-compile
        (el-get-bundle 'shrink-path))
 
-     (with-delayed-execution
-       (message "Install shrink-path...")
-       (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/shrink-path"))))
+     (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/shrink-path")))
    #+end_src
 * Language
 ** buffer-mode
@@ -812,14 +804,15 @@
      (with-delayed-execution
        (message "Install typescript-mode...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/typescript-mode"))
-       (when (autoload-if-found '(typescript-mode) "typescript-mode" nil t)
+       (require 'typescript-mode)
+       (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
+
+       (when (autoload-if-found '(typescript-mode typescript-tsx-mode) "typescript-mode" nil t)
          (push '("\\.ts$" . typescript-mode) auto-mode-alist)
-         (with-eval-after-load 'typescript-mode
-           (eval-and-compile
-             (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
-             (add-to-list 'auto-mode-alist (cons (rx ".tsx" string-end) #'typescript-tsx-mode))
-             (add-hook 'typescript-mode-hook 'lsp-deferred)
-             (add-hook 'typescript-tsx-mode-hook 'lsp-deferred)))))
+         (add-hook 'typescript-mode-hook 'lsp-deferred)
+
+         (push '("\\.tsx$" . typescript-tsx-mode) auto-mode-alist)
+         (add-hook 'typescript-tsx-mode-hook 'lsp-deferred)))
    #+END_SRC
 ** vue-mode
    #+BEGIN_SRC emacs-lisp
@@ -1048,9 +1041,7 @@
       (eval-when-compile
         (el-get-bundle 'all-the-icons))
 
-      (with-delayed-execution
-        (message "Install all-the-icons...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons")))
+      (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons"))
     #+END_SRC
 *** all-the-icons-dired
     #+begin_src emacs-lisp
@@ -1104,20 +1095,19 @@
       (eval-when-compile
         (el-get-bundle 'doom-modeline))
 
-      (with-delayed-execution
-        (message "Install doom-modeline...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-modeline"))
-        (when (autoload-if-found '(doom-modeline-mode line-number-mode column-number-mode) "doom-modeline" nil t)
-          (doom-modeline-mode 1)
-          (line-number-mode 0)
-          (column-number-mode 0)
-          (with-eval-after-load 'doom-modeline
-            (eval-and-compile
-              (setq doom-modeline-buffer-file-name-style 'truncate-with-project)
-              (setq doom-modeline-icon t)
-              (setq doom-modeline-major-mode-icon nil)
-              (setq doom-modeline-minor-modes nil)
-              (setq inhibit-compacting-font-caches t)))))
+      (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-modeline"))
+
+      (when (autoload-if-found '(doom-modeline-mode line-number-mode column-number-mode) "doom-modeline" nil t)
+        (doom-modeline-mode 1)
+        (line-number-mode 0)
+        (column-number-mode 0)
+        (with-eval-after-load 'doom-modeline
+          (eval-and-compile
+            (setq doom-modeline-buffer-file-name-style 'truncate-with-project)
+            (setq doom-modeline-icon t)
+            (setq doom-modeline-major-mode-icon nil)
+            (setq doom-modeline-minor-modes nil)
+            (setq inhibit-compacting-font-caches t))))
     #+END_SRC
 *** hl-line
     #+BEGIN_SRC emacs-lisp
@@ -1175,15 +1165,14 @@
       (eval-when-compile
         (el-get-bundle 'nyan-mode))
 
-      (with-delayed-execution
-        (message "Install nyan-mode...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/nyan-mode"))
-        (when (autoload-if-found '(nyan-mode) "nyan-mode" nil t)
-          (add-hook 'doom-modeline-mode-hook 'nyan-mode)
-          (with-eval-after-load 'nyan-mode
-            (eval-and-compile
-              (setq nyan-cat-face-number 4)
-              (setq nyan-animate-nyancat t)))))
+      (add-to-list 'load-path (locate-user-emacs-file "el-get/nyan-mode"))
+
+      (when (autoload-if-found '(nyan-mode) "nyan-mode" nil t)
+        (add-hook 'doom-modeline-mode-hook 'nyan-mode)
+        (with-eval-after-load 'nyan-mode
+          (eval-and-compile
+            (setq nyan-cat-face-number 4)
+            (setq nyan-animate-nyancat t))))
     #+END_SRC
 ** Project
 *** projectile
@@ -1198,15 +1187,12 @@
           (projectile-mode +1)
           (global-set-key (kbd "M-p") 'projectile-command-map)
           (global-set-key (kbd "C-c p") 'projectile-command-map)
-          (add-hook 'projectile-mode-hook (lambda ()
-                                            (when (and (executable-find "ghq")
-                                                       (boundp 'projectile-known-projects))
-                                              (setq projectile-known-projects (mapcar
-                                                                               (lambda (x)
-                                                                                 (abbreviate-file-name (concat x "/")))
-                                                                               (split-string (shell-command-to-string "ghq list --full-path")))))))
           (with-eval-after-load 'projectile
             (eval-and-compile
+              (setq projectile-known-projects (mapcar
+                                               (lambda (x)
+                                                 (abbreviate-file-name (concat x "/")))
+                                               (split-string (shell-command-to-string "ghq list --full-path"))))
               (setq projectile-switch-project-action 'projectile-dired)))))
     #+end_src
 ** Refactor
@@ -1425,6 +1411,8 @@
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
         (el-get-bundle 'bui)
+        (el-get-bundle 'pfuture)
+        (el-get-bundle 'treemacs)
         (el-get-bundle 'tree-mode)
         (el-get-bundle 'posframe)
         (el-get-bundle 'dap-mode))
@@ -1433,36 +1421,31 @@
         (message "Install dap-mode...")
 
         (add-to-list 'load-path (locate-user-emacs-file "el-get/bui"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/pfuture"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/treemacs/src/elisp"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/tree-mode"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/posframe"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-treemacs"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/dap-mode"))
 
-        (defun my/load-dap-libs ()
-          (require 'dap-mode)
-          (require 'dap-ui)
-          (require 'dap-mouse))
+        (when (autoload-if-found '(dap-mode dap-hydra) "dap-mode" nil t)
+          ;; (define-key dap-mode-map (kbd "C-c d") 'dap-breakpoint-toggle)
+          ;; (add-hook 'dap-stopped-hook (lambda () (call-interactively 'dap-hydra)))
+          (dap-mode 1))
 
-        (add-hook 'lsp-mode-hook 'my/load-dap-libs)
+        (when (autoload-if-found '(dap-ui-mode) "dap-ui" nil t)
+          (dap-ui-mode 1))
 
-        (define-key dap-mode-map (kbd "C-c d") 'dap-breakpoint-toggle)
-        (add-hook 'dap-stopped-hook (lambda () (call-interactively #'dap-hydra)))
-
-        (dap-mode 1)
-        (dap-ui-mode 1)
-        (dap-tooltip-mode 1))
+        (when (autoload-if-found '(dap-tooltip-mode) "dap-mouse" nil t)
+          (dap-tooltip-mode 1)))
     #+END_SRC
 *** lsp-ui
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
-        (el-get-bundle treemacs)
-        (el-get-bundle pfuture)
         (el-get-bundle lsp-ui))
 
       (with-delayed-execution
         (message "Install lsp-ui...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/treemacs/src/elisp"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/pfuture"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-treemacs"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-ui"))
         (when (autoload-if-found '(lsp-ui-mode) "lsp-ui" nil t)
           (add-hook 'lsp-mode-hook 'lsp-ui-mode)
@@ -1517,6 +1500,7 @@
         (el-get-bundle exec-path-from-shell))
 
       (add-to-list 'load-path (locate-user-emacs-file "el-get/exec-path-from-shell"))
+
       (when (autoload-if-found '(exec-path-from-shell-initialize) "exec-path-from-shell")
         (add-hook 'emacs-startup-hook 'exec-path-from-shell-initialize)
         (with-eval-after-load 'exec-path-from-shell
@@ -1561,30 +1545,41 @@
 *** tree-sitter
     #+begin_src emacs-lisp
       (eval-when-compile
+        (el-get-bundle 'tsc)
+        (el-get-bundle "emacs-tree-sitter/tree-sitter-langs")
         (el-get-bundle 'tree-sitter))
 
       (with-delayed-execution
         (message "Install tree-sitter...")
+
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/tsc"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/tree-sitter-langs"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/tree-sitter"))
-        (when (autoload-if-found '() "tree-sitter" nil t)
-          (with-eval-after-load 'tree-sitter
-            (when (boundp 'tree-sitter-major-mode-language-alist)
-              (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx)))
-            (tree-sitter-hl-add-patterns 'tsx
-                                         [(call_expression
-                                           ;; styled.div``
-                                           function: (member_expression
-                                                      object: (identifier) @function.call
-                                                      (.eq? @function.call "styled"))
-                                           arguments: ((template_string) @property.definition
-                                                       (.offset! @property.definition 0 1 0 -1)))
-                                          (call_expression
-                                           ;; styled(Component)``
-                                           function: (call_expression
-                                                      function: (identifier) @function.call
-                                                      (.eq? @function.call "styled"))
-                                           arguments: ((template_string) @property.definition
-                                                       (.offset! @property.definition 0 1 0 -1)))]))))
+
+        (when (autoload-if-found '(tree-sitter-mode tree-sitter-require tree-sitter-hl-add-patterns) "tree-sitter" nil t)
+          (add-hook 'typescript-tsx-mode-hook 'tree-sitter-mode)
+          (when (require 'tree-sitter-langs)
+            (tree-sitter-require 'tsx))
+          (tree-sitter-hl-add-patterns 'tsx
+            [(call_expression
+              ;; styled.div``
+              function: (member_expression
+                         object: (identifier) @function.call
+                         (.eq? @function.call "styled"))
+              arguments: ((template_string) @property.definition
+                          (.offset! @property.definition 0 1 0 -1)))
+             (call_expression
+              ;; styled(Component)``
+              function: (call_expression
+                         function: (identifier) @function.call
+                         (.eq? @function.call "styled"))
+              arguments: ((template_string) @property.definition
+                          (.offset! @property.definition 0 1 0 -1)))])
+
+          (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx)))
+
+        (when (autoload-if-found '(tree-sitter-hl-mode) "tree-sitter-hl" nil t)
+          (add-hook 'tree-sitter-after-on-hook 'tree-sitter-hl-mode)))
     #+end_src
 ** Ruby
 *** robe

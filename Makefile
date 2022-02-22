@@ -5,6 +5,9 @@ TOP_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 HTMLIZE_FILE=$(TOP_DIR)/htmlize.el
 HTMLIZE_URL=https://raw.githubusercontent.com/hniksic/emacs-htmlize/master/htmlize.el
 
+.PHONY: all
+all: compile org-generate org-to-html
+
 .PHONY: clean
 clean:
 	rm -f  ~/.emacs.d/.junk/*
@@ -29,8 +32,3 @@ org-generate:
 
 $(HTMLIZE_FILE):
 	wget $(HTMLIZE_URL)
-
-.PHONY: old-compile
-old-compile:
-	$(EMACS) -Q --batch --eval "(progn (require 'ob-tangle) (org-babel-tangle-file \"./old.org\" \"./init.el\" \"emacs-lisp\"))"
-	$(EMACS) -Q --batch -f batch-byte-compile init.el

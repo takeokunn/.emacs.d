@@ -108,6 +108,40 @@
        <meta name="twitter:site" content="">
        <meta name="twitter:card" content="">
      #+end_src
+*** css-mode/
+**** template
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # name: template
+       # key: template
+       # --
+       ,* {
+           padding: 0;
+           margin: 0;
+           -webkit-font-smoothing: antialiased;
+           text-rendering: optimizeLegibility;
+           scroll-behavior: smooth;
+           overscroll-behavior-y: contain;
+           $0
+       }
+
+       a {
+           text-decoration: none;
+       }
+     #+end_src
+*** snippet-mode/
+**** template
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # name: template
+       # key: template
+       # --
+       # -*- mode: snippet -*-
+       # name: ${1:name}
+       # key: ${2:key}
+       # --
+       $0
+     #+end_src
 *** php-mode/
 **** _call
      #+begin_src snippet
@@ -125,9 +159,8 @@
 **** abstruct
      #+begin_src snippet
        # -*- mode: snippet -*-
-       # name: class
+       # name: abstract
        # key: abstract
-       # group: definitions
        # --
        abstract class ${1:`(yas-php-get-class-name-by-file-name)`}
        {
@@ -289,7 +322,7 @@
            $0
        }
      #+end_src
-**** vd
+**** var_dump
      #+begin_src snippet
        # -*- mode: snippet -*-
        # contributor: USAMI Kenta <tadsan@zonu.me>
@@ -384,28 +417,28 @@ ${11:(message "Hello World!")}
         :ensure t
         $0)
 #+END_SRC
-**** minor_mode
+**** minor
 #+BEGIN_SRC snippet
-# -*- mode: snippet -*-
-# name: minor_mode
-# key: minor
-# --
-(defvar ${1:mode}-modeline-indicator " ${2:indicator}"
-  "call ($1-install-mode) again if this is changed")
+  # -*- mode: snippet -*-
+  # name: minor
+  # key: minor
+  # --
+  (defvar ${1:mode}-modeline-indicator " ${2:indicator}"
+    "call ($1-install-mode) again if this is changed")
 
-(defvar $1-mode nil)
-(make-variable-buffer-local '$1-mode)
-(put '$1-mode 'permanent-local t)
+  (defvar $1-mode nil)
+  (make-variable-buffer-local '$1-mode)
+  (put '$1-mode 'permanent-local t)
 
-(defun $1-mode (&optional arg)
-  "$0"
-  (interactive "P")
-  (setq $1-mode
-        (if (null arg) (not $1-mode)
-          (> (prefix-numeric-value arg) 0)))
-  (force-mode-line-update))
+  (defun $1-mode (&optional arg)
+    "$0"
+    (interactive "P")
+    (setq $1-mode
+          (if (null arg) (not $1-mode)
+            (> (prefix-numeric-value arg) 0)))
+    (force-mode-line-update))
 
-(provide '$1-mode)
+  (provide '$1-mode)
 #+END_SRC
 *** fish-mode/
 **** bang
@@ -492,11 +525,11 @@ end
 *** fundamental-mode/
 **** current-date
 #+BEGIN_SRC snippet
-# name: current-date
-# key: dd
-# contributor : Kristof Molnar-Tatai <kristof.mlnr@gmail.com>
-# --
-`(format-time-string "%Y-%m-%d")`
+  # name: current-date
+  # key: dd
+  # contributor : Kristof Molnar-Tatai <kristof.mlnr@gmail.com>
+  # --
+  `(format-time-string "%Y-%m-%d")`
 #+END_SRC
 **** mode-line
 #+BEGIN_SRC snippet
