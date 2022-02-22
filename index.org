@@ -343,6 +343,12 @@
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/shrink-path"))))
    #+end_src
 * Language
+** buffer-mode
+   #+begin_src emacs-lisp
+     (setq initial-buffer-choice t)
+     (setq initial-scratch-message nil)
+     (setq initial-major-mode 'org-mode)
+   #+end_src
 ** c++-mode
    #+begin_src emacs-lisp
      (with-eval-after-load 'c++-mode
@@ -1706,11 +1712,16 @@
       (with-delayed-execution
         (message "Install open-junk-file...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/open-junk-file"))
-        (when (autoload-if-found '(open-junk-file) "open-junk-file" nil t)
-          (global-set-key (kbd "C-x j") 'open-junk-file)
-          (with-eval-after-load 'open-junk-file
-            (eval-and-compile
-              (setq open-junk-file-format `,(locate-user-emacs-file ".junk/%Y-%m%d-%H%M%S."))))))
+        (when (autoload-if-found '(my/open-junk-file open-junk-file) "open-junk-file" nil t)
+          (defun my/open-junk-file ()
+            (interactive)
+            (ivy-mode 0)
+            (let ((default-directory (format-time-string "~/.emacs.d/.junk/%Y-%m%d-%H%M%S." (current-time))))
+              (open-junk-file))
+            (ivy-mode 1))
+          (global-set-key (kbd "C-x j") 'my/open-junk-file)
+          (eval-and-compile
+            (setq open-junk-file-format ""))))
     #+END_SRC
 ** Check
 *** flycheck
@@ -1819,17 +1830,16 @@
       (eval-when-compile
         (el-get-bundle 'ddskk))
 
-      (with-delayed-execution
-        (message "Install ddskk...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/ddskk"))
-        (when (autoload-if-found '(skk-mode) "skk" nil t)
-          (global-set-key (kbd "C-x C-j") 'skk-mode)
-          (with-eval-after-load 'ddskk
-            (eval-and-compile
-              (setq skk-byte-compile-init-file t)
-              (setq skk-isearch-mode-enable 'always)
-              (setq skk-preload t)
-              (setq default-input-method "japanese-skk")))))
+      (add-to-list 'load-path (locate-user-emacs-file "el-get/ddskk"))
+
+      (when (autoload-if-found '(skk-mode) "skk" nil t)
+        (global-set-key (kbd "C-x C-j") 'skk-mode)
+        (with-eval-after-load 'ddskk
+          (eval-and-compile
+            (setq skk-byte-compile-init-file t)
+            (setq skk-isearch-mode-enable 'always)
+            (setq skk-preload t)
+            (setq default-input-method "japanese-skk"))))
     #+END_SRC
 *** editorconfig
     #+BEGIN_SRC emacs-lisp
@@ -2202,15 +2212,14 @@
      (eval-when-compile
        (el-get-bundle 'org-superstar))
 
-     (with-delayed-execution
-       (message "Install org-superstar...")
-       (add-to-list 'load-path (locate-user-emacs-file "el-get/org-superstar"))
-       (when (autoload-if-found '(org-superstar-mode) "org-superstar")
-         (add-hook 'org-mode-hook 'org-superstar-mode)
-         (with-eval-after-load 'org-superstar
-           (eval-and-compile
-             (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿"))
-             (setq org-superstar-leading-bullet " ")))))
+     (add-to-list 'load-path (locate-user-emacs-file "el-get/org-superstar"))
+
+     (when (autoload-if-found '(org-superstar-mode) "org-superstar")
+       (add-hook 'org-mode-hook 'org-superstar-mode)
+       (with-eval-after-load 'org-superstar
+         (eval-and-compile
+           (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿"))
+           (setq org-superstar-leading-bullet " "))))
    #+end_src
 ** org-generate
    #+begin_src emacs-lisp
