@@ -337,7 +337,6 @@
 * Language
 ** buffer-mode
    #+begin_src emacs-lisp
-     (setq initial-buffer-choice t)
      (setq initial-scratch-message nil)
      (setq initial-major-mode 'org-mode)
    #+end_src
@@ -478,8 +477,11 @@
      (with-delayed-execution
        (message "Install git-modes...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/git-modes")))
-       (when (autoload-if-found '(gitignore-mode) "git-modes" nil t)
-         (push '("\\.dockerignore$" . gitignore-mode) auto-mode-alist)))
+       (when (autoload-if-found '(gitignore-mode gitconfig-mode) "git-modes" nil t)
+         (push '("\\.dockerignore$" . gitignore-mode) auto-mode-alist)
+         (push '("\\.gitignore$" . gitignore-mode) auto-mode-alist)
+         (push '("\\.prettierignore$" . gitignore-mode) auto-mode-alist)
+         (push '("\\.editorconfig$" . gitconfig-mode) auto-mode-alist)))
    #+end_src
 ** glsl-mode
    #+BEGIN_SRC emacs-lisp
@@ -1035,6 +1037,56 @@
         (with-eval-after-load 'cider))
     #+END_SRC
 * Awesome Package
+** Search
+*** el-get
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle abo-abo/swiper))
+
+      (with-delayed-execution
+        (message "Install swiper...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/swiper")))
+    #+end_src
+*** swiper
+    #+BEGIN_SRC emacs-lisp
+      (with-delayed-execution
+        (when (autoload-if-found '(my/swiper) "swiper" nil t)
+          (defun my/swiper ()
+            (interactive)
+            (let ((word (thing-at-point 'symbol 'no-properties)))
+              (swiper word)))
+          (global-set-key (kbd "C-o") 'my/swiper)))
+    #+END_SRC
+*** counsel
+    #+begin_src emacs-lisp
+      (with-delayed-execution
+        (when (autoload-if-found '(counsel-mode counsel-compile) "counsel" nil t)
+          (global-set-key (kbd "C-x m") 'counsel-compile)
+          (counsel-mode 1)))
+    #+end_src
+*** ivy
+    #+begin_src emacs-lisp
+      (with-delayed-execution
+        (when (autoload-if-found '(ivy-mode) "ivy" nil t)
+          (ivy-mode 1)
+          (with-eval-after-load 'ivy
+            (eval-and-compile
+              (setq ivy-use-virtual-buffers t)))))
+    #+end_src
+*** ivy-rich
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'ivy-rich))
+
+      (with-delayed-execution
+        (message "Install ivy-rich...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-rich"))
+        (when (autoload-if-found '(ivy-rich-mode) "ivy-rich" nil t)
+          (ivy-rich-mode 1)
+          (with-eval-after-load 'ivy-rich
+            (eval-and-compile
+              (setq ivy-rich-path-style 'abbrev)))))
+    #+END_SRC
 ** Theme
 *** all-the-icons
     #+BEGIN_SRC emacs-lisp
@@ -1055,19 +1107,6 @@
           (with-eval-after-load 'all-the-icons-dired-mode
             (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))))
     #+end_src
-*** all-the-icons-ivy
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'all-the-icons-ivy))
-
-      (with-delayed-execution
-        (message "Install all-the-icons-ivy...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons-ivy"))
-        (when (autoload-if-found '(all-the-icons-ivy-setup) "all-the-icons-ivy")
-          (with-eval-after-load 'all-the-icons-ivy
-            (if window-system
-                (all-the-icons-ivy-setup)))))
-    #+END_SRC
 *** dashboard
     #+begin_src emacs-lisp
       (eval-when-compile
@@ -1076,17 +1115,21 @@
       (with-delayed-execution
         (message "Install dashboard...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/dashboard"))
-        (when (autoload-if-found '(dashboard-refresh-buffer) "dashboard" nil t)))
+        (when (autoload-if-found '(dashboard-refresh-buffer) "dashboard" nil t)
+          (with-eval-after-load 'dashboard
+            (eval-and-compile
+              (setq dashboard-startup-banner 4)
+              (setq dashboard-items '((recents . 15)
+                                      (projects . 5)
+                                      (bookmarks . 5)))))))
     #+end_src
-*** doom-theme
+*** doom-themes
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
         (el-get-bundle 'doom-themes))
 
-      (with-delayed-execution
-        (message "Install doom-themes...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes"))
-        (with-eval-after-load 'doom-themes))
+      (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes"))
+      (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes/extensions"))
 
       (load-theme 'tango-dark t)
     #+END_SRC
@@ -1098,6 +1141,7 @@
       (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-modeline"))
 
       (when (autoload-if-found '(doom-modeline-mode line-number-mode column-number-mode) "doom-modeline" nil t)
+        (add-hook 'after-init-hook 'doom-modeline-mode)
         (doom-modeline-mode 1)
         (line-number-mode 0)
         (column-number-mode 0)
@@ -1105,15 +1149,16 @@
           (eval-and-compile
             (setq doom-modeline-buffer-file-name-style 'truncate-with-project)
             (setq doom-modeline-icon t)
-            (setq doom-modeline-major-mode-icon nil)
+            (setq doom-modeline-major-mode-icon t)
             (setq doom-modeline-minor-modes nil)
             (setq inhibit-compacting-font-caches t))))
     #+END_SRC
 *** hl-line
     #+BEGIN_SRC emacs-lisp
+      ;; (add-hook 'emacs-startup-hook 'global-hl-line-mode)
+
       (when (autoload-if-found '(global-hl-line-mode) "hl-line-mode" nil t)
         (with-eval-after-load 'hl-line
-          (global-hl-line-mode)
           (set-face-attribute 'hl-line nil :inherit nil)
           (set-face-background 'hl-line "#444642")))
     #+END_SRC
@@ -1183,17 +1228,33 @@
       (with-delayed-execution
         (message "Install projectile...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/projectile"))
-        (when (autoload-if-found '(projectile-mode projectile-command-map) "projectile" nil t)
-          (projectile-mode +1)
+        (when (autoload-if-found '(projectile-mode projectile-command-map my/update-projectile-known-projects) "projectile" nil t)
           (global-set-key (kbd "M-p") 'projectile-command-map)
           (global-set-key (kbd "C-c p") 'projectile-command-map)
+
+          (projectile-mode +1)
+          (add-hook 'projectile-mode-hook 'my/update-projectile-known-projects)
+          (defun my/update-projectile-known-projects ()
+            (interactive)
+            (setq projectile-known-projects (mapcar
+                                             (lambda (x)
+                                               (abbreviate-file-name (concat x "/")))
+                                             (split-string (shell-command-to-string "ghq list --full-path")))))
           (with-eval-after-load 'projectile
             (eval-and-compile
-              (setq projectile-known-projects (mapcar
-                                               (lambda (x)
-                                                 (abbreviate-file-name (concat x "/")))
-                                               (split-string (shell-command-to-string "ghq list --full-path"))))
-              (setq projectile-switch-project-action 'projectile-dired)))))
+              (setq projectile-switch-project-action 'projectile-dired)
+              (setq projectile-enable-caching t)))))
+    #+end_src
+*** counsel-projectile
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'counsel-projectile))
+
+      (with-delayed-execution
+        (message "Install counsel-projectile...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/counsel-projectile"))
+        (when (autoload-if-found '(counsel-projectile-mode) "counsel-projectile" nil t)
+          (counsel-projectile-mode +1)))
     #+end_src
 ** Refactor
 *** emr
@@ -1311,53 +1372,6 @@
       ;;         (setq slime-company-completion 'fuzzy)
       ;;         (setq slime-company-after-completion 'slime-company-just-one-space)))))
     #+end_src
-** Search
-*** el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle abo-abo/swiper))
-
-      (with-delayed-execution
-        (message "Install swiper...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/swiper")))
-    #+end_src
-*** swiper
-    #+BEGIN_SRC emacs-lisp
-      (with-delayed-execution
-        (when (autoload-if-found '(my/swiper) "swiper" nil t)
-          (defun my/swiper ()
-            (interactive)
-            (let ((word (thing-at-point 'symbol 'no-properties)))
-              (swiper word)))
-          (global-set-key (kbd "C-o") 'my/swiper)))
-    #+END_SRC
-*** counsel
-    #+begin_src emacs-lisp
-      (with-delayed-execution
-        (when (autoload-if-found '(counsel-mode counsel-compile) "counsel" nil t)
-          (global-set-key (kbd "C-x m") 'counsel-compile)
-          (counsel-mode 1)))
-    #+end_src
-*** ivy
-    #+begin_src emacs-lisp
-      (with-delayed-execution
-        (when (autoload-if-found '(ivy-mode) "ivy" nil t)
-          (ivy-mode 1)
-          (with-eval-after-load 'ivy
-            (eval-and-compile
-              (setq ivy-use-virtual-buffers t)))))
-    #+end_src
-*** ivy-rich
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'ivy-rich))
-
-      (with-delayed-execution
-        (message "Install ivy-rich...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-rich"))
-        (when (autoload-if-found '(ivy-rich-mode) "ivy-rich" nil t)
-          (ivy-rich-mode 1)))
-    #+END_SRC
 ** Snippet
 *** yasnippet
     #+begin_src emacs-lisp
@@ -1467,18 +1481,20 @@
         (el-get-bundle magit/with-editor)
         (el-get-bundle magit/magit))
 
-      (with-delayed-execution
-        (message "Install magit...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/transient/lisp"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/ghub/lisp"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/magit-pop"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/with-editor/lisp"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/magit/lisp"))
-        (when (autoload-if-found '(magit-status) "magit")
-          (global-set-key (kbd "C-x g") 'magit-status)
-          (with-eval-after-load 'magit
-            (eval-and-compile
-              (setq magit-refresh-status-buffer nil)))))
+      (add-to-list 'load-path (locate-user-emacs-file "el-get/transient/lisp"))
+      (add-to-list 'load-path (locate-user-emacs-file "el-get/ghub/lisp"))
+      (add-to-list 'load-path (locate-user-emacs-file "el-get/magit-pop"))
+      (add-to-list 'load-path (locate-user-emacs-file "el-get/with-editor/lisp"))
+      (add-to-list 'load-path (locate-user-emacs-file "el-get/magit/lisp"))
+
+      (when (autoload-if-found '(global-git-commit-mode) "git-commit" nil t)
+        (add-hook 'after-init-hook 'global-git-commit-mode))
+
+      (when (autoload-if-found '(global-git-commit-mode magit-status) "magit")
+        (global-set-key (kbd "C-x g") 'magit-status)
+        (with-eval-after-load 'magit
+          (eval-and-compile
+            (setq magit-refresh-status-buffer nil))))
     #+END_SRC
 *** magit-forge
     #+begin_src emacs-lisp
@@ -1502,7 +1518,7 @@
       (add-to-list 'load-path (locate-user-emacs-file "el-get/exec-path-from-shell"))
 
       (when (autoload-if-found '(exec-path-from-shell-initialize) "exec-path-from-shell")
-        (add-hook 'emacs-startup-hook 'exec-path-from-shell-initialize)
+        (add-hook 'after-init-hook 'exec-path-from-shell-initialize)
         (with-eval-after-load 'exec-path-from-shell
           (eval-and-compile
             (setq exec-path-from-shell-variables '("PATH" "GEM_HOME" "GOROOT" "GOPATH")))))
@@ -1949,6 +1965,22 @@
           (global-set-key (kbd "C-c C-l p") 'lorem-ipsum-insert-paragraphs)
           (global-set-key (kbd "C-c C-l l") 'lorem-ipsum-insert-list)))
     #+end_src
+*** minimap
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'minimap))
+
+      (with-delayed-execution
+        (message "Install minimap...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/minimap"))
+        (when (autoload-if-found '(minimap-mode) "minimap" nil t)
+          (global-set-key (kbd "C-x t") 'minimap-mode)
+          (with-eval-after-load 'minimap
+            (setq minimap-window-location 'right)
+            (setq minimap-update-delay 0.2)
+            (setq minimap-minimum-width 20)
+            (setq minimap-major-modes '(prog-mode org-mode)))))
+    #+end_src
 *** origami
     #+begin_src emacs-lisp
       (eval-when-compile
@@ -2025,27 +2057,28 @@
       (with-delayed-execution
         (message "Install undo-tree...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/queue"))
-        (require 'queue)
         (add-to-list 'load-path (locate-user-emacs-file "el-get/undo-tree"))
+        (require 'queue)
         (when (autoload-if-found '(global-undo-tree-mode) "undo-tree" nil t)
-          (global-undo-tree-mode)))
+          (global-undo-tree-mode)
+          (with-eval-after-load 'undo-tree
+            (eval-and-compile
+              (setq undo-tree-auto-save-history nil)))))
     #+end_src
 *** uuid
     #+begin_src emacs-lisp
       (eval-when-compile
         (el-get-bundle 'uuid
-          :url "https://github.com/nicferrier/emacs-uuid.git"))
+                       :url "https://github.com/nicferrier/emacs-uuid.git"))
 
       (with-delayed-execution
         (message "Install uuid...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/uuid")))
-
-      ;; (when (and (require 'uuid nil t)
-      ;;            (boundp 'uuid-string))
-      ;;   (defun my/uuid ()
-      ;;     (interactive)
-      ;;     (insert (uuid-string)))
-      ;;   (defalias 'my/uuid 'uuid))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/uuid"))
+        (when (autoload-if-found '(my/uuid) "uuid" nil t)
+          (defun my/uuid ()
+            (interactive)
+            (insert (uuid-string)))
+          (defalias 'my/uuid 'uuid)))
     #+end_src
 *** which-key
     #+begin_src emacs-lisp
