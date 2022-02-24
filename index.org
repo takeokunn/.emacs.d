@@ -263,6 +263,7 @@
 ** common lispを使う
    #+begin_src emacs-lisp
      (eval-when-compile
+       (setq byte-compile-warnings '(cl-functions))
        (require 'cl-lib nil t))
 
      (with-delayed-execution
@@ -449,7 +450,8 @@
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/emmet-mode")))
        (when (autoload-if-found '(emmet-mode) "emmet-mode" nil t)
          (add-hook 'web-mode-hook 'emmet-mode)
-         (add-hook 'css-mode-hook  'emmet-mode)
+         (add-hook 'css-mode-hook 'emmet-mode)
+         (add-hook 'typescript-tsx-mode-hook 'emmet-mode)
          (with-eval-after-load 'emmet-mode
            (when (boundp 'emmet-mode-keymap)
              (define-key emmet-mode-keymap (kbd "C-j") nil)
@@ -503,8 +505,13 @@
      (with-delayed-execution
        (message "Install go-mode...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/go-mode")))
-       (with-eval-after-load 'go-mode
-         (add-hook 'go-mode-hook 'lsp-deferred)))
+       (when (autoload-if-found '(go-mode) "go-mode" nil t)
+         (push '("\\.go$" . go-mode) auto-mode-alist)
+         (with-eval-after-load 'go-mode
+           (add-hook 'go-mode-hook 'lsp-deferred)
+           (add-hook 'before-save-hook 'gofmt-before-save)
+           (eval-and-compile
+             (setq gofmt-command "goimports")))))
    #+END_SRC
 ** gradle-mode
    #+BEGIN_SRC emacs-lisp
@@ -1260,10 +1267,16 @@
 *** emr
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
+        (el-get-bundle 'popup)
+        (el-get-bundle 'list-utils)
+        (el-get-bundle 'iedit)
         (el-get-bundle 'emr))
 
       (with-delayed-execution
         (message "Install emr...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/popup"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/list-utils"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/iedit"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/emr"))
         (when (autoload-if-found '(emr-show-refactor-menu) "emr" nil t)
           (define-key prog-mode-map (kbd "M-RET") 'emr-show-refactor-menu)))
@@ -1283,10 +1296,9 @@
                                        (push 'company-capf company-backends)
                                        (push 'company-elisp company-backends)
                                        (push 'company-yasnippet company-backends))))
-        (with-eval-after-load 'company
-          (when (boundp 'company-active-map)
-            (define-key company-active-map (kbd "C-n") 'company-select-next)
-            (define-key company-active-map (kbd "C-p") 'company-select-previous))))
+        (when (boundp 'company-active-map)
+          (define-key company-active-map (kbd "C-n") 'company-select-next)
+          (define-key company-active-map (kbd "C-p") 'company-select-previous)))
     #+END_SRC
 *** company-dockerfile
     #+begin_src emacs-lisp
@@ -1298,9 +1310,8 @@
         (message "Install company-dockerfile...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/company-dockerfile"))
         (when (autoload-if-found '(company-dockerfile) "company-dockerfile" nil t)
-          (with-eval-after-load 'company
-            (when (boundp 'company-backends)
-              (push 'company-dockerfile company-backends)))))
+          (when (boundp 'company-backends)
+            (push 'company-dockerfile company-backends))))
     #+end_src
 *** company-glsl
     #+BEGIN_SRC emacs-lisp
@@ -1311,9 +1322,8 @@
         (message "Install company-glsl...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/company-glsl"))
         (when (autoload-if-found '(company-glsl) "company-glsl" nil t)
-          (with-eval-after-load 'company
-            (when (boundp 'company-backends)
-              (push 'company-glsl company-backends)))))
+          (when (boundp 'company-backends)
+            (push 'company-glsl company-backends))))
     #+END_SRC
 *** company-c-headers
     #+begin_src emacs-lisp
@@ -1324,9 +1334,8 @@
         (message "Install company-c-headers...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/company-c-headers"))
         (when (autoload-if-found '(company-c-headers) "company-c-headers" nil t)
-          (with-eval-after-load 'company
-            (when (boundp 'company-backends)
-              (push 'company-c-headers company-backends)))))
+          (when (boundp 'company-backends)
+            (push 'company-c-headers company-backends))))
     #+end_src
 *** company-shell
     #+begin_src emacs-lisp
@@ -1337,11 +1346,10 @@
         (message "Install company-shell...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/company-shell"))
         (when (autoload-if-found '(company-shell company-shell-env company-fish-shell) "company-shell" nil t)
-          (with-eval-after-load 'company
-            (when (boundp 'company-backends)
-              (push 'company-shell company-backends)
-              (push 'company-shell-env company-backends)
-              (push 'company-fish-shell company-backends)))))
+          (when (boundp 'company-backends)
+            (push 'company-shell company-backends)
+            (push 'company-shell-env company-backends)
+            (push 'company-fish-shell company-backends))))
     #+end_src
 *** company-terraform
     #+begin_src emacs-lisp
@@ -1355,6 +1363,18 @@
           (with-eval-after-load 'company
             (when (boundp 'company-backends)
               (push 'company-terraform company-backends)))))
+    #+end_src
+*** company-go
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'company-go))
+
+      (with-delayed-execution
+        (message "Install company-go...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/company-go"))
+        (when (autoload-if-found '(company-go) "company-go" nil t)
+          (when (boundp 'company-backends)
+            (push 'company-go company-backends))))
     #+end_src
 *** TODO slime-company
     #+begin_src emacs-lisp
@@ -1499,15 +1519,21 @@
 *** magit-forge
     #+begin_src emacs-lisp
       (eval-when-compile
+        (el-get-bundle 'treepy)
+        (el-get-bundle 'yaml)
         (el-get-bundle "emacscollective/closql")
         (el-get-bundle "skeeto/emacsql")
         (el-get-bundle "magit/forge"))
 
       (with-delayed-execution
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/treepy"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/yaml"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/closql"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/emacsql"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/ghub"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/forge/lisp"))
-        (with-eval-after-load 'forge))
+        (add-hook 'magit-mode-hook (lambda ()
+                                     (require 'forge))))
     #+end_src
 ** Shell
 *** exec-path-from-shell
@@ -1608,9 +1634,8 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/robe"))
         (when (autoload-if-found '(robe-mode) "robe" nil t)
           (add-hook 'ruby-mode-hook 'robe-mode)
-          (with-eval-after-load 'company
-            (when (boundp 'company-backends)
-              (push 'company-robe company-backends)))))
+          (when (boundp 'company-backends)
+            (push 'company-robe company-backends))))
     #+end_src
 *** rubocop
     #+begin_src emacs-lisp
@@ -2080,6 +2105,18 @@
             (insert (uuid-string)))
           (defalias 'my/uuid 'uuid)))
     #+end_src
+*** wanderlust
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'wanderlust))
+
+      (with-delayed-execution
+        (message "Install wanderlust...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/wanderlust"))
+        (with-eval-after-load 'wanderlust
+          (eval-and-compile
+            (setq ssl-certificate-verification-policy 1))))
+    #+end_src
 *** which-key
     #+begin_src emacs-lisp
       (eval-when-compile
@@ -2102,17 +2139,13 @@
             (setq whitespace-display-mappings '((space-mark ?\u3000 [?\u25a1])
                                                 (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t]))))))
     #+END_SRC
-*** wanderlust
+*** woman
     #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'wanderlust))
+      (autoload 'woman
+        "woman" "Decode and browse a UN*X man page." t)
 
-      (with-delayed-execution
-        (message "Install wanderlust...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/wanderlust"))
-        (with-eval-after-load 'wanderlust
-          (eval-and-compile
-            (setq ssl-certificate-verification-policy 1))))
+      (autoload 'woman-find-file "woman"
+        "Find, decode and browse a specific UN*X man-page file." t)
     #+end_src
 * Eshell
 ** basic
