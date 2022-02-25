@@ -258,7 +258,7 @@
      (global-set-key (kbd "C-c i") 'find-function)
      (global-set-key (kbd "C-x C-o") 'other-window)
      (global-set-key (kbd "C-x C-k") nil)
-     ;; (global-set-key (kbd "C-x C-c") nil)
+     (global-set-key (kbd "C-x C-c") nil)
    #+END_SRC
 ** common lispを使う
    #+begin_src emacs-lisp
@@ -593,6 +593,12 @@
          (push '("\\.md$" . markdown-mode) auto-mode-alist)
          (push '("\\.markdown$" . markdown-mode) auto-mode-alist)))
    #+END_SRC
+** makefile-mode
+   #+begin_src emacs-lisp
+     (when (autoload-if-found '(makefile-mode) "makefile-mode" nil t)
+       (push '("Makefile" . makefile-mode) auto-mode-alist)
+       (push '("\\.mk$" . makefile-mode) auto-mode-alist))
+   #+end_src
 ** nginx-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
@@ -602,7 +608,12 @@
        (message "Install nginx-mode...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/nginx-mode")))
        (when (autoload-if-found '(nginx-mode) "nginx-mode" nil t)
-         (push '("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode) auto-mode-alist)))
+         (push '("nginx\\.conf\\'" . nginx-mode) auto-mode-alist)
+         (push '("/nginx/.+\\.conf\\'" . nginx-mode) auto-mode-alist)
+         (push '("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode) auto-mode-alist)
+         (with-eval-after-load 'nginx-mode
+           (eval-and-compile
+             (setq nginx-indent-tabs-mode t)))))
    #+END_SRC
 ** php-mode
    #+BEGIN_SRC emacs-lisp
@@ -727,7 +738,11 @@
 
      (with-delayed-execution
        (message "Install scss-mode...")
-       (add-to-list 'load-path (locate-user-emacs-file "el-get/scss-mode")))
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/scss-mode"))
+       (when (autoload-if-found '(scss-mode) "scss-mode" nil t)
+         (push '("\\.php$" . scss-mode) auto-mode-alist)
+         (with-eval-after-load 'scss-mode
+           (add-hook 'scss-mode-hook 'lsp-deferred))))
    #+end_src
 ** slim-mode
    #+BEGIN_SRC emacs-lisp
@@ -1289,16 +1304,15 @@
 
       (add-to-list 'load-path (locate-user-emacs-file "el-get/company"))
 
-      (when (autoload-if-found '(global-company-mode company-capf company-elisp company-yasnippet) "company" nil t)
-        (add-hook 'after-init-hook (lambda ()
-                                     (global-company-mode)
-                                     (when (boundp 'company-backends)
-                                       (push 'company-capf company-backends)
-                                       (push 'company-elisp company-backends)
-                                       (push 'company-yasnippet company-backends))))
-        (when (boundp 'company-active-map)
+      (when (autoload-if-found '(global-company-mode) "company" nil t)
+        (global-company-mode)
+        (with-eval-after-load 'company
           (define-key company-active-map (kbd "C-n") 'company-select-next)
-          (define-key company-active-map (kbd "C-p") 'company-select-previous)))
+          (define-key company-active-map (kbd "C-p") 'company-select-previous)
+          (when (require 'company-css)
+            (push 'company-css company-backends))
+          (when (require 'company-elisp)
+            (push 'company-elisp company-backends))))
     #+END_SRC
 *** company-dockerfile
     #+begin_src emacs-lisp
@@ -1376,6 +1390,18 @@
           (when (boundp 'company-backends)
             (push 'company-go company-backends))))
     #+end_src
+*** company-nginx
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'company-nginx))
+
+      (with-delayed-execution
+        (message "Install company-nginx...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/company-nginx"))
+        (when (autoload-if-found '(company-nginx) "company-nginx" nil t)
+          (when (boundp 'company-backends)
+            (push 'company-nginx company-backends))))
+    #+end_src
 *** TODO slime-company
     #+begin_src emacs-lisp
       ;; (eval-when-compile
@@ -1438,6 +1464,7 @@
         (when (autoload-if-found '(lsp lsp-deferred) "lsp-mode" nil t)
           (with-eval-after-load 'lsp-mode
             (eval-and-compile
+              (setq lsp-prefer-capf t)
               (setq lsp-keymap-prefix "C-c l")
               (setq lsp-completion-provider t)))))
     #+END_SRC
@@ -2326,6 +2353,17 @@
        (message "Install org-pomodoro...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/org-pomodoro"))
        (with-eval-after-load 'org-pomodoro))
+   #+end_src
+** org-view-mode
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle org-view-mode))
+
+     (with-delayed-execution
+       (message "Install org-view-mode...")
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/org-view-mode"))
+       (when (autoload-if-found '(org-view-mode) "org-view-mode" nil t)
+         (with-eval-after-load 'org-view-mode)))
    #+end_src
 * MyFunc
 ** my/beginning-of-intendation

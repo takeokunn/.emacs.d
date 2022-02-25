@@ -143,6 +143,17 @@
        $0
      #+end_src
 *** php-mode/
+**** .yas-setup.el
+     #+begin_src emacs-lisp
+       (require 'yasnippet)
+
+       (defun yas-php-get-class-name-by-file-name ()
+         "Return name of class-like construct by `file-name'.
+       \"class-like\" contains class, trait and interface."
+         (file-name-nondirectory
+          (file-name-sans-extension (or (buffer-file-name)
+                                        (buffer-name (current-buffer))))))
+     #+end_src
 **** _call
      #+begin_src snippet
        # -*- mode: snippet -*-
@@ -320,6 +331,20 @@
        trait ${1:`(yas-php-get-class-name-by-file-name)`}
        {
            $0
+       }
+     #+end_src
+**** template
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # name: template
+       # key: template
+       # --
+       <?php
+       declare(strict_types=1);
+
+       final class ${1:`(yas-php-get-class-name-by-file-name)`}
+       {
+       $0
        }
      #+end_src
 **** var_dump
@@ -1285,10 +1310,17 @@ $0
 #+END_SRC
 **** setup
 #+BEGIN_SRC snippet
-# name: setup
-# key: setup
-# --
-#+setupfile: $0
+  # name: setup
+  # key: setup
+  # --
+  ,#+setup: $0
+#+END_SRC
+**** setupfile
+#+BEGIN_SRC snippet
+  # name: setupfile
+  # key: setupfile
+  # --
+  ,#+setupfile: $0
 #+END_SRC
 **** style
 #+BEGIN_SRC snippet
