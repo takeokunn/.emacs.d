@@ -258,7 +258,7 @@
      (global-set-key (kbd "C-c i") 'find-function)
      (global-set-key (kbd "C-x C-o") 'other-window)
      (global-set-key (kbd "C-x C-k") nil)
-     (global-set-key (kbd "C-x C-c") nil)
+     ;; (global-set-key (kbd "C-x C-c") nil)
    #+END_SRC
 ** common lispを使う
    #+begin_src emacs-lisp
@@ -440,6 +440,17 @@
        (when (autoload-if-found '(dockerfile-mode) "dockerfile-mode" nil t)
          (push '("Dockerfile\\'" . dockerfile-mode) auto-mode-alist)))
    #+END_SRC
+** dotenv-mode
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'dotenv-mode))
+
+     (with-delayed-execution
+       (message "Install dotenv-mode...")
+       (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/dotenv-mode")))
+       (when (autoload-if-found '(dotenv-mode) "dotenv-mode" nil t)
+         (push '("\\.env\\..*\\'" . dotenv-mode) auto-mode-alist)))
+   #+end_src
 ** emmet-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
@@ -452,6 +463,7 @@
          (add-hook 'web-mode-hook 'emmet-mode)
          (add-hook 'css-mode-hook 'emmet-mode)
          (add-hook 'typescript-tsx-mode-hook 'emmet-mode)
+         (add-hook 'vue-html-mode 'emmet-mode)
          (with-eval-after-load 'emmet-mode
            (when (boundp 'emmet-mode-keymap)
              (define-key emmet-mode-keymap (kbd "C-j") nil)
@@ -595,9 +607,8 @@
    #+END_SRC
 ** makefile-mode
    #+begin_src emacs-lisp
-     (when (autoload-if-found '(makefile-mode) "makefile-mode" nil t)
-       (push '("Makefile" . makefile-mode) auto-mode-alist)
-       (push '("\\.mk$" . makefile-mode) auto-mode-alist))
+     ;; (push '("Makefile" . makefile-mode) auto-mode-alist)
+     ;; (push '("\\.mk\\" . makefile-mode) auto-mode-alist)
    #+end_src
 ** nginx-mode
    #+BEGIN_SRC emacs-lisp
@@ -623,7 +634,7 @@
      (with-delayed-execution
        (message "Install php-mode...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/php-mode/lisp"))
-       (when (autoload-if-found '(php-mode) "php-mode" nil t)
+       (when (autoload-if-found '(php-mode php-search-documentation-browser-function) "php-mode" nil t)
          (push '("\\.php$" . php-mode) auto-mode-alist)
          (with-eval-after-load 'php-mode
            (add-hook 'php-mode-hook 'lsp-deferred))))
@@ -718,7 +729,8 @@
        (message "Install rust-mode...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/rust-mode"))
        (when (autoload-if-found '(rust-mode) "rust-mode" nil t)
-         (push '("\\.rs$" . rust-mode) auto-mode-alist)))
+         (push '("\\.rs$" . rust-mode) auto-mode-alist)
+         (add-hook 'rust-mode-hook 'lsp)))
    #+END_SRC
 ** scala-mode
    #+BEGIN_SRC emacs-lisp
@@ -740,7 +752,7 @@
        (message "Install scss-mode...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/scss-mode"))
        (when (autoload-if-found '(scss-mode) "scss-mode" nil t)
-         (push '("\\.php$" . scss-mode) auto-mode-alist)
+         (push '("\\.scss$" . scss-mode) auto-mode-alist)
          (with-eval-after-load 'scss-mode
            (add-hook 'scss-mode-hook 'lsp-deferred))))
    #+end_src
@@ -809,6 +821,11 @@
        (when (autoload-if-found '(terraform-mode) "terraform-mode" nil t)
          (push '("\\.tf$" . terraform-mode) auto-mode-alist)))
    #+END_SRC
+** text-mode
+   #+begin_src emacs-lisp
+     (when (autoload-if-found '(conf-space-mode) "text-mode" nil t)
+       (push '("\\.tigrc$" . conf-space-mode) auto-mode-alist))
+   #+end_src
 ** toml-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
@@ -828,13 +845,19 @@
      (with-delayed-execution
        (message "Install typescript-mode...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/typescript-mode"))
-       (require 'typescript-mode)
-       (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
 
        (when (autoload-if-found '(typescript-mode typescript-tsx-mode) "typescript-mode" nil t)
-         (push '("\\.ts$" . typescript-mode) auto-mode-alist)
-         (add-hook 'typescript-mode-hook 'lsp-deferred)
+         (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
 
+         ;; for ts/deno
+         (push '("\\.ts$" . typescript-mode) auto-mode-alist)
+         (defun run-local-vars-mode-hook ()
+           "Run `major-mode' hook after the local variables have been processed."
+           (run-hooks (intern (concat (symbol-name major-mode) "-local-vars-hook"))))
+         (add-hook 'hack-local-variables-hook 'run-local-vars-mode-hook)
+         (add-hook 'typescript-mode-local-vars-hook #'lsp)
+
+         ;; for tsx
          (push '("\\.tsx$" . typescript-tsx-mode) auto-mode-alist)
          (add-hook 'typescript-tsx-mode-hook 'lsp-deferred)))
    #+END_SRC
@@ -879,7 +902,14 @@
        (when (autoload-if-found '(web-mode) "web-mode" nil t)
          (push '("\\.html?\\'" . web-mode) auto-mode-alist)
          (push '("\\.erb?\\'" . web-mode) auto-mode-alist)
-         (push '("\\.gsp?\\'" . web-mode) auto-mode-alist)))
+         (push '("\\.gsp?\\'" . web-mode) auto-mode-alist)
+         (push '("\\.blade.php\\'" . web-mode) auto-mode-alist)
+         (add-hook 'web-mode-hook 'lsp)
+         (with-eval-after-load 'web-mode
+           (eval-and-compile
+             (setq web-mode-engines-alist '(("blade"  . "\\.blade\\.")))
+             (setq web-mode-enable-auto-pairing nil)
+             (setq emmet-self-closing-tag-style "")))))
    #+END_SRC
 ** yaml-mode
    #+BEGIN_SRC emacs-lisp
@@ -1129,6 +1159,25 @@
           (with-eval-after-load 'all-the-icons-dired-mode
             (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))))
     #+end_src
+*** all-the-icons-ivy-rich
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'all-the-icons-ivy-rich))
+
+      (with-delayed-execution
+        (message "Install all-the-icons-ivy-rich...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons-ivy-rich"))
+        (when (autoload-if-found '(all-the-icons-ivy-rich-mode) "all-the-icons-ivy-rich" nil t)
+          (all-the-icons-ivy-rich-mode 1)
+          (with-eval-after-load 'all-the-icons-ivy-rich
+            (eval-and-compile
+              (setq all-the-icons-ivy-rich-icon t)
+              (setq all-the-icons-ivy-rich-color-icon t)
+              (setq all-the-icons-ivy-rich-icon-size 1.0)
+              (setq all-the-icons-ivy-rich-project t)
+              (setq all-the-icons-ivy-rich-field-width 80)
+              (setq inhibit-compacting-font-caches t)))))
+    #+end_src
 *** dashboard
     #+begin_src emacs-lisp
       (eval-when-compile
@@ -1276,7 +1325,12 @@
         (message "Install counsel-projectile...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/counsel-projectile"))
         (when (autoload-if-found '(counsel-projectile-mode) "counsel-projectile" nil t)
-          (counsel-projectile-mode +1)))
+          (counsel-projectile-mode +1)
+          (with-eval-after-load 'counsel-projectile
+            (eval-and-compile
+              (setq counsel-projectile-grep-initial-input '(ivy-thing-at-point))
+              (setq counsel-projectile-ag-initial-input '(ivy-thing-at-point))
+              (setq counsel-projectile-rg-initial-input '(ivy-thing-at-point))))))
     #+end_src
 ** Refactor
 *** emr
@@ -1378,18 +1432,6 @@
             (when (boundp 'company-backends)
               (push 'company-terraform company-backends)))))
     #+end_src
-*** company-go
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'company-go))
-
-      (with-delayed-execution
-        (message "Install company-go...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/company-go"))
-        (when (autoload-if-found '(company-go) "company-go" nil t)
-          (when (boundp 'company-backends)
-            (push 'company-go company-backends))))
-    #+end_src
 *** company-nginx
     #+begin_src emacs-lisp
       (eval-when-compile
@@ -1476,6 +1518,7 @@
         (el-get-bundle 'treemacs)
         (el-get-bundle 'tree-mode)
         (el-get-bundle 'posframe)
+        (el-get-bundle 'hydra)
         (el-get-bundle 'dap-mode))
 
       (with-delayed-execution
@@ -1487,18 +1530,35 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/tree-mode"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/posframe"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-treemacs"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/dap-mode"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/hydra"))
+        (add-to-list 'load-path "~/.ghq/github.com/takeokunn/dap-mode")
 
-        (when (autoload-if-found '(dap-mode dap-hydra) "dap-mode" nil t)
-          ;; (define-key dap-mode-map (kbd "C-c d") 'dap-breakpoint-toggle)
-          ;; (add-hook 'dap-stopped-hook (lambda () (call-interactively 'dap-hydra)))
-          (dap-mode 1))
+        (when (autoload-if-found '(dap-mode) "dap-mode" nil t)
+          (dap-mode 1)
+          (define-key dap-mode-map (kbd "C-c d") 'dap-breakpoint-toggle))
+
+        (when (autoload-if-found '(dap-hydra) "dap-hydra" nil t)
+          (add-hook 'dap-stopped-hook (lambda () (call-interactively 'dap-hydra))))
 
         (when (autoload-if-found '(dap-ui-mode) "dap-ui" nil t)
-          (dap-ui-mode 1))
+          (dap-ui-mode 1)
+          (dap-ui-controls-mode 1))
 
         (when (autoload-if-found '(dap-tooltip-mode) "dap-mouse" nil t)
-          (dap-tooltip-mode 1)))
+          (tooltip-mode 1)
+          (dap-tooltip-mode 1))
+
+        (when (autoload-if-found '(dap-php-setup) "dap-php" nil t)
+          (add-hook 'php-mode-hook 'dap-php-setup))
+
+        (when (autoload-if-found '(dap-node-setup) "dap-node" nil t)
+          (add-hook 'js2-mode-hook 'dap-node-setup))
+
+        (when (autoload-if-found '(dap-go-setup) "dap-go" nil t)
+          (add-hook 'go-mode-hook 'dap-go-setup))
+
+        (when (autoload-if-found '(dap-ruby-setup) "dap-ruby" nil t)
+          (add-hook 'ruby-mode-hook 'dap-ruby-setup)))
     #+END_SRC
 *** lsp-ui
     #+BEGIN_SRC emacs-lisp
@@ -1510,7 +1570,7 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-ui"))
         (when (autoload-if-found '(lsp-ui-mode) "lsp-ui" nil t)
           (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-          (with-eval-after-load 'lsp-mode
+          (with-eval-after-load 'lsp-ui-mode
             (eval-and-compile
               (setq lsp-ui-doc-enable t)
               (setq lsp-ui-doc-max-height 15)
@@ -1729,6 +1789,16 @@
         (message "Install psysh...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/psysh")))
     #+end_src
+*** laravel-tinker-repl
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle "takeokunn/laravel-tinker-repl.el"))
+
+      (with-delayed-execution
+        (message "Install laravel-tinker-repl...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/laravel-tinker-repl.el"))
+        (require 'laravel-tinker-repl))
+    #+end_src
 ** Markdown
 *** poly-markdown
     #+begin_src emacs-lisp
@@ -1747,12 +1817,16 @@
     #+begin_src emacs-lisp
       (eval-when-compile
         (el-get-bundle 'fish-repl
-          :url "https://github.com/takeokunn/fish-repl.el.git"))
+                       :url "https://github.com/takeokunn/fish-repl.el.git"))
 
       (with-delayed-execution
         (message "Install fish-repl...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/fish-repl"))
         (with-eval-after-load 'fish-repl))
+    #+end_src
+** NodeJS
+*** nodejs-repl
+    #+begin_src emacs-lisp
     #+end_src
 ** File
 *** recentf
@@ -1797,33 +1871,17 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/flycheck")))
     #+end_src
 ** Cursor
-*** smartrep/multiple-cursors
+*** multiple-cursors
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
-        (el-get-bundle 'smartrep)
         (el-get-bundle 'multiple-cursors))
 
       (with-delayed-execution
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/smartrep"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/multiple-cursors"))
-        (when (autoload-if-found '(smartrep-define-key) "smartrep" nil t)
-          (global-unset-key (kbd "C-t"))
-          (add-hook 'emacs-startup-hook (lambda ()
-                                          (when (fboundp 'smartrep-define-key)
-                                            (smartrep-define-key global-map "C-t"
-                                              '(("C-t" 'mc/mark-next-like-this)
-                                                ("n" 'mc/mark-next-like-this)
-                                                ("p" 'mc/mark-previous-like-this)
-                                                ("m" 'mc/mark-more-like-this-extended)
-                                                ("u" 'mc/unmark-next-like-this)
-                                                ("U" 'mc/unmark-previous-like-this)
-                                                ("s" 'mc/skip-to-next-like-this)
-                                                ("S" 'mc/skip-to-previous-like-this)
-                                                ("*" 'mc/mark-all-like-this)
-                                                ("d" 'mc/mark-all-like-this-dwim)
-                                                ("i" 'mc/insert-numbers)
-                                                ("o" 'mc/sort-regions)
-                                                ("O" 'mc/reverse-regions))))))))
+        (when (require 'multiple-cursors)
+          (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+          (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+          (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)))
     #+END_SRC
 ** Other
 *** auto-save-buffers-enhanced
@@ -2042,7 +2100,7 @@
         (message "Install origami...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/origami"))
         (when (autoload-if-found '(global-origami-mode origami-recursively-toggle-node origami-recursively-toggle-node) "origami" nil t)
-          (add-hook 'emacs-startup-hook (lambda () (global-origami-mode)))
+          (global-origami-mode)
           (global-set-key (kbd "C-c t") 'origami-recursively-toggle-node)
           (global-set-key (kbd "C-c C-t") 'origami-recursively-toggle-node)))
     #+end_src
