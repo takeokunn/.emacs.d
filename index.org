@@ -81,10 +81,11 @@
                (lambda ()
                  (setq my/delayed-configuration-timer
                        (run-with-timer
-                        0.1 0.01
+                        0.1 0.001
                         (lambda ()
                           (if my/delayed-configurations
-                              (eval (pop my/delayed-configurations))
+                              (let ((inhibit-message t))
+                                (eval (pop my/delayed-configurations)))
                             (progn
                               (cancel-timer my/delayed-configuration-timer)
                               (message "Finish!!!"))))))))
@@ -937,6 +938,7 @@
           (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
           (add-hook 'lisp-interacton-mode-hook 'enable-paredit-mode)
           (global-set-key (kbd "C-c f") 'paredit-forward-slurp-sexp)
+          (global-set-key (kbd "M-r") 'paredit-raise-sexp)
           (with-eval-after-load 'paredit
             (show-paren-mode 1))))
     #+END_SRC
