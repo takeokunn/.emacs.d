@@ -28,8 +28,12 @@
        "If non-nil, use built-in profiler.el.")
 
      (require 'utility-autoloads nil t)
+
      ;; (require 'profiler)
      ;; (profiler-start 'cpu)
+
+     (defconst my-saved-file-name-handler-alist file-name-handler-alist)
+     (setq file-name-handler-alist nil)
    #+end_src
 ** 起動時間計測
    #+begin_src emacs-lisp
@@ -127,14 +131,6 @@
                  el-get-default-process-sync t))))
    #+end_src
 * Basic
-** early-init
-   #+BEGIN_SRC emacs-lisp
-     (if (version< emacs-version "27")
-         (progn
-           (menu-bar-mode -1)
-           (tool-bar-mode -1)
-           (toggle-scroll-bar -1)))
-   #+END_SRC
 ** スタートアップメッセージを非表示
    #+BEGIN_SRC emacs-lisp
      (setq inhibit-startup-message t)
@@ -150,7 +146,8 @@
                  term-mode
                  twittering-mode
                  minibuffer-inactive-mode
-                 dashboard-mode))
+                 dashboard-mode
+                 fundamental-mode))
        (add-hook (intern (concat (symbol-name mode) "-hook"))
                  '(lambda () (setq show-trailing-whitespace nil))))
    #+END_SRC
@@ -397,6 +394,11 @@
        (when (autoload-if-found '(csharp-mode) "csharp-mode" nil t)
          (push '("\\.cs$" . csharp-mode) auto-mode-alist)))
    #+END_SRC
+** css-mode
+   #+begin_src emacs-lisp
+     (with-eval-after-load 'css-mode
+       (add-hook 'css-mode-hook 'lsp-deferred))
+   #+end_src
 ** csv-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
@@ -450,6 +452,7 @@
        (message "Install dotenv-mode...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/dotenv-mode")))
        (when (autoload-if-found '(dotenv-mode) "dotenv-mode" nil t)
+         (push '(".env" . dotenv-mode) auto-mode-alist)
          (push '("\\.env\\..*\\'" . dotenv-mode) auto-mode-alist)))
    #+end_src
 ** emmet-mode
@@ -463,8 +466,9 @@
        (when (autoload-if-found '(emmet-mode) "emmet-mode" nil t)
          (add-hook 'web-mode-hook 'emmet-mode)
          (add-hook 'css-mode-hook 'emmet-mode)
+         (add-hook 'vue-mode-hook 'emmet-mode)
+         (add-hook 'nxml-mode-hook 'emmet-mode)
          (add-hook 'typescript-tsx-mode-hook 'emmet-mode)
-         (add-hook 'vue-html-mode 'emmet-mode)
          (with-eval-after-load 'emmet-mode
            (when (boundp 'emmet-mode-keymap)
              (define-key emmet-mode-keymap (kbd "C-j") nil)
@@ -520,6 +524,7 @@
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/go-mode")))
        (when (autoload-if-found '(go-mode) "go-mode" nil t)
          (push '("\\.go$" . go-mode) auto-mode-alist)
+         (push '("^go.mod$" . go-dot-mod-mode) auto-mode-alist)
          (with-eval-after-load 'go-mode
            (add-hook 'go-mode-hook 'lsp-deferred)
            (add-hook 'before-save-hook 'gofmt-before-save)
@@ -879,7 +884,11 @@
        (add-to-list 'load-path (locate-user-emacs-file "el-get/edit-indirect"))
        (add-to-list 'load-path (locate-user-emacs-file "el-get/vue-mode"))
        (when (autoload-if-found '(vue-mode) "vue-mode" nil t)
-         (push '("\\.vue$" . vue-mode) auto-mode-alist)))
+         (push '("\\.vue$" . vue-mode) auto-mode-alist)
+         (add-hook 'vue-mode-hook 'lsp)
+         (with-eval-after-load
+             (eval-and-compile
+               (setq mmm-submode-decoration-level 0)))))
    #+END_SRC
 ** vimrc-mode
    #+begin_src emacs-lisp
@@ -938,7 +947,7 @@
           (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
           (add-hook 'lisp-interacton-mode-hook 'enable-paredit-mode)
           (global-set-key (kbd "C-c f") 'paredit-forward-slurp-sexp)
-          (global-set-key (kbd "M-r") 'paredit-raise-sexp)
+          (global-set-key (kbd "M-s") 'paredit-splice-sexp)
           (with-eval-after-load 'paredit
             (show-paren-mode 1))))
     #+END_SRC
@@ -1063,21 +1072,22 @@
           (add-hook 'ielm-mode-hook 'nameless-mode)
           (add-hook 'emacs-lisp-mode-hook 'nameless-mode)))
     #+END_SRC
-*** TODO my/ielm-history
+*** my/ielm-history
     #+BEGIN_SRC emacs-lisp
-      ;; (defun my/ielm-history ()
-      ;;   (interactive)
-      ;;   (insert
-      ;;    (completing-read
-      ;;     "choice history: "
-      ;;     (progn
-      ;;       (let ((history nil)
-      ;;             (comint-input-ring nil))
-      ;;         (if (and (fboundp 'ring-length)
-      ;;                  (fboundp 'ring-ref))
-      ;;             (dotimes (index (ring-length comint-input-ring))
-      ;;               (push (ring-ref comint-input-ring index) history)))
-      ;;         history)))))
+      (with-delayed-execution
+        (autoload-if-found '(my/ielm-history) "ielm" ))
+
+      (defun my/ielm-history ()
+        (interactive)
+        (insert
+         (completing-read
+          "choice history: "
+          (progn
+            (let ((history nil)
+                  (comint-input-ring nil))
+              (dotimes (index (ring-length comint-input-ring))
+                (push (ring-ref comint-input-ring index) history))
+              history)))))
     #+END_SRC
 ** Clojure
 *** cider
@@ -1204,8 +1214,20 @@
       (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes"))
       (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes/extensions"))
 
-      (if window-system
-          (load-theme 'tango-dark t))
+      (when (require 'doom-themes)
+        (when window-system
+          (load-theme 'doom-dracula t))
+        (eval-and-compile
+          (setq doom-themes-enable-bold t)
+          (setq doom-themes-enable-italic t)))
+
+      (when (require 'doom-themes-ext-org)
+        (with-eval-after-load 'org-mode
+          (doom-themes-enable-org-fontification)))
+
+      (when (require 'doom-themes-ext-neotree)
+        (with-eval-after-load 'neotree
+          (doom-themes-neotree-config)))
     #+END_SRC
 *** doom-modeline
     #+BEGIN_SRC emacs-lisp
@@ -1369,7 +1391,9 @@
           (when (require 'company-css)
             (push 'company-css company-backends))
           (when (require 'company-elisp)
-            (push 'company-elisp company-backends))))
+            (push 'company-elisp company-backends))
+          (eval-and-compile
+            (setq company-minimum-prefix-length 2))))
     #+END_SRC
 *** company-dockerfile
     #+begin_src emacs-lisp
@@ -1501,17 +1525,22 @@
 
         (defun my/load-lsp-libs ()
           (require 'lsp-mode)
+          (require 'lsp-diagnostics)
+          (require 'lsp-completion)
+          (require 'lsp-dired)
+          (require 'lsp-icons)
           (require 'lsp-modeline)
           (require 'lsp-headerline))
 
         (add-hook 'lsp-mode-hook 'my/load-lsp-libs)
 
         (when (autoload-if-found '(lsp lsp-deferred) "lsp-mode" nil t)
-          (with-eval-after-load 'lsp-mode
+          (with-eval-after-load 'lsp-completion
             (eval-and-compile
-              (setq lsp-prefer-capf t)
-              (setq lsp-keymap-prefix "C-c l")
-              (setq lsp-completion-provider t)))))
+              (setq lsp-prefer-capf t)))
+          (with-eval-after-load 'lsp-diagnostics
+            (eval-and-compile
+              (setq lsp-diagnostics-provider :flycheck)))))
     #+END_SRC
 *** dap-mode
     #+BEGIN_SRC emacs-lisp
@@ -1573,13 +1602,13 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-ui"))
         (when (autoload-if-found '(lsp-ui-mode) "lsp-ui" nil t)
           (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-          (with-eval-after-load 'lsp-ui-mode
+          (with-eval-after-load 'lsp-ui
             (eval-and-compile
-              (setq lsp-ui-doc-enable t)
-              (setq lsp-ui-doc-max-height 15)
-              (setq lsp-ui-sideline-enable nil)
-              (setq lsp-ui-imenu-enable nil)
-              (setq lsp-ui-sideline-enable nil)))))
+              (setq lsp-ui-doc-position 'at-point)
+              (setq lsp-ui-sideline-show-hover t)
+              (setq lsp-ui-doc-include-signature t)
+              (setq lsp-ui-doc-max-height 30)))))
+
     #+END_SRC
 ** Git
 *** magit
@@ -1871,7 +1900,8 @@
 
       (with-delayed-execution
         (message "Install flycheck...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/flycheck")))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/flycheck"))
+        (global-flycheck-mode))
     #+end_src
 ** Cursor
 *** multiple-cursors
@@ -2220,7 +2250,8 @@
     #+BEGIN_SRC emacs-lisp
       (when (autoload-if-found '(global-whitespace-mode) "whitespace" nil t)
         (add-hook 'emacs-startup-hook (lambda ()
-                                        (global-whitespace-mode 1)))
+                                        (if window-system
+                                            (global-whitespace-mode 1))))
         (with-eval-after-load 'whitespace
           (eval-and-compile
             (setq whitespace-style '(face tabs tab-mark spaces space-mark))
@@ -2299,6 +2330,7 @@
      (global-set-key (kbd "C-c c") 'org-capture)
 
      (with-eval-after-load 'org
+       (define-key org-mode-map (kbd "C-c ,") 'org-insert-structure-template)
        (eval-and-compile
          (setq org-use-speed-commands t)
          (setq org-agenda-todo-ignore-with-date t)
@@ -2499,8 +2531,26 @@
 
      (defalias 'ghq-get 'my/ghq-get)
    #+end_src
-** footer
-  #+begin_src emacs-lisp
-    ;; (profiler-report)
-    ;; (profiler-stop)
-  #+end_src
+** my/toggle-kill-emacs
+   #+begin_src emacs-lisp
+     (defvar my/kill-emacs-keybind-p t)
+
+     (defun my/toggle-kill-emacs ()
+       (interactive)
+       (if my/kill-emacs-keybind-p
+           (progn
+             (message "C-x C-c save-buffers-kill-emacs OFF")
+             (setq my/kill-emacs-keybind-p nil)
+             (global-set-key (kbd "C-x C-c") nil))
+         (progn
+           (message "C-x C-c save-buffers-kill-emacs ON")
+           (setq my/kill-emacs-keybind-p t)
+           (global-set-key (kbd "C-x C-c") 'save-buffers-kill-emacs))))
+   #+end_src
+* footer
+ #+begin_src emacs-lisp
+   ;; (profiler-report)
+   ;; (profiler-stop)
+
+   (setq file-name-handler-alist my-saved-file-name-handler-alist)
+ #+end_src

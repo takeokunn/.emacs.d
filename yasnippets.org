@@ -619,6 +619,16 @@ ${1:$$(yas-choose-value '("fix" "hotfix" "add" "update" "change" "clean" "disabl
                $0
        }
      #+end_src
+**** handler
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # name: handler
+       # key: handler
+       # --
+       var $1 = func(w http.ResponseWriter, r *http.Request) {
+           $0
+       }
+     #+end_src
 **** init
      #+begin_src snippet
        # name: init
@@ -708,36 +718,6 @@ class ${1:Class}${2: extends ${3:ParentClass}} {
   $0
 }
 #+END_SRC
-**** comment
-#+BEGIN_SRC snippet
-  # name: comment (/* ... */)
-  # key: comment
-  # --
-  /*
-   ,* $0
-   ,*/
-#+END_SRC
-**** comment-big-block
-#+BEGIN_SRC snippet
-  # name: Comment Big Block
-  # key: comment-big-block
-  # --
-
-  /**
-  |--------------------------------------------------
-  | $1
-  |--------------------------------------------------
-  ,*/
-#+END_SRC
-**** comment-multiline
- #+BEGIN_SRC snippet
- # name: comment-multiline
- # key: /**
- # --
- /**
-  * $0
-  */
- #+END_SRC
 **** const
 #+BEGIN_SRC snippet
 # name: const declaration
@@ -764,28 +744,19 @@ ${1:collection}.forEach(function (${2:elem}) {
 #+END_SRC
 **** export-const
 #+BEGIN_SRC snippet
-# uuid: 095f24bf-5c76-4d0b-862e-a1f0ab1e1b95
-# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-# name: exportNamedFunction
-# key: enf
-# --
+  # -*- mode: snippet -*-
+  # name: export-const
+  # key: export-const
+  # --
 
-export const ${1:functionName} = (${2:params}) => {
-  $0
-}
+  export const ${1:functionName} = (${2:params}) => {
+    $0
+  }
 #+END_SRC
 **** export-default
 #+BEGIN_SRC snippet
-  # name: exportDefault
+  # name: export-default
   # key: export-default
-  # --
-
-  export default $1$0
-#+END_SRC
-**** export-default-function
-#+BEGIN_SRC snippet
-  # name: exportDefaultFunction
-  # key: export-default-function
   # --
 
   export default (${1:params}) => {
@@ -852,7 +823,7 @@ if (${1:condition}) {
   # name: log (console.log)
   # key: log
   # --
-  console.log("$1: ", ${1:var})
+  console.log("$2 >> ", ${1:var})
 #+END_SRC
 **** import
 #+BEGIN_SRC snippet
@@ -1518,6 +1489,40 @@ INSERT INTO ${table-name} (${col1, col2}) VALUES (${'val1', 'val2'});$0
 #+BEGIN_SRC snippet
 js-mode
 #+END_SRC
+**** abstract
+#+BEGIN_SRC snippet
+# name: abstract
+# key: abstract
+# --
+abstract class ${1:Class} {
+  ${2:constructor(${3:arg}) {
+    ${4:super(arg);}
+    $5
+  }}
+
+  $0
+}
+#+END_SRC
+**** export-type
+#+BEGIN_SRC snippet
+  # -*- mode: snippet -*-
+  # name: export-type
+  # key: export-type
+  # --
+  export type ${1:name} {
+    $0
+  }
+#+END_SRC
+**** interface
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # name: interface
+       # key: interface
+       # --
+       interface $1 ${2: extends ${3:Parent}} = {
+       $0
+       }
+     #+end_src
 **** namespace
 #+begin_src snippet
   # name: namespace
@@ -1665,5 +1670,37 @@ js-mode
 *** typescript-tsx-mode/
 **** .yas-parents
 #+BEGIN_SRC snippet
-web-mode
+  web-mode
 #+END_SRC
+***
+**** template
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # name: template
+       # key: template
+       # --
+       export const ${1:Component}: React.FC${2:<${3:Props}>} = (${4:props: Props}) => {
+         return (
+            $0
+         )
+       }
+     #+end_src
+*** vue-mode/
+**** template
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # name: template
+       # key: template
+       # --
+       <template>
+           $0
+       </template>
+
+       <script lang="${1:ts}">
+
+       </script>
+
+       <style ${2:scoped}>
+
+       </style>
+     #+end_src
