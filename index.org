@@ -944,6 +944,7 @@
         (message "Install paredit...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/paredit"))
         (when (autoload-if-found '(enable-paredit-mode) "paredit" nil t)
+          (add-hook 'lisp-mode-hook 'enable-paredit-mode)
           (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
           (add-hook 'lisp-interacton-mode-hook 'enable-paredit-mode)
           (global-set-key (kbd "C-c f") 'paredit-forward-slurp-sexp)
@@ -963,89 +964,40 @@
           (add-hook 'prog-mode-hook 'rainbow-delimiters-mode-enable)))
     #+END_SRC
 ** CommonLisp
-*** TODO slime
+*** slime
     #+BEGIN_SRC emacs-lisp
-      ;; (with-eval-after-load 'slime
-      ;;   (eval-when-compile
-      ;;     (setq byte-compile-warnings '(cl-functions))
-      ;;     (load (expand-file-name "~/.roswell/helper.el")))
-      ;;   (defvar slime-net-coding-system 'utf-8-unix)
-
-      ;;   (define-key 'lisp-mode-map (kbd "C-c h") 'hyperspec-lookup)
-
-      ;;   (defvar common-lisp-hyperspec-root "~/.roswell/HyperSpec/")
-      ;;   (defvar common-lisp-hyperspec--reader-macros nil)
-      ;;   (defvar common-lisp-hyperspec--format-characters nil)
-
-      ;;   (defun common-lisp-hyperspec (symbol-name)
-      ;;     (interactive (list (common-lisp-hyperspec-read-symbol-name)))
-      ;;       (let ((name (common-lisp-hyperspec--strip-cl-package
-      ;;                    (downcase symbol-name))))
-      ;;         (if (fboundp 'cl-maplist)
-      ;;             (cl-maplist (lambda (entry)
-      ;;                           (eww-open-file (concat common-lisp-hyperspec-root "Body/"
-      ;;                                                  (car entry)))
-      ;;                           (when (cdr entry)
-      ;;                             (sleep-for 1.5)))
-      ;;                         (or (common-lisp-hyperspec--find name)
-      ;;                             (error "The symbol `%s' is not defined in Common Lisp"
-      ;;                                    symbol-name))))))
-
-      ;;   (defun common-lisp-hyperspec-lookup-reader-macro (macro)
-      ;;     (interactive
-      ;;      (list
-      ;;       (let ((completion-ignore-case t))
-      ;;         (completing-read "Look up reader-macro: "
-      ;;                          common-lisp-hyperspec--reader-macros nil t
-      ;;                          (common-lisp-hyperspec-reader-macro-at-point)))))
-      ;;     (eww-open-file
-      ;;      (concat common-lisp-hyperspec-root "Body/"
-      ;;              (gethash macro common-lisp-hyperspec--reader-macros))))
-
-      ;;   (defun common-lisp-hyperspec-format (character-name)
-      ;;     (interactive (list (common-lisp-hyperspec--read-format-character)))
-      ;;     (if (fboundp 'cl-maplist)
-      ;;         (cl-maplist (lambda (entry)
-      ;;                       (eww-open-file (common-lisp-hyperspec-section (car entry))))
-      ;;                     (or (gethash character-name
-      ;;                                  common-lisp-hyperspec--format-characters)
-      ;;                         (error "The symbol `%s' is not defined in Common Lisp"
-      ;;                                character-name)))))
-
-      ;;   (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
-      ;;     (let ((buf (current-buffer)))
-      ;;       ad-do-it
-      ;;       (switch-to-buffer buf)
-      ;;       (pop-to-buffer "*eww*")))
-
-      ;;   (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
-      ;;     (let ((buf (current-buffer)))
-      ;;       ad-do-it
-      ;;       (switch-to-buffer buf)
-      ;;       (pop-to-buffer "*eww*")))
-
-      ;;   (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
-      ;;     (let ((buf (current-buffer)))
-      ;;       ad-do-it
-      ;;       (switch-to-buffer buf)
-      ;;       (pop-to-buffer "*eww*"))))
+      (with-delayed-execution
+        (message "Install slime...")
+        (load (expand-file-name "~/.roswell/helper.el"))
+        (with-eval-after-load 'slime
+          (eval-and-compile
+            (setq slime-net-coding-system 'utf-8-unix))))
     #+END_SRC
-*** TODO my/slime-history
+*** hyperspec
+    #+begin_src emacs-lisp
+      (with-delayed-execution
+        (when (autoload-if-found '(hyperspec-lookup) "hyperspec" nil t)
+          (define-key 'lisp-mode-map (kbd "C-c h") 'hyperspec-lookup)
+          (with-eval-after-load 'hyperspec
+            (eval-and-compile
+              (setq common-lisp-hyperspec-root "~/.roswell/HyperSpec/")
+              (setq common-lisp-hyperspec--reader-macros nil)
+              (setq common-lisp-hyperspec--format-characters nil)))))
+    #+end_src
+*** my/slime-history
     #+BEGIN_SRC emacs-lisp
-      ;; (add-hook 'slime-mode-hook (lambda ()
-      ;;                              (define-key 'slime-repl-mode-map (kbd "C-c C-r") 'my/slime-history)))
-
-      ;; (with-eval-after-load 'slime
-      ;;   (defun my/slime-history ()
-      ;;     (interactive)
-      ;;     (require 'f)
-      ;;     (require 'dash)
-      ;;     (if (and (fboundp '-distinct)
-      ;;              (fboundp 'f-read-text))
-      ;;         (insert
-      ;;          (completing-read
-      ;;           "choice history: "
-      ;;           (-distinct (read (f-read-text "~/.slime-history.eld"))))))))
+      (when (autoload-if-found '(my/slime-history) "slime" nil t)
+        (define-key 'slime-repl-mode-map (kbd "C-c C-r") 'my/slime-history)
+        (defun my/slime-history ()
+          (interactive)
+          (require 'f)
+          (require 'dash)
+          (if (and (fboundp '-distinct)
+                   (fboundp 'f-read-text))
+              (insert
+               (completing-read
+                "choice history: "
+                (-distinct (read (f-read-text "~/.slime-history.eld"))))))))
     #+END_SRC
 ** EmacsLisp
 *** elisp-slime-nav
@@ -1471,21 +1423,8 @@
           (when (boundp 'company-backends)
             (push 'company-nginx company-backends))))
     #+end_src
-*** TODO slime-company
+*** slime-company
     #+begin_src emacs-lisp
-      ;; (eval-when-compile
-      ;;   (el-get-bundle "anwyn/slime-company"))
-
-      ;; (with-delayed-execution
-      ;;   (message "Install slime-company...")
-      ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
-      ;;   (when (autoload-if-found '(company-slime) "slime-company" nil t)
-      ;;     (with-eval-after-load 'company
-      ;;       (when (boundp 'company-backends)
-      ;;         (push 'company-slime company-backends))
-      ;;       (eval-and-compile
-      ;;         (setq slime-company-completion 'fuzzy)
-      ;;         (setq slime-company-after-completion 'slime-company-just-one-space)))))
     #+end_src
 ** Snippet
 *** yasnippet
@@ -1800,6 +1739,9 @@
 
     #+END_SRC
 ** SQL
+*** sql
+    #+begin_src emacs-lisp
+    #+end_src
 *** sql-indent
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -1854,7 +1796,7 @@
       (with-delayed-execution
         (message "Install fish-repl...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/fish-repl"))
-        (with-eval-after-load 'fish-repl))
+        (autoload-if-found '(fish-repl) "fish-repl" nil t))
     #+end_src
 ** NodeJS
 *** nodejs-repl
@@ -1901,7 +1843,8 @@
       (with-delayed-execution
         (message "Install flycheck...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/flycheck"))
-        (global-flycheck-mode))
+        (when (autoload-if-found '(flycheck-mode) "flycheck" nil t)
+          (add-hook 'lsp-mode-hook 'flycheck-mode)))
     #+end_src
 ** Cursor
 *** multiple-cursors
@@ -2137,6 +2080,20 @@
           (global-set-key (kbd "C-c t") 'origami-recursively-toggle-node)
           (global-set-key (kbd "C-c C-t") 'origami-recursively-toggle-node)))
     #+end_src
+*** persistent-scratch
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'persistent-scratch))
+
+      (with-delayed-execution
+        (message "Install persistent-scratch...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/persistent-scratch"))
+        (when (autoload-if-found '(persistent-scratch-setup-default) "persistent-scratch" nil t)
+          (persistent-scratch-setup-default)
+          (with-eval-after-load 'persistent-scratch
+            (eval-and-compile
+              (setq persistent-scratch-autosave-interval 100)))))
+    #+end_src
 *** popwin
     #+begin_src emacs-lisp
       (eval-when-compile
@@ -2169,27 +2126,23 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/smart-jump"))
         (with-eval-after-load 'smart-jump))
     #+end_src
-*** TODO subword
+*** subword
     #+begin_src emacs-lisp
-      ;; (eval-when-compile
-      ;;   (when (require 'subword nil t)
-      ;;     (defun my/delete-forward-block ()
-      ;;       (interactive)
-      ;;       (if (eobp)
-      ;;           (message "End of buffer")
-      ;;         (let* ((syntax-move-point
-      ;;                 (save-excursion
-      ;;                   (skip-syntax-forward (string (char-syntax (char-after))))
-      ;;                   (point)))
-      ;;                (subword-move-point
-      ;;                 (save-excursion
-      ;;                   (subword-forward)
-      ;;                   (point))))
-      ;;           (kill-region (point) (min syntax-move-point subword-move-point)))))))
-
-      ;; (global-set-key (kbd "M-d") 'my/delete-forward-block)
-
-      ;; (with-eval-after-load 'subword)
+      (when (autoload-if-found '(my/delete-forward-block) "subword" nil t)
+        (global-set-key (kbd "M-d") 'my/delete-forward-block)
+        (defun my/delete-forward-block ()
+          (interactive)
+          (if (eobp)
+              (message "End of buffer")
+            (let* ((syntax-move-point
+                    (save-excursion
+                      (skip-syntax-forward (string (char-syntax (char-after))))
+                      (point)))
+                   (subword-move-point
+                    (save-excursion
+                      (subword-forward)
+                      (point))))
+              (kill-region (point) (min syntax-move-point subword-move-point))))))
     #+end_src
 *** undo-tree
     #+begin_src emacs-lisp
