@@ -721,6 +721,7 @@
          (push '(".pryrc" . ruby-mode) auto-mode-alist)
          (push '("Fastfile" . ruby-mode) auto-mode-alist)
          (push '("Matchfile" . ruby-mode) auto-mode-alist)
+         (push '("Procfile" . ruby-mode) auto-mode-alist)
          (push '(".git-pr-template" . ruby-mode) auto-mode-alist)
          (with-eval-after-load 'ruby-mode
            (eval-and-compile
@@ -801,6 +802,9 @@
 ** sql-mode
    #+begin_src emacs-lisp
      (with-eval-after-load 'sql-mode
+       (load-library "sql-indent")
+       (load-library "sql-complete")
+       (load-library "sql-transform")
        (eval-and-compile
          (setq sql-indent-offset t)))
    #+end_src
@@ -900,6 +904,17 @@
        (add-to-list 'load-path (locate-user-emacs-file "el-get/vimrc-mode"))
        (when (autoload-if-found '(vimrc-mode) "vimrc-mode" nil t)
          (push '("\\.vim\\(rc\\)?\\'" . vimrc-mode) auto-mode-alist)))
+   #+end_src
+** wat-mode
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'wat-mode :url "https://github.com/devonsparks/wat-mode.git"))
+
+     (with-delayed-execution
+       (message "Install wat-mode...")
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/wat-mode"))
+       (when (autoload-if-found '(wat-mode) "wat-mode" nil t)
+         (push '("\\.wat?\\'" . wat-mode) auto-mode-alist)))
    #+end_src
 ** web-mode
    #+BEGIN_SRC emacs-lisp
@@ -1084,9 +1099,11 @@
     #+begin_src emacs-lisp
       (with-delayed-execution
         (when (autoload-if-found '(ivy-mode) "ivy" nil t)
-          (ivy-mode 1)
+          (add-hook 'minibuffer-setup-hook (lambda ()
+                                             (ivy-mode 1)))
           (with-eval-after-load 'ivy
             (eval-and-compile
+              (setq enable-recursive-minibuffers t)
               (setq ivy-use-virtual-buffers t)))))
     #+end_src
 *** ivy-rich
@@ -1423,9 +1440,6 @@
           (when (boundp 'company-backends)
             (push 'company-nginx company-backends))))
     #+end_src
-*** slime-company
-    #+begin_src emacs-lisp
-    #+end_src
 ** Snippet
 *** yasnippet
     #+begin_src emacs-lisp
@@ -1739,9 +1753,6 @@
 
     #+END_SRC
 ** SQL
-*** sql
-    #+begin_src emacs-lisp
-    #+end_src
 *** sql-indent
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -1750,8 +1761,10 @@
       (with-delayed-execution
         (message "Install sql-indent...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/sql-indent"))
-        (when (autoload-if-found '(sqlind-minor-mode) "sql-indent" nil t)
-          (add-hook 'sql-mode-hook 'sqlind-minor-mode)))
+        (when (autoload-if-found '(sqlind-setup sqlind-minor-mode) "sql-indent" nil t)
+          (add-hook 'sql-mode-hook (lambda ()
+                                     (sqlind-setup)
+                                     (sqlind-minor-mode)))))
     #+END_SRC
 ** PHP
 *** psysh
@@ -1801,6 +1814,22 @@
 ** NodeJS
 *** nodejs-repl
     #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'nodejs-repl
+                       :url "https://github.com/abicky/nodejs-repl.el.git"))
+
+      (with-delayed-execution
+        (message "Install nodejs-repl...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/nodejs-repl"))
+        (when (autoload-if-found '(nodejs-repl) "nodejs-repl" nil t)
+          (add-hook 'js-mode-hook
+                    (lambda ()
+                      (define-key js-mode-map (kbd "C-x C-e") 'nodejs-repl-send-last-expression)
+                      (define-key js-mode-map (kbd "C-c C-j") 'nodejs-repl-send-line)
+                      (define-key js-mode-map (kbd "C-c C-r") 'nodejs-repl-send-region)
+                      (define-key js-mode-map (kbd "C-c C-c") 'nodejs-repl-send-buffer)
+                      (define-key js-mode-map (kbd "C-c C-l") 'nodejs-repl-load-file)
+                      (define-key js-mode-map (kbd "C-c C-z") 'nodejs-repl-switch-to-repl)))))
     #+end_src
 ** File
 *** recentf
@@ -2175,6 +2204,20 @@
             (interactive)
             (insert (uuid-string)))
           (defalias 'my/uuid 'uuid)))
+    #+end_src
+*** redacted.el
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'redacted
+                       :url "https://github.com/bkaestner/redacted.el.git"))
+
+      (with-delayed-execution
+        (message "Install redacted...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/redacted"))
+        (when (autoload-if-found '(my/redacted-mode) "redacted" nil t)
+          (defun my/redacted-mode ()
+            (interactive)
+            (redacted-mode (if redacted-mode -1 1)))))
     #+end_src
 *** wanderlust
     #+begin_src emacs-lisp
