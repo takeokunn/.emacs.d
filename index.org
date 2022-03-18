@@ -268,6 +268,13 @@
        (message "install cl-lib....")
        (require 'cl-lib))
    #+end_src
+** kill-ringのサイズを変更
+   #+begin_src emacs-lisp
+     (setq kill-ring-max 100000)
+
+     (custom-set-variables '(savehist-additional-variables '(kill-ring)))
+     (savehist-mode 1)
+   #+end_src
 * Utility
 ** dash
    #+begin_src emacs-lisp
@@ -723,6 +730,7 @@
          (push '("Matchfile" . ruby-mode) auto-mode-alist)
          (push '("Procfile" . ruby-mode) auto-mode-alist)
          (push '(".git-pr-template" . ruby-mode) auto-mode-alist)
+         (add-hook 'ruby-mode-hook 'lsp)
          (with-eval-after-load 'ruby-mode
            (eval-and-compile
              (setq-default ruby-insert-encoding-magic-comment nil)))))
@@ -750,6 +758,15 @@
        (when (autoload-if-found '(scala-mode) "scala-mode" nil t)
          (push '("\\.scala$" . scala-mode) auto-mode-alist)))
    #+END_SRC
+** scheme-mode
+   #+begin_src emacs-lisp
+     (with-delayed-execution
+       (message "Install scheme...")
+       (when (require 'scheme)
+         (with-eval-after-load 'scheme
+           (eval-and-compile
+             (setq scheme-program-name "gosh -i")))))
+   #+end_src
 ** scss-mode
    #+begin_src emacs-lisp
      (eval-when-compile
@@ -871,6 +888,21 @@
          (push '("\\.tsx$" . typescript-tsx-mode) auto-mode-alist)
          (add-hook 'typescript-tsx-mode-hook 'lsp-deferred)))
    #+END_SRC
+** v-mode
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'v-mode))
+
+     (with-delayed-execution
+       (message "Install v-mode...")
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/v-mode"))
+       (when (autoload-if-found '(v-mode v-menu v-format-buffer) "v-mode" nil t)
+         (push '("\\(\\.v?v\\|\\.vsh\\)$" . v-mode) auto-mode-alist)
+         (with-eval-after-load 'v-mode
+           (when (boundp 'v-mode-map)
+             (define-key v-mode-map (kbd "M-z") 'v-menu)
+             (define-key v-mode-map (kbd "C-c C-f") 'v-format-buffer)))))
+   #+end_src
 ** vue-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
@@ -979,14 +1011,19 @@
           (add-hook 'prog-mode-hook 'rainbow-delimiters-mode-enable)))
     #+END_SRC
 ** CommonLisp
-*** slime
+*** TODO slime/slime-company
     #+BEGIN_SRC emacs-lisp
-      (with-delayed-execution
-        (message "Install slime...")
-        (load (expand-file-name "~/.roswell/helper.el"))
-        (with-eval-after-load 'slime
-          (eval-and-compile
-            (setq slime-net-coding-system 'utf-8-unix))))
+      ;; (eval-when-compile
+      ;;   ;; (load (expand-file-name "~/.roswell/helper.el"))
+      ;;   (el-get-bundle 'slime)
+      ;;   (el-get-bundle 'slime-company))
+
+      ;; (with-delayed-execution
+      ;;   (message "Install slime...")
+      ;;   (load (expand-file-name "~/.roswell/helper.el"))
+      ;;   (with-eval-after-load 'slime
+      ;;     (eval-and-compile
+      ;;       (setq slime-net-coding-system 'utf-8-unix))))
     #+END_SRC
 *** hyperspec
     #+begin_src emacs-lisp
@@ -1483,7 +1520,8 @@
           (require 'lsp-dired)
           (require 'lsp-icons)
           (require 'lsp-modeline)
-          (require 'lsp-headerline))
+          (require 'lsp-headerline)
+          (require 'lsp-v))
 
         (add-hook 'lsp-mode-hook 'my/load-lsp-libs)
 
@@ -1739,7 +1777,7 @@
       (with-delayed-execution
         (message "Install inf-ruby...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/inf-ruby"))
-        (when (autoload-if-found '(inf-ruby) "inf-ruby")
+        (when (autoload-if-found '(inf-ruby inf-ruby-minor-mode) "inf-ruby")
           (add-hook 'ruby-mode-hook 'inf-ruby-minor-mode)
           (defun takeokunn/irb-history ()
             (interactive)
@@ -2205,7 +2243,7 @@
             (insert (uuid-string)))
           (defalias 'my/uuid 'uuid)))
     #+end_src
-*** redacted.el
+*** redacted
     #+begin_src emacs-lisp
       (eval-when-compile
         (el-get-bundle 'redacted
@@ -2214,9 +2252,10 @@
       (with-delayed-execution
         (message "Install redacted...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/redacted"))
-        (when (autoload-if-found '(my/redacted-mode) "redacted" nil t)
+        (when (require 'redacted)
           (defun my/redacted-mode ()
             (interactive)
+            (read-only-mode (if redacted-mode -1 1))
             (redacted-mode (if redacted-mode -1 1)))))
     #+end_src
 *** wanderlust
@@ -2526,6 +2565,18 @@
                       " ")))))
 
      (defalias 'ghq-get 'my/ghq-get)
+   #+end_src
+** my/gh-browse
+   #+begin_src emacs-lisp
+     (defun my/gh-browse ()
+       (interactive)
+       (message
+        (shell-command-to-string
+         (mapconcat #'shell-quote-argument
+                    (list "gh" "browse")
+                    " "))))
+
+     (defalias 'gh-browse 'my/gh-browse)
    #+end_src
 ** my/toggle-kill-emacs
    #+begin_src emacs-lisp
