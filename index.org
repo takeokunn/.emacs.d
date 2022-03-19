@@ -181,8 +181,11 @@
    #+END_SRC
 ** Font
    #+BEGIN_SRC emacs-lisp
-     (set-fontset-font t 'japanese-jisx0208 "TakaoPGothic")
-     (add-to-list 'face-font-rescale-alist '(".*Takao P.*" . 0.85))
+     (when (member ".*Takao P.*" (font-family-list))
+       (add-to-list 'face-font-rescale-alist '(".*Takao P.*" . 0.85)))
+
+     (when (member "TakaoPGothic" (font-family-list))
+       (add-to-list 'default-frame-alist '(font . "TakaoPGothic")))
    #+END_SRC
 ** GC/Memory
    #+BEGIN_SRC emacs-lisp
@@ -471,9 +474,9 @@
        (message "Install emmet-mode...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/emmet-mode")))
        (when (autoload-if-found '(emmet-mode) "emmet-mode" nil t)
+         (add-hook 'html-mode-hook 'emmet-mode)
          (add-hook 'web-mode-hook 'emmet-mode)
          (add-hook 'css-mode-hook 'emmet-mode)
-         (add-hook 'vue-mode-hook 'emmet-mode)
          (add-hook 'nxml-mode-hook 'emmet-mode)
          (add-hook 'typescript-tsx-mode-hook 'emmet-mode)
          (with-eval-after-load 'emmet-mode
@@ -1177,6 +1180,7 @@
         (message "Install all-the-icons-dired...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons-dired"))
         (when (autoload-if-found '(all-the-icons-dired-mode) "all-the-icons-dired")
+          (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
           (with-eval-after-load 'all-the-icons-dired-mode
             (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))))
     #+end_src
