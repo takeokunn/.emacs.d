@@ -1007,8 +1007,9 @@
       (with-delayed-execution
         (message "Install rainbow-delimiters...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/rainbow-delimiters"))
-        (with-eval-after-load 'rainbow-delimiters
-          (add-hook 'prog-mode-hook 'rainbow-delimiters-mode-enable)))
+        (when (autoload-if-found '(rainbow-delimiters-mode-enable) "rainbow-delimiters" nil t)
+          (with-eval-after-load 'rainbow-delimiters
+            (add-hook 'prog-mode-hook 'rainbow-delimiters-mode-enable))))
     #+END_SRC
 ** CommonLisp
 *** TODO slime/slime-company
@@ -1072,9 +1073,11 @@
       (with-delayed-execution
         (message "Install nameless...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/nameless"))
-        (with-eval-after-load 'nameless
+        (when (autoload-if-found '(nameless-mode) "nameless" nil t)
           (add-hook 'ielm-mode-hook 'nameless-mode)
-          (add-hook 'emacs-lisp-mode-hook 'nameless-mode)))
+          (add-hook 'emacs-lisp-mode-hook (lambda ()
+                                            (message "fdsafasfdafdsafasfdsafasfdsafasfdsafasfdsafas")
+                                            (nameless-mode)))))
     #+END_SRC
 *** my/ielm-history
     #+BEGIN_SRC emacs-lisp
@@ -1476,6 +1479,19 @@
         (when (autoload-if-found '(company-nginx) "company-nginx" nil t)
           (when (boundp 'company-backends)
             (push 'company-nginx company-backends))))
+    #+end_src
+*** company-gemoji
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'company-gemoji
+                       :url "https://github.com/takeokunn/company-gemoji.git"))
+
+      (with-delayed-execution
+        (message "Install company-gemoji...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/company-gemoji"))
+        (when (autoload-if-found '(company-gemoji) "company-gemoji" nil t)
+          (when (boundp 'company-backends)
+            (push 'company-gemoji company-backends))))
     #+end_src
 ** Snippet
 *** yasnippet
@@ -1947,9 +1963,8 @@
 
       (with-delayed-execution
         (message "Install amx...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/amx")))
-
-      (with-eval-after-load 'amx)
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/amx"))
+        (with-eval-after-load 'amx))
     #+END_SRC
 *** avy
     #+begin_src emacs-lisp
