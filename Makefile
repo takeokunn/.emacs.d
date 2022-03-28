@@ -5,6 +5,9 @@ TOP_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 HTMLIZE_FILE=$(TOP_DIR)/htmlize.el
 HTMLIZE_URL=https://raw.githubusercontent.com/hniksic/emacs-htmlize/master/htmlize.el
 
+.PHONY: init
+init: compile org-generate
+
 .PHONY: all
 all: compile org-generate org-to-html
 

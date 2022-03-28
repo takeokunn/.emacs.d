@@ -924,7 +924,6 @@
        (add-to-list 'load-path (locate-user-emacs-file "el-get/vue-mode"))
        (when (autoload-if-found '(vue-mode) "vue-mode" nil t)
          (push '("\\.vue$" . vue-mode) auto-mode-alist)
-         (add-hook 'vue-mode-hook 'lsp)
          (with-eval-after-load
              (eval-and-compile
                (setq mmm-submode-decoration-level 0)))))
@@ -969,6 +968,7 @@
            (eval-and-compile
              (setq web-mode-engines-alist '(("blade"  . "\\.blade\\.")))
              (setq web-mode-enable-auto-pairing nil)
+             (setq web-mode-enable-auto-indentation nil)
              (setq emmet-self-closing-tag-style "")))))
    #+END_SRC
 ** yaml-mode
@@ -1078,9 +1078,7 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/nameless"))
         (when (autoload-if-found '(nameless-mode) "nameless" nil t)
           (add-hook 'ielm-mode-hook 'nameless-mode)
-          (add-hook 'emacs-lisp-mode-hook (lambda ()
-                                            (message "fdsafasfdafdsafasfdsafasfdsafasfdsafasfdsafas")
-                                            (nameless-mode)))))
+          (add-hook 'emacs-lisp-mode-hook 'nameless-mode)))
     #+END_SRC
 *** my/ielm-history
     #+BEGIN_SRC emacs-lisp
@@ -1363,6 +1361,8 @@
         (message "Install counsel-projectile...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/counsel-projectile"))
         (when (autoload-if-found '(counsel-projectile-mode) "counsel-projectile" nil t)
+          (define-key projectile-mode-map (kbd "M-p") 'projectile-command-map)
+          (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
           (counsel-projectile-mode +1)
           (with-eval-after-load 'counsel-projectile
             (eval-and-compile
@@ -1974,15 +1974,20 @@
 *** avy
     #+begin_src emacs-lisp
       (eval-when-compile
-        (el-get-bundle 'avy)
-        (el-get-bundle 'avy-zap))
+        (el-get-bundle 'avy))
 
       (with-delayed-execution
         (message "Install avy...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/avy"))
         (when (autoload-if-found '(avy-goto-char-timer) "avy" nil t)
-          (global-set-key (kbd "C-:") 'avy-goto-char-timer))
+          (global-set-key (kbd "C-:") 'avy-goto-char-timer)))
+    #+end_src
+*** avy-zap
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'avy-zap))
 
+      (with-delayed-execution
         (message "Install avy-zap...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/avy-zap"))
         (when (autoload-if-found '(avy-zap-up-to-char-dwim) "avy-zap" nil t)
@@ -2048,34 +2053,6 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/esup"))
         (with-eval-after-load 'esup))
     #+END_SRC
-*** elfeed
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'elfeed))
-
-      (with-delayed-execution
-        (message "Install elfeed...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/elfeed"))
-        (with-eval-after-load 'elfeed
-          (eval-and-compile
-            (setq elfeed-search-filter "@3-days-ago +unread")
-            (setq browse-url-browser-function 'eww-browse-url))))
-    #+end_src
-*** elfeed-org
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'elfeed-org))
-
-      (with-delayed-execution
-        (message "Install elfeed-org...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/elfeed-org"))
-        (when (autoload-if-found '(elfeed-org) "elfeed-org" nil t)
-          (add-hook 'emacs-startup-hook (lambda ()
-                                          (elfeed-org)))
-          (with-eval-after-load 'elfeed-org
-            (eval-and-compile
-              (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org"))))))
-    #+end_src
 *** font-lock-studio
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -2181,6 +2158,7 @@
             (eval-and-compile
               (setq persistent-scratch-autosave-interval 100)))))
     #+end_src
+*** point
 *** popwin
     #+begin_src emacs-lisp
       (eval-when-compile
@@ -2321,6 +2299,35 @@
       (autoload 'woman-find-file "woman"
         "Find, decode and browse a specific UN*X man-page file." t)
     #+end_src
+* Elfeed
+** elfeed
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'elfeed))
+
+     (with-delayed-execution
+       (message "Install elfeed...")
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/elfeed"))
+       (when (autoload-if-found '(elfeed) "elfeed" nil t)
+         (with-eval-after-load 'elfeed
+           (eval-and-compile
+             (setq elfeed-search-filter "@3-days-ago +unread")
+             (setq browse-url-browser-function 'eww-browse-url)))))
+   #+end_src
+** elfeed-org
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'elfeed-org))
+
+     (with-delayed-execution
+       (message "Install elfeed-org...")
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/elfeed-org"))
+       (when (autoload-if-found '(elfeed-org) "elfeed-org" nil t)
+         (elfeed-org)
+         (with-eval-after-load 'elfeed-org
+           (eval-and-compile
+             (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org"))))))
+   #+end_src
 * Eshell
 ** basic
    #+begin_src emacs-lisp
@@ -2495,12 +2502,13 @@
 ** org-pomodoro
    #+begin_src emacs-lisp
      (eval-when-compile
-       (el-get-bundle "marcinkoziej/org-pomodoro"))
+       (el-get-bundle "jwiegley/alert")
+       (el-get-bundle 'org-pomodoro))
 
      (with-delayed-execution
        (message "Install org-pomodoro...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/org-pomodoro"))
-       (with-eval-after-load 'org-pomodoro))
+       (autoload-if-found '(org-pomodoro) "org-pomodoro" nil t))
    #+end_src
 ** org-view-mode
    #+begin_src emacs-lisp
@@ -2532,47 +2540,6 @@
 
      ;; (advice-add 'set-auto-mode :before-until my/before-set-auto-mode)
    #+END_SRC
-** my/reload-major-mode
-   #+BEGIN_SRC emacs-lisp
-     (defun my/reload-major-mode ()
-       "Reload current major mode."
-       (interactive)
-       (let ((current-mode major-mode))
-         (fundamental-mode)
-         (funcall current-mode)
-         current-mode))
-   #+END_SRC
-** my/move-line
-   #+begin_src emacs-lisp
-     (defun my/move-line (arg)
-       (interactive)
-       (let ((col (current-column)))
-         (unless (eq col 0)
-           (move-to-column 0))
-         (save-excursion
-           (forward-line)
-           (transpose-lines arg))
-         (forward-line arg)))
-
-     (defun my/move-line-down ()
-       (interactive)
-       (my/move-line 1))
-
-     (defun my/move-line-up ()
-       (interactive)
-       (my/move-line -1))
-
-     (global-set-key (kbd "M-N") 'my/move-line-down)
-     (global-set-key (kbd "M-P") 'my/move-line-up)
-   #+end_src
-** my/toggle-read-only-mode
-   #+begin_src emacs-lisp
-     (defun my/toggle-read-only-mode ()
-       (interactive)
-       (read-only-mode))
-
-     (global-set-key (kbd "C-x C-q") 'my/toggle-read-only-mode)
-   #+end_src
 ** my/ghq-get
    #+begin_src emacs-lisp
      (defun my/ghq-get ()
@@ -2597,6 +2564,55 @@
                     " "))))
 
      (defalias 'gh-browse 'my/gh-browse)
+   #+end_src
+** my/indent-all
+   #+begin_src emacs-lisp
+     (defun my/indent-all ()
+       (interactive)
+       (save-excursion
+         (mark-whole-buffer)
+         (indent-region (region-beginning) (region-end))))
+   #+end_src
+** my/move-line
+   #+begin_src emacs-lisp
+     (defun my/move-line (arg)
+       (interactive)
+       (let ((col (current-column)))
+         (unless (eq col 0)
+           (move-to-column 0))
+         (save-excursion
+           (forward-line)
+           (transpose-lines arg))
+         (forward-line arg)))
+
+     (defun my/move-line-down ()
+       (interactive)
+       (my/move-line 1))
+
+     (defun my/move-line-up ()
+       (interactive)
+       (my/move-line -1))
+
+     (global-set-key (kbd "M-N") 'my/move-line-down)
+     (global-set-key (kbd "M-P") 'my/move-line-up)
+   #+end_src
+** my/reload-major-mode
+   #+BEGIN_SRC emacs-lisp
+     (defun my/reload-major-mode ()
+       "Reload current major mode."
+       (interactive)
+       (let ((current-mode major-mode))
+         (fundamental-mode)
+         (funcall current-mode)
+         current-mode))
+   #+END_SRC
+** my/toggle-read-only-mode
+   #+begin_src emacs-lisp
+     (defun my/toggle-read-only-mode ()
+       (interactive)
+       (read-only-mode))
+
+     (global-set-key (kbd "C-x C-q") 'my/toggle-read-only-mode)
    #+end_src
 ** my/toggle-kill-emacs
    #+begin_src emacs-lisp
