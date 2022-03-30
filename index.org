@@ -15,24 +15,30 @@
    - repo: [[http://github.com/takeokunn/.emacs.d][takeokunn/.emacs.d]]
    - twitter: [[https://twitter.com/takeokunn][たけてぃ@takeokunn]]
    - blog: [[https://takeokunn.xyz][https://takeokunn.xyz]]
+* Header
+  #+begin_src emacs-lisp
+    ;; init.el --- My init.el -*- lexical-binding: t -*-
+    ;; Configurations for Emacs
+    ;;                                         Takeo Obara  <bararararatty@gmail.com>
+  #+end_src
 * Boot
-** header
-   #+begin_src emacs-lisp
-     ;; init.el --- My init.el -*- lexical-binding: t -*-
-     ;; Configurations for Emacs
-     ;;                                         Takeo Obara  <bararararatty@gmail.com>
-   #+end_src
 ** env
    #+begin_src emacs-lisp
      (defconst my/loading-profile-p t
        "If non-nil, use built-in profiler.el.")
 
-     (require 'utility-autoloads nil t)
-
-     ;; (require 'profiler)
-     ;; (profiler-start 'cpu)
-
-     (defconst my-saved-file-name-handler-alist file-name-handler-alist)
+     (defconst my/enable-profile nil
+       "If true, enable profile")
+   #+end_src
+** profile
+   #+begin_src emacs-lisp
+     (when my/enable-profile
+       (require 'profiler)
+       (profiler-start 'cpu))
+   #+end_src
+** Magic File Name を一時的に無効にする
+   #+begin_src emacs-lisp
+     (defconst my/saved-file-name-handler-alist file-name-handler-alist)
      (setq file-name-handler-alist nil)
    #+end_src
 ** 起動時間計測
@@ -63,8 +69,7 @@
                              (time-subtract ctime my/tick-previous-time)))
                     msg)
            (setq my/tick-previous-time ctime))))
-   #+end_src
-   #+begin_src emacs-lisp
+
      (defun my/emacs-init-time ()
        "Emacs booting time in msec."
        (interactive)
@@ -277,6 +282,23 @@
 
      (custom-set-variables '(savehist-additional-variables '(kill-ring)))
      (savehist-mode 1)
+   #+end_src
+** [mac] clipboardに入るようにする
+   #+begin_src emacs-lisp
+     (eval-and-compile
+       (defun my/copy-from-osx ()
+         (shell-command-to-string "pbpaste"))
+
+       (defun my/paste-to-osx (text)
+         (let ((process-connection-type nil))
+           (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+             (process-send-string proc text)
+             (process-send-eof proc))))
+
+       (when (and (string= system-type "darwin")
+                  (not window-system))
+         (setq interprogram-cut-function 'my/paste-to-osx)
+         (setq interprogram-paste-function 'my/copy-from-osx)))
    #+end_src
 * Utility
 ** dash
@@ -2277,7 +2299,7 @@
         (message "Install which-key...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/which-key"))
         (when (autoload-if-found '(which-key-mode) "which-key" nil t)
-          (add-hook 'after-init-hook 'which-key-mode)))
+          (which-key-mode)))
     #+end_src
 *** whitespace
     #+BEGIN_SRC emacs-lisp
@@ -2393,6 +2415,7 @@
 
      (with-eval-after-load 'org
        (define-key org-mode-map (kbd "C-c ,") 'org-insert-structure-template)
+       (define-key org-mode-map (kbd "C-c C-,") 'org-insert-structure-template)
        (eval-and-compile
          (setq org-use-speed-commands t)
          (setq org-agenda-todo-ignore-with-date t)
@@ -2540,6 +2563,16 @@
 
      ;; (advice-add 'set-auto-mode :before-until my/before-set-auto-mode)
    #+END_SRC
+** my/copy-buffer
+   #+begin_src emacs-lisp
+     (defun my/copy-buffer ()
+       (interactive)
+       (save-excursion
+         (mark-whole-buffer)
+         (copy-region-as-kill (region-beginning) (region-end))))
+
+     (defalias 'copy-buffer 'my/copy-buffer)
+   #+end_src
 ** my/ghq-get
    #+begin_src emacs-lisp
      (defun my/ghq-get ()
@@ -2567,11 +2600,13 @@
    #+end_src
 ** my/indent-all
    #+begin_src emacs-lisp
-     (defun my/indent-all ()
+     (defun my/indent-buffer ()
        (interactive)
        (save-excursion
          (mark-whole-buffer)
          (indent-region (region-beginning) (region-end))))
+
+     (defalias 'indent-buffer 'my/indent-buffer)
    #+end_src
 ** my/move-line
    #+begin_src emacs-lisp
@@ -2631,9 +2666,13 @@
            (global-set-key (kbd "C-x C-c") 'save-buffers-kill-emacs))))
    #+end_src
 * footer
+** Magic File Name を一時的に無効にする
+   #+begin_src emacs-lisp
+     (setq file-name-handler-alist my/saved-file-name-handler-alist)
+   #+end_src
+** my/enable-profile
  #+begin_src emacs-lisp
-   ;; (profiler-report)
-   ;; (profiler-stop)
-
-   (setq file-name-handler-alist my-saved-file-name-handler-alist)
+   (when my/enable-profile
+     (profiler-report)
+     (profiler-stop))
  #+end_src
