@@ -164,7 +164,7 @@
           (file-name-sans-extension (or (buffer-file-name)
                                         (buffer-name (current-buffer))))))
      #+end_src
-**** _call
+**** __call
      #+begin_src snippet
        # -*- mode: snippet -*-
        # contributor: USAMI Kenta <tadsan@zonu.me>
@@ -175,6 +175,17 @@
        public function __call($name, $args)
        {
            $0
+       }
+     #+end_src
+**** __constructor
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # name: __construct()
+       # key: __construct
+       # --
+       ${1:public }function __construct($2)
+       {
+       $0
        }
      #+end_src
 **** abstruct
@@ -209,6 +220,15 @@
        # group: definitions
        # --
        const ${1:NAME} = ${2:value};
+     #+end_src
+**** declare
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # name: declare
+       # key: declare
+       # group: generic
+       # --
+       declare(strict_types=1);
      #+end_src
 **** doc
      #+begin_src snippet
@@ -268,7 +288,7 @@
        # key: function
        # group : control structure
        # --
-       ${4:public }function ${1:name}(${2:$arg, ...}): ${3:type}
+       ${1:public }function ${2:name}(${3:$arg, ...}): ${4:type}
        {
            $0
        }
@@ -321,15 +341,6 @@
        $0
        };
      #+end_src
-**** strict_types
-     #+begin_src snippet
-       # -*- mode: snippet -*-
-       # name: strict_types
-       # key: strict_types
-       # group: generic
-       # --
-       declare(strict_types=1);
-     #+end_src
 **** trait
      #+begin_src snippet
        # -*- mode: snippet -*-
@@ -367,6 +378,24 @@
        # --
        var_dump(${1:$var});
      #+end_src
+**** @phpstan-ignore-line
+    #+begin_src snippet
+      # -*- mode: snippet -*-
+      # name: @phpstan-ignore-line
+      # key: phpstan-ignore-line
+      # --
+
+      // @phpstan-ignore-line
+    #+end_src
+**** @phpstan-ignore-next-line
+    #+begin_src snippet
+      # -*- mode: snippet -*-
+      # name: @phpstan-ignore-next-line
+      # key: phpstan-ignore-next-line
+      # --
+
+      // @phpstan-ignore-next-line
+    #+end_src
 *** emacs-lisp-mode/
 **** cond
 #+BEGIN_SRC snippet

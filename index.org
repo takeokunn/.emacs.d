@@ -264,7 +264,9 @@
      (global-set-key (kbd "C-c i") 'find-function)
      (global-set-key (kbd "C-x C-o") 'other-window)
      (global-set-key (kbd "C-x C-k") nil)
-     ;; (global-set-key (kbd "C-x C-c") nil)
+
+     (when window-system
+       (global-set-key (kbd "C-x C-c") nil))
    #+END_SRC
 ** common lispを使う
    #+begin_src emacs-lisp
@@ -1038,45 +1040,62 @@
             (add-hook 'prog-mode-hook 'rainbow-delimiters-mode-enable))))
     #+END_SRC
 ** CommonLisp
-*** TODO slime/slime-company
+*** slime/slime-company
     #+BEGIN_SRC emacs-lisp
-      ;; (eval-when-compile
-      ;;   ;; (load (expand-file-name "~/.roswell/helper.el"))
-      ;;   (el-get-bundle 'slime)
-      ;;   (el-get-bundle 'slime-company))
+      (eval-when-compile
+        (load (expand-file-name "~/.roswell/helper.el"))
+        (when (require 'slime)
+          (el-get-bundle 'slime-company)))
 
-      ;; (with-delayed-execution
-      ;;   (message "Install slime...")
-      ;;   (load (expand-file-name "~/.roswell/helper.el"))
-      ;;   (with-eval-after-load 'slime
-      ;;     (eval-and-compile
-      ;;       (setq slime-net-coding-system 'utf-8-unix))))
+      (with-delayed-execution
+        (message "Install slime...")
+        (message "Install slime-company...")
+        (load (expand-file-name "~/.roswell/helper.el"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
+        (with-delayed-execution
+          (when (autoload-if-found '(slime-company) "slime" nil t)
+            (slime-setup '(slime-company))))
+        (with-eval-after-load 'slime
+          (eval-and-compile
+            (setq slime-net-coding-system 'utf-8-unix))))
     #+END_SRC
 *** hyperspec
     #+begin_src emacs-lisp
       (with-delayed-execution
-        (when (autoload-if-found '(hyperspec-lookup) "hyperspec" nil t)
-          (define-key 'lisp-mode-map (kbd "C-c h") 'hyperspec-lookup)
-          (with-eval-after-load 'hyperspec
-            (eval-and-compile
-              (setq common-lisp-hyperspec-root "~/.roswell/HyperSpec/")
-              (setq common-lisp-hyperspec--reader-macros nil)
-              (setq common-lisp-hyperspec--format-characters nil)))))
+        (define-key lisp-mode-map (kbd "C-c h") 'hyperspec-lookup)
+        (with-eval-after-load 'hyperspec
+          (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
+            (let ((buf (current-buffer)))
+              ad-do-it
+              (switch-to-buffer buf)
+              (pop-to-buffer "*eww*")))
+          (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
+            (let ((buf (current-buffer)))
+              ad-do-it
+              (switch-to-buffer buf)
+              (pop-to-buffer "*eww*")))
+          (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
+            (let ((buf (current-buffer)))
+              ad-do-it
+              (switch-to-buffer buf)
+              (pop-to-buffer "*eww*")))
+          (eval-and-compile
+            (setq common-lisp-hyperspec--reader-macros nil)
+            (setq common-lisp-hyperspec--format-characters nil))))
     #+end_src
 *** my/slime-history
     #+BEGIN_SRC emacs-lisp
-      (when (autoload-if-found '(my/slime-history) "slime" nil t)
-        (define-key 'slime-repl-mode-map (kbd "C-c C-r") 'my/slime-history)
-        (defun my/slime-history ()
-          (interactive)
-          (require 'f)
-          (require 'dash)
-          (if (and (fboundp '-distinct)
-                   (fboundp 'f-read-text))
-              (insert
-               (completing-read
-                "choice history: "
-                (-distinct (read (f-read-text "~/.slime-history.eld"))))))))
+      (with-delayed-execution
+        (when (autoload-if-found '(my/slime-history) "slime" nil t)
+          (define-key slime-repl-mode-map (kbd "C-c C-r") 'my/slime-history)
+          (defun my/slime-history ()
+            (interactive)
+            (if (and (fboundp '-distinct)
+                     (fboundp 'f-read-text))
+                (insert
+                 (completing-read
+                  "choice history: "
+                  (-distinct (read (f-read-text "~/.slime-history.eld")))))))))
     #+END_SRC
 ** EmacsLisp
 *** elisp-slime-nav
@@ -1129,7 +1148,8 @@
       (with-delayed-execution
         (message "Install cider...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/cider"))
-        (with-eval-after-load 'cider))
+        (when (autoload-if-found '(cider) "cider" nil t)
+          (with-eval-after-load 'cider)))
     #+END_SRC
 * Awesome Package
 ** Search
@@ -1530,7 +1550,10 @@
         (message "Install yasnippet...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/yasnippet"))
         (when (autoload-if-found '(yas-global-mode) "yasnippet" nil t)
-          (yas-global-mode 1)))
+          (yas-global-mode 1)
+          (with-eval-after-load 'yasnippet
+            (eval-and-compile
+              (setq tab-width 4)))))
     #+end_src
 *** ivy-yasnippet
     #+begin_src emacs-lisp
@@ -1753,7 +1776,6 @@
 
         (when (autoload-if-found '(tree-sitter-mode tree-sitter-require tree-sitter-hl-add-patterns) "tree-sitter" nil t)
           (add-hook 'typescript-tsx-mode-hook 'tree-sitter-mode)
-          (add-hook 'vue-mode-hook 'tree-sitter-mode)
           (when (require 'tree-sitter-langs)
             (tree-sitter-require 'tsx))
           (tree-sitter-hl-add-patterns 'tsx
@@ -2667,7 +2689,7 @@
            (global-set-key (kbd "C-x C-c") 'save-buffers-kill-emacs))))
    #+end_src
 * footer
-** Magic File Name を一時的に無効にする
+** Magic File Name を有効にする
    #+begin_src emacs-lisp
      (setq file-name-handler-alist my/saved-file-name-handler-alist)
    #+end_src
