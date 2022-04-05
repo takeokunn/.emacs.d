@@ -648,8 +648,9 @@
    #+END_SRC
 ** makefile-mode
    #+begin_src emacs-lisp
-     ;; (push '("Makefile" . makefile-mode) auto-mode-alist)
-     ;; (push '("\\.mk\\" . makefile-mode) auto-mode-alist)
+     (when (autoload-if-found '(makefile-mode) "makefile-mode" nil t)
+       (push '("\\.mk$" . makefile-mode) auto-mode-alist)
+       (push '("Makefile" . makefile-mode) auto-mode-alist))
    #+end_src
 ** nginx-mode
    #+BEGIN_SRC emacs-lisp
@@ -931,27 +932,27 @@
              (define-key v-mode-map (kbd "M-z") 'v-menu)
              (define-key v-mode-map (kbd "C-c C-f") 'v-format-buffer)))))
    #+end_src
-** vue-mode
+** TODO vue-mode
    #+BEGIN_SRC emacs-lisp
-     (eval-when-compile
-       (el-get-bundle 'ssass-mode)
-       (el-get-bundle 'vue-html-mode)
-       (el-get-bundle "purcell/mmm-mode")
-       (el-get-bundle "Fanael/edit-indirect")
-       (el-get-bundle 'vue-mode))
+     ;; (eval-when-compile
+     ;;   (el-get-bundle 'ssass-mode)
+     ;;   (el-get-bundle 'vue-html-mode)
+     ;;   (el-get-bundle "purcell/mmm-mode")
+     ;;   (el-get-bundle "Fanael/edit-indirect")
+     ;;   (el-get-bundle 'vue-mode))
 
-     (with-delayed-execution
-       (message "Install vue-mode...")
-       (add-to-list 'load-path (locate-user-emacs-file "el-get/ssass-mode"))
-       (add-to-list 'load-path (locate-user-emacs-file "el-get/vue-html-mode"))
-       (add-to-list 'load-path (locate-user-emacs-file "el-get/mmm-mode"))
-       (add-to-list 'load-path (locate-user-emacs-file "el-get/edit-indirect"))
-       (add-to-list 'load-path (locate-user-emacs-file "el-get/vue-mode"))
-       (when (autoload-if-found '(vue-mode) "vue-mode" nil t)
-         (push '("\\.vue$" . vue-mode) auto-mode-alist)
-         (with-eval-after-load
-             (eval-and-compile
-               (setq mmm-submode-decoration-level 0)))))
+     ;; (with-delayed-execution
+     ;;   (message "Install vue-mode...")
+     ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/ssass-mode"))
+     ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/vue-html-mode"))
+     ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/mmm-mode"))
+     ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/edit-indirect"))
+     ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/vue-mode"))
+     ;;   (when (autoload-if-found '(vue-mode) "vue-mode" nil t)
+     ;;     (push '("\\.vue$" . vue-mode) auto-mode-alist)
+     ;;     (with-eval-after-load
+     ;;         (eval-and-compile
+     ;;           (setq mmm-submode-decoration-level 0)))))
    #+END_SRC
 ** vimrc-mode
    #+begin_src emacs-lisp
@@ -2556,16 +2557,16 @@
        (add-to-list 'load-path (locate-user-emacs-file "el-get/org-pomodoro"))
        (autoload-if-found '(org-pomodoro) "org-pomodoro" nil t))
    #+end_src
-** org-view-mode
+** TODO org-view-mode
    #+begin_src emacs-lisp
-     (eval-when-compile
-       (el-get-bundle org-view-mode))
+     ;; (eval-when-compile
+     ;;   (el-get-bundle org-view-mode))
 
-     (with-delayed-execution
-       (message "Install org-view-mode...")
-       (add-to-list 'load-path (locate-user-emacs-file "el-get/org-view-mode"))
-       (when (autoload-if-found '(org-view-mode) "org-view-mode" nil t)
-         (with-eval-after-load 'org-view-mode)))
+     ;; (with-delayed-execution
+     ;;   (message "Install org-view-mode...")
+     ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/org-view-mode"))
+     ;;   (when (autoload-if-found '(org-view-mode) "org-view-mode" nil t)
+     ;;     (with-eval-after-load 'org-view-mode)))
    #+end_src
 * MyFunc
 ** my/beginning-of-intendation
