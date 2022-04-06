@@ -154,7 +154,7 @@
                  dashboard-mode
                  fundamental-mode))
        (add-hook (intern (concat (symbol-name mode) "-hook"))
-                 '(lambda () (setq show-trailing-whitespace nil))))
+                 #'(lambda () (setq show-trailing-whitespace nil))))
    #+END_SRC
 ** 行番号を表示する
    #+BEGIN_SRC emacs-lisp
@@ -256,7 +256,7 @@
    #+BEGIN_SRC emacs-lisp
      (keyboard-translate ?\C-h ?\C-?)
 
-     (global-set-key (kbd "M-¥") '(lambda () (interactive) (insert "\\")))
+     (global-set-key (kbd "M-¥") #'(lambda () (interactive) (insert "\\")))
      (global-set-key (kbd "C-h") 'backward-delete-char)
      (global-set-key (kbd "C-z") 'undo)
      (global-set-key (kbd "C-?") 'help-command)
@@ -934,25 +934,22 @@
    #+end_src
 ** TODO vue-mode
    #+BEGIN_SRC emacs-lisp
-     ;; (eval-when-compile
-     ;;   (el-get-bundle 'ssass-mode)
-     ;;   (el-get-bundle 'vue-html-mode)
-     ;;   (el-get-bundle "purcell/mmm-mode")
-     ;;   (el-get-bundle "Fanael/edit-indirect")
-     ;;   (el-get-bundle 'vue-mode))
+     (eval-when-compile
+       (el-get-bundle 'ssass-mode)
+       (el-get-bundle 'vue-html-mode)
+       (el-get-bundle "purcell/mmm-mode")
+       (el-get-bundle "Fanael/edit-indirect")
+       (el-get-bundle 'vue-mode))
 
-     ;; (with-delayed-execution
-     ;;   (message "Install vue-mode...")
-     ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/ssass-mode"))
-     ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/vue-html-mode"))
-     ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/mmm-mode"))
-     ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/edit-indirect"))
-     ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/vue-mode"))
-     ;;   (when (autoload-if-found '(vue-mode) "vue-mode" nil t)
-     ;;     (push '("\\.vue$" . vue-mode) auto-mode-alist)
-     ;;     (with-eval-after-load
-     ;;         (eval-and-compile
-     ;;           (setq mmm-submode-decoration-level 0)))))
+     (with-delayed-execution
+       (message "Install vue-mode...")
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/ssass-mode"))
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/vue-html-mode"))
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/mmm-mode"))
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/edit-indirect"))
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/vue-mode"))
+       (when (autoload-if-found '(vue-mode) "vue-mode" nil t)
+         (push '("\\.vue$" . vue-mode) auto-mode-alist)))
    #+END_SRC
 ** vimrc-mode
    #+begin_src emacs-lisp
@@ -1043,22 +1040,22 @@
 ** CommonLisp
 *** slime/slime-company
     #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (load (expand-file-name "~/.roswell/helper.el"))
-        (when (require 'slime)
-          (el-get-bundle 'slime-company)))
+      ;; (eval-when-compile
+      ;;   (load (expand-file-name "~/.roswell/helper.el"))
+      ;;   (when (require 'slime)
+      ;;     (el-get-bundle 'slime-company)))
 
-      (with-delayed-execution
-        (message "Install slime...")
-        (message "Install slime-company...")
-        (load (expand-file-name "~/.roswell/helper.el"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
-        (with-delayed-execution
-          (when (autoload-if-found '(slime-company) "slime" nil t)
-            (slime-setup '(slime-company))))
-        (with-eval-after-load 'slime
-          (eval-and-compile
-            (setq slime-net-coding-system 'utf-8-unix))))
+      ;; (with-delayed-execution
+      ;;   (message "Install slime...")
+      ;;   (message "Install slime-company...")
+      ;;   (load (expand-file-name "~/.roswell/helper.el"))
+      ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
+      ;;   (with-delayed-execution
+      ;;     (when (autoload-if-found '(slime-company) "slime" nil t)
+      ;;       (slime-setup '(slime-company))))
+      ;;   (with-eval-after-load 'slime
+      ;;     (eval-and-compile
+      ;;       (setq slime-net-coding-system 'utf-8-unix))))
     #+END_SRC
 *** hyperspec
     #+begin_src emacs-lisp
@@ -1663,7 +1660,7 @@
           (with-eval-after-load 'lsp-ui
             (eval-and-compile
               (setq lsp-ui-doc-position 'at-point)
-              (setq lsp-ui-sideline-show-hover t)
+              (setq lsp-ui-sideline-show-code-actions t)
               (setq lsp-ui-doc-include-signature t)
               (setq lsp-ui-doc-max-height 30)))))
 
@@ -2557,16 +2554,17 @@
        (add-to-list 'load-path (locate-user-emacs-file "el-get/org-pomodoro"))
        (autoload-if-found '(org-pomodoro) "org-pomodoro" nil t))
    #+end_src
-** TODO org-view-mode
+** org-view-mode
    #+begin_src emacs-lisp
-     ;; (eval-when-compile
-     ;;   (el-get-bundle org-view-mode))
+     (eval-when-compile
+       (el-get-bundle org-view-mode))
 
-     ;; (with-delayed-execution
-     ;;   (message "Install org-view-mode...")
-     ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/org-view-mode"))
-     ;;   (when (autoload-if-found '(org-view-mode) "org-view-mode" nil t)
-     ;;     (with-eval-after-load 'org-view-mode)))
+     (with-delayed-execution
+       (message "Install org-view-mode...")
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/org-view-mode"))
+       ;; (when (autoload-if-found '() "org-view-mode" nil t)
+       ;;   (with-eval-after-load 'org-view-mode))
+       )
    #+end_src
 * MyFunc
 ** my/beginning-of-intendation
