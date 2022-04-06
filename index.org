@@ -24,7 +24,7 @@
 * Boot
 ** env
    #+begin_src emacs-lisp
-     (defconst my/loading-profile-p t
+     (defconst my/loading-profile-p nil
        "If non-nil, use built-in profiler.el.")
 
      (defconst my/enable-profile nil
@@ -153,6 +153,7 @@
                  minibuffer-inactive-mode
                  dashboard-mode
                  fundamental-mode))
+
        (add-hook (intern (concat (symbol-name mode) "-hook"))
                  #'(lambda () (setq show-trailing-whitespace nil))))
    #+END_SRC
@@ -302,6 +303,10 @@
          (setq interprogram-cut-function 'my/paste-to-osx)
          (setq interprogram-paste-function 'my/copy-from-osx)))
    #+end_src
+** native compのwarningを抑える
+#+begin_src emacs-lisp
+  (custom-set-variables '(warning-suppress-types '((comp))))
+#+end_src
 * Utility
 ** dash
    #+begin_src emacs-lisp
@@ -986,6 +991,7 @@
          (push '("\\.erb?\\'" . web-mode) auto-mode-alist)
          (push '("\\.gsp?\\'" . web-mode) auto-mode-alist)
          (push '("\\.blade.php\\'" . web-mode) auto-mode-alist)
+         (push '("\\.svg\\'" . web-mode) auto-mode-alist)
          (add-hook 'web-mode-hook 'lsp)
          (with-eval-after-load 'web-mode
            (eval-and-compile
@@ -1435,19 +1441,20 @@
       (eval-when-compile
         (el-get-bundle 'company))
 
-      (add-to-list 'load-path (locate-user-emacs-file "el-get/company"))
-
-      (when (autoload-if-found '(global-company-mode) "company" nil t)
-        (global-company-mode)
-        (with-eval-after-load 'company
-          (define-key company-active-map (kbd "C-n") 'company-select-next)
-          (define-key company-active-map (kbd "C-p") 'company-select-previous)
-          (when (require 'company-css)
-            (push 'company-css company-backends))
-          (when (require 'company-elisp)
-            (push 'company-elisp company-backends))
-          (eval-and-compile
-            (setq company-minimum-prefix-length 2))))
+      (with-delayed-execution
+        (message "Install company...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/company"))
+        (when (autoload-if-found '(global-company-mode) "company" nil t)
+          (global-company-mode)
+          (with-eval-after-load 'company
+            (define-key company-active-map (kbd "C-n") 'company-select-next)
+            (define-key company-active-map (kbd "C-p") 'company-select-previous)
+            (when (require 'company-css)
+              (push 'company-css company-backends))
+            (when (require 'company-elisp)
+              (push 'company-elisp company-backends))
+            (eval-and-compile
+              (setq company-minimum-prefix-length 2)))))
     #+END_SRC
 *** company-dockerfile
     #+begin_src emacs-lisp
