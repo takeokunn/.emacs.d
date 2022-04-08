@@ -142,7 +142,7 @@
    #+END_SRC
 ** 末尾のスペースを可視化する
    #+BEGIN_SRC emacs-lisp
-     (setq-default show-trailing-whitespace t)
+     ;; (setq-default show-trailing-whitespace nil)
 
      (dolist
          (mode '(comint-mode
@@ -303,6 +303,10 @@
          (setq interprogram-cut-function 'my/paste-to-osx)
          (setq interprogram-paste-function 'my/copy-from-osx)))
    #+end_src
+** native compを有効にする
+#+begin_src emacs-lisp
+  (setq package-native-compile t)
+#+end_src
 ** native compのwarningを抑える
 #+begin_src emacs-lisp
   (custom-set-variables '(warning-suppress-types '((comp))))
@@ -681,10 +685,9 @@
      (with-delayed-execution
        (message "Install php-mode...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/php-mode/lisp"))
-       (when (autoload-if-found '(php-mode php-search-documentation-browser-function) "php-mode" nil t)
+       (when (autoload-if-found '(php-mode) "php-mode" nil t)
          (push '("\\.php$" . php-mode) auto-mode-alist)
-         (with-eval-after-load 'php-mode
-           (add-hook 'php-mode-hook 'lsp-deferred))))
+         (add-hook 'php-mode-hook 'lsp)))
    #+END_SRC
 ** phpt-mode
    #+begin_src emacs-lisp
@@ -1273,8 +1276,7 @@
       (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes/extensions"))
 
       (when (require 'doom-themes)
-        (when window-system
-          (load-theme 'doom-dracula t))
+        (load-theme 'tango-dark t)
         (eval-and-compile
           (setq doom-themes-enable-bold t)
           (setq doom-themes-enable-italic t)))
@@ -1602,7 +1604,10 @@
               (setq lsp-prefer-capf t)))
           (with-eval-after-load 'lsp-diagnostics
             (eval-and-compile
-              (setq lsp-diagnostics-provider :flycheck)))))
+              (setq lsp-diagnostics-provider :flycheck)))
+          (with-eval-after-load 'lsp-icons
+            (unless window-system
+              (setq lsp-headerline-breadcrumb-icons-enable nil)))))
     #+END_SRC
 *** dap-mode
     #+BEGIN_SRC emacs-lisp
@@ -1670,7 +1675,6 @@
               (setq lsp-ui-sideline-show-code-actions t)
               (setq lsp-ui-doc-include-signature t)
               (setq lsp-ui-doc-max-height 30)))))
-
     #+END_SRC
 ** Git
 *** magit
@@ -1895,6 +1899,29 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/laravel-tinker-repl.el"))
         (require 'laravel-tinker-repl))
     #+end_src
+*** TODO phpactor
+#+begin_src emacs-lisp
+  ;; (eval-when-compile
+  ;;   (el-get-bundle 'async)
+  ;;   (el-get-bundle "emacs-php/composer.el")
+  ;;   (el-get-bundle "emacs-php/php-runtime.el")
+  ;;   (el-get-bundle "emacs-php/phpactor.el"))
+
+  ;; (with-delayed-execution
+  ;;   (message "Install phpactor...")
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/async"))
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/composer.el"))
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/php-runtime.el"))
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/phpactor.el"))
+  ;;   (when (autoload-if-found '(company-phpactor) "company-phpactor" nil t)
+  ;;     (add-hook 'php-mode-hook #'(lambda ()
+  ;;                                  (push '(company-phpactor company-files) company-backends))))
+  ;;   (when (autoload-if-found '(phpactor-goto-definition phpactor-find-references) "phpactor" nil t)
+  ;;     (add-hook 'php-mode-hook #'lsp-deferred)
+  ;;     (with-eval-after-load 'phpactor
+  ;;       (define-key php-mode-map (kbd "M-.") #'phpactor-goto-definition)
+  ;;       (define-key php-mode-map (kbd "M-?") #'phpactor-find-references))))
+#+end_src
 ** Markdown
 *** poly-markdown
     #+begin_src emacs-lisp
@@ -1998,6 +2025,15 @@
           (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)))
     #+END_SRC
 ** Other
+*** ansi-color
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install ansi-color...")
+    (autoload 'ansi-color-for-comint-mode-on "ansi-color" "Set `ansi-color-for-comint-mode' to t." t)
+    (when (autoload-if-found '(ansi-color-for-comint-mode-on) "ansi-color" nil t)
+      (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+      (add-hook 'compilation-filter-hook 'ansi-color-for-comint-mode-on)))
+#+end_src
 *** auto-save-buffers-enhanced
     #+begin_src emacs-lisp
       (eval-when-compile
