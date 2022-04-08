@@ -2032,7 +2032,9 @@
     (autoload 'ansi-color-for-comint-mode-on "ansi-color" "Set `ansi-color-for-comint-mode' to t." t)
     (when (autoload-if-found '(ansi-color-for-comint-mode-on) "ansi-color" nil t)
       (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-      (add-hook 'compilation-filter-hook 'ansi-color-for-comint-mode-on)))
+      (add-hook 'compilation-filter-hook
+            '(lambda ()
+               (ansi-color-apply-on-region (point-min) (point-max))))))
 #+end_src
 *** auto-save-buffers-enhanced
     #+begin_src emacs-lisp
