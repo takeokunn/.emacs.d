@@ -1899,28 +1899,28 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/laravel-tinker-repl.el"))
         (require 'laravel-tinker-repl))
     #+end_src
-*** TODO phpactor
+*** phpactor
 #+begin_src emacs-lisp
-  ;; (eval-when-compile
-  ;;   (el-get-bundle 'async)
-  ;;   (el-get-bundle "emacs-php/composer.el")
-  ;;   (el-get-bundle "emacs-php/php-runtime.el")
-  ;;   (el-get-bundle "emacs-php/phpactor.el"))
+  (eval-when-compile
+    (el-get-bundle 'async)
+    (el-get-bundle "emacs-php/composer.el")
+    (el-get-bundle "emacs-php/php-runtime.el")
+    (el-get-bundle "emacs-php/phpactor.el"))
 
-  ;; (with-delayed-execution
-  ;;   (message "Install phpactor...")
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/async"))
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/composer.el"))
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/php-runtime.el"))
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/phpactor.el"))
-  ;;   (when (autoload-if-found '(company-phpactor) "company-phpactor" nil t)
-  ;;     (add-hook 'php-mode-hook #'(lambda ()
-  ;;                                  (push '(company-phpactor company-files) company-backends))))
-  ;;   (when (autoload-if-found '(phpactor-goto-definition phpactor-find-references) "phpactor" nil t)
-  ;;     (add-hook 'php-mode-hook #'lsp-deferred)
-  ;;     (with-eval-after-load 'phpactor
-  ;;       (define-key php-mode-map (kbd "M-.") #'phpactor-goto-definition)
-  ;;       (define-key php-mode-map (kbd "M-?") #'phpactor-find-references))))
+  (with-delayed-execution
+    (message "Install phpactor...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/async"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/composer.el"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/php-runtime.el"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/phpactor.el"))
+    (when (autoload-if-found '(company-phpactor) "company-phpactor" nil t)
+      (add-hook 'php-mode-hook #'(lambda ()
+                                   (push '(company-phpactor company-files) company-backends))))
+    (when (autoload-if-found '(phpactor-goto-definition phpactor-find-references) "phpactor" nil t)
+      (add-hook 'php-mode-hook #'lsp-deferred)
+      (with-eval-after-load 'phpactor
+        (define-key php-mode-map (kbd "M-.") #'phpactor-goto-definition)
+        (define-key php-mode-map (kbd "M-?") #'phpactor-find-references))))
 #+end_src
 ** Markdown
 *** poly-markdown
@@ -2032,9 +2032,8 @@
     (autoload 'ansi-color-for-comint-mode-on "ansi-color" "Set `ansi-color-for-comint-mode' to t." t)
     (when (autoload-if-found '(ansi-color-for-comint-mode-on) "ansi-color" nil t)
       (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-      (add-hook 'compilation-filter-hook
-            '(lambda ()
-               (ansi-color-apply-on-region (point-min) (point-max))))))
+      (add-hook 'compilation-filter-hook #'(lambda ()
+                                             (ansi-color-apply-on-region (point-min) (point-max))))))
 #+end_src
 *** auto-save-buffers-enhanced
     #+begin_src emacs-lisp
