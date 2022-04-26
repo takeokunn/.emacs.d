@@ -311,6 +311,11 @@
 #+begin_src emacs-lisp
   (custom-set-variables '(warning-suppress-types '((comp))))
 #+end_src
+** 折り返ししない
+#+begin_src emacs-lisp
+  (setq-default truncate-lines t)
+  (setq-default truncate-partial-width-windows t)
+#+end_src
 * Utility
 ** dash
    #+begin_src emacs-lisp
@@ -377,6 +382,17 @@
      (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/shrink-path")))
    #+end_src
 * Language
+** apache-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'apache-mode))
+
+  (with-delayed-execution
+    (message "Install apache-mode")
+    (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/apache-mode")))
+    (when (autoload-if-found '(apache-mode) "apache-mode" nil t)
+      (push '("\\.htaccess$" . apache-mode) auto-mode-alist)))
+#+end_src
 ** buffer-mode
    #+begin_src emacs-lisp
      (setq initial-scratch-message nil)
@@ -484,7 +500,7 @@
        (message "Install dockerfile-mode...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/dockerfile-mode")))
        (when (autoload-if-found '(dockerfile-mode) "dockerfile-mode" nil t)
-         (push '("Dockerfile\\'" . dockerfile-mode) auto-mode-alist)))
+         (push '("\\Dockerfile$" . dockerfile-mode) auto-mode-alist)))
    #+END_SRC
 ** dotenv-mode
    #+begin_src emacs-lisp
@@ -687,7 +703,10 @@
        (add-to-list 'load-path (locate-user-emacs-file "el-get/php-mode/lisp"))
        (when (autoload-if-found '(php-mode) "php-mode" nil t)
          (push '("\\.php$" . php-mode) auto-mode-alist)
-         (add-hook 'php-mode-hook 'lsp)))
+         (add-hook 'php-mode-hook #'(lambda ()
+                                      (let ((lsp-ui-doc-enable nil)
+                                            (lsp-ui-sideline-enable nil))
+                                        (lsp))))))
    #+END_SRC
 ** phpt-mode
    #+begin_src emacs-lisp
@@ -873,7 +892,7 @@
        (when (autoload-if-found '(swift-mode) "swift-mode" nil t)
          (push '("\\.swift$" . swift-mode) auto-mode-alist)))
    #+end_src
-** terraform-mode
+** terrafoprm-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
        (el-get-bundle 'terraform-mode))
@@ -1159,6 +1178,17 @@
           (with-eval-after-load 'cider)))
     #+END_SRC
 * Awesome Package
+** Check
+*** flycheck
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'flycheck))
+
+      (with-delayed-execution
+        (message "Install flycheck...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/flycheck"))
+        (autoload-if-found '(flycheck-mode) "flycheck" nil t))
+    #+end_src
 ** Search
 *** el-get
     #+begin_src emacs-lisp
@@ -1597,6 +1627,7 @@
           (require 'lsp-v))
 
         (add-hook 'lsp-mode-hook 'my/load-lsp-libs)
+        (add-hook 'lsp-mode-hook 'flycheck-mode)
 
         (when (autoload-if-found '(lsp lsp-deferred) "lsp-mode" nil t)
           (with-eval-after-load 'lsp-completion
@@ -1899,28 +1930,52 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/laravel-tinker-repl.el"))
         (require 'laravel-tinker-repl))
     #+end_src
-*** phpactor
+*** TODO phpactor
+#+begin_src emacs-lisp
+  ;; (eval-when-compile
+  ;;   (el-get-bundle 'async)
+  ;;   (el-get-bundle "emacs-php/composer.el")
+  ;;   (el-get-bundle "emacs-php/php-runtime.el")
+  ;;   (el-get-bundle "emacs-php/phpactor.el"))
+
+  ;; (with-delayed-execution
+  ;;   (message "Install phpactor...")
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/async"))
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/composer.el"))
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/php-runtime.el"))
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/phpactor.el"))
+
+  ;;   (when (and (require 'php-mode)
+  ;;              (require 'phpactor))
+  ;;     (define-key php-mode-map (kbd "M-.") #'phpactor-goto-definition)
+  ;;     (define-key php-mode-map (kbd "M-?") #'phpactor-find-references))
+  ;;   (when (and (require 'company-phpactor)
+  ;;              (boundp 'company-backends))
+  ;;     (push '(company-phpactor company-files) company-backends)))
+#+end_src
+*** phpstan
+#+begin_src emacs-lisp
+  ;; (eval-when-compile
+  ;;   (el-get-bundle "emacs-php/phpstan.el"))
+
+  ;; (with-delayed-execution
+  ;;   (message "Install phpstan...")
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/phpstan.el"))
+  ;;   (when (autoload-if-found '(my/phpstan-setup) "phpstan" nil t)
+  ;;     (defun my/phpstan-setup ()
+  ;;       (when (require 'flycheck-phpstan)
+  ;;         (flycheck-mode t)))
+  ;;     (add-hook 'php-mode-hook 'my/phpstan-setup)))
+#+end_src
+*** emacs-php-doc-block
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-get-bundle 'async)
-    (el-get-bundle "emacs-php/composer.el")
-    (el-get-bundle "emacs-php/php-runtime.el")
-    (el-get-bundle "emacs-php/phpactor.el"))
+    (el-get-bundle "moskalyovd/emacs-php-doc-block"))
 
   (with-delayed-execution
-    (message "Install phpactor...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/async"))
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/composer.el"))
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/php-runtime.el"))
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/phpactor.el"))
-    (when (autoload-if-found '(company-phpactor) "company-phpactor" nil t)
-      (add-hook 'php-mode-hook #'(lambda ()
-                                   (push '(company-phpactor company-files) company-backends))))
-    (when (autoload-if-found '(phpactor-goto-definition phpactor-find-references) "phpactor" nil t)
-      (add-hook 'php-mode-hook #'lsp-deferred)
-      (with-eval-after-load 'phpactor
-        (define-key php-mode-map (kbd "M-.") #'phpactor-goto-definition)
-        (define-key php-mode-map (kbd "M-?") #'phpactor-find-references))))
+    (message "Install emacs-php-doc-block...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/emacs-php-doc-block"))
+    (autoload-if-found '(php-doc-block) "php-doc-block" nil t))
 #+end_src
 ** Markdown
 *** poly-markdown
@@ -1999,18 +2054,6 @@
           (eval-and-compile
             (setq open-junk-file-format ""))))
     #+END_SRC
-** Check
-*** flycheck
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'flycheck))
-
-      (with-delayed-execution
-        (message "Install flycheck...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/flycheck"))
-        (when (autoload-if-found '(flycheck-mode) "flycheck" nil t)
-          (add-hook 'lsp-mode-hook 'flycheck-mode)))
-    #+end_src
 ** Cursor
 *** multiple-cursors
     #+BEGIN_SRC emacs-lisp
@@ -2736,7 +2779,7 @@
    #+begin_src emacs-lisp
      (setq file-name-handler-alist my/saved-file-name-handler-alist)
    #+end_src
-** my/enable-profile
+** profilerを終了する
  #+begin_src emacs-lisp
    (when my/enable-profile
      (profiler-report)
