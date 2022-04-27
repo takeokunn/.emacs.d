@@ -704,7 +704,8 @@
        (when (autoload-if-found '(php-mode) "php-mode" nil t)
          (push '("\\.php$" . php-mode) auto-mode-alist)
          (add-hook 'php-mode-hook #'(lambda ()
-                                      (let ((lsp-ui-doc-enable nil)
+                                      (let ((lsp-enabled-clients '(phpactor))
+                                            (lsp-ui-doc-enable nil)
                                             (lsp-ui-sideline-enable nil))
                                         (lsp))))))
    #+END_SRC
@@ -1953,19 +1954,22 @@
   ;;              (boundp 'company-backends))
   ;;     (push '(company-phpactor company-files) company-backends)))
 #+end_src
+
+#+RESULTS:
+
 *** phpstan
 #+begin_src emacs-lisp
-  ;; (eval-when-compile
-  ;;   (el-get-bundle "emacs-php/phpstan.el"))
+  (eval-when-compile
+    (el-get-bundle "emacs-php/phpstan.el"))
 
-  ;; (with-delayed-execution
-  ;;   (message "Install phpstan...")
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/phpstan.el"))
-  ;;   (when (autoload-if-found '(my/phpstan-setup) "phpstan" nil t)
-  ;;     (defun my/phpstan-setup ()
-  ;;       (when (require 'flycheck-phpstan)
-  ;;         (flycheck-mode t)))
-  ;;     (add-hook 'php-mode-hook 'my/phpstan-setup)))
+  (with-delayed-execution
+    (message "Install phpstan...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/phpstan.el"))
+    (when (autoload-if-found '(my/phpstan-setup) "phpstan" nil t)
+      (defun my/phpstan-setup ()
+        (when (require 'flycheck-phpstan)
+          (flycheck-mode t)))
+      (add-hook 'php-mode-hook 'my/phpstan-setup)))
 #+end_src
 *** emacs-php-doc-block
 #+begin_src emacs-lisp
