@@ -381,6 +381,13 @@
 
      (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/shrink-path")))
    #+end_src
+** compat
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'compat))
+
+  (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/compat")))
+#+end_src
 * Language
 ** apache-mode
 #+begin_src emacs-lisp
@@ -960,7 +967,7 @@
              (define-key v-mode-map (kbd "M-z") 'v-menu)
              (define-key v-mode-map (kbd "C-c C-f") 'v-format-buffer)))))
    #+end_src
-** TODO vue-mode
+** vue-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
        (el-get-bundle 'ssass-mode)
@@ -1307,7 +1314,7 @@
       (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes/extensions"))
 
       (when (require 'doom-themes)
-        (load-theme 'tango-dark t)
+        (load-theme 'doom-dracula t)
         (eval-and-compile
           (setq doom-themes-enable-bold t)
           (setq doom-themes-enable-italic t)))
@@ -1954,9 +1961,6 @@
   ;;              (boundp 'company-backends))
   ;;     (push '(company-phpactor company-files) company-backends)))
 #+end_src
-
-#+RESULTS:
-
 *** phpstan
 #+begin_src emacs-lisp
   (eval-when-compile
