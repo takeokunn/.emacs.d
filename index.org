@@ -1314,7 +1314,10 @@
       (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes/extensions"))
 
       (when (require 'doom-themes)
-        (load-theme 'doom-dracula t)
+        (if (window-system)
+            (load-theme 'doom-dracula t)
+          (load-theme 'tango-dark t))
+        (when (not (window-system)))
         (eval-and-compile
           (setq doom-themes-enable-bold t)
           (setq doom-themes-enable-italic t)))
@@ -1782,7 +1785,7 @@
       (with-delayed-execution
         (message "Install clang-format...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/clang-format"))
-        (when (autoload-if-found '(clang-format-buffer c-mode c++-mode) "clang-format" nil t)
+        (when (autoload-if-found '(clang-format-buffer) "clang-format" nil t)
           (add-hook 'before-save-hook (lambda ()
                                         (when (member major-mode '(c-mode c++-mode))
                                           (clang-format-buffer))))))
