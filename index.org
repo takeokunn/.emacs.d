@@ -1055,6 +1055,7 @@
         (when (autoload-if-found '(enable-paredit-mode) "paredit" nil t)
           (add-hook 'lisp-mode-hook 'enable-paredit-mode)
           (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+          (add-hook 'clojure-mode-hook 'enable-paredit-mode)
           (add-hook 'lisp-interacton-mode-hook 'enable-paredit-mode)
           (global-set-key (kbd "C-c f") 'paredit-forward-slurp-sexp)
           (global-set-key (kbd "M-s") 'paredit-splice-sexp)
@@ -1177,14 +1178,87 @@
 *** cider
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
+        (el-get-bundle 'parseclj-parser
+                       :url "https://github.com/clojure-emacs/parseclj.git")
+        (el-get-bundle 'parseedn)
+        (el-get-bundle 'queue)
+        (el-get-bundle 'spinner)
+        (el-get-bundle 'seq)
+        (el-get-bundle 'sesman)
         (el-get-bundle 'cider))
 
       (with-delayed-execution
         (message "Install cider...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/parseclj"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/parseedn"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/queue"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/spinner"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/seq"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/sesman"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/cider"))
-        (when (autoload-if-found '(cider) "cider" nil t)
-          (with-eval-after-load 'cider)))
+        (when (autoload-if-found '(cider cider-mode-map) "cider" nil t)
+          (defun my/cider-switch-to-last-clojure-buffer ()
+            (interactive)
+            (let* ((window (split-window-right))
+                   (buffer (my/find-cider-repl-buffer)))
+              (set-window-buffer window buffer)
+              (cider-switch-to-last-clojure-buffer)))
+          (define-key cider-mode-map (kbd "C-c C-z") #'my/cider-switch-to-last-clojure-buffer)
+          (with-eval-after-load 'cider
+            (eval-and-compile
+              (setq cider-repl-display-in-current-window t
+                    cider-font-lock-dynamically '(macro core function var))))))
     #+END_SRC
+*** clojure-cheatsheet
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'async)
+    (el-get-bundle 'helm)
+    (el-get-bundle 'clojure-cheatsheet
+                   :url "https://github.com/clojure-emacs/clojure-cheatsheet.git"))
+
+  (with-delayed-execution
+    (message "Install clojure-cheatsheet...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/async"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/helm"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/clojure-cheatsheet"))
+    (autoload-if-found '(clojure-cheatsheet) "clojure-cheatsheet" nil t))
+#+end_src
+*** kibit-helper
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'kibit-helper))
+
+  (with-delayed-execution
+    (message "Install kibit-helper...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/kibit-helper"))
+    (autoload-if-found '(kibit kibit-current-file kibit-accept-proposed-change) "kibit-helper" nil t))
+#+end_src
+*** clj-refactor
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'inflections)
+    (el-get-bundle 'clj-refactor))
+
+  (with-delayed-execution
+    (message "Install clj-refactor...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/inflections"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/clj-refactor"))
+    (when (autoload-if-found '(clj-refactor-mode cljr-add-keybindings-with-prefix) "clj-refactor" nil t)
+      (add-hook 'clojure-mode-hook #'(lambda ()
+                                       (clj-refactor-mode 1)
+                                       (cljr-add-keybindings-with-prefix "C-c C-m")))))
+#+end_src
+*** inf-clojure
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'inf-clojure))
+
+  (with-delayed-execution
+    (message "Install inf-clojure...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/inf-clojure"))
+    (autoload-if-found '(inf-clojure) "inf-clojure" nil t))
+#+end_src
 * Awesome Package
 ** Check
 *** flycheck
@@ -1738,7 +1812,11 @@
         (add-hook 'after-init-hook 'global-git-commit-mode))
 
       (when (autoload-if-found '(global-git-commit-mode magit-status) "magit")
-        (global-set-key (kbd "C-x g") 'magit-status)
+        (defun my/magit-status ()
+          (interactive)
+          (let ((default-directory (locate-dominating-file default-directory ".git")))
+            (magit-status)))
+        (global-set-key (kbd "C-x g") #'my/magit-status)
         (with-eval-after-load 'magit
           (eval-and-compile
             (setq magit-refresh-status-buffer nil))))
@@ -2397,17 +2475,18 @@
             (read-only-mode (if redacted-mode -1 1))
             (redacted-mode (if redacted-mode -1 1)))))
     #+end_src
-*** wanderlust
+*** TODO wanderlust
     #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'wanderlust))
+      ;; (eval-when-compile
+      ;;   (el-get-bundle 'wanderlust
+      ;;                  :url "https://github.com/wanderlust/wanderlust.git"))
 
-      (with-delayed-execution
-        (message "Install wanderlust...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/wanderlust"))
-        (with-eval-after-load 'wanderlust
-          (eval-and-compile
-            (setq ssl-certificate-verification-policy 1))))
+      ;; (with-delayed-execution
+      ;;   (message "Install wanderlust...")
+      ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/wanderlust"))
+      ;;   (with-eval-after-load 'wanderlust
+      ;;     (eval-and-compile
+      ;;       (setq ssl-certificate-verification-policy 1))))
     #+end_src
 *** which-key
     #+begin_src emacs-lisp
