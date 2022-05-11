@@ -2519,6 +2519,33 @@
       (autoload 'woman-find-file "woman"
         "Find, decode and browse a specific UN*X man-page file." t)
     #+end_src
+*** writer-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'visual-fill-column)
+    (el-get-bundle 'writeroom-mode))
+
+  (with-delayed-execution
+    (message "Install writeroom-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/visual-fill-column"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/writeroom-mode"))
+    (when (autoload-if-found '(writeroom-mode
+                               writeroom-mode-map
+                               writeroom-decrease-width
+                               writeroom-increase-width
+                               writeroom-adjust-width
+                               writeroom-width)
+                             "writeroom-mode" nil t)
+      (add-hook 'writeroom-mode-hook #'(lambda ()
+                                         (linum-mode -1)
+                                         (display-line-numbers-mode)))
+      (with-eval-after-load 'writeroom-mode
+        (eval-and-compile
+          (setq writeroom-width 200))
+        (define-key writeroom-mode-map (kbd "C-M-<") #'writeroom-decrease-width)
+        (define-key writeroom-mode-map (kbd "C-M->") #'writeroom-increase-width)
+        (define-key writeroom-mode-map (kbd "C-M-=") #'writeroom-adjust-width))))
+#+end_src
 * Elfeed
 ** elfeed
    #+begin_src emacs-lisp
