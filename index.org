@@ -536,6 +536,8 @@
          (add-hook 'nxml-mode-hook 'emmet-mode)
          (add-hook 'typescript-tsx-mode-hook 'emmet-mode)
          (with-eval-after-load 'emmet-mode
+           (eval-and-compile
+             (setq emmet-indent-after-insert nil))
            (when (boundp 'emmet-mode-keymap)
              (define-key emmet-mode-keymap (kbd "C-j") nil)
              (define-key emmet-mode-keymap (kbd "M-j") 'emmet-expand-line)))))
@@ -564,6 +566,7 @@
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/git-modes")))
        (when (autoload-if-found '(gitignore-mode gitconfig-mode) "git-modes" nil t)
          (push '("\\.dockerignore$" . gitignore-mode) auto-mode-alist)
+         (push '("\\.gitconfig$" . gitconfig-mode) auto-mode-alist)
          (push '("\\.gitignore$" . gitignore-mode) auto-mode-alist)
          (push '("\\.prettierignore$" . gitignore-mode) auto-mode-alist)
          (push '("\\.editorconfig$" . gitconfig-mode) auto-mode-alist)))
@@ -712,6 +715,7 @@
          (push '("\\.php$" . php-mode) auto-mode-alist)
          (add-hook 'php-mode-hook #'(lambda ()
                                       (let ((lsp-enabled-clients '(phpactor))
+                                            (lsp-diagnostic-package :none)
                                             (lsp-ui-doc-enable nil)
                                             (lsp-ui-sideline-enable nil))
                                         (lsp))))))
