@@ -714,10 +714,7 @@
        (when (autoload-if-found '(php-mode) "php-mode" nil t)
          (push '("\\.php$" . php-mode) auto-mode-alist)
          (add-hook 'php-mode-hook #'(lambda ()
-                                      (let ((lsp-enabled-clients '(phpactor))
-                                            (lsp-diagnostic-package :none)
-                                            (lsp-ui-doc-enable nil)
-                                            (lsp-ui-sideline-enable nil))
+                                      (let ((lsp-enabled-clients '(phpactor)))
                                         (lsp))))))
    #+END_SRC
 ** phpt-mode
@@ -1275,6 +1272,16 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/flycheck"))
         (autoload-if-found '(flycheck-mode) "flycheck" nil t))
     #+end_src
+*** TODO flycheck-phpstan
+#+begin_src emacs-lisp
+  ;; (eval-when-compile
+  ;;   (el-get-bundle "emacs-php/phpstan.el"))
+
+  ;; (with-delayed-execution
+  ;;   (message "Install phpstan...")
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/phpstan.el"))
+  ;;   (require 'flycheck-phpstan))
+#+end_src
 ** Search
 *** el-get
     #+begin_src emacs-lisp
@@ -1719,6 +1726,11 @@
         (add-hook 'lsp-mode-hook 'flycheck-mode)
 
         (when (autoload-if-found '(lsp lsp-deferred) "lsp-mode" nil t)
+          (with-eval-after-load 'lsp-mode
+            (eval-and-compile
+              (setq lsp-idle-delay 0.8)
+              (setq lsp-log-io nil)
+              (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]vendor")))
           (with-eval-after-load 'lsp-completion
             (eval-and-compile
               (setq lsp-prefer-capf t)))
@@ -1791,9 +1803,10 @@
           (add-hook 'lsp-mode-hook 'lsp-ui-mode)
           (with-eval-after-load 'lsp-ui
             (eval-and-compile
-              (setq lsp-ui-doc-position 'at-point)
-              (setq lsp-ui-sideline-show-code-actions t)
+              (setq lsp-ui-doc-enable nil)
+              (setq lsp-ui-doc-show-with-mouse nil)
               (setq lsp-ui-doc-include-signature t)
+              (setq lsp-ui-doc-delay 0.7)
               (setq lsp-ui-doc-max-height 30)))))
     #+END_SRC
 ** Git
@@ -2021,45 +2034,8 @@
       (with-delayed-execution
         (message "Install laravel-tinker-repl...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/laravel-tinker-repl.el"))
-        (require 'laravel-tinker-repl))
+        (autoload-if-found '(laravel-tinker-repl) "laravel-tinker-repl" nil t))
     #+end_src
-*** TODO phpactor
-#+begin_src emacs-lisp
-  ;; (eval-when-compile
-  ;;   (el-get-bundle 'async)
-  ;;   (el-get-bundle "emacs-php/composer.el")
-  ;;   (el-get-bundle "emacs-php/php-runtime.el")
-  ;;   (el-get-bundle "emacs-php/phpactor.el"))
-
-  ;; (with-delayed-execution
-  ;;   (message "Install phpactor...")
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/async"))
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/composer.el"))
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/php-runtime.el"))
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/phpactor.el"))
-
-  ;;   (when (and (require 'php-mode)
-  ;;              (require 'phpactor))
-  ;;     (define-key php-mode-map (kbd "M-.") #'phpactor-goto-definition)
-  ;;     (define-key php-mode-map (kbd "M-?") #'phpactor-find-references))
-  ;;   (when (and (require 'company-phpactor)
-  ;;              (boundp 'company-backends))
-  ;;     (push '(company-phpactor company-files) company-backends)))
-#+end_src
-*** phpstan
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle "emacs-php/phpstan.el"))
-
-  (with-delayed-execution
-    (message "Install phpstan...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/phpstan.el"))
-    (when (autoload-if-found '(my/phpstan-setup) "phpstan" nil t)
-      (defun my/phpstan-setup ()
-        (when (require 'flycheck-phpstan)
-          (flycheck-mode t)))
-      (add-hook 'php-mode-hook 'my/phpstan-setup)))
-#+end_src
 *** emacs-php-doc-block
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -2262,9 +2238,8 @@
         (message "Install editorconfig...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/editorconfig"))
         (when (autoload-if-found '(editorconfig-mode) "editorconfig" nil t)
-          (require 'editorconfig-core)
-          (require 'editorconfig)
-          (editorconfig-mode 1)))
+          (when (require 'editorconfig-core)
+            (editorconfig-mode 1))))
     #+END_SRC
 *** esup
     #+BEGIN_SRC emacs-lisp

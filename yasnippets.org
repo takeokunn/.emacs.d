@@ -239,6 +239,14 @@
         ,* ${1:Summary}
         ,*/
      #+end_src
+**** dumptype
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: dumptype
+  # key: dumptype
+  # --
+  \PHPStan\dumpType($0);
+#+end_src
 **** enum
      #+begin_src snippet
        # -*- mode: snippet -*-
@@ -1427,11 +1435,10 @@ Otherwise the reversed output of function `yas-trimmed-comment-start' is returne
 # --
 `(yas-trimmed-comment-start)` ${1:comment}`(unless (eq (length comment-end) 0) (concat " " (yas-trimmed-comment-end)))`$0
 #+END_SRC
-**** commentblock
+**** comment-block
 #+BEGIN_SRC snippet
-# contributor: sh-ow <sh-ow@users.noreply.github.com>
-# name: commentblock
-# key: cob
+# name: comment-block
+# key: comment-block
 # --
 ${1:$(let* ((col (current-column))
            (str "")
@@ -1465,18 +1472,22 @@ ${1:$(let* ((col (current-column))
                 (setq str (concat str lastcom)))
        (concat start str end))}$0
 #+END_SRC
-**** commentline
+**** commentblock-two
 #+BEGIN_SRC snippet
-# contributor: sh-ow <sh-ow@users.noreply.github.com>
-# name: commentline
-# key: col
-# --
-`(yas-trimmed-comment-start)` ${1:comment} ${1:$(let* ((start (yas-trimmed-comment-start))
-                                                       (lastcom (aref start (1- (length start))))
-                                                       (end (yas-trimmed-comment-end))
-                                                       (endpadlen (- 79 (+ (current-column) (length end)))))
-                                              (concat (make-string (max endpadlen 0) lastcom)
-                                                      end))}$0
+  # name: commentblock-two
+  # key: commentblock-two
+  # --
+
+  /*
+  |--------------------------------------------------------------------------
+  | $1
+  |--------------------------------------------------------------------------
+  |
+  | $2
+  |
+  ,*/
+
+  $0
 #+END_SRC
 **** fixme
 #+BEGIN_SRC snippet
