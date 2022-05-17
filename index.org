@@ -1738,8 +1738,17 @@
             (eval-and-compile
               (setq lsp-diagnostics-provider :flycheck)))
           (with-eval-after-load 'lsp-icons
-            (unless window-system
-              (setq lsp-headerline-breadcrumb-icons-enable nil)))))
+            (eval-and-compile
+              (unless window-system
+                (setq lsp-headerline-breadcrumb-icons-enable nil))))
+          (with-eval-after-load lsp-css
+            (eval-and-compile
+              (setq lsp-css-lint-float 'error)
+              (setq lsp-css-lint-duplicate-properties 'error)
+              (setq lsp-css-lint-empty-rules 'error)
+              (setq lsp-css-lint-import-statement 'error)
+              (setq lsp-css-lint-font-face-properties 'error)
+              (setq lsp-css-lint-unknown-vendor-specific-properties 'error)))))
     #+END_SRC
 *** dap-mode
     #+BEGIN_SRC emacs-lisp
