@@ -843,8 +843,8 @@
        (when (autoload-if-found '(scss-mode) "scss-mode" nil t)
          (push '("\\.scss$" . scss-mode) auto-mode-alist)
          (add-hook 'scss-mode-hook #'(lambda ()
-                                       (let ((lsp-diagnostics-provider :none))
-                                         (lsp-deferred))))))
+                                       (setq lsp-diagnostics-provider :none)
+                                       (lsp-deferred)))))
    #+end_src
 ** slim-mode
    #+BEGIN_SRC emacs-lisp
@@ -1198,18 +1198,19 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/seq"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/sesman"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/cider"))
-        (when (autoload-if-found '(cider cider-mode-map) "cider" nil t)
+        (when (autoload-if-found '(cider) "cider" nil t)
           (defun my/cider-switch-to-last-clojure-buffer ()
             (interactive)
             (let* ((window (split-window-right))
                    (buffer (my/find-cider-repl-buffer)))
               (set-window-buffer window buffer)
               (cider-switch-to-last-clojure-buffer)))
-          (define-key cider-mode-map (kbd "C-c C-z") #'my/cider-switch-to-last-clojure-buffer)
-          (with-eval-after-load 'cider
-            (eval-and-compile
-              (setq cider-repl-display-in-current-window t
-                    cider-font-lock-dynamically '(macro core function var))))))
+          ;; (define-key cider-mode-map (kbd "C-c C-z") #'my/cider-switch-to-last-clojure-buffer)
+          ;; (with-eval-after-load 'cider
+          ;;   (eval-and-compile
+          ;;     (setq cider-repl-display-in-current-window t
+          ;;           cider-font-lock-dynamically '(macro core function var))))
+          ))
     #+END_SRC
 *** clojure-cheatsheet
 #+begin_src emacs-lisp
@@ -1721,6 +1722,7 @@
           (require 'lsp-icons)
           (require 'lsp-modeline)
           (require 'lsp-headerline)
+          (require 'lsp-css)
           (require 'lsp-v))
 
         (add-hook 'lsp-mode-hook 'my/load-lsp-libs)
