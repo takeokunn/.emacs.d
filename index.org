@@ -842,8 +842,9 @@
        (add-to-list 'load-path (locate-user-emacs-file "el-get/scss-mode"))
        (when (autoload-if-found '(scss-mode) "scss-mode" nil t)
          (push '("\\.scss$" . scss-mode) auto-mode-alist)
-         (with-eval-after-load 'scss-mode
-           (add-hook 'scss-mode-hook 'lsp-deferred))))
+         (add-hook 'scss-mode-hook #'(lambda ()
+                                       (let ((lsp-diagnostics-provider :none))
+                                         (lsp-deferred))))))
    #+end_src
 ** slim-mode
    #+BEGIN_SRC emacs-lisp
