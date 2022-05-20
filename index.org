@@ -2257,6 +2257,19 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/esup"))
         (autoload-if-found '(esup) "esup" nil t))
     #+END_SRC
+*** expand-region
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'expand-region))
+
+  (with-delayed-execution
+    (message "Install expand-region...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/expand-region"))
+    (when (autoload-if-found '(er/expand-region er/contract-region) "expand-region" nil t)
+      (transient-mark-mode)
+      (global-set-key (kbd "C-@") 'er/expand-region)
+      (global-set-key (kbd "C-M-@") 'er/contract-region)))
+#+end_src
 *** font-lock-studio
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
