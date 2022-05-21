@@ -188,20 +188,20 @@
 ** Font
    #+BEGIN_SRC emacs-lisp
      (when (member ".*Takao P.*" (font-family-list))
-       (add-to-list 'face-font-rescale-alist '(".*Takao P.*" . 0.85)))
+       (add-to-list 'face-font-rescale-alist '(".*Takao P.*" . 1)))
 
      (when (member "TakaoPGothic" (font-family-list))
        (add-to-list 'default-frame-alist '(font . "TakaoPGothic")))
    #+END_SRC
 ** GC/Memory
    #+BEGIN_SRC emacs-lisp
-     ;;; gc
-     (setq gc-cons-threshold (* 128 1024 1024))
+     (setq gc-cons-threshold (* 256 1024 1024))
      (setq garbage-collection-messages t)
-
-     ;;; memory
-     (setq read-process-output-max (* 8 1024 1024))
    #+END_SRC
+** read-process
+#+begin_src emacs-lisp
+  (setq read-process-output-max (* 8 1024 1024))
+#+end_src
 ** indent
    #+BEGIN_SRC emacs-lisp
      (setq-default indent-tabs-mode nil)
@@ -265,9 +265,16 @@
      (global-set-key (kbd "C-?") 'help-command)
      (global-set-key (kbd "C-a") 'back-to-indentation)
      (global-set-key (kbd "C-c i") 'find-function)
+     (global-set-key (kbd "C-x C-o") 'other-window)
+
+     (global-set-key (kbd "C-x a") 'windmove-left)
+     (global-set-key (kbd "C-x s") 'windmove-down)
+     (global-set-key (kbd "C-x d") 'windmove-right)
+     (global-set-key (kbd "C-x w") 'windmove-up)
+
      (global-set-key (kbd "C-x l") 'next-buffer)
      (global-set-key (kbd "C-x h") 'previous-buffer)
-     (global-set-key (kbd "C-x C-o") 'other-window)
+
      (global-set-key (kbd "C-x C-k") nil)
 
      (when window-system
@@ -1409,7 +1416,6 @@
         (if (window-system)
             (load-theme 'doom-dracula t)
           (load-theme 'tango-dark t))
-        (when (not (window-system)))
         (eval-and-compile
           (setq doom-themes-enable-bold t)
           (setq doom-themes-enable-italic t)))
@@ -1731,6 +1737,7 @@
 
         (add-hook 'lsp-mode-hook 'my/load-lsp-libs)
         (add-hook 'lsp-mode-hook 'flycheck-mode)
+        (add-hook 'lsp-mode-hook 'lsp-lens-mode)
 
         (when (autoload-if-found '(lsp lsp-deferred) "lsp-mode" nil t)
           (with-eval-after-load 'lsp-mode
@@ -1776,9 +1783,6 @@
           (dap-mode 1)
           (define-key dap-mode-map (kbd "C-c d") 'dap-breakpoint-toggle))
 
-        (when (autoload-if-found '(dap-hydra) "dap-hydra" nil t)
-          (add-hook 'dap-stopped-hook (lambda () (call-interactively 'dap-hydra))))
-
         (when (autoload-if-found '(dap-ui-mode) "dap-ui" nil t)
           (dap-ui-mode 1)
           (dap-ui-controls-mode 1))
@@ -1788,7 +1792,17 @@
           (dap-tooltip-mode 1))
 
         (when (autoload-if-found '(dap-php-setup) "dap-php" nil t)
-          (add-hook 'php-mode-hook 'dap-php-setup))
+          (add-hook 'php-mode-hook 'dap-php-setup)
+          (with-eval-after-load 'dap-php
+            (eval-and-compile
+              (setq dap-php-debug-path "~/.ghq/github.com/xdebug/vscode-php-debug")
+              (setq dap-php-debug-program `("node" ,(f-join dap-php-debug-path "out/phpDebug.js")))
+              (dap-register-debug-template "Laravel Run Configuration"
+                                           (list :type "php"
+                                                 :request "launch"
+                                                 :mode "remote"
+                                                 :host "localhost"
+                                                 :port "9003")))))
 
         (when (autoload-if-found '(dap-node-setup) "dap-node" nil t)
           (add-hook 'js2-mode-hook 'dap-node-setup))
@@ -2039,7 +2053,8 @@
 
       (with-delayed-execution
         (message "Install laravel-tinker-repl...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/laravel-tinker-repl.el"))
+        ;; (add-to-list 'load-path (locate-user-emacs-file "el-get/laravel-tinker-repl.el"))
+        (add-to-list 'load-path "~/.ghq/github.com/takeokunn/laravel-tinker-repl.el")
         (autoload-if-found '(laravel-tinker-repl) "laravel-tinker-repl" nil t))
     #+end_src
 *** emacs-php-doc-block
@@ -2118,14 +2133,14 @@
       (with-delayed-execution
         (message "Install open-junk-file...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/open-junk-file"))
-        (when (autoload-if-found '(my/open-junk-file open-junk-file) "open-junk-file" nil t)
+        (when (autoload-if-found '(my/open-junk-file) "open-junk-file" nil t)
           (defun my/open-junk-file ()
             (interactive)
             (ivy-mode 0)
             (let ((default-directory (format-time-string "~/.emacs.d/.junk/%Y-%m%d-%H%M%S." (current-time))))
               (open-junk-file))
             (ivy-mode 1))
-          (global-set-key (kbd "C-x j") 'my/open-junk-file)
+          (global-set-key (kbd "C-c j") 'my/open-junk-file)
           (eval-and-compile
             (setq open-junk-file-format ""))))
     #+END_SRC
@@ -2267,8 +2282,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/expand-region"))
     (when (autoload-if-found '(er/expand-region er/contract-region) "expand-region" nil t)
       (transient-mark-mode)
-      (global-set-key (kbd "C-@") 'er/expand-region)
-      (global-set-key (kbd "C-M-@") 'er/contract-region)))
+      (global-set-key (kbd "C-M-@") 'er/expand-region)))
 #+end_src
 *** font-lock-studio
     #+BEGIN_SRC emacs-lisp
@@ -2279,6 +2293,17 @@
         (message "Install font-lock-studio...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/font-lock-studio")))
     #+END_SRC
+*** gcmh
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'gcmh))
+
+  (with-delayed-execution
+    (message "Install gcmh...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/gcmh"))
+    (when (autoload-if-found '(gcmh-mode) "gcmh" nil t)
+      (gcmh-mode 1)))
+#+end_src
 *** google-this
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
