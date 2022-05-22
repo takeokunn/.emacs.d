@@ -195,7 +195,7 @@
    #+END_SRC
 ** GC/Memory
    #+BEGIN_SRC emacs-lisp
-     (setq gc-cons-threshold (* 256 1024 1024))
+     (setq gc-cons-threshold (* 128 1024 1024))
      (setq garbage-collection-messages t)
    #+END_SRC
 ** read-process
@@ -1326,7 +1326,7 @@
 *** ivy
     #+begin_src emacs-lisp
       (with-delayed-execution
-        (when (autoload-if-found '(ivy-mode ivy-read) "ivy" nil t)
+        (when (autoload-if-found '(ivy-mode ivy-read ivy-completing-read) "ivy" nil t)
           (add-hook 'minibuffer-setup-hook (lambda ()
                                              (ivy-mode 1)))
           (with-eval-after-load 'ivy
@@ -2293,16 +2293,16 @@
         (message "Install font-lock-studio...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/font-lock-studio")))
     #+END_SRC
-*** gcmh
+*** TODO gcmh
 #+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'gcmh))
+  ;; (eval-when-compile
+  ;;   (el-get-bundle 'gcmh))
 
-  (with-delayed-execution
-    (message "Install gcmh...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/gcmh"))
-    (when (autoload-if-found '(gcmh-mode) "gcmh" nil t)
-      (gcmh-mode 1)))
+  ;; (with-delayed-execution
+  ;;   (message "Install gcmh...")
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/gcmh"))
+  ;;   (when (autoload-if-found '(gcmh-mode) "gcmh" nil t)
+  ;;     (gcmh-mode 1)))
 #+end_src
 *** google-this
     #+BEGIN_SRC emacs-lisp
@@ -2366,7 +2366,7 @@
         (message "Install minimap...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/minimap"))
         (when (autoload-if-found '(minimap-mode) "minimap" nil t)
-          (global-set-key (kbd "C-x t") 'minimap-mode)
+          (global-set-key (kbd "C-c m") 'minimap-mode)
           (with-eval-after-load 'minimap
             (setq minimap-window-location 'right)
             (setq minimap-update-delay 0.2)
@@ -2450,6 +2450,49 @@
                       (point))))
               (kill-region (point) (min syntax-move-point subword-move-point))))))
     #+end_src
+*** tab-bar
+#+begin_src emacs-lisp
+  (when (autoload-if-found '(tab-bar-mode tab-bar-history-mode) "tab-bar" nil t)
+    (tab-bar-mode 1)
+    (tab-bar-history-mode 1)
+    (global-set-key (kbd "C-x C-t") tab-prefix-map)
+
+    (with-eval-after-load 'tab-bar
+      (eval-and-compile
+        (setq tab-bar-close-button-show nil)
+        (setq tab-bar-close-last-tab-choice nil)
+        (setq tab-bar-close-tab-select 'left)
+        (setq tab-bar-history-mode nil)
+        (setq tab-bar-new-tab-choice "*scratch*")
+        (setq tab-bar-new-button-show nil)
+        (setq tab-bar-tab-name-truncated-max 12)
+        (setq tab-bar-separator " | ")))
+
+    (with-eval-after-load 'ivy
+      (defun my/advice-completing-read-to-ivy (orig-func &rest args)
+        (interactive
+         (let* ((recent-tabs (mapcar (lambda (tab)
+                                       (alist-get 'name tab))
+                                     (tab-bar--tabs-recent))))
+           (list (ivy-completing-read "Switch to tab by name (default recent): "
+                                      recent-tabs nil nil nil nil recent-tabs))))
+        (apply orig-func args))
+      (advice-add #'tab-bar-switch-to-tab :around #'my/advice-completing-read-to-ivy))
+
+    (with-eval-after-load 'projectile
+      (defun my/set-tab-name-default (&rest x)
+        (let ((proj-name (projectile-project-name)))
+          (when proj-name
+            (tab-bar-rename-tab proj-name))))
+      (advice-add 'tab-bar-new-tab :after #'my/set-tab-name-default)
+      (add-hook 'window-setup-hook #'my/set-tab-name-default)
+
+      (defun my/tab-bar-rename-tab ()
+        (interactive)
+        (let ((proj-name (projectile-project-name)))
+          (tab-bar-rename-tab proj-name)))
+      (define-key tab-prefix-map (kbd "r") #'my/tab-bar-rename-tab)))
+#+end_src
 *** undo-tree
     #+begin_src emacs-lisp
       (eval-when-compile
