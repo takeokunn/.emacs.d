@@ -1409,44 +1409,43 @@
       (eval-when-compile
         (el-get-bundle 'doom-themes))
 
-      (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes"))
-      (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes/extensions"))
+      (with-delayed-execution
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes/extensions"))
+        (when (require 'doom-themes)
+          (if (window-system)
+              (load-theme 'doom-dracula t)
+            (load-theme 'tango-dark t))
+          (eval-and-compile
+            (setq doom-themes-enable-bold t)
+            (setq doom-themes-enable-italic t)))
+        (when (require 'doom-themes-ext-org)
+          (with-eval-after-load 'org-mode
+            (doom-themes-enable-org-fontification)))
+        (when (require 'doom-themes-ext-neotree)
+          (with-eval-after-load 'neotree
+            (doom-themes-neotree-config))))
 
-      (when (require 'doom-themes)
-        (if (window-system)
-            (load-theme 'doom-dracula t)
-          (load-theme 'tango-dark t))
-        (eval-and-compile
-          (setq doom-themes-enable-bold t)
-          (setq doom-themes-enable-italic t)))
-
-      (when (require 'doom-themes-ext-org)
-        (with-eval-after-load 'org-mode
-          (doom-themes-enable-org-fontification)))
-
-      (when (require 'doom-themes-ext-neotree)
-        (with-eval-after-load 'neotree
-          (doom-themes-neotree-config)))
     #+END_SRC
 *** doom-modeline
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
         (el-get-bundle 'doom-modeline))
 
-      (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-modeline"))
-
-      (when (autoload-if-found '(doom-modeline-mode line-number-mode column-number-mode) "doom-modeline" nil t)
-        (add-hook 'after-init-hook 'doom-modeline-mode)
-        (doom-modeline-mode 1)
-        (line-number-mode 0)
-        (column-number-mode 0)
-        (with-eval-after-load 'doom-modeline
-          (eval-and-compile
-            (setq doom-modeline-buffer-file-name-style 'truncate-with-project)
-            (setq doom-modeline-icon t)
-            (setq doom-modeline-major-mode-icon t)
-            (setq doom-modeline-minor-modes nil)
-            (setq inhibit-compacting-font-caches t))))
+      (with-delayed-execution
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-modeline"))
+        (when (autoload-if-found '(doom-modeline-mode line-number-mode column-number-mode) "doom-modeline" nil t)
+          (add-hook 'after-init-hook 'doom-modeline-mode)
+          (doom-modeline-mode 1)
+          (line-number-mode 0)
+          (column-number-mode 0)
+          (with-eval-after-load 'doom-modeline
+            (eval-and-compile
+              (setq doom-modeline-buffer-file-name-style 'truncate-with-project)
+              (setq doom-modeline-icon t)
+              (setq doom-modeline-major-mode-icon t)
+              (setq doom-modeline-minor-modes nil)
+              (setq inhibit-compacting-font-caches t)))))
     #+END_SRC
 *** hl-line
     #+BEGIN_SRC emacs-lisp
@@ -2453,8 +2452,9 @@
 *** tab-bar
 #+begin_src emacs-lisp
   (when (autoload-if-found '(tab-bar-mode tab-bar-history-mode) "tab-bar" nil t)
-    (tab-bar-mode 1)
-    (tab-bar-history-mode 1)
+    (when (window-system)
+      (tab-bar-mode 1)
+      (tab-bar-history-mode 1))
     (global-set-key (kbd "C-x C-t") tab-prefix-map)
 
     (with-eval-after-load 'tab-bar
@@ -2480,7 +2480,7 @@
       (advice-add #'tab-bar-switch-to-tab :around #'my/advice-completing-read-to-ivy))
 
     (with-eval-after-load 'projectile
-      (defun my/set-tab-name-default (&rest x)
+      (defun my/set-tab-name-default (&rest _)
         (let ((proj-name (projectile-project-name)))
           (when proj-name
             (tab-bar-rename-tab proj-name))))
@@ -2491,7 +2491,11 @@
         (interactive)
         (let ((proj-name (projectile-project-name)))
           (tab-bar-rename-tab proj-name)))
-      (define-key tab-prefix-map (kbd "r") #'my/tab-bar-rename-tab)))
+      (define-key tab-prefix-map (kbd "r") #'my/tab-bar-rename-tab))
+
+    (with-eval-after-load 'neotree
+      (advice-add 'tab-new :before #'(lambda (&rest _) (neotree-hide)))
+      (advice-add 'tab-bar-switch-to-tab :before #'(lambda (&rest _) (neotree-hide)))))
 #+end_src
 *** undo-tree
     #+begin_src emacs-lisp
@@ -2611,6 +2615,17 @@
         (define-key writeroom-mode-map (kbd "C-M->") #'writeroom-increase-width)
         (define-key writeroom-mode-map (kbd "C-M-=") #'writeroom-adjust-width))))
 #+end_src
+*** zoom-window
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'zoom-window))
+
+  (with-delayed-execution
+    (message "Install zoom-window...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/zoom-window"))
+    (when (autoload-if-found '(zoom-window-zoom) "zoom-window" nil t)
+      (global-set-key (kbd "C-x 1") 'zoom-window-zoom)))
+#+end_src
 * Elfeed
 ** elfeed
    #+begin_src emacs-lisp
@@ -2646,7 +2661,9 @@
      (with-eval-after-load 'eshell
        ;; my function
        (defun my/eshell-create (name)
-         (interactive "sName: ")
+         (interactive
+          (let ((proj-name (projectile-project-name)))
+            (concat "sName: " proj-name)))
          (eshell)
          (rename-buffer (concat "$" name)))
        (defalias 'eshell-create 'my/eshell-create)
@@ -2676,29 +2693,33 @@
      (with-delayed-execution
        (message "Install eshell-z...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/eshell-z"))
-       (when (autoload-if-found '(eshell-z) "eshell-z" nil t)
-         (add-hook 'eshell-mode-hok (lambda ()
-                                      (define-key 'eshell-mode-map (kbd "C-c C-q") 'eshell-z)))))
+       ;; (when (autoload-if-found '(eshell-z) "eshell-z" nil t)
+       ;;   (define-key eshell-command-map (kbd "C-c C-q") 'eshell-z))
+       )
    #+end_src
-** aweshell
+** TODO aweshell
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
-       (el-get-bundle "takeokunn/aweshell"))
+       (el-get-bundle 'aweshell
+                      :url "https://github.com/takeokunn/aweshell.git"))
 
      (with-delayed-execution
        (add-to-list 'load-path (locate-user-emacs-file "el-get/aweshell"))
-       (require 'esh-mode)
-       (require 'aweshell)
-       (with-eval-after-load 'aweshell
-         (defvar eshell-mode-map nil)
-         (defvar aweshell-auto-suggestion-p nil)
-         (defvar eshell-highlight-prompt t)
-         (defun my/ivy-aweshell-history ()
-           (interactive)
-           (insert (ivy-read "Aweshell history: " (aweshell-parse-shell-history))))
-         (add-hook 'eshell-mode-hook
-                   (lambda ()
-                     (define-key eshell-mode-map (kbd "C-c C-r") 'my/ivy-aweshell-history)))))
+
+       ;; (when (require 'eshell-did-you-mean)
+       ;;   (eshell-did-you-mean-setup))
+
+       ;; (when (require 'esh-opt)
+       ;;   (autoload 'epe-theme-lambda "eshell-prompt-extras")
+       ;;   (setq eshell-prompt-function 'epe-theme-lambda)
+       ;;   (setq aweshell-auto-suggestion-p nil))
+
+       ;; (when (require 'aweshell)
+       ;;   (defun my/ivy-aweshell-history ()
+       ;;     (interactive)
+       ;;     (insert (ivy-read "Aweshell history: " (aweshell-parse-shell-history))))
+       ;;   (define-key eshell-command-map (kbd "C-c C-r") 'my/ivy-aweshell-history))
+       )
    #+END_SRC
 ** emacs-fish-completion
 #+begin_src emacs-lisp
@@ -2808,14 +2829,14 @@
      (eval-when-compile
        (el-get-bundle 'org-superstar))
 
-     (add-to-list 'load-path (locate-user-emacs-file "el-get/org-superstar"))
-
-     (when (autoload-if-found '(org-superstar-mode) "org-superstar")
-       (add-hook 'org-mode-hook 'org-superstar-mode)
-       (with-eval-after-load 'org-superstar
-         (eval-and-compile
-           (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿"))
-           (setq org-superstar-leading-bullet " "))))
+     (with-delayed-execution
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/org-superstar"))
+       (when (autoload-if-found '(org-superstar-mode) "org-superstar")
+         (add-hook 'org-mode-hook 'org-superstar-mode)
+         (with-eval-after-load 'org-superstar
+           (eval-and-compile
+             (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿"))
+             (setq org-superstar-leading-bullet " ")))))
    #+end_src
 ** org-generate
    #+begin_src emacs-lisp
@@ -2852,6 +2873,33 @@
        ;;   (with-eval-after-load 'org-view-mode))
        )
    #+end_src
+* EAF
+** basic
+#+begin_src emacs-lisp
+  ;; (add-to-list 'load-path "~/.ghq/github.com/emacs-eaf/emacs-application-framework")
+  ;; (require 'eaf)
+
+  ;; (require 'eaf-demo)
+  ;; (require 'eaf-file-sender)
+  ;; (require 'eaf-music-player)
+  ;; (require 'eaf-camera)
+  ;; (require 'eaf-rss-reader)
+  ;; (require 'eaf-terminal)
+  ;; (require 'eaf-image-viewer)
+  ;; (require 'eaf-pdf-viewer)
+  ;; (require 'eaf-browser)
+  ;; (require 'eaf-markdown-previewer)
+  ;; (require 'eaf-file-browser)
+  ;; (require 'eaf-mermaid)
+  ;; (require 'eaf-file-manager)
+  ;; (require 'eaf-mindmap)
+  ;; (require 'eaf-video-player)
+  ;; (require 'eaf-org-previewer)
+  ;; (require 'eaf-airshare)
+  ;; (require 'eaf-netease-cloud-music)
+  ;; (require 'eaf-git)
+  ;; (require 'eaf-system-monitor)
+#+end_src
 * MyFunc
 ** my/beginning-of-intendation
    #+BEGIN_SRC emacs-lisp
