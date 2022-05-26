@@ -671,6 +671,7 @@
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/json-mode")))
        (when (autoload-if-found '(json-mode) "json-mode" nil t)
          (push '("\\.json$" . json-mode) auto-mode-alist)
+         (push '("\\.textlintrc$" . json-mode) auto-mode-alist)
          (push '("\\.prettierrc$" . json-mode) auto-mode-alist)))
    #+END_SRC
 ** lisp-mode
@@ -807,7 +808,6 @@
          (push '("Matchfile" . ruby-mode) auto-mode-alist)
          (push '("Procfile" . ruby-mode) auto-mode-alist)
          (push '(".git-pr-template" . ruby-mode) auto-mode-alist)
-         (add-hook 'ruby-mode-hook 'lsp)
          (with-eval-after-load 'ruby-mode
            (eval-and-compile
              (setq-default ruby-insert-encoding-magic-comment nil)))))
@@ -1973,7 +1973,7 @@
       (with-delayed-execution
         (message "Install robe...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/robe"))
-        (when (autoload-if-found '(robe-mode) "robe" nil t)
+        (when (autoload-if-found '(robe-mode inf-ruby-console-auto) "robe" nil t)
           (add-hook 'ruby-mode-hook 'robe-mode)
           (when (boundp 'company-backends)
             (push 'company-robe company-backends))))
@@ -2624,7 +2624,7 @@
     (message "Install zoom-window...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/zoom-window"))
     (when (autoload-if-found '(zoom-window-zoom) "zoom-window" nil t)
-      (global-set-key (kbd "C-x 1") 'zoom-window-zoom)))
+      (global-set-key (kbd "C-x C-z") 'zoom-window-zoom)))
 #+end_src
 * Elfeed
 ** elfeed
