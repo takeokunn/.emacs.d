@@ -3235,6 +3235,15 @@ ref: https://qiita.com/kawabata@github/items/2c4b0b689834c9c193aa
            (setq my/kill-emacs-keybind-p t)
            (global-set-key (kbd "C-x C-c") 'save-buffers-kill-emacs))))
    #+end_src
+** my/get-class-name-by-file-name
+#+begin_src emacs-lisp
+  (defun my/get-class-name-by-file-name ()
+    (interactive)
+    (insert
+     (file-name-nondirectory
+      (file-name-sans-extension (or (buffer-file-name)
+                                    (buffer-name (current-buffer)))))))
+#+end_src
 * footer
 ** Magic File Name を有効にする
    #+begin_src emacs-lisp
