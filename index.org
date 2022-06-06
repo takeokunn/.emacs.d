@@ -136,205 +136,6 @@
                  el-get-default-process-sync t))))
    #+end_src
 * Basic
-** font
-#+begin_src emacs-lisp
-  (defun my/set-fontset-font:around (set-fontset-font name target font-spec &optional frame add)
-    "Warn if specified font is not installed."
-    (if (stringp font-spec)
-        (setq font-spec (font-spec :family font-spec)))
-    (when (and (fontp font-spec)
-               (find-font font-spec))
-      (funcall set-fontset-font name target font-spec frame add)))
-
-  (advice-add 'set-fontset-font :around #'my/set-fontset-font:around)
-
-  (when (and window-system
-             (member "Noto Sans" (font-family-list)))
-    (add-to-list 'default-frame-alist '(font . "Noto Sans"))
-    (set-fontset-font t 'latin "Noto Sans")
-    (set-fontset-font t 'greek "Noto Sans")
-    (set-fontset-font t 'phonetic "Noto Sans")
-    (set-fontset-font t 'coptic "Noto Sans Coptic")
-    (set-fontset-font t 'coptic "Noto Sans Symbols2" nil 'append)
-    (set-fontset-font t 'cyrillic "Noto Sans")
-    (set-fontset-font t 'armenian "Noto Sans Armenian")
-    (set-fontset-font t 'hebrew "Noto Sans Hebrew")
-    (set-fontset-font t 'arabic "Noto Sans Arabic")
-    (set-fontset-font t 'syriac "Noto Sans Syriac")
-    (set-fontset-font t 'thaana "Noto Sans Thaana")
-    (set-fontset-font t 'nko "Noto Sans N'Ko")
-    (set-fontset-font t 'samaritan "Noto Sans Samaritan")
-    (set-fontset-font t 'mandaic "Noto Sans Mandaic")
-    (set-fontset-font t 'devanagari "Noto Sans Devanagari")
-    (set-fontset-font t 'bengali "Noto Sans Bengali")
-    (set-fontset-font t 'gurmukhi "Noto Sans Gurmukhi")
-    (set-fontset-font t 'gujarati "Noto Sans Gujarati")
-    (set-fontset-font t 'oriya "Noto Sans Oriya")
-    (set-fontset-font t 'tamil "Noto Sans Tamil")
-    (set-fontset-font t 'tamil "Noto Sans Tamil Supplement" nil 'append)
-    (set-fontset-font t 'telugu "Noto Sans Telugu")
-    (set-fontset-font t 'kannada "Noto Sans Kannada")
-    (set-fontset-font t 'malayalam "Noto Sans Malayalam")
-    (set-fontset-font t 'sinhala "Noto Sans Sinhala")
-    (set-fontset-font t 'thai "Noto Sans Thai")
-    (set-fontset-font t 'lao "Noto Sans Lao")
-    (set-fontset-font t 'tibetan "Noto Sans Tibetan")
-    (set-fontset-font t 'burmese "Noto Sans Myanmar")
-    (set-fontset-font t 'georgian "Noto Sans Georgian")
-    (set-fontset-font t 'hangul "Noto Sans CJK KR")
-    (set-fontset-font t 'ethiopic "Noto Sans Ethiopic")
-    (set-fontset-font t 'cherokee "Noto Sans Cherokee")
-    (set-fontset-font t 'canadian-aboriginal "Noto Sans Canadian Aboriginal")
-    (set-fontset-font t 'ogham "Noto Sans Ogham")
-    (set-fontset-font t 'runic "Noto Sans Runic")
-    (set-fontset-font t 'tagalog "Noto Sans Tagalog")
-    (set-fontset-font t 'hanunoo "Noto Sans Hanunoo")
-    (set-fontset-font t 'buhid "Noto Sans Buhid")
-    (set-fontset-font t 'tagbanwa "Noto Sans Tagbanwa")
-    (set-fontset-font t 'khmer "Noto Sans Khmer")
-    (set-fontset-font t 'mongolian "Noto Sans Mongolian")
-    (set-fontset-font t 'limbu "Noto Sans Limbu")
-    (set-fontset-font t 'tai-le "Noto Sans Tai Le")
-    (set-fontset-font t 'tai-lue "Noto Sans NewTaiLue")
-    (set-fontset-font t 'buginese "Noto Sans Buginese")
-    (set-fontset-font t 'tai-tham "Noto Sans Tai Tham")
-    (set-fontset-font t 'balinese "Noto Sans Balinese")
-    (set-fontset-font t 'sundanese "Noto Sans Sundanese")
-    (set-fontset-font t 'vedic "Noto Sans Devanagari")
-    (set-fontset-font t 'symbol "Noto Sans CJK JP")
-    (set-fontset-font t 'symbol "Noto Sans Symbols2" nil 'append)
-    (set-fontset-font t 'symbol "Noto Sans" nil 'append)
-    (set-fontset-font t 'symbol "Noto Sans Math" nil 'append)
-    (set-fontset-font t 'symbol "Noto Emoji" nil 'append)
-    (set-fontset-font t 'symbol "Noto Sans Symbols" nil 'append)
-    (set-fontset-font t 'braille "Noto Sans Symbols2")
-    (set-fontset-font t 'batak "Noto Sans Batak")
-    (set-fontset-font t 'lepcha "Noto Sans Lepcha")
-    (set-fontset-font t 'ol-chiki "Noto Sans Ol Chiki")
-    (set-fontset-font t 'glagolitic "Noto Sans Glagolitic")
-    (set-fontset-font t 'tifinagh "Noto Sans Tifinagh")
-    (set-fontset-font t 'han "Noto Sans CJK JP")
-    (set-fontset-font t 'ideographic-description "Noto Sans CJK JP")
-    (set-fontset-font t 'cjk-misc "Noto Sans CJK JP")
-    (set-fontset-font t 'kana "Noto Sans CJK JP")
-    (set-fontset-font t 'bopomofo "Noto Sans CJK TC")
-    (set-fontset-font t 'kanbun "Noto Sans CJK JP")
-    (set-fontset-font t 'yi "Noto Sans Yi")
-    (set-fontset-font t 'lisu "Noto Sans Lisu")
-    (set-fontset-font t 'vai "Noto Sans Vai")
-    (set-fontset-font t 'bamum "Noto Sans Bamum")
-    (set-fontset-font t 'syloti-nagri "Noto Sans Syloti Nagri")
-    (set-fontset-font t 'north-indic-number "Noto Sans Devanagari")
-    (set-fontset-font t 'phags-pa "Noto Sans Phags Pa")
-    (set-fontset-font t 'saurashtra "Noto Sans Saurashtra")
-    (set-fontset-font t 'kayah-li "Noto Sans Kayah Li")
-    (set-fontset-font t 'rejang "Noto Sans Rejang")
-    (set-fontset-font t 'javanese "Noto Sans Javanese")
-    (set-fontset-font t 'cham "Noto Sans Cham")
-    (set-fontset-font t 'tai-viet "Noto Sans Tai Viet")
-    (set-fontset-font t 'meetei-mayek "Noto Sans Meetei Mayek")
-    (set-fontset-font t 'vertical-form "Noto Sans CJK JP")
-    (set-fontset-font t '(#xfff9 . #xfffb) "Noto Sans Symbols2")
-    (set-fontset-font t 'linear-b "Noto Sans Linear B")
-    (set-fontset-font t 'aegean-number "Noto Sans Linear B")
-    (set-fontset-font t 'ancient-greek-number "Noto Sans Symbols2")
-    (set-fontset-font t 'ancient-symbol "Noto Sans Symbols2")
-    (set-fontset-font t 'phaistos-disc "Noto Sans Symbols2")
-    (set-fontset-font t 'lycian "Noto Sans Lycian")
-    (set-fontset-font t 'carian "Noto Sans Carian")
-    (set-fontset-font t 'old-italic "Noto Sans Old Italic")
-    (set-fontset-font t 'gothic "Noto Sans Gothic")
-    (set-fontset-font t 'old-permic "Noto Sans Old Permic")
-    (set-fontset-font t 'ugaritic "Noto Sans Ugaritic")
-    (set-fontset-font t 'old-persian "Noto Sans OldPersian")
-    (set-fontset-font t 'deseret "Noto Sans Deseret")
-    (set-fontset-font t 'shavian "Noto Sans Shavian")
-    (set-fontset-font t 'osmanya "Noto Sans Osmanya")
-    (set-fontset-font t 'osage "Noto Sans Osage")
-    (set-fontset-font t 'elbasan "Noto Sans Elbasan")
-    (set-fontset-font t 'caucasian-albanian "Noto Sans CaucAlban")
-    (set-fontset-font t 'linear-a "Noto Sans Linear A")
-    (set-fontset-font t 'cypriot-syllabary "Noto Sans Cypriot")
-    (set-fontset-font t 'aramaic "Noto Sans ImpAramaic")
-    (set-fontset-font t 'palmyrene "Noto Sans Palmyrene")
-    (set-fontset-font t 'nabataean "Noto Sans Nabataean")
-    (set-fontset-font t 'hatran "Noto Sans Hatran")
-    (set-fontset-font t 'phoenician "Noto Sans Phoenician")
-    (set-fontset-font t 'lydian "Noto Sans Lydian")
-    (set-fontset-font t 'meroitic "Noto Sans Meroitic")
-    (set-fontset-font t 'kharoshthi "Noto Sans Kharoshthi")
-    (set-fontset-font t 'old-south-arabian "Noto Sans OldSouArab")
-    (set-fontset-font t 'old-north-arabian "Noto Sans OldNorArab")
-    (set-fontset-font t 'manichaean "Noto Sans Manichaean")
-    (set-fontset-font t 'avestan "Noto Sans Avestan")
-    (set-fontset-font t 'inscriptional-parthian "Noto Sans Inscriptional Parthian")
-    (set-fontset-font t 'inscriptional-pahlavi "Noto Sans Inscriptional Pahlavi")
-    (set-fontset-font t 'psalter-pahlavi "Noto Sans PsaPahlavi")
-    (set-fontset-font t 'old-turkic "Noto Sans Old Turkic")
-    (set-fontset-font t 'old-hungarian "Noto Sans OldHung")
-    (set-fontset-font t 'hanifi-rohingya "Noto Sans HanifiRohg")
-    (set-fontset-font t 'rumi-number "Noto Sans Symbols2")
-    (set-fontset-font t 'old-sogdian "Noto Sans OldSogdian")
-    (set-fontset-font t 'sogdian "Noto Sans Sogdian")
-    (set-fontset-font t 'elymaic "Noto Sans Elymaic")
-    (set-fontset-font t 'brahmi "Noto Sans Brahmi")
-    (set-fontset-font t 'kaithi "Noto Sans Kaithi")
-    (set-fontset-font t 'sora-sompeng "Noto Sans SoraSomp")
-    (set-fontset-font t 'chakma "Noto Sans Chakma")
-    (set-fontset-font t 'mahajani "Noto Sans Mahajani")
-    (set-fontset-font t 'sharada "Noto Sans Sharada")
-    (set-fontset-font t 'sinhala-archaic-number "Noto Sans Sinhala")
-    (set-fontset-font t 'khojki "Noto Sans Khojki")
-    (set-fontset-font t 'multani "Noto Sans Multani")
-    (set-fontset-font t 'khudawadi "Noto Sans Khudawadi")
-    (set-fontset-font t 'grantha "Noto Sans Grantha")
-    (set-fontset-font t 'newa "Noto Sans Newa")
-    (set-fontset-font t 'tirhuta "Noto Sans Tirhuta")
-    (set-fontset-font t 'siddham "Noto Sans Siddham")
-    (set-fontset-font t 'modi "Noto Sans Modi")
-    (set-fontset-font t 'takri "Noto Sans Takri")
-    (set-fontset-font t 'ahom "Noto Serif Ahom")
-    (set-fontset-font t 'dogra "Noto Serif Dogra")
-    (set-fontset-font t 'warang-citi "Noto Sans WarangCiti")
-    (set-fontset-font t 'zanabazar-square "Noto Sans Zanabazar")
-    (set-fontset-font t 'soyombo "Noto Sans Soyombo")
-    (set-fontset-font t 'pau-cin-hau "Noto Sans PauCinHau")
-    (set-fontset-font t 'bhaiksuki "Noto Sans Bhaiksuki")
-    (set-fontset-font t 'marchen "Noto Sans Marchen")
-    (set-fontset-font t 'masaram-gondi "Noto Sans Masaram Gondi")
-    (set-fontset-font t 'gunjala-gondi "Noto Sans Gunjala Gondi")
-    (set-fontset-font t 'cuneiform "Noto Sans Cuneiform")
-    (set-fontset-font t 'cuneiform-numbers-and-punctuation "Noto Sans Cuneiform")
-    (set-fontset-font t 'egyptian "Noto Sans EgyptHiero")
-    (set-fontset-font t 'anatolian "Noto Sans AnatoHiero")
-    (set-fontset-font t 'mro "Noto Sans Mro")
-    (set-fontset-font t 'bassa-vah "Noto Sans Bassa Vah")
-    (set-fontset-font t 'pahawh-hmong "Noto Sans Pahawh Hmong")
-    (set-fontset-font t 'miao "Noto Sans Miao")
-    (set-fontset-font t 'tangut "Noto Serif Tangut")
-    (set-fontset-font t 'tangut-components "Noto Serif Tangut")
-    (set-fontset-font t '(#x16fe0 . #x16fe0) "Noto Serif Tangut")
-    (set-fontset-font t 'duployan-shorthand "Noto Sans Duployan")
-    (set-fontset-font t 'byzantine-musical-symbol "Noto Music")
-    (set-fontset-font t 'musical-symbol "Noto Music")
-    (set-fontset-font t 'ancient-greek-musical-notation "Noto Music")
-    (set-fontset-font t 'mayan-numeral "Noto Sans Mayan Numerals")
-    (set-fontset-font t 'tai-xuan-jing-symbol "Noto Sans Symbols2")
-    (set-fontset-font t 'counting-rod-numeral "Noto Sans Symbols2")
-    (set-fontset-font t 'mathematical "Noto Sans Math")
-    (set-fontset-font t 'wancho "Noto Sans Wancho")
-    (set-fontset-font t 'mende-kikakui "Noto Sans Mende Kikakui")
-    (set-fontset-font t 'adlam "Noto Sans Adlam")
-    (set-fontset-font t 'indic-siyaq-number "Noto Sans Indic Siyaq Numbers")
-    (set-fontset-font t '(#x1ee00 . #x1eeff) "Noto Sans Math")
-    (set-fontset-font t 'mahjong-tile "Noto Sans Symbols2")
-    (set-fontset-font t 'domino-tile "Noto Sans Symbols2")
-    (set-fontset-font t 'playing-cards "Noto Sans Symbols2")
-    (set-fontset-font t 'kana "UniHentaiKana" nil 'append)
-    (set-fontset-font t 'latin "Iposevka" nil 'append)
-    (set-fontset-font t 'symbol "Iosevka" nil 'append)
-    (set-fontset-font t '(#xe000 . #xf136) "Inconsolata Nerd Font"))
-#+end_src
 ** スタートアップメッセージを非表示
    #+BEGIN_SRC emacs-lisp
      (setq inhibit-startup-message t)
@@ -387,7 +188,7 @@
 ** GC/Memory
    #+BEGIN_SRC emacs-lisp
      (setq gc-cons-threshold (* 128 1024 1024))
-     (setq garbage-collection-messages t)
+     (setq garbage-collection-messages nil)
    #+END_SRC
 ** read-process
 #+begin_src emacs-lisp
@@ -769,6 +570,7 @@
        (when (autoload-if-found '(gitignore-mode gitconfig-mode) "git-modes" nil t)
          (push '("\\.dockerignore$" . gitignore-mode) auto-mode-alist)
          (push '("\\.gitconfig$" . gitconfig-mode) auto-mode-alist)
+         (push '("\\.git-pr-release$" . gitconfig-mode) auto-mode-alist)
          (push '("\\.gitignore$" . gitignore-mode) auto-mode-alist)
          (push '("\\.prettierignore$" . gitignore-mode) auto-mode-alist)
          (push '("\\.editorconfig$" . gitconfig-mode) auto-mode-alist)))
@@ -810,8 +612,8 @@
      (with-delayed-execution
        (message "Install gradle-mode...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/gradle-mode")))
-       (when (autoload-if-found '(java-mode) "gradle-mode" nil t)
-         (push '("\\.gradle$" . java-mode) auto-mode-alist)))
+       (when (autoload-if-found '(gradle-mode) "gradle-mode" nil t)
+         (push '("\\.gradle$" . gradle-mode) auto-mode-alist)))
    #+END_SRC
 ** graphql-mode
    #+begin_src emacs-lisp
@@ -837,6 +639,13 @@
          (push '("\\.hs$" . haskell-mode) auto-mode-alist)
          (push '("\\.cable$" . haskell-mode) auto-mode-alist)))
    #+END_SRC
+** java-mode
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install java-mode...")
+    (when (autoload-if-found '(java-mode) "java-mode" nil t)
+      (push '("\\.java$" . java-mode) auto-mode-alist)))
+#+end_src
 ** js2-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
@@ -1290,22 +1099,22 @@
             (add-hook 'prog-mode-hook 'rainbow-delimiters-mode-enable))))
     #+END_SRC
 ** CommonLisp
-*** slime/slime-company
+*** TODO slime/slime-company
     #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'slime)
-        (el-get-bundle 'slime-company))
+      ;; (eval-when-compile
+      ;;   (el-get-bundle 'slime)
+      ;;   (el-get-bundle 'slime-company))
 
-      (with-delayed-execution
-        (message "Install slime...")
-        (message "Install slime-company...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
-        (load (expand-file-name "~/.roswell/helper.el"))
-        (when (require 'slime-company)
-          (slime-setup '(slime-fancy slime-company)))
-        (with-eval-after-load 'slime
-          (eval-and-compile
-            (setq slime-net-coding-system 'utf-8-unix))))
+      ;; (with-delayed-execution
+      ;;   (message "Install slime...")
+      ;;   (message "Install slime-company...")
+      ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
+      ;;   (load (expand-file-name "~/.roswell/helper.el"))
+      ;;   (when (require 'slime-company)
+      ;;     (slime-setup '(slime-fancy slime-company)))
+      ;;   (with-eval-after-load 'slime
+      ;;     (eval-and-compile
+      ;;       (setq slime-net-coding-system 'utf-8-unix))))
     #+END_SRC
 *** hyperspec
     #+begin_src emacs-lisp
@@ -1466,7 +1275,8 @@
 *** inf-clojure
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-get-bundle 'inf-clojure))
+    (el-get-bundle 'inf-clojure
+                   :url "https://github.com/clojure-emacs/inf-clojure.git"))
 
   (with-delayed-execution
     (message "Install inf-clojure...")
@@ -1612,9 +1422,7 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes/extensions"))
         (when (require 'doom-themes)
-          (if (window-system)
-              (load-theme 'doom-dracula t)
-            (load-theme 'tango-dark t))
+          (load-theme 'doom-dracula t)
           (eval-and-compile
             (setq doom-themes-enable-bold t)
             (setq doom-themes-enable-italic t)))
@@ -1807,7 +1615,9 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/company-box"))
     (when (autoload-if-found '(company-box-mode) "company-box" nil t)
       (when window-system
-        (add-hook 'company-mode-hook 'company-box-mode))))
+        (add-hook 'company-mode-hook 'company-box-mode))
+      (with-eval-after-load 'company-box
+        (setq company-box-doc-enable nil))))
 #+end_src
 *** company-dockerfile
     #+begin_src emacs-lisp
@@ -2058,9 +1868,9 @@
       (add-to-list 'load-path (locate-user-emacs-file "el-get/magit/lisp"))
 
       (when (autoload-if-found '(global-git-commit-mode) "git-commit" nil t)
-        (add-hook 'after-init-hook 'global-git-commit-mode))
+        (global-git-commit-mode))
 
-      (when (autoload-if-found '(global-git-commit-mode magit-status) "magit")
+      (when (autoload-if-found '(magit-status) "magit")
         (defun my/magit-status ()
           (interactive)
           (let ((default-directory (locate-dominating-file default-directory ".git")))
@@ -2736,8 +2546,8 @@
         (message "Install undo-tree...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/queue"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/undo-tree"))
-        (require 'queue)
         (when (autoload-if-found '(global-undo-tree-mode) "undo-tree" nil t)
+          (require 'queue)
           (global-undo-tree-mode)
           (with-eval-after-load 'undo-tree
             (eval-and-compile
@@ -2960,8 +2770,7 @@
     (message "Install emacs-fish-completion")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/emacs-fish-completion"))
     (when (autoload-if-found '(global-fish-completion-mode) "fish-completion" nil t)
-      (when (and (executable-find "fish")
-                 (require 'fish-completion))
+      (when (and (executable-find "fish"))
         (global-fish-completion-mode))))
 #+end_src
 * Org Mode
