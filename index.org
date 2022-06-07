@@ -810,6 +810,7 @@
        (add-to-list 'load-path (locate-user-emacs-file "el-get/ruby-mode"))
        (when (autoload-if-found '(ruby-mode) "ruby-mode" nil t)
          (push '("\\.rb$" . ruby-mode) auto-mode-alist)
+         (push '("\\.irbrc$" . ruby-mode) auto-mode-alist)
          (push '("Capfile" . ruby-mode) auto-mode-alist)
          (push '("Gemfile" . ruby-mode) auto-mode-alist)
          (push '("Schemafile" . ruby-mode) auto-mode-alist)
@@ -818,6 +819,7 @@
          (push '("Matchfile" . ruby-mode) auto-mode-alist)
          (push '("Procfile" . ruby-mode) auto-mode-alist)
          (push '(".git-pr-template" . ruby-mode) auto-mode-alist)
+         (push '(".gemrc" . ruby-mode) auto-mode-alist)
          (with-eval-after-load 'ruby-mode
            (eval-and-compile
              (setq-default ruby-insert-encoding-magic-comment nil)))))
@@ -939,7 +941,10 @@
 ** text-mode
    #+begin_src emacs-lisp
      (when (autoload-if-found '(conf-space-mode) "text-mode" nil t)
-       (push '("\\.tigrc$" . conf-space-mode) auto-mode-alist))
+       (push '("\\.tigrc$" . conf-space-mode) auto-mode-alist)
+       (push '("\\.editrc$" . conf-space-mode) auto-mode-alist)
+       (push '("\\.inputrc$" . conf-space-mode) auto-mode-alist)
+       (push '("\\.colorrc$" . conf-space-mode) auto-mode-alist))
    #+end_src
 ** toml-mode
    #+BEGIN_SRC emacs-lisp
@@ -2222,8 +2227,10 @@
       (with-delayed-execution
         (message "Install avy...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/avy"))
-        (when (autoload-if-found '(avy-goto-char-timer) "avy" nil t)
-          (global-set-key (kbd "C-:") 'avy-goto-char-timer)))
+        (when (autoload-if-found '(avy-goto-word-1) "avy" nil t)
+          (global-set-key (kbd "C-:") 'avy-goto-word-1))
+        (with-eval-after-load 'avy
+          (setq avy-background t)))
     #+end_src
 *** avy-zap
     #+begin_src emacs-lisp
