@@ -159,7 +159,8 @@
    #+END_SRC
 ** 行番号を表示する
    #+BEGIN_SRC emacs-lisp
-     (global-linum-mode t)
+     (with-eval-after-load 'linum
+       (global-linum-mode t))
    #+END_SRC
 ** 自動生成ファイルを無効にする
    #+BEGIN_SRC emacs-lisp
@@ -170,16 +171,19 @@
    #+END_SRC
 ** C-kで行削除
    #+BEGIN_SRC emacs-lisp
-     (setq kill-whole-line t)
+     (with-eval-after-load 'simple
+       (setq kill-whole-line t))
    #+END_SRC
 ** カッコの中をハイライトする
    #+BEGIN_SRC emacs-lisp
-     (show-paren-mode t)
-     (setq-default show-paren-style 'mixed)
+     (with-eval-after-load 'paren
+       (show-paren-mode t)
+       (setq-default show-paren-style 'mixed))
    #+END_SRC
 ** カッコが自動的に作られるようにする
    #+BEGIN_SRC emacs-lisp
-     (electric-pair-mode 1)
+     (with-eval-after-load 'elec-pair
+       (electric-pair-mode 1))
    #+END_SRC
 ** time locale
    #+BEGIN_SRC emacs-lisp
@@ -227,7 +231,8 @@
    #+end_src
 ** global-auto-revert-mode
    #+begin_src emacs-lisp
-     (global-auto-revert-mode t)
+     (with-eval-after-load 'autorevert
+       (global-auto-revert-mode t))
    #+end_src
 ** yes/no to y/n
    #+begin_src emacs-lisp
@@ -242,8 +247,9 @@
    #+end_src
 ** dired-use-ls-dired
    #+begin_src emacs-lisp
-     (when (string= system-type "darwin")
-       (setq dired-use-ls-dired nil))
+     (with-eval-after-load 'dired-load-hook
+       (when (string= system-type "darwin")
+         (setq dired-use-ls-dired nil)))
    #+end_src
 ** keybind
    #+BEGIN_SRC emacs-lisp
@@ -287,7 +293,9 @@
      (setq kill-ring-max 100000)
 
      (custom-set-variables '(savehist-additional-variables '(kill-ring)))
-     (savehist-mode 1)
+
+     (with-eval-after-load 'savehist
+       (savehist-mode 1))
    #+end_src
 ** [mac] clipboardに入るようにする
    #+begin_src emacs-lisp
@@ -308,7 +316,15 @@
    #+end_src
 ** native compを有効にする
 #+begin_src emacs-lisp
-  (setq package-native-compile t)
+  (with-eval-after-load 'package
+    (setq package-native-compile t))
+
+  (with-delayed-execution
+    (when (autoload-if-found '(native-compile-async) "comp" nil t)
+      (native-compile-async "~/.emacs.d/" 'recursively)
+      (with-eval-after-load 'comp
+        (setq native-comp-speed 3)
+        (setq native-comp-async-jobs-number 8))))
 #+end_src
 ** native compのwarningを抑える
 #+begin_src emacs-lisp
