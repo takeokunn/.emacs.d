@@ -159,8 +159,7 @@
    #+END_SRC
 ** 行番号を表示する
    #+BEGIN_SRC emacs-lisp
-     (with-eval-after-load 'linum
-       (global-linum-mode t))
+     (global-linum-mode t)
    #+END_SRC
 ** 自動生成ファイルを無効にする
    #+BEGIN_SRC emacs-lisp
@@ -176,14 +175,14 @@
    #+END_SRC
 ** カッコの中をハイライトする
    #+BEGIN_SRC emacs-lisp
+     (show-paren-mode t)
+
      (with-eval-after-load 'paren
-       (show-paren-mode t)
        (setq-default show-paren-style 'mixed))
    #+END_SRC
 ** カッコが自動的に作られるようにする
    #+BEGIN_SRC emacs-lisp
-     (with-eval-after-load 'elec-pair
-       (electric-pair-mode 1))
+     (electric-pair-mode 1)
    #+END_SRC
 ** time locale
    #+BEGIN_SRC emacs-lisp
@@ -231,8 +230,7 @@
    #+end_src
 ** global-auto-revert-mode
    #+begin_src emacs-lisp
-     (with-eval-after-load 'autorevert
-       (global-auto-revert-mode t))
+     (global-auto-revert-mode t)
    #+end_src
 ** yes/no to y/n
    #+begin_src emacs-lisp
@@ -274,6 +272,7 @@
      (global-set-key (kbd "C-x h") 'previous-buffer)
 
      (global-set-key (kbd "C-x C-k") nil)
+     (global-set-key (kbd "C-x C-n") nil)
 
      (when window-system
        (global-set-key (kbd "C-x C-c") nil))
@@ -314,17 +313,16 @@
          (setq interprogram-cut-function 'my/paste-to-osx)
          (setq interprogram-paste-function 'my/copy-from-osx)))
    #+end_src
-** native compを有効にする
+** native compを無効にする
 #+begin_src emacs-lisp
   (with-eval-after-load 'package
-    (setq package-native-compile t))
+    (setq package-native-compile nil))
 
-  (with-delayed-execution
-    (when (autoload-if-found '(native-compile-async) "comp" nil t)
-      (native-compile-async "~/.emacs.d/" 'recursively)
-      (with-eval-after-load 'comp
-        (setq native-comp-speed 3)
-        (setq native-comp-async-jobs-number 8))))
+  (defun my/native-comp-packages ()
+    (let ((native-comp-async-jobs-number 8)
+          (native-comp-speed 3))
+      (native-compile-async "~/.emacs.d/el-get" 'recursively)
+      (native-compile-async "~/.emacs.d/elpa" 'recursively)))
 #+end_src
 ** native compのwarningを抑える
 #+begin_src emacs-lisp
@@ -1028,6 +1026,10 @@
        (add-to-list 'load-path (locate-user-emacs-file "el-get/mmm-mode"))
        (add-to-list 'load-path (locate-user-emacs-file "el-get/edit-indirect"))
        (add-to-list 'load-path (locate-user-emacs-file "el-get/vue-mode"))
+
+       (with-eval-after-load 'vue-html-mode
+         (setq vue-html-extra-indent 4))
+
        (when (autoload-if-found '(vue-mode) "vue-mode" nil t)
          (push '("\\.vue$" . vue-mode) auto-mode-alist)))
    #+END_SRC
@@ -1067,13 +1069,15 @@
          (push '("\\.gsp?\\'" . web-mode) auto-mode-alist)
          (push '("\\.blade.php\\'" . web-mode) auto-mode-alist)
          (push '("\\.svg\\'" . web-mode) auto-mode-alist)
-         (add-hook 'web-mode-hook 'lsp)
-         (with-eval-after-load 'web-mode
-           (eval-and-compile
-             (setq web-mode-engines-alist '(("blade"  . "\\.blade\\.")))
-             (setq web-mode-enable-auto-pairing nil)
-             (setq web-mode-enable-auto-indentation nil)
-             (setq emmet-self-closing-tag-style "")))))
+         (add-hook 'web-mode-hook 'lsp))
+       (with-eval-after-load 'web-mode
+         (eval-and-compile
+           (add-to-list 'web-mode-comment-formats '("blade" . "{{--"))
+           (setq web-mode-engines-alist '(("blade"  . "\\.blade\\.")))
+           (setq web-mode-comment-style 2)
+           (setq web-mode-enable-auto-pairing nil)
+           (setq web-mode-enable-auto-indentation nil)
+           (setq emmet-self-closing-tag-style ""))))
    #+END_SRC
 ** yaml-mode
    #+BEGIN_SRC emacs-lisp
@@ -1103,9 +1107,7 @@
           (add-hook 'clojure-mode-hook 'enable-paredit-mode)
           (add-hook 'lisp-interacton-mode-hook 'enable-paredit-mode)
           (global-set-key (kbd "C-c f") 'paredit-forward-slurp-sexp)
-          (global-set-key (kbd "M-s") 'paredit-splice-sexp)
-          (with-eval-after-load 'paredit
-            (show-paren-mode 1))))
+          (global-set-key (kbd "M-s") 'paredit-splice-sexp)))
     #+END_SRC
 *** rainbow-delimiter
     #+BEGIN_SRC emacs-lisp
