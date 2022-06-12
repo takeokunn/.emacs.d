@@ -83,27 +83,44 @@
    #+end_src
 ** async load
    #+begin_src emacs-lisp
-     (defvar my/delayed-configurations '())
-     (defvar my/delayed-configuration-timer nil)
+     (defvar my/delayed-priority-high-configurations '())
+     (defvar my/delayed-priority-high-configuration-timer nil)
+
+     (defvar my/delayed-priority-low-configurations '())
+     (defvar my/delayed-priority-low-configuration-timer nil)
 
      (add-hook 'emacs-startup-hook
                (lambda ()
-                 (setq my/delayed-configuration-timer
+                 (setq my/delayed-priority-high-configuration-timer
                        (run-with-timer
-                        0.05 0.001
+                        0 0.001
                         (lambda ()
-                          (if my/delayed-configurations
+                          (if my/delayed-priority-high-configurations
                               (let ((inhibit-message t))
-                                (eval (pop my/delayed-configurations)))
+                                (eval (pop my/delayed-priority-high-configurations)))
                             (progn
-                              (cancel-timer my/delayed-configuration-timer)
-                              ;; (message "Finish!!!")
-                              )))))))
+                              (cancel-timer my/delayed-priority-high-configuration-timer)
+                              (message "Priority High Finish!!!"))))))
+                 (setq my/delayed-priority-low-configuration-timer
+                       (run-with-timer
+                        0.3 0.001
+                        (lambda ()
+                          (if my/delayed-priority-low-configurations
+                              (let ((inhibit-message t))
+                                (eval (pop my/delayed-priority-low-configurations)))
+                            (progn
+                              (cancel-timer my/delayed-priority-low-configuration-timer)
+                              (message "Priority Low Finish!!!"))))))))
+
+     (defmacro with-delayed-execution-priority-high (&rest body)
+       (declare (indent 0))
+       `(setq my/delayed-priority-high-configurations
+              (append my/delayed-priority-high-configurations ',body)))
 
      (defmacro with-delayed-execution (&rest body)
        (declare (indent 0))
-       `(setq my/delayed-configurations
-              (append my/delayed-configurations ',body)))
+       `(setq my/delayed-priority-low-configurations
+              (append my/delayed-priority-low-configurations ',body)))
    #+end_src
 ** autoload-if-found
    #+begin_src emacs-lisp
@@ -183,7 +200,7 @@
    #+END_SRC
 ** coding system
    #+begin_src emacs-lisp
-     (with-delayed-execution
+     (with-delayed-execution-priority-high
        ;; language and locale
        (set-language-environment "Japanese")
        (setq system-time-locale "C")
@@ -207,7 +224,7 @@
    #+end_src
 ** yes/no to y/n
    #+begin_src emacs-lisp
-     (with-delayed-execution
+     (with-delayed-execution-priority-high
        (fset 'yes-or-no-p 'y-or-n-p))
    #+end_src
 ** dired-use-ls-dired
@@ -250,13 +267,13 @@
        (setq byte-compile-warnings '(cl-functions))
        (require 'cl-lib nil t))
 
-     (with-delayed-execution
+     (with-delayed-execution-priority-high
        (message "install cl-lib....")
        (require 'cl-lib))
    #+end_src
 ** savehistを有効にする
 #+begin_src emacs-lisp
-  (with-eval-after-load 'savehist
+  (with-delayed-execution-priority-high 'savehist
     (savehist-mode 1))
 #+end_src
 ** [mac] clipboardに入るようにする
@@ -300,7 +317,7 @@
      (eval-when-compile
        (el-get-bundle 'dash))
 
-     (with-delayed-execution
+     (with-delayed-execution-priority-high
        (message "Install dash...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/dash"))))
    #+end_src
@@ -309,7 +326,7 @@
      (eval-when-compile
        (el-get-bundle 'mustache))
 
-     (with-delayed-execution
+     (with-delayed-execution-priority-high
        (message "Install mustache...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/mustache"))))
    #+end_src
@@ -318,7 +335,7 @@
      (eval-when-compile
        (el-get-bundle 'f))
 
-     (with-delayed-execution
+     (with-delayed-execution-priority-high
        (message "Install f...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/f"))))
    #+end_src
@@ -327,7 +344,7 @@
      (eval-when-compile
        (el-get-bundle 's))
 
-     (with-delayed-execution
+     (with-delayed-execution-priority-high
        (message "Install s...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/s"))))
    #+end_src
@@ -336,7 +353,7 @@
      (eval-when-compile
        (el-get-bundle 'ht))
 
-     (with-delayed-execution
+     (with-delayed-execution-priority-high
        (message "Install ht...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/ht"))))
    #+end_src
@@ -345,7 +362,7 @@
      (eval-when-compile
        (el-get-bundle 'lv))
 
-     (with-delayed-execution
+     (with-delayed-execution-priority-high
        (message "Install lv...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/lv"))))
    #+end_src
@@ -354,7 +371,7 @@
      (eval-when-compile
        (el-get-bundle 'spinner))
 
-     (with-delayed-execution
+     (with-delayed-execution-priority-high
        (message "Install spinner...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/spinner"))))
    #+end_src
@@ -363,7 +380,7 @@
      (eval-when-compile
        (el-get-bundle 'shrink-path))
 
-     (with-delayed-execution
+     (with-delayed-execution-priority-high
        (message "Install shrink-path...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/shrink-path"))))
    #+end_src
@@ -372,7 +389,7 @@
   (eval-when-compile
     (el-get-bundle 'compat))
 
-  (with-delayed-execution
+  (with-delayed-execution-priority-high
     (message "Install compat...")
     (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/compat"))))
 #+end_src
@@ -1067,7 +1084,7 @@
       (eval-when-compile
         (el-get-bundle 'paredit))
 
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (message "Install paredit...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/paredit"))
         (when (autoload-if-found '(enable-paredit-mode) "paredit" nil t)
@@ -1292,7 +1309,7 @@
       (eval-when-compile
         (el-get-bundle abo-abo/swiper))
 
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (message "Install swiper...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/swiper")))
     #+end_src
@@ -1308,14 +1325,14 @@
     #+END_SRC
 *** counsel
     #+begin_src emacs-lisp
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (when (autoload-if-found '(counsel-mode counsel-compile) "counsel" nil t)
           (global-set-key (kbd "C-x m") 'counsel-compile)
           (counsel-mode 1)))
     #+end_src
 *** ivy
     #+begin_src emacs-lisp
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (when (autoload-if-found '(ivy-mode ivy-read ivy-completing-read) "ivy" nil t)
           (add-hook 'minibuffer-setup-hook (lambda ()
                                              (ivy-mode 1)))
@@ -1329,7 +1346,7 @@
       (eval-when-compile
         (el-get-bundle 'ivy-rich))
 
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (message "Install ivy-rich...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-rich"))
         (when (autoload-if-found '(ivy-rich-mode) "ivy-rich" nil t)
@@ -1344,8 +1361,8 @@
       (eval-when-compile
         (el-get-bundle 'all-the-icons))
 
-      (with-delayed-execution
-        (Install "Install all-the-icons...")
+      (with-delayed-execution-priority-high
+        (message "Install all-the-icons...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons")))
     #+END_SRC
 *** all-the-icons-dired
@@ -1353,7 +1370,7 @@
       (eval-when-compile
         (el-get-bundle 'all-the-icons-dired))
 
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (message "Install all-the-icons-dired...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons-dired"))
         (when (autoload-if-found '(all-the-icons-dired-mode) "all-the-icons-dired")
@@ -1366,7 +1383,7 @@
       (eval-when-compile
         (el-get-bundle 'all-the-icons-ivy-rich))
 
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (message "Install all-the-icons-ivy-rich...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons-ivy-rich"))
         (when (autoload-if-found '(all-the-icons-ivy-rich-mode) "all-the-icons-ivy-rich" nil t)
@@ -1401,7 +1418,7 @@
       (eval-when-compile
         (el-get-bundle 'doom-themes))
 
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes/extensions"))
         (when (require 'doom-themes)
@@ -1422,7 +1439,7 @@
       (eval-when-compile
         (el-get-bundle 'doom-modeline))
 
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-modeline"))
         (when (autoload-if-found '(doom-modeline-mode line-number-mode column-number-mode) "doom-modeline" nil t)
           (add-hook 'after-init-hook 'doom-modeline-mode)
@@ -1452,7 +1469,7 @@
       (eval-when-compile
         (el-get-bundle 'neotree))
 
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (message "Install neotree...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/neotree"))
         (when (autoload-if-found '(my/neotree-toggle) "neotree" nil t)
@@ -1495,7 +1512,7 @@
       (eval-when-compile
         (el-get-bundle 'nyan-mode))
 
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (message "Install nyan-mode...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/nyan-mode"))
         (when (autoload-if-found '(nyan-mode) "nyan-mode" nil t)
@@ -1511,7 +1528,7 @@
       (eval-when-compile
         (el-get-bundle 'projectile))
 
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (message "Install projectile...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/projectile"))
         (when (autoload-if-found '(projectile-mode projectile-command-map my/update-projectile-known-projects) "projectile" nil t)
@@ -1536,7 +1553,7 @@
       (eval-when-compile
         (el-get-bundle 'counsel-projectile))
 
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (message "Install counsel-projectile...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/counsel-projectile"))
         (when (autoload-if-found '(counsel-projectile-mode) "counsel-projectile" nil t)
@@ -1851,7 +1868,7 @@
         (el-get-bundle magit/with-editor)
         (el-get-bundle magit/magit))
 
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (message "Install magit...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/transient/lisp"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/ghub/lisp"))
@@ -2206,7 +2223,7 @@
       (eval-when-compile
         (el-get-bundle 'amx))
 
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (message "Install amx...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/amx"))
         (with-eval-after-load 'amx))
@@ -2261,7 +2278,7 @@
       (eval-when-compile
         (el-get-bundle 'ddskk))
 
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (message "Install ddskk...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/ddskk"))
 
