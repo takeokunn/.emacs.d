@@ -100,7 +100,8 @@
                                 (eval (pop my/delayed-priority-high-configurations)))
                             (progn
                               (cancel-timer my/delayed-priority-high-configuration-timer)
-                              (message "Priority High Finish!!!"))))))
+                              ;; (message "Priority High Finish!!!")
+                              )))))
                  (setq my/delayed-priority-low-configuration-timer
                        (run-with-timer
                         0.3 0.001
@@ -110,7 +111,8 @@
                                 (eval (pop my/delayed-priority-low-configurations)))
                             (progn
                               (cancel-timer my/delayed-priority-low-configuration-timer)
-                              (message "Priority Low Finish!!!"))))))))
+                              ;; (message "Priority Low Finish!!!")
+                              )))))))
 
      (defmacro with-delayed-execution-priority-high (&rest body)
        (declare (indent 0))
@@ -1402,7 +1404,7 @@
       (eval-when-compile
         (el-get-bundle 'dashboard))
 
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (message "Install dashboard...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/dashboard"))
         (autoload-if-found '(dashboard-refresh-buffer) "dashboard" nil t)
@@ -1915,7 +1917,7 @@
       (eval-when-compile
         (el-get-bundle exec-path-from-shell))
 
-      (with-delayed-execution
+      (with-delayed-execution-priority-high
         (message "Install exec-path-from-shell...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/exec-path-from-shell"))
 
@@ -2510,7 +2512,7 @@
     #+end_src
 *** tab-bar
 #+begin_src emacs-lisp
-  (with-delayed-execution
+  (with-delayed-execution-priority-high
     (when (autoload-if-found '(tab-bar-mode tab-bar-history-mode) "tab-bar" nil t)
       (when (window-system)
         (tab-bar-mode 1)
@@ -2890,7 +2892,7 @@
      (eval-when-compile
        (el-get-bundle 'org-superstar))
 
-     (with-delayed-execution
+     (with-delayed-execution-priority-high
        (add-to-list 'load-path (locate-user-emacs-file "el-get/org-superstar"))
        (when (autoload-if-found '(org-superstar-mode) "org-superstar")
          (add-hook 'org-mode-hook 'org-superstar-mode))
