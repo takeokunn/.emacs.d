@@ -23,6 +23,7 @@ link:
 compile:
 	$(EMACS) -Q --batch --eval "(progn (require 'ob-tangle) (org-babel-tangle-file \"./early-init.org\" \"./early-init.el\" \"emacs-lisp\"))"
 	$(EMACS) -Q --batch --eval "(progn (require 'ob-tangle) (org-babel-tangle-file \"./index.org\" \"./init.el\" \"emacs-lisp\"))"
+	$(EMACS) -Q --batch -f batch-byte-compile early-init.el
 	$(EMACS) -Q --batch -f batch-byte-compile init.el
 
 .PHONY: org-to-html

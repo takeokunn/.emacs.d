@@ -11,14 +11,19 @@
 #+html_head: <script type="text/javascript" src="https://www.pirilampo.org/styles/readtheorg/js/readtheorg.js"></script>
 
 * early-init.el
-** default
+** リサイズを行わない
+#+begin_src emacs-lisp
+  (setq frame-inhibit-implied-resize t)
+#+end_src
+** 自動的なpackageのロードを無効にする
+#+begin_src emacs-lisp
+  (setq package-enable-at-startup nil)
+#+end_src
+** tab bar非表示
 #+begin_src emacs-lisp
   (push '(menu-bar-lines . 0) default-frame-alist)
   (push '(tool-bar-lines . 0) default-frame-alist)
-  (setq package-enable-at-startup nil)
-  (setq frame-inhibit-implied-resize t)
 #+end_src
-
 ** スタートアップメッセージを非表示
    #+BEGIN_SRC emacs-lisp
      (setq inhibit-startup-message t)
@@ -47,7 +52,6 @@
    #+BEGIN_SRC emacs-lisp
      (setq-default indent-tabs-mode nil)
    #+END_SRC
-
 ** ビープ音を消す
    #+begin_src emacs-lisp
      (setq ring-bell-function 'ignore)
@@ -67,10 +71,8 @@
 ** kill-ringのサイズを変更
    #+begin_src emacs-lisp
      (setq kill-ring-max 100000)
-
      (custom-set-variables '(savehist-additional-variables '(kill-ring)))
    #+end_src
-
 ** 折り返ししない
 #+begin_src emacs-lisp
   (setq-default truncate-lines t)
@@ -81,3 +83,9 @@
      (setq initial-scratch-message nil)
      (setq initial-major-mode 'org-mode)
    #+end_src
+** native compを無効にする
+#+begin_src emacs-lisp
+  (with-eval-after-load 'package
+    (eval-and-compile
+      (setq package-native-compile nil)))
+#+end_src

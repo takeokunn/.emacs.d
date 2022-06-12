@@ -93,26 +93,22 @@
                (lambda ()
                  (setq my/delayed-priority-high-configuration-timer
                        (run-with-timer
-                        0 0.001
+                        0.1 0.0001
                         (lambda ()
                           (if my/delayed-priority-high-configurations
                               (let ((inhibit-message t))
                                 (eval (pop my/delayed-priority-high-configurations)))
                             (progn
-                              (cancel-timer my/delayed-priority-high-configuration-timer)
-                              ;; (message "Priority High Finish!!!")
-                              )))))
+                              (cancel-timer my/delayed-priority-high-configuration-timer))))))
                  (setq my/delayed-priority-low-configuration-timer
                        (run-with-timer
-                        0.3 0.001
+                        0.2 0.0001
                         (lambda ()
                           (if my/delayed-priority-low-configurations
                               (let ((inhibit-message t))
                                 (eval (pop my/delayed-priority-low-configurations)))
                             (progn
-                              (cancel-timer my/delayed-priority-low-configuration-timer)
-                              ;; (message "Priority Low Finish!!!")
-                              )))))))
+                              (cancel-timer my/delayed-priority-low-configuration-timer))))))))
 
      (defmacro with-delayed-execution-priority-high (&rest body)
        (declare (indent 0))
@@ -295,17 +291,15 @@
          (setq interprogram-cut-function 'my/paste-to-osx)
          (setq interprogram-paste-function 'my/copy-from-osx)))
    #+end_src
-** native compを無効にする
+** pluginをnative compする
 #+begin_src emacs-lisp
-  (with-eval-after-load 'package
-    (setq package-native-compile nil))
-
   (with-eval-after-load 'comp
     (defun my/native-comp-packages ()
       (interactive)
       (let ((native-comp-async-jobs-number 8)
             (native-comp-speed 3))
         (native-compile-async "~/.emacs.d/init.el")
+        (native-compile-async "~/.emacs.d/early-init.el")
         (native-compile-async "~/.emacs.d/el-get" 'recursively)
         (native-compile-async "~/.emacs.d/elpa" 'recursively))))
 #+end_src
@@ -2763,27 +2757,27 @@
    #+end_src
 ** TODO aweshell
    #+BEGIN_SRC emacs-lisp
-     (eval-when-compile
-       (el-get-bundle 'aweshell
-                      :url "https://github.com/takeokunn/aweshell.git"))
+     ;; (eval-when-compile
+     ;;   (el-get-bundle 'aweshell
+     ;;                  :url "https://github.com/takeokunn/aweshell.git"))
 
-     (with-delayed-execution
-       (add-to-list 'load-path (locate-user-emacs-file "el-get/aweshell"))
+     ;; (with-delayed-execution
+     ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/aweshell"))
 
-       ;; (when (require 'eshell-did-you-mean)
-       ;;   (eshell-did-you-mean-setup))
+     ;;   ;; (when (require 'eshell-did-you-mean)
+     ;;   ;;   (eshell-did-you-mean-setup))
 
-       ;; (when (require 'esh-opt)
-       ;;   (autoload 'epe-theme-lambda "eshell-prompt-extras")
-       ;;   (setq eshell-prompt-function 'epe-theme-lambda)
-       ;;   (setq aweshell-auto-suggestion-p nil))
+     ;;   ;; (when (require 'esh-opt)
+     ;;   ;;   (autoload 'epe-theme-lambda "eshell-prompt-extras")
+     ;;   ;;   (setq eshell-prompt-function 'epe-theme-lambda)
+     ;;   ;;   (setq aweshell-auto-suggestion-p nil))
 
-       ;; (when (require 'aweshell)
-       ;;   (defun my/ivy-aweshell-history ()
-       ;;     (interactive)
-       ;;     (insert (ivy-read "Aweshell history: " (aweshell-parse-shell-history))))
-       ;;   (define-key eshell-command-map (kbd "C-c C-r") 'my/ivy-aweshell-history))
-       )
+     ;;   ;; (when (require 'aweshell)
+     ;;   ;;   (defun my/ivy-aweshell-history ()
+     ;;   ;;     (interactive)
+     ;;   ;;     (insert (ivy-read "Aweshell history: " (aweshell-parse-shell-history))))
+     ;;   ;;   (define-key eshell-command-map (kbd "C-c C-r") 'my/ivy-aweshell-history))
+     ;;   )
    #+END_SRC
 ** emacs-fish-completion
 #+begin_src emacs-lisp
