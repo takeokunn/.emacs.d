@@ -17,7 +17,7 @@
    - blog: [[https://takeokunn.xyz][https://takeokunn.xyz]]
 * Header
   #+begin_src emacs-lisp
-    ;; init.el --- My init.el -*- lexical-binding: t -*-
+    ;; init.el --- My init.el
     ;; Configurations for Emacs
     ;;                                         Takeo Obara  <bararararatty@gmail.com>
   #+end_src
@@ -97,7 +97,8 @@
                                 (eval (pop my/delayed-configurations)))
                             (progn
                               (cancel-timer my/delayed-configuration-timer)
-                              (message "Finish!!!"))))))))
+                              ;; (message "Finish!!!")
+                              )))))))
 
      (defmacro with-delayed-execution (&rest body)
        (declare (indent 0))
@@ -136,10 +137,6 @@
                  el-get-default-process-sync t))))
    #+end_src
 * Basic
-** スタートアップメッセージを非表示
-   #+BEGIN_SRC emacs-lisp
-     (setq inhibit-startup-message t)
-   #+END_SRC
 ** 末尾のスペースを可視化する
    #+BEGIN_SRC emacs-lisp
      (with-delayed-execution
@@ -166,13 +163,6 @@
          (run-with-idle-timer 1 nil #'linum-update-current))
        (global-linum-mode t))
    #+END_SRC
-** 自動生成ファイルを無効にする
-   #+BEGIN_SRC emacs-lisp
-     (setq make-backup-files nil)
-     (setq auto-save-default nil)
-     (setq auto-save-list-file-prefix nil)
-     (setq create-lockfiles nil)
-   #+END_SRC
 ** C-kで行削除
    #+BEGIN_SRC emacs-lisp
      (with-eval-after-load 'simple
@@ -191,32 +181,6 @@
      (with-delayed-execution
        (electric-pair-mode 1))
    #+END_SRC
-** time locale
-   #+BEGIN_SRC emacs-lisp
-     (setq system-time-locale "C")
-   #+END_SRC
-** GC/Memory
-   #+BEGIN_SRC emacs-lisp
-     (setq gc-cons-threshold (* 128 1024 1024))
-     (setq garbage-collection-messages nil)
-   #+END_SRC
-** read-process
-#+begin_src emacs-lisp
-  (setq read-process-output-max (* 8 1024 1024))
-#+end_src
-** indent
-   #+BEGIN_SRC emacs-lisp
-     (setq-default indent-tabs-mode nil)
-   #+END_SRC
-** ビープ音を消す
-   #+begin_src emacs-lisp
-     (setq ring-bell-function 'ignore)
-   #+end_src
-** デフォルトのpathをかえる
-   #+begin_src emacs-lisp
-     (setq default-directory "~/")
-     (setq command-line-default-directory "~/")
-   #+end_src
 ** coding system
    #+begin_src emacs-lisp
      (with-delayed-execution
@@ -243,14 +207,8 @@
    #+end_src
 ** yes/no to y/n
    #+begin_src emacs-lisp
-     (fset 'yes-or-no-p 'y-or-n-p)
-   #+end_src
-** killできないようにする
-   #+begin_src emacs-lisp
-     (with-current-buffer "*scratch*"
-       (emacs-lock-mode 'kill))
-     (with-current-buffer "*Messages*"
-       (emacs-lock-mode 'kill))
+     (with-delayed-execution
+       (fset 'yes-or-no-p 'y-or-n-p))
    #+end_src
 ** dired-use-ls-dired
    #+begin_src emacs-lisp
@@ -296,15 +254,11 @@
        (message "install cl-lib....")
        (require 'cl-lib))
    #+end_src
-** kill-ringのサイズを変更
-   #+begin_src emacs-lisp
-     (setq kill-ring-max 100000)
-
-     (custom-set-variables '(savehist-additional-variables '(kill-ring)))
-
-     (with-eval-after-load 'savehist
-       (savehist-mode 1))
-   #+end_src
+** savehistを有効にする
+#+begin_src emacs-lisp
+  (with-eval-after-load 'savehist
+    (savehist-mode 1))
+#+end_src
 ** [mac] clipboardに入るようにする
    #+begin_src emacs-lisp
      (eval-and-compile
@@ -339,11 +293,6 @@
 ** native compのwarningを抑える
 #+begin_src emacs-lisp
   (custom-set-variables '(warning-suppress-types '((comp))))
-#+end_src
-** 折り返ししない
-#+begin_src emacs-lisp
-  (setq-default truncate-lines t)
-  (setq-default truncate-partial-width-windows t)
 #+end_src
 * Utility
 ** dash
@@ -439,11 +388,6 @@
     (when (autoload-if-found '(apache-mode) "apache-mode" nil t)
       (push '("\\.htaccess$" . apache-mode) auto-mode-alist)))
 #+end_src
-** buffer-mode
-   #+begin_src emacs-lisp
-     (setq initial-scratch-message nil)
-     (setq initial-major-mode 'org-mode)
-   #+end_src
 ** c++-mode
    #+begin_src emacs-lisp
      (with-eval-after-load 'c++-mode
