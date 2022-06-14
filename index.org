@@ -303,6 +303,12 @@
         (native-compile-async "~/.emacs.d/el-get" 'recursively)
         (native-compile-async "~/.emacs.d/elpa" 'recursively))))
 #+end_src
+** native compを無効にする
+#+begin_src emacs-lisp
+  (with-eval-after-load 'comp
+    (eval-and-compile
+      (setq package-native-compile nil)))
+#+end_src
 ** native compのwarningを抑える
 #+begin_src emacs-lisp
   (custom-set-variables '(warning-suppress-types '((comp))))
@@ -1084,10 +1090,15 @@
         (message "Install paredit...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/paredit"))
         (when (autoload-if-found '(enable-paredit-mode) "paredit" nil t)
+          ;; hooks
           (add-hook 'lisp-mode-hook 'enable-paredit-mode)
           (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
           (add-hook 'clojure-mode-hook 'enable-paredit-mode)
           (add-hook 'lisp-interacton-mode-hook 'enable-paredit-mode)
+          (add-hook 'lisp-data-mode-hook 'enable-paredit-mode)
+          (add-hook 'eval-expression-minibuffer-setup-hook #'paredit-mode)
+
+          ;; global keybind
           (global-set-key (kbd "C-c f") 'paredit-forward-slurp-sexp)
           (global-set-key (kbd "M-s") 'paredit-splice-sexp)))
     #+END_SRC
@@ -1222,19 +1233,38 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/seq"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/sesman"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/cider"))
-        (when (autoload-if-found '(cider) "cider" nil t)
-          (defun my/cider-switch-to-last-clojure-buffer ()
-            (interactive)
-            (let* ((window (split-window-right))
-                   (buffer (my/find-cider-repl-buffer)))
-              (set-window-buffer window buffer)
-              (cider-switch-to-last-clojure-buffer)))
+
+        (when (autoload-if-found '(cider
+                                   cider-format-buffer
+                                   cider-switch-to-last-clojure-buffer
+                                   my/cider-switch-to-last-clojure-buffer) "cider" nil t)
+          (add-hook 'before-save-hook 'cider-format-buffer t t)
+
+          ;; (defun my/cider-switch-to-last-clojure-buffer ()
+          ;;   (interactive)
+          ;;   (let* ((window (split-window-right))
+          ;;          (buffer (current-buffer)))
+          ;;     (set-window-buffer window buffer)
+          ;;     (cider-switch-to-last-clojure-buffer)))
           ;; (define-key cider-mode-map (kbd "C-c C-z") #'my/cider-switch-to-last-clojure-buffer)
-          ;; (with-eval-after-load 'cider
-          ;;   (eval-and-compile
-          ;;     (setq cider-repl-display-in-current-window t
-          ;;           cider-font-lock-dynamically '(macro core function var))))
-          ))
+          )
+
+        (with-eval-after-load 'cider-mode
+          (eval-and-compile
+            (setq cider-font-lock-dynamically '(macro core function var))))
+
+        (with-eval-after-load 'cider-repl
+          (eval-and-compile
+            (setq cider-repl-buffer-size-limit 1000000)
+            (setq cider-repl-wrap-history t)
+            (setq cider-repl-history-size 10000)
+            (setq cider-repl-tab-command #'indent-for-tab-command)
+            (setq cider-repl-display-in-current-window t)))
+
+        (with-eval-after-load 'cider-eval
+          (eval-and-compile
+            (setq cider-show-error-buffer nil)
+            (setq cider-auto-select-error-buffer nil))))
     #+END_SRC
 *** clojure-cheatsheet
 #+begin_src emacs-lisp
@@ -1762,10 +1792,13 @@
         (autoload-if-found '(lsp lsp-deferred) "lsp-mode" nil t)
 
         (with-eval-after-load 'lsp-mode
+          (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]vendor")
+          (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]storage")
+          (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]docs")
+          (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]docker")
           (eval-and-compile
             (setq lsp-idle-delay 0.8)
-            (setq lsp-log-io nil)
-            (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]vendor")))
+            (setq lsp-log-io nil)))
 
         (with-eval-after-load 'lsp-completion
           (eval-and-compile
