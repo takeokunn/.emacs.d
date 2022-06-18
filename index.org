@@ -102,7 +102,7 @@
                               (cancel-timer my/delayed-priority-high-configuration-timer))))))
                  (setq my/delayed-priority-low-configuration-timer
                        (run-with-timer
-                        0.2 0.0001
+                        0.2 0.001
                         (lambda ()
                           (if my/delayed-priority-low-configurations
                               (let ((inhibit-message t))
@@ -312,6 +312,12 @@
 ** native compのwarningを抑える
 #+begin_src emacs-lisp
   (custom-set-variables '(warning-suppress-types '((comp))))
+#+end_src
+** 同一bufferの名前を変える
+#+begin_src emacs-lisp
+  (with-eval-after-load 'uniquify
+    (eval-and-compile
+      (setq uniquify-buffer-name-style 'post-forward-angle-brackets)))
 #+end_src
 * Utility
 ** dash
@@ -673,6 +679,21 @@
          (push '("\\.textlintrc$" . json-mode) auto-mode-alist)
          (push '("\\.prettierrc$" . json-mode) auto-mode-alist)))
    #+END_SRC
+** jq-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'jq-mode))
+
+  (with-delayed-execution
+    (message "Install jq-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/jq-mode")))
+    (when (autoload-if-found '(jq-interactively) "jq-mode" nil t)
+      (with-eval-after-load 'json-mode
+        (define-key json-mode-map (kbd "C-c C-j") #'jq-interactively)))
+    (with-eval-after-load 'ob-babel
+      (org-babel-do-load-languages 'org-babel-load-languages
+                                   '((jq . t)))))
+#+end_src
 ** lisp-mode
    #+BEGIN_SRC emacs-lisp
      (with-delayed-execution
@@ -710,6 +731,17 @@
     (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/neon-mode")))
     (when (autoload-if-found '(neon-mode) "neon-mode" nil t)
       (add-to-list 'auto-mode-alist '("\\.neon\\'" . neon-mode))))
+#+end_src
+** nix-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'nix-mode))
+
+  (with-delayed-execution
+    (message "Install nix-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/nix-mode")))
+    (when (autoload-if-found '(nix-mode) "nix-mode" nil t)
+      (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-mode))))
 #+end_src
 ** nginx-mode
    #+BEGIN_SRC emacs-lisp
@@ -801,6 +833,18 @@
        (when (autoload-if-found '(python-mode) "python-mode" nil t)
          (push '("\\.py$" . python-mode) auto-mode-alist)))
    #+END_SRC
+** robots-txt-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'robots-txt-mode
+      :url "https://github.com/emacs-php/robots-txt-mode.git"))
+
+  (with-delayed-execution
+    (message "Install robots-txt-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/robots-txt-mode"))
+    (when (autoload-if-found '(robots-txt-mode) "robots-txt-mode" nil t)
+      (push '("/robots\\.txt\\'" . robots-txt-mode) auto-mode-alist)))
+#+end_src
 ** ruby-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
@@ -914,7 +958,9 @@
        (load-library "sql-complete")
        (load-library "sql-transform")
        (eval-and-compile
-         (setq sql-indent-offset t)))
+         (setq sql-indent-offset t)
+         (setq indent-tabs-mode nil)
+         (setq sql-mysql-login-params '(user password database server port))))
    #+end_src
 ** swift-mode
    #+begin_src emacs-lisp
@@ -1435,9 +1481,7 @@
         (with-eval-after-load 'dashboard
           (eval-and-compile
             (setq dashboard-startup-banner 4)
-            (setq dashboard-items '((recents . 15)
-                                    (projects . 5)
-                                    (bookmarks . 5))))))
+            (setq dashboard-items '((recents . 10))))))
     #+end_src
 *** doom-themes
     #+BEGIN_SRC emacs-lisp
@@ -1484,8 +1528,8 @@
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
         (when (autoload-if-found '(global-hl-line-mode) "hl-line-mode" nil t)
-          (global-hl-line-mode))
-
+          (when (not window-system)
+            (global-hl-line-mode)))
         (with-eval-after-load 'hl-line
           (set-face-attribute 'hl-line nil :inherit nil)
           (set-face-background 'hl-line "#444642")))
@@ -1837,30 +1881,32 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/dap-mode"))
 
         (when (autoload-if-found '(dap-mode) "dap-mode" nil t)
-          (dap-mode 1)
+          (add-hook 'lsp-mode-hook 'dap-mode))
+
+        (with-eval-after-load 'dap-mode
           (define-key dap-mode-map (kbd "C-c d") 'dap-breakpoint-toggle))
 
         (when (autoload-if-found '(dap-ui-mode) "dap-ui" nil t)
-          (dap-ui-mode 1)
-          (dap-ui-controls-mode 1))
+          (add-hook 'dap-mode-hook 'dap-ui-mode)
+          (add-hook 'dap-mode-hook 'dap-ui-controls-mode))
 
         (when (autoload-if-found '(dap-tooltip-mode) "dap-mouse" nil t)
-          (tooltip-mode 1)
-          (dap-tooltip-mode 1))
+          (add-hook 'dap-mode-hook 'tooltip-mode)
+          (add-hook 'dap-mode-hook 'dap-tooltip-mode))
 
         (when (autoload-if-found '(dap-php-setup) "dap-php" nil t)
           (add-hook 'php-mode-hook 'dap-php-setup))
 
         (with-eval-after-load 'dap-php
+          (dap-register-debug-template "Laravel Run Configuration"
+                                       (list :type "php"
+                                             :request "launch"
+                                             :mode "remote"
+                                             :host "localhost"
+                                             :port "9003"))
           (eval-and-compile
             (setq dap-php-debug-path "~/.ghq/github.com/xdebug/vscode-php-debug")
-            (setq dap-php-debug-program `("node" ,(f-join dap-php-debug-path "out/phpDebug.js")))
-            (dap-register-debug-template "Laravel Run Configuration"
-                                         (list :type "php"
-                                               :request "launch"
-                                               :mode "remote"
-                                               :host "localhost"
-                                               :port "9003"))))
+            (setq dap-php-debug-program `("node" ,(f-join dap-php-debug-path "out/phpDebug.js")))))
 
         (when (autoload-if-found '(dap-node-setup) "dap-node" nil t)
           (add-hook 'js2-mode-hook 'dap-node-setup))
@@ -1907,17 +1953,18 @@
         (when (autoload-if-found '(global-git-commit-mode) "git-commit" nil t)
           (global-git-commit-mode))
 
-        (with-eval-after-load 'magit
-          (eval-and-compile
-            (setq magit-refresh-status-buffer nil)))
-
         (with-delayed-execution
-          (when (autoload-if-found '(magit-status) "magit")
+          (when (autoload-if-found '(magit-status magit-blame) "magit")
             (defun my/magit-status ()
               (interactive)
               (let ((default-directory (locate-dominating-file default-directory ".git")))
                 (magit-status)))
-            (global-set-key (kbd "C-x g") #'my/magit-status))))
+            (global-set-key (kbd "C-x g") #'my/magit-status)
+            (global-set-key (kbd "C-x G") #'magit-blame))
+
+          (with-eval-after-load 'magit
+            (eval-and-compile
+              (setq magit-refresh-status-buffer nil)))))
     #+END_SRC
 *** magit-forge
     #+begin_src emacs-lisp
@@ -2144,6 +2191,25 @@
         (when (autoload-if-found '(poly-markdown-mode) "poly-markdown" nil t)
           (add-to-list 'auto-mode-alist '("\\.md" . poly-markdown-mode))))
     #+end_src
+*** markdown-preview-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'web-server)
+    (el-get-bundle 'websocket)
+    (el-get-bundle 'markdown-preview-mode))
+
+  (with-delayed-execution
+    (message "Install markdown-preview-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/web-server"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/websocket"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/markdown-preview-mode"))
+
+    (autoload-if-found '(markdown-preview-open-browser markdown-preview-mode) "markdown-preview-mode" nil t)
+
+    (with-eval-after-load 'markdown-preview-mode
+      (eval-and-compile
+        (setq markdown-preview-stylesheets (list "http://thomasf.github.io/solarized-css/solarized-light.min.css")))))
+#+end_src
 ** Fish
 *** fish-repl
     #+begin_src emacs-lisp
@@ -2281,6 +2347,12 @@
         (when (autoload-if-found '(avy-zap-up-to-char-dwim) "avy-zap" nil t)
           (global-set-key (kbd "M-z") 'avy-zap-up-to-char-dwim)))
     #+end_src
+*** browse-url
+#+begin_src emacs-lisp
+  (with-eval-after-load 'browse-url
+    (eval-and-compile
+      (setq browse-url-browser-function 'eww-browse-url)))
+#+end_src
 *** define-word
     #+begin_src emacs-lisp
       (eval-when-compile
@@ -2343,6 +2415,12 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/esup"))
         (autoload-if-found '(esup) "esup" nil t))
     #+END_SRC
+*** epa-file
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (when (autoload-if-found '(epa-file-enable) "epa-file" nil t)
+      (epa-file-enable)))
+#+end_src
 *** expand-region
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -2364,16 +2442,38 @@
         (message "Install font-lock-studio...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/font-lock-studio")))
     #+END_SRC
-*** TODO gcmh
+*** gcmh
 #+begin_src emacs-lisp
-  ;; (eval-when-compile
-  ;;   (el-get-bundle 'gcmh))
+  (eval-when-compile
+    (el-get-bundle 'gcmh))
 
-  ;; (with-delayed-execution
-  ;;   (message "Install gcmh...")
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/gcmh"))
-  ;;   (when (autoload-if-found '(gcmh-mode) "gcmh" nil t)
-  ;;     (gcmh-mode 1)))
+  (with-delayed-execution
+    (message "Install gcmh...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/gcmh"))
+    (when (autoload-if-found '(gcmh-mode) "gcmh" nil t)
+      (defvar my/gcmh-status nil)
+
+      (gcmh-mode 1)
+
+      (advice-add #'garbage-collect
+                  :before
+                  (defun my/gcmh-log-start (&rest _)
+                    (when gcmh-verbose
+                      (setq my/gcmh-status "Running GC..."))))
+
+      (advice-add #'gcmh-message
+                  :override
+                  (defun my/gcmh-message (format-string &rest args)
+                    (setq akirak/gcmh-status
+                          (apply #'format-message format-string args))
+                    (run-with-timer 2 nil
+                                    (lambda ()
+                                      (setq my/gcmh-status nil)))))
+
+      (with-eval-after-load 'gcmh
+        (eval-and-compile
+          (setq gcmh-verbose t)
+          (setq gcmh-idle-delay 15)))))
 #+end_src
 *** google-this
     #+BEGIN_SRC emacs-lisp
@@ -2393,6 +2493,25 @@
           (add-hook 'prog-mode-hook 'goto-address-prog-mode)
           (add-hook 'text-mode-hook 'goto-address-mode)))
     #+END_SRC
+*** hl-todo
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'hl-todo))
+
+  (with-delayed-execution
+    (message "Install hl-todo...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/hl-todo"))
+    (when (autoload-if-found '(global-hl-todo-mode) "hl-todo" nil t)
+      (global-hl-todo-mode))
+    (with-eval-after-load 'hl-todo
+      (eval-and-compile
+        (setq hl-todo-keyword-faces
+              '(("TODO"   . "#FF0000")
+                ("FIXME"  . "#FF0000")
+                ("DEBUG"  . "#A020F0")
+                ("GOTCHA" . "#FF4500")
+                ("STUB"   . "#1E90FF"))))))
+#+end_src
 *** highlight-indent-guides
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -2498,6 +2617,32 @@
           (add-hook 'emacs-startup-hook (lambda ()
                                           (popwin-mode 1)))))
     #+end_src
+*** power-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'power-mode
+                   :url "https://github.com/elizagamedev/power-mode.el.git"))
+
+  (with-delayed-execution
+    (message "Install power-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/power-mode"))
+    (autoload-if-found '(power-mode) "power-mode" nil t))
+#+end_src
+*** redacted
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'redacted
+                       :url "https://github.com/bkaestner/redacted.el.git"))
+
+      (with-delayed-execution
+        (message "Install redacted...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/redacted"))
+        (when (require 'redacted)
+          (defun my/redacted-mode ()
+            (interactive)
+            (read-only-mode (if redacted-mode -1 1))
+            (redacted-mode (if redacted-mode -1 1)))))
+    #+end_src
 *** smartparens
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -2569,13 +2714,6 @@
       (advice-add #'tab-bar-switch-to-tab :around #'my/advice-completing-read-to-ivy))
 
     (with-eval-after-load 'projectile
-      (defun my/set-tab-name-default (&rest _)
-        (let ((proj-name (projectile-project-name)))
-          (when proj-name
-            (tab-bar-rename-tab proj-name))))
-      (advice-add 'tab-bar-new-tab :after #'my/set-tab-name-default)
-      (add-hook 'window-setup-hook #'my/set-tab-name-default)
-
       (defun my/tab-bar-rename-tab ()
         (interactive)
         (let ((proj-name (projectile-project-name)))
@@ -2619,21 +2757,18 @@
             (insert (uuid-string)))
           (defalias 'my/uuid 'uuid)))
     #+end_src
-*** redacted
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'redacted
-                       :url "https://github.com/bkaestner/redacted.el.git"))
+*** view-lock-mode
+#+begin_src emacs-lisp
+  (eval-and-compile
+    (el-get-bundle 'view-lock-mode
+                   :url "https://github.com/s-fubuki/view-lock-mode.git"))
 
-      (with-delayed-execution
-        (message "Install redacted...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/redacted"))
-        (when (require 'redacted)
-          (defun my/redacted-mode ()
-            (interactive)
-            (read-only-mode (if redacted-mode -1 1))
-            (redacted-mode (if redacted-mode -1 1)))))
-    #+end_src
+  (with-delayed-execution
+    (message "Install view-lock-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/view-lock-mode"))
+    (when (autoload-if-found '(view-lock-timer-setup) "view-lock-mode" nil t)
+      (add-hook 'view-mode-hook #'view-lock-timer-setup)))
+#+end_src
 *** TODO wanderlust
     #+begin_src emacs-lisp
       ;; (eval-when-compile
@@ -2729,7 +2864,7 @@
        (autoload-if-found '(elfeed) "elfeed" nil t)
        (with-eval-after-load 'elfeed
          (eval-and-compile
-           (setq elfeed-search-filter "@3-days-ago +unread")
+           (setq elfeed-search-filter "@1-week-ago +unread")
            (setq browse-url-browser-function 'eww-browse-url))))
    #+end_src
 ** elfeed-org
@@ -2744,7 +2879,8 @@
          (elfeed-org))
        (with-eval-after-load 'elfeed-org
          (eval-and-compile
-           (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org")))))
+           (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org"))
+           (setq rmh-elfeed-org-auto-ignore-invalid-feeds t))))
    #+end_src
 * Eshell
 ** basic
@@ -2866,10 +3002,9 @@
      (with-delayed-execution
        (message "Install org-crypt...")
        (with-eval-after-load 'org-crypt
-         (when (autoload-if-found '(org-crypt-use-before-save-magic) "org-crypt" nil t)
+         (when (autoload-if-found '(org-encrypt-entry org-decrypt-entry org-crypt-use-before-save-magic) "org-crypt" nil t)
            (org-crypt-use-before-save-magic)
            (eval-and-compile
-             (setq org-crypt-key "bararararatty@gmail.com")
              (setq org-tags-exclude-from-inheritance '("crypt"))))))
    #+end_src
 ** org-babel
@@ -2886,9 +3021,11 @@
        (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-go"))
        (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-rust"))
        (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-typescript"))
+
        (with-eval-after-load 'ob-core
          (eval-and-compile
            (setq org-confirm-babel-evaluate nil)))
+
        (with-eval-after-load 'ob-babel
          (org-babel-do-load-languages 'org-babel-load-languages
                                       '((shell . t)

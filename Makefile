@@ -7,6 +7,7 @@ HTMLIZE_URL=https://raw.githubusercontent.com/hniksic/emacs-htmlize/master/htmli
 
 .PHONY: init
 init: compile org-generate
+	mkdir -p ~/.emacs.d/.junk
 
 .PHONY: all
 all: compile org-generate org-to-html

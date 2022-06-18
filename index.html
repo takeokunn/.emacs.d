@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-06-12 Sun 20:52 -->
+<!-- 2022-06-18 Sat 19:39 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Configurations for GNU Emacs</title>
@@ -207,386 +207,397 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orgbf5f8f8">1. はじめに</a>
+<li><a href="#org9e27fed">1. はじめに</a>
 <ul>
-<li><a href="#orgd89bead">1.1. 基本情報</a></li>
+<li><a href="#org44f8195">1.1. 基本情報</a></li>
 </ul>
 </li>
-<li><a href="#org421bdf8">2. Header</a></li>
-<li><a href="#org73e6d4f">3. Boot</a>
+<li><a href="#org80a302b">2. Header</a></li>
+<li><a href="#orga92b42c">3. Boot</a>
 <ul>
-<li><a href="#orgfbde4f3">3.1. env</a></li>
-<li><a href="#org4ea545e">3.2. profile</a></li>
-<li><a href="#org758cb97">3.3. Magic File Name を一時的に無効にする</a></li>
-<li><a href="#org362121a">3.4. 起動時間計測</a></li>
-<li><a href="#org7912135">3.5. async load</a></li>
-<li><a href="#org7a6ec20">3.6. autoload-if-found</a></li>
-<li><a href="#org9ad2b0a">3.7. el-get</a></li>
+<li><a href="#org7b969f3">3.1. env</a></li>
+<li><a href="#org8b94b91">3.2. profile</a></li>
+<li><a href="#org5efeffb">3.3. Magic File Name を一時的に無効にする</a></li>
+<li><a href="#orge4a5d5c">3.4. 起動時間計測</a></li>
+<li><a href="#org63d2242">3.5. async load</a></li>
+<li><a href="#orgf73623c">3.6. autoload-if-found</a></li>
+<li><a href="#org7201f0c">3.7. el-get</a></li>
 </ul>
 </li>
-<li><a href="#org6f8758e">4. Basic</a>
+<li><a href="#orgc984b97">4. Basic</a>
 <ul>
-<li><a href="#org647a78f">4.1. 末尾のスペースを可視化する</a></li>
-<li><a href="#org3be6b80">4.2. 行番号を表示する</a></li>
-<li><a href="#org4f2aad7">4.3. C-kで行削除</a></li>
-<li><a href="#org86d9d7c">4.4. カッコの中をハイライトする</a></li>
-<li><a href="#orgf55d40e">4.5. カッコが自動的に作られるようにする</a></li>
-<li><a href="#org423fd14">4.6. coding system</a></li>
-<li><a href="#org5eca638">4.7. global-auto-revert-mode</a></li>
-<li><a href="#orgca74b8c">4.8. yes/no to y/n</a></li>
-<li><a href="#orgf69a373">4.9. dired-use-ls-dired</a></li>
-<li><a href="#org962bf4a">4.10. keybind</a></li>
-<li><a href="#orge67980d">4.11. common lispを使う</a></li>
-<li><a href="#org6dff7b9">4.12. savehistを有効にする</a></li>
-<li><a href="#orga2aeb1f">4.13. [mac] clipboardに入るようにする</a></li>
-<li><a href="#orga0677ab">4.14. native compを無効にする</a></li>
-<li><a href="#org2a761bd">4.15. native compのwarningを抑える</a></li>
+<li><a href="#org584e824">4.1. 末尾のスペースを可視化する</a></li>
+<li><a href="#orgcf1af3f">4.2. 行番号を表示する</a></li>
+<li><a href="#org4a387ad">4.3. C-kで行削除</a></li>
+<li><a href="#org5c1e38e">4.4. カッコの中をハイライトする</a></li>
+<li><a href="#org87b4a7f">4.5. カッコが自動的に作られるようにする</a></li>
+<li><a href="#org1a3eacc">4.6. coding system</a></li>
+<li><a href="#org8072b43">4.7. global-auto-revert-mode</a></li>
+<li><a href="#orgd9a9ee6">4.8. yes/no to y/n</a></li>
+<li><a href="#org791d59f">4.9. dired-use-ls-dired</a></li>
+<li><a href="#orgc4a7995">4.10. keybind</a></li>
+<li><a href="#orgd901b3e">4.11. common lispを使う</a></li>
+<li><a href="#org5ffd889">4.12. savehistを有効にする</a></li>
+<li><a href="#org8007156">4.13. [mac] clipboardに入るようにする</a></li>
+<li><a href="#org5586160">4.14. pluginをnative compする</a></li>
+<li><a href="#org6788200">4.15. native compを無効にする</a></li>
+<li><a href="#orgd3dcf95">4.16. native compのwarningを抑える</a></li>
+<li><a href="#org6e64b8b">4.17. 同一bufferの名前を変える</a></li>
 </ul>
 </li>
-<li><a href="#org33bf9fa">5. Utility</a>
+<li><a href="#org493da0d">5. Utility</a>
 <ul>
-<li><a href="#org1bdd2eb">5.1. dash</a></li>
-<li><a href="#org221fe87">5.2. mustache</a></li>
-<li><a href="#orgb8fe975">5.3. f</a></li>
-<li><a href="#org78a2d52">5.4. s</a></li>
-<li><a href="#org399e9c3">5.5. ht</a></li>
-<li><a href="#org99ee215">5.6. lv</a></li>
-<li><a href="#orga7da431">5.7. spinner</a></li>
-<li><a href="#orge27908a">5.8. shrink-path</a></li>
-<li><a href="#orgf4f99ca">5.9. compat</a></li>
+<li><a href="#org74aff50">5.1. dash</a></li>
+<li><a href="#org7ff98e0">5.2. mustache</a></li>
+<li><a href="#orgd5def94">5.3. f</a></li>
+<li><a href="#orgf2b3a81">5.4. s</a></li>
+<li><a href="#orgb73b370">5.5. ht</a></li>
+<li><a href="#org4ae2050">5.6. lv</a></li>
+<li><a href="#orge8a3594">5.7. spinner</a></li>
+<li><a href="#orge5f8a59">5.8. shrink-path</a></li>
+<li><a href="#org8236c4f">5.9. compat</a></li>
 </ul>
 </li>
-<li><a href="#org3b86c43">6. Language</a>
+<li><a href="#org24bb9a0">6. Language</a>
 <ul>
-<li><a href="#orgf27a1ba">6.1. apache-mode</a></li>
-<li><a href="#org07cec52">6.2. c++-mode</a></li>
-<li><a href="#org52c47d4">6.3. c-mode</a></li>
-<li><a href="#org3648845">6.4. clojure-mode</a></li>
-<li><a href="#org2156c33">6.5. cmake-mode</a></li>
-<li><a href="#org4d58497">6.6. coffee-mode</a></li>
-<li><a href="#org4cda32e">6.7. csharp-mode</a></li>
-<li><a href="#orgedab2b8">6.8. css-mode</a></li>
-<li><a href="#org2fbfdb4">6.9. csv-mode</a></li>
-<li><a href="#org0f966fb">6.10. dart-mode</a></li>
-<li><a href="#org12f2113">6.11. docker-compose-mode</a></li>
-<li><a href="#org50191ee">6.12. dockerfile-mode</a></li>
-<li><a href="#orgaaff48c">6.13. dotenv-mode</a></li>
-<li><a href="#orge6773c0">6.14. emmet-mode</a></li>
-<li><a href="#org728348a">6.15. fish-mode</a></li>
-<li><a href="#org91ea7bd">6.16. git-modes</a></li>
-<li><a href="#org50a6e00">6.17. glsl-mode</a></li>
-<li><a href="#org9ae14d6">6.18. go-mode</a></li>
-<li><a href="#org85c660b">6.19. gradle-mode</a></li>
-<li><a href="#org14ae3ca">6.20. graphql-mode</a></li>
-<li><a href="#org3956c3e">6.21. haskell-mode</a></li>
-<li><a href="#org1ce9a5e">6.22. java-mode</a></li>
-<li><a href="#orgee8eb99">6.23. js2-mode</a></li>
-<li><a href="#org471def8">6.24. json-mode</a></li>
-<li><a href="#orgec04a3e">6.25. lisp-mode</a></li>
-<li><a href="#org8c48ba7">6.26. markdown-mode</a></li>
-<li><a href="#org86cbfdc">6.27. makefile-mode</a></li>
-<li><a href="#org5b3c586">6.28. neon-mode</a></li>
-<li><a href="#org6728ed1">6.29. nginx-mode</a></li>
-<li><a href="#orgdc273b2">6.30. php-mode</a></li>
-<li><a href="#orgd7e78cb">6.31. phpt-mode</a></li>
-<li><a href="#orgc96dbab">6.32. plantuml-mode</a></li>
-<li><a href="#org1c41789">6.33. prisma-mode</a></li>
-<li><a href="#org6575a9b">6.34. processing-mode</a></li>
-<li><a href="#org24e266a">6.35. python-mode</a></li>
-<li><a href="#orgc9df5e9">6.36. ruby-mode</a></li>
-<li><a href="#orga63a6a7">6.37. rust-mode</a></li>
-<li><a href="#orga9076f1">6.38. scala-mode</a></li>
-<li><a href="#orgc2e1f76">6.39. scheme-mode</a></li>
-<li><a href="#orgbce1f19">6.40. scss-mode</a></li>
-<li><a href="#org2cac1cc">6.41. slim-mode</a></li>
-<li><a href="#orgddd8523">6.42. solidity-mode</a></li>
-<li><a href="#org8a89451">6.43. ssh-config-mode</a></li>
-<li><a href="#org41464ad">6.44. sql-mode</a></li>
-<li><a href="#org8333f71">6.45. swift-mode</a></li>
-<li><a href="#orgd5420c7">6.46. terrafoprm-mode</a></li>
-<li><a href="#orgafdaa64">6.47. text-mode</a></li>
-<li><a href="#orgc670de4">6.48. toml-mode</a></li>
-<li><a href="#org8f5dc61">6.49. typescript-mode</a></li>
-<li><a href="#orgf55aac1">6.50. v-mode</a></li>
-<li><a href="#org191e203">6.51. vue-mode</a></li>
-<li><a href="#org2d0040f">6.52. vimrc-mode</a></li>
-<li><a href="#org39a7507">6.53. wat-mode</a></li>
-<li><a href="#org5b71533">6.54. web-mode</a></li>
-<li><a href="#org397bf63">6.55. yaml-mode</a></li>
+<li><a href="#orgf90de6f">6.1. apache-mode</a></li>
+<li><a href="#org8f4deee">6.2. c++-mode</a></li>
+<li><a href="#orgfa5bf4f">6.3. c-mode</a></li>
+<li><a href="#orgbb5bd45">6.4. clojure-mode</a></li>
+<li><a href="#org703111e">6.5. cmake-mode</a></li>
+<li><a href="#org2e44122">6.6. coffee-mode</a></li>
+<li><a href="#orgbd28bd6">6.7. csharp-mode</a></li>
+<li><a href="#org0e2bf86">6.8. css-mode</a></li>
+<li><a href="#org1fb4db6">6.9. csv-mode</a></li>
+<li><a href="#orgfb4f5eb">6.10. dart-mode</a></li>
+<li><a href="#orgb48908c">6.11. docker-compose-mode</a></li>
+<li><a href="#orge068824">6.12. dockerfile-mode</a></li>
+<li><a href="#orgbfa6c37">6.13. dotenv-mode</a></li>
+<li><a href="#org490c94e">6.14. emmet-mode</a></li>
+<li><a href="#orge237120">6.15. fish-mode</a></li>
+<li><a href="#orgfc3d32e">6.16. git-modes</a></li>
+<li><a href="#orgfda6c3d">6.17. glsl-mode</a></li>
+<li><a href="#orga0f343d">6.18. go-mode</a></li>
+<li><a href="#org357c02c">6.19. gradle-mode</a></li>
+<li><a href="#org42897b6">6.20. graphql-mode</a></li>
+<li><a href="#org6d869b2">6.21. haskell-mode</a></li>
+<li><a href="#org6c1ae2d">6.22. java-mode</a></li>
+<li><a href="#orgc028616">6.23. js2-mode</a></li>
+<li><a href="#org4f6cfc3">6.24. json-mode</a></li>
+<li><a href="#org574cca9">6.25. jq-mode</a></li>
+<li><a href="#orgd38b755">6.26. lisp-mode</a></li>
+<li><a href="#org9283617">6.27. markdown-mode</a></li>
+<li><a href="#org7d52d83">6.28. makefile-mode</a></li>
+<li><a href="#org398e6f5">6.29. neon-mode</a></li>
+<li><a href="#org68ac5df">6.30. nix-mode</a></li>
+<li><a href="#org8595704">6.31. nginx-mode</a></li>
+<li><a href="#orgd0e9a58">6.32. php-mode</a></li>
+<li><a href="#org8f2f60c">6.33. phpt-mode</a></li>
+<li><a href="#org96068a1">6.34. plantuml-mode</a></li>
+<li><a href="#org23bef5d">6.35. prisma-mode</a></li>
+<li><a href="#org0518914">6.36. processing-mode</a></li>
+<li><a href="#org3225df7">6.37. python-mode</a></li>
+<li><a href="#org453fde5">6.38. robots-txt-mode</a></li>
+<li><a href="#orga2298dd">6.39. ruby-mode</a></li>
+<li><a href="#orgff40f6c">6.40. rust-mode</a></li>
+<li><a href="#orgf0fb398">6.41. scala-mode</a></li>
+<li><a href="#org6d91949">6.42. scheme-mode</a></li>
+<li><a href="#orge246783">6.43. scss-mode</a></li>
+<li><a href="#orgd324eed">6.44. slim-mode</a></li>
+<li><a href="#orgb56e165">6.45. solidity-mode</a></li>
+<li><a href="#orgc9ada13">6.46. ssh-config-mode</a></li>
+<li><a href="#org4ff8ebf">6.47. sql-mode</a></li>
+<li><a href="#org546aa00">6.48. swift-mode</a></li>
+<li><a href="#orgd802b9d">6.49. terrafoprm-mode</a></li>
+<li><a href="#orgd56f220">6.50. text-mode</a></li>
+<li><a href="#orgbd1c310">6.51. toml-mode</a></li>
+<li><a href="#orgdeb019a">6.52. typescript-mode</a></li>
+<li><a href="#orgb4388af">6.53. v-mode</a></li>
+<li><a href="#orge56e595">6.54. vue-mode</a></li>
+<li><a href="#org4e55f07">6.55. vimrc-mode</a></li>
+<li><a href="#orga02906e">6.56. wat-mode</a></li>
+<li><a href="#org20351a0">6.57. web-mode</a></li>
+<li><a href="#org852037c">6.58. yaml-mode</a></li>
 </ul>
 </li>
-<li><a href="#org49c88c3">7. Lisp</a>
+<li><a href="#org2f15e58">7. Lisp</a>
 <ul>
-<li><a href="#orgc15b52d">7.1. Basic</a>
+<li><a href="#orged75787">7.1. Basic</a>
 <ul>
-<li><a href="#orge73c43e">7.1.1. paredit</a></li>
-<li><a href="#orgd8725cb">7.1.2. rainbow-delimiter</a></li>
+<li><a href="#org2a47739">7.1.1. paredit</a></li>
+<li><a href="#orge18c649">7.1.2. rainbow-delimiter</a></li>
 </ul>
 </li>
-<li><a href="#org5bfd2b5">7.2. CommonLisp</a>
+<li><a href="#org9943508">7.2. CommonLisp</a>
 <ul>
-<li><a href="#org913b946">7.2.1. <span class="todo TODO">TODO</span> slime/slime-company</a></li>
-<li><a href="#org35f38e8">7.2.2. hyperspec</a></li>
-<li><a href="#org5f78b72">7.2.3. my/slime-history</a></li>
+<li><a href="#org876a82c">7.2.1. <span class="todo TODO">TODO</span> slime/slime-company</a></li>
+<li><a href="#org91b3cf8">7.2.2. hyperspec</a></li>
+<li><a href="#orgaa01b13">7.2.3. my/slime-history</a></li>
 </ul>
 </li>
-<li><a href="#org5aa4270">7.3. EmacsLisp</a>
+<li><a href="#org73a7d9f">7.3. EmacsLisp</a>
 <ul>
-<li><a href="#org577ca8f">7.3.1. elisp-slime-nav</a></li>
-<li><a href="#org996324a">7.3.2. nameless</a></li>
-<li><a href="#orgc7ecfae">7.3.3. my/ielm-history</a></li>
+<li><a href="#orgbfc80b3">7.3.1. elisp-slime-nav</a></li>
+<li><a href="#org98510d1">7.3.2. nameless</a></li>
+<li><a href="#org5075ccf">7.3.3. my/ielm-history</a></li>
 </ul>
 </li>
-<li><a href="#org4849499">7.4. Clojure</a>
+<li><a href="#org5229045">7.4. Clojure</a>
 <ul>
-<li><a href="#org1c35980">7.4.1. cider</a></li>
-<li><a href="#org4e84109">7.4.2. clojure-cheatsheet</a></li>
-<li><a href="#org120ab40">7.4.3. kibit-helper</a></li>
-<li><a href="#org8a5f1f0">7.4.4. clj-refactor</a></li>
-<li><a href="#org90c289c">7.4.5. inf-clojure</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#org35a51d9">8. Awesome Package</a>
-<ul>
-<li><a href="#orgd7ef014">8.1. Check</a>
-<ul>
-<li><a href="#org072a42f">8.1.1. flycheck</a></li>
-</ul>
-</li>
-<li><a href="#org9eb1128">8.2. Search</a>
-<ul>
-<li><a href="#org512b794">8.2.1. el-get</a></li>
-<li><a href="#org4d52f54">8.2.2. swiper</a></li>
-<li><a href="#org9e3b13d">8.2.3. counsel</a></li>
-<li><a href="#org7b4b689">8.2.4. ivy</a></li>
-<li><a href="#orgb3c8019">8.2.5. ivy-rich</a></li>
-</ul>
-</li>
-<li><a href="#org805eea6">8.3. Theme</a>
-<ul>
-<li><a href="#orgd49bd9f">8.3.1. all-the-icons</a></li>
-<li><a href="#org88666e9">8.3.2. all-the-icons-dired</a></li>
-<li><a href="#orgcd14c5a">8.3.3. all-the-icons-ivy-rich</a></li>
-<li><a href="#org14f2e45">8.3.4. dashboard</a></li>
-<li><a href="#org6886f98">8.3.5. doom-themes</a></li>
-<li><a href="#orgea2f1da">8.3.6. doom-modeline</a></li>
-<li><a href="#orgf2adf1a">8.3.7. hl-line</a></li>
-<li><a href="#org7278db4">8.3.8. neotree</a></li>
-<li><a href="#org52ab92e">8.3.9. nyan-mode</a></li>
-</ul>
-</li>
-<li><a href="#org4d26b35">8.4. Project</a>
-<ul>
-<li><a href="#org12e47e4">8.4.1. projectile</a></li>
-<li><a href="#orgfaa937f">8.4.2. counsel-projectile</a></li>
-</ul>
-</li>
-<li><a href="#org46fffff">8.5. Refactor</a>
-<ul>
-<li><a href="#org062d334">8.5.1. emr</a></li>
-</ul>
-</li>
-<li><a href="#org65edbf8">8.6. Completion</a>
-<ul>
-<li><a href="#org20e67a4">8.6.1. company</a></li>
-<li><a href="#orge2bb2ef">8.6.2. company-box</a></li>
-<li><a href="#org4ac53cb">8.6.3. company-dockerfile</a></li>
-<li><a href="#orgd24015f">8.6.4. company-glsl</a></li>
-<li><a href="#org9ba45d7">8.6.5. company-c-headers</a></li>
-<li><a href="#orgaef0480">8.6.6. company-shell</a></li>
-<li><a href="#org5b63820">8.6.7. company-terraform</a></li>
-<li><a href="#org59be944">8.6.8. company-nginx</a></li>
-<li><a href="#org53a3408">8.6.9. company-gemoji</a></li>
-</ul>
-</li>
-<li><a href="#orgc237d1e">8.7. Snippet</a>
-<ul>
-<li><a href="#orgcde90e7">8.7.1. yasnippet</a></li>
-<li><a href="#org33fe86c">8.7.2. ivy-yasnippet</a></li>
-</ul>
-</li>
-<li><a href="#orgbe42114">8.8. LSP</a>
-<ul>
-<li><a href="#org21be46b">8.8.1. lsp-mode</a></li>
-<li><a href="#org1ff4207">8.8.2. dap-mode</a></li>
-<li><a href="#org60f604d">8.8.3. lsp-ui</a></li>
-</ul>
-</li>
-<li><a href="#org3afa127">8.9. Git</a>
-<ul>
-<li><a href="#org9192e3d">8.9.1. magit</a></li>
-<li><a href="#orgb6bd9e3">8.9.2. magit-forge</a></li>
-</ul>
-</li>
-<li><a href="#org34b5834">8.10. Shell</a>
-<ul>
-<li><a href="#org50b7de6">8.10.1. exec-path-from-shell</a></li>
-</ul>
-</li>
-<li><a href="#org57d4919">8.11. Cpp</a>
-<ul>
-<li><a href="#org255b222">8.11.1. clang-format</a></li>
-<li><a href="#orgd0a00ab">8.11.2. inferior-cling</a></li>
-</ul>
-</li>
-<li><a href="#orgd7240fa">8.12. JavaScript/TypeScript</a>
-<ul>
-<li><a href="#org8b16897">8.12.1. js2-refactor</a></li>
-<li><a href="#orgcfe72b7">8.12.2. tree-sitter</a></li>
-</ul>
-</li>
-<li><a href="#org3d87b0f">8.13. Ruby</a>
-<ul>
-<li><a href="#orgb6f07db">8.13.1. robe</a></li>
-<li><a href="#orge67e007">8.13.2. rubocop</a></li>
-<li><a href="#org495c5d7">8.13.3. ruby-refactor</a></li>
-<li><a href="#org14a5866">8.13.4. inf-ruby</a></li>
-</ul>
-</li>
-<li><a href="#orgfbd4f03">8.14. SQL</a>
-<ul>
-<li><a href="#org9f684a5">8.14.1. sql-indent</a></li>
-</ul>
-</li>
-<li><a href="#org15d741a">8.15. PHP</a>
-<ul>
-<li><a href="#org723357f">8.15.1. psysh</a></li>
-<li><a href="#orgff056e6">8.15.2. laravel-tinker-repl</a></li>
-<li><a href="#orgc742ebc">8.15.3. emacs-php-doc-block</a></li>
-</ul>
-</li>
-<li><a href="#org56d1c7c">8.16. Markdown</a>
-<ul>
-<li><a href="#orgad0ebfa">8.16.1. poly-markdown</a></li>
-</ul>
-</li>
-<li><a href="#orgff294e1">8.17. Fish</a>
-<ul>
-<li><a href="#org4689741">8.17.1. fish-repl</a></li>
-</ul>
-</li>
-<li><a href="#org6e36da9">8.18. NodeJS</a>
-<ul>
-<li><a href="#org60fcc74">8.18.1. nodejs-repl</a></li>
-</ul>
-</li>
-<li><a href="#org1fc40b5">8.19. File</a>
-<ul>
-<li><a href="#org27266b9">8.19.1. recentf</a></li>
-<li><a href="#orgbc7466e">8.19.2. open-junk-file</a></li>
-</ul>
-</li>
-<li><a href="#orgb6b0177">8.20. Cursor</a>
-<ul>
-<li><a href="#orgb7823c6">8.20.1. multiple-cursors</a></li>
-</ul>
-</li>
-<li><a href="#org8d376f0">8.21. Other</a>
-<ul>
-<li><a href="#org49d3566">8.21.1. ansi-color</a></li>
-<li><a href="#orga302c12">8.21.2. auto-save-buffers-enhanced</a></li>
-<li><a href="#orgc7474d8">8.21.3. amx</a></li>
-<li><a href="#orga5d087c">8.21.4. avy</a></li>
-<li><a href="#org6bd18cb">8.21.5. avy-zap</a></li>
-<li><a href="#org30a4190">8.21.6. define-word</a></li>
-<li><a href="#org00785f9">8.21.7. ddskk</a></li>
-<li><a href="#org8e528f7">8.21.8. editorconfig</a></li>
-<li><a href="#org344d94e">8.21.9. esup</a></li>
-<li><a href="#org77b8b4b">8.21.10. expand-region</a></li>
-<li><a href="#org0b1fabb">8.21.11. font-lock-studio</a></li>
-<li><a href="#org441e006">8.21.12. <span class="todo TODO">TODO</span> gcmh</a></li>
-<li><a href="#org213c7ff">8.21.13. google-this</a></li>
-<li><a href="#org9b8a2b1">8.21.14. goto-addr</a></li>
-<li><a href="#orgc2fc927">8.21.15. highlight-indent-guides</a></li>
-<li><a href="#orgde0c1b3">8.21.16. htmlize</a></li>
-<li><a href="#org77e3212">8.21.17. keyfreq</a></li>
-<li><a href="#org9b4fa95">8.21.18. lorem ipsum</a></li>
-<li><a href="#orgf16b62e">8.21.19. minimap</a></li>
-<li><a href="#org416127b">8.21.20. origami</a></li>
-<li><a href="#orge5ec6fc">8.21.21. persistent-scratch</a></li>
-<li><a href="#orgbfd9054">8.21.22. popwin</a></li>
-<li><a href="#orga07d9eb">8.21.23. smartparens</a></li>
-<li><a href="#org334cd17">8.21.24. smart-jump</a></li>
-<li><a href="#orge7ef664">8.21.25. subword</a></li>
-<li><a href="#orgf5fc074">8.21.26. tab-bar</a></li>
-<li><a href="#orge1807f7">8.21.27. undo-tree</a></li>
-<li><a href="#orgc55b86e">8.21.28. uuid</a></li>
-<li><a href="#org578b3dd">8.21.29. redacted</a></li>
-<li><a href="#org904b381">8.21.30. <span class="todo TODO">TODO</span> wanderlust</a></li>
-<li><a href="#orgba2faad">8.21.31. which-key</a></li>
-<li><a href="#orgf58bec8">8.21.32. whitespace</a></li>
-<li><a href="#org04ccfa1">8.21.33. woman</a></li>
-<li><a href="#org899664f">8.21.34. writer-mode</a></li>
-<li><a href="#orge601c00">8.21.35. zoom-window</a></li>
+<li><a href="#org2fb47b1">7.4.1. cider</a></li>
+<li><a href="#orgc998ca1">7.4.2. clojure-cheatsheet</a></li>
+<li><a href="#org5dcd14d">7.4.3. kibit-helper</a></li>
+<li><a href="#org9be0be8">7.4.4. clj-refactor</a></li>
+<li><a href="#org125a10c">7.4.5. inf-clojure</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#orgf719a45">9. Elfeed</a>
+<li><a href="#orgf494b39">8. Awesome Package</a>
 <ul>
-<li><a href="#org1de581a">9.1. elfeed</a></li>
-<li><a href="#org666b660">9.2. elfeed-org</a></li>
+<li><a href="#orgdef9b1b">8.1. Check</a>
+<ul>
+<li><a href="#org0c400bb">8.1.1. flycheck</a></li>
 </ul>
 </li>
-<li><a href="#org75af39d">10. Eshell</a>
+<li><a href="#orgb28c812">8.2. Search</a>
 <ul>
-<li><a href="#orga0dda7b">10.1. basic</a></li>
-<li><a href="#orgf0e8b42">10.2. eshell-z</a></li>
-<li><a href="#orgc880f36">10.3. <span class="todo TODO">TODO</span> aweshell</a></li>
-<li><a href="#orga7bdb5d">10.4. emacs-fish-completion</a></li>
+<li><a href="#org6c9a302">8.2.1. el-get</a></li>
+<li><a href="#org7d64d88">8.2.2. swiper</a></li>
+<li><a href="#orgfde198c">8.2.3. counsel</a></li>
+<li><a href="#orgd5bc9f1">8.2.4. ivy</a></li>
+<li><a href="#org566c585">8.2.5. ivy-rich</a></li>
 </ul>
 </li>
-<li><a href="#orgf9990b3">11. Org Mode</a>
+<li><a href="#org2ff4d15">8.3. Theme</a>
 <ul>
-<li><a href="#org2883442">11.1. basic</a></li>
-<li><a href="#orga0ac6f6">11.2. org-id</a></li>
-<li><a href="#org8c4e2cb">11.3. org-crypt</a></li>
-<li><a href="#orgca1a3c8">11.4. org-babel</a></li>
-<li><a href="#org48d1238">11.5. org-journal</a></li>
-<li><a href="#org3224363">11.6. org-superstar</a></li>
-<li><a href="#orgc08b589">11.7. org-generate</a></li>
-<li><a href="#org84391c8">11.8. org-pomodoro</a></li>
-<li><a href="#org4b8b71f">11.9. org-view-mode</a></li>
+<li><a href="#org3a11d6c">8.3.1. all-the-icons</a></li>
+<li><a href="#orgf74fc24">8.3.2. all-the-icons-dired</a></li>
+<li><a href="#orgf62bf23">8.3.3. all-the-icons-ivy-rich</a></li>
+<li><a href="#orgf425f62">8.3.4. dashboard</a></li>
+<li><a href="#orgdeab0a6">8.3.5. doom-themes</a></li>
+<li><a href="#org5dc9f8d">8.3.6. doom-modeline</a></li>
+<li><a href="#org54544ac">8.3.7. hl-line</a></li>
+<li><a href="#orgf75b742">8.3.8. neotree</a></li>
+<li><a href="#org1a912e2">8.3.9. nyan-mode</a></li>
 </ul>
 </li>
-<li><a href="#orgc28e49e">12. EAF</a>
+<li><a href="#orgee53fd2">8.4. Project</a>
 <ul>
-<li><a href="#orgdcb8b3a">12.1. basic</a></li>
+<li><a href="#org33c645d">8.4.1. projectile</a></li>
+<li><a href="#org2202daf">8.4.2. counsel-projectile</a></li>
 </ul>
 </li>
-<li><a href="#org0ff847f">13. MyFunc</a>
+<li><a href="#org87807d3">8.5. Refactor</a>
 <ul>
-<li><a href="#orgb33088a">13.1. my/beginning-of-intendation</a></li>
-<li><a href="#orgabe34e2">13.2. my/before-set-auto-mode</a></li>
-<li><a href="#orgab32b23">13.3. my/copy-buffer</a></li>
-<li><a href="#org3ea3fba">13.4. my/ghq-get</a></li>
-<li><a href="#org829de70">13.5. my/gh-browse</a></li>
-<li><a href="#orgdbe9c30">13.6. my/indent-all</a></li>
-<li><a href="#org96977a2">13.7. my/move-line</a></li>
-<li><a href="#orgcad3fc1">13.8. my/reload-major-mode</a></li>
-<li><a href="#org059d3eb">13.9. my/toggle-read-only-mode</a></li>
-<li><a href="#org89b62a2">13.10. my/toggle-kill-emacs</a></li>
-<li><a href="#org8276acd">13.11. my/get-class-name-by-file-name</a></li>
+<li><a href="#org7fefe82">8.5.1. emr</a></li>
 </ul>
 </li>
-<li><a href="#orga4e5d0a">14. footer</a>
+<li><a href="#org57aa795">8.6. Completion</a>
 <ul>
-<li><a href="#orgd6aafa1">14.1. Magic File Name を有効にする</a></li>
-<li><a href="#org99cea3d">14.2. profilerを終了する</a></li>
+<li><a href="#org7e3cff3">8.6.1. company</a></li>
+<li><a href="#orgd7147ec">8.6.2. company-box</a></li>
+<li><a href="#orgee4da0e">8.6.3. company-dockerfile</a></li>
+<li><a href="#org0180715">8.6.4. company-glsl</a></li>
+<li><a href="#org520370d">8.6.5. company-c-headers</a></li>
+<li><a href="#orgd579362">8.6.6. company-shell</a></li>
+<li><a href="#org5a9c92a">8.6.7. company-terraform</a></li>
+<li><a href="#orgc644d75">8.6.8. company-nginx</a></li>
+<li><a href="#orgf73db65">8.6.9. company-gemoji</a></li>
+</ul>
+</li>
+<li><a href="#org181524d">8.7. Snippet</a>
+<ul>
+<li><a href="#org990cb14">8.7.1. yasnippet</a></li>
+<li><a href="#org472e39a">8.7.2. ivy-yasnippet</a></li>
+</ul>
+</li>
+<li><a href="#orgf78ca73">8.8. LSP</a>
+<ul>
+<li><a href="#org2e9c629">8.8.1. lsp-mode</a></li>
+<li><a href="#orgb405f98">8.8.2. dap-mode</a></li>
+<li><a href="#org7a38e9d">8.8.3. lsp-ui</a></li>
+</ul>
+</li>
+<li><a href="#org2c2078b">8.9. Git</a>
+<ul>
+<li><a href="#org20871f9">8.9.1. magit</a></li>
+<li><a href="#org13f3382">8.9.2. magit-forge</a></li>
+</ul>
+</li>
+<li><a href="#org62ddd60">8.10. Shell</a>
+<ul>
+<li><a href="#orgd26f831">8.10.1. exec-path-from-shell</a></li>
+</ul>
+</li>
+<li><a href="#org7335c1f">8.11. Cpp</a>
+<ul>
+<li><a href="#org9446e8a">8.11.1. clang-format</a></li>
+<li><a href="#orgc64636f">8.11.2. inferior-cling</a></li>
+</ul>
+</li>
+<li><a href="#org000d555">8.12. JavaScript/TypeScript</a>
+<ul>
+<li><a href="#org46a8df4">8.12.1. js2-refactor</a></li>
+<li><a href="#org0ff483f">8.12.2. tree-sitter</a></li>
+</ul>
+</li>
+<li><a href="#org4b2dc77">8.13. Ruby</a>
+<ul>
+<li><a href="#org816e969">8.13.1. robe</a></li>
+<li><a href="#org8523c14">8.13.2. rubocop</a></li>
+<li><a href="#org20961f9">8.13.3. ruby-refactor</a></li>
+<li><a href="#org6e6a610">8.13.4. inf-ruby</a></li>
+</ul>
+</li>
+<li><a href="#org0afae69">8.14. SQL</a>
+<ul>
+<li><a href="#org220c73e">8.14.1. sql-indent</a></li>
+</ul>
+</li>
+<li><a href="#org773fca0">8.15. PHP</a>
+<ul>
+<li><a href="#org65010b6">8.15.1. psysh</a></li>
+<li><a href="#org8de45b0">8.15.2. laravel-tinker-repl</a></li>
+<li><a href="#orgf118f67">8.15.3. emacs-php-doc-block</a></li>
+</ul>
+</li>
+<li><a href="#org63e1ee7">8.16. Markdown</a>
+<ul>
+<li><a href="#org99ab038">8.16.1. poly-markdown</a></li>
+<li><a href="#org498085d">8.16.2. markdown-preview-mode</a></li>
+</ul>
+</li>
+<li><a href="#orga6f37ab">8.17. Fish</a>
+<ul>
+<li><a href="#org13fadf2">8.17.1. fish-repl</a></li>
+</ul>
+</li>
+<li><a href="#orgcb04f22">8.18. NodeJS</a>
+<ul>
+<li><a href="#org45cd4f9">8.18.1. nodejs-repl</a></li>
+</ul>
+</li>
+<li><a href="#org63ce8ea">8.19. File</a>
+<ul>
+<li><a href="#org058a738">8.19.1. recentf</a></li>
+<li><a href="#org8d9416a">8.19.2. open-junk-file</a></li>
+</ul>
+</li>
+<li><a href="#org0dc8f47">8.20. Cursor</a>
+<ul>
+<li><a href="#org7fa4d6d">8.20.1. multiple-cursors</a></li>
+</ul>
+</li>
+<li><a href="#orgdf390da">8.21. Other</a>
+<ul>
+<li><a href="#orga89b8ce">8.21.1. ansi-color</a></li>
+<li><a href="#orgb4f9590">8.21.2. auto-save-buffers-enhanced</a></li>
+<li><a href="#orgbf9c69d">8.21.3. amx</a></li>
+<li><a href="#orgce3fdb0">8.21.4. avy</a></li>
+<li><a href="#org0d5adb7">8.21.5. avy-zap</a></li>
+<li><a href="#org199ffa3">8.21.6. browse-url</a></li>
+<li><a href="#org9015ac4">8.21.7. define-word</a></li>
+<li><a href="#org44c4b80">8.21.8. ddskk</a></li>
+<li><a href="#orgd6180cd">8.21.9. editorconfig</a></li>
+<li><a href="#org2c4c455">8.21.10. esup</a></li>
+<li><a href="#org61a821f">8.21.11. epa-file</a></li>
+<li><a href="#orgc3dc917">8.21.12. expand-region</a></li>
+<li><a href="#orga3343c2">8.21.13. font-lock-studio</a></li>
+<li><a href="#orga4ab95b">8.21.14. gcmh</a></li>
+<li><a href="#orgcccb890">8.21.15. google-this</a></li>
+<li><a href="#orgaed428f">8.21.16. goto-addr</a></li>
+<li><a href="#orgfb043ff">8.21.17. hl-todo</a></li>
+<li><a href="#orge07124d">8.21.18. highlight-indent-guides</a></li>
+<li><a href="#orgb308fe2">8.21.19. htmlize</a></li>
+<li><a href="#orgde55c30">8.21.20. keyfreq</a></li>
+<li><a href="#org56a20ca">8.21.21. lorem ipsum</a></li>
+<li><a href="#org249c3c3">8.21.22. minimap</a></li>
+<li><a href="#org685c59f">8.21.23. origami</a></li>
+<li><a href="#org2f6d0c9">8.21.24. persistent-scratch</a></li>
+<li><a href="#org4bc9747">8.21.25. popwin</a></li>
+<li><a href="#org057c80f">8.21.26. power-mode</a></li>
+<li><a href="#orgfef51a6">8.21.27. redacted</a></li>
+<li><a href="#org3b4a944">8.21.28. smartparens</a></li>
+<li><a href="#orga221098">8.21.29. smart-jump</a></li>
+<li><a href="#orga41f7f4">8.21.30. subword</a></li>
+<li><a href="#orgabe3fe4">8.21.31. tab-bar</a></li>
+<li><a href="#org4758c36">8.21.32. undo-tree</a></li>
+<li><a href="#org34aa106">8.21.33. uuid</a></li>
+<li><a href="#org2100136">8.21.34. view-lock-mode</a></li>
+<li><a href="#org6f29130">8.21.35. <span class="todo TODO">TODO</span> wanderlust</a></li>
+<li><a href="#org7277f1a">8.21.36. which-key</a></li>
+<li><a href="#org2ad47c3">8.21.37. whitespace</a></li>
+<li><a href="#org5d35464">8.21.38. woman</a></li>
+<li><a href="#orgbb2e31a">8.21.39. writer-mode</a></li>
+<li><a href="#orgc33112b">8.21.40. zoom-window</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org140d3b9">9. Elfeed</a>
+<ul>
+<li><a href="#org311ad97">9.1. elfeed</a></li>
+<li><a href="#orgfd5c89f">9.2. elfeed-org</a></li>
+</ul>
+</li>
+<li><a href="#org7d88ffa">10. Eshell</a>
+<ul>
+<li><a href="#org7762503">10.1. basic</a></li>
+<li><a href="#org12efa18">10.2. eshell-z</a></li>
+<li><a href="#orga19571c">10.3. <span class="todo TODO">TODO</span> aweshell</a></li>
+<li><a href="#org0182bfa">10.4. emacs-fish-completion</a></li>
+</ul>
+</li>
+<li><a href="#org783f90c">11. Org Mode</a>
+<ul>
+<li><a href="#orgb4d87f2">11.1. basic</a></li>
+<li><a href="#orgcee38b6">11.2. org-id</a></li>
+<li><a href="#org9b3f894">11.3. org-crypt</a></li>
+<li><a href="#orga0185aa">11.4. org-babel</a></li>
+<li><a href="#orgb941b23">11.5. org-journal</a></li>
+<li><a href="#org6a63caa">11.6. org-superstar</a></li>
+<li><a href="#org6ae08ae">11.7. org-generate</a></li>
+<li><a href="#orgb2df2ed">11.8. org-pomodoro</a></li>
+<li><a href="#org1c45dbd">11.9. org-view-mode</a></li>
+</ul>
+</li>
+<li><a href="#org2e3c0e4">12. EAF</a>
+<ul>
+<li><a href="#org37fc4a8">12.1. basic</a></li>
+</ul>
+</li>
+<li><a href="#orge22d48a">13. MyFunc</a>
+<ul>
+<li><a href="#org65e5770">13.1. my/beginning-of-intendation</a></li>
+<li><a href="#org610e8ba">13.2. my/before-set-auto-mode</a></li>
+<li><a href="#org0c6ceb4">13.3. my/copy-buffer</a></li>
+<li><a href="#org57dfcb8">13.4. my/ghq-get</a></li>
+<li><a href="#org4ead7f7">13.5. my/gh-browse</a></li>
+<li><a href="#org0bec311">13.6. my/indent-all</a></li>
+<li><a href="#org8ae1dad">13.7. my/move-line</a></li>
+<li><a href="#org53e4c69">13.8. my/reload-major-mode</a></li>
+<li><a href="#orgdf38cd7">13.9. my/toggle-read-only-mode</a></li>
+<li><a href="#orgd7570cd">13.10. my/toggle-kill-emacs</a></li>
+<li><a href="#org040bb64">13.11. my/get-class-name-by-file-name</a></li>
+</ul>
+</li>
+<li><a href="#org9d516e6">14. footer</a>
+<ul>
+<li><a href="#org1a0c2f8">14.1. Magic File Name を有効にする</a></li>
+<li><a href="#org879bd53">14.2. profilerを終了する</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgbf5f8f8" class="outline-2">
-<h2 id="orgbf5f8f8"><span class="section-number-2">1.</span> はじめに</h2>
+<div id="outline-container-org9e27fed" class="outline-2">
+<h2 id="org9e27fed"><span class="section-number-2">1.</span> はじめに</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-orgd89bead" class="outline-3">
-<h3 id="orgd89bead"><span class="section-number-3">1.1.</span> 基本情報</h3>
+<div id="outline-container-org44f8195" class="outline-3">
+<h3 id="org44f8195"><span class="section-number-3">1.1.</span> 基本情報</h3>
 <div class="outline-text-3" id="text-1-1">
 <ul class="org-ul">
 <li>repo: <a href="http://github.com/takeokunn/.emacs.d">takeokunn/.emacs.d</a></li>
@@ -596,8 +607,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org421bdf8" class="outline-2">
-<h2 id="org421bdf8"><span class="section-number-2">2.</span> Header</h2>
+<div id="outline-container-org80a302b" class="outline-2">
+<h2 id="org80a302b"><span class="section-number-2">2.</span> Header</h2>
 <div class="outline-text-2" id="text-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">init.el --- My init.el</span>
@@ -607,12 +618,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org73e6d4f" class="outline-2">
-<h2 id="org73e6d4f"><span class="section-number-2">3.</span> Boot</h2>
+<div id="outline-container-orga92b42c" class="outline-2">
+<h2 id="orga92b42c"><span class="section-number-2">3.</span> Boot</h2>
 <div class="outline-text-2" id="text-3">
 </div>
-<div id="outline-container-orgfbde4f3" class="outline-3">
-<h3 id="orgfbde4f3"><span class="section-number-3">3.1.</span> env</h3>
+<div id="outline-container-org7b969f3" class="outline-3">
+<h3 id="org7b969f3"><span class="section-number-3">3.1.</span> env</h3>
 <div class="outline-text-3" id="text-3-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">defconst</span> <span class="org-variable-name">my/loading-profile-p</span> nil
@@ -624,8 +635,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org4ea545e" class="outline-3">
-<h3 id="org4ea545e"><span class="section-number-3">3.2.</span> profile</h3>
+<div id="outline-container-org8b94b91" class="outline-3">
+<h3 id="org8b94b91"><span class="section-number-3">3.2.</span> profile</h3>
 <div class="outline-text-3" id="text-3-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">when</span> my/enable-profile
@@ -635,8 +646,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org758cb97" class="outline-3">
-<h3 id="org758cb97"><span class="section-number-3">3.3.</span> Magic File Name を一時的に無効にする</h3>
+<div id="outline-container-org5efeffb" class="outline-3">
+<h3 id="org5efeffb"><span class="section-number-3">3.3.</span> Magic File Name を一時的に無効にする</h3>
 <div class="outline-text-3" id="text-3-3">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">defconst</span> <span class="org-variable-name">my/saved-file-name-handler-alist</span> file-name-handler-alist)
@@ -645,8 +656,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org362121a" class="outline-3">
-<h3 id="org362121a"><span class="section-number-3">3.4.</span> 起動時間計測</h3>
+<div id="outline-container-orge4a5d5c" class="outline-3">
+<h3 id="orge4a5d5c"><span class="section-number-3">3.4.</span> 起動時間計測</h3>
 <div class="outline-text-3" id="text-3-4">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">defconst</span> <span class="org-variable-name">my/before-load-init-time</span> (current-time))
@@ -690,8 +701,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org7912135" class="outline-3">
-<h3 id="org7912135"><span class="section-number-3">3.5.</span> async load</h3>
+<div id="outline-container-org63d2242" class="outline-3">
+<h3 id="org63d2242"><span class="section-number-3">3.5.</span> async load</h3>
 <div class="outline-text-3" id="text-3-5">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">defvar</span> <span class="org-variable-name">my/delayed-priority-high-configurations</span> '())
@@ -704,26 +715,22 @@
           (<span class="org-keyword">lambda</span> ()
             (<span class="org-keyword">setq</span> my/delayed-priority-high-configuration-timer
                   (run-with-timer
-                   0 0.0001
+                   0.1 0.0001
                    (<span class="org-keyword">lambda</span> ()
                      (<span class="org-keyword">if</span> my/delayed-priority-high-configurations
                          (<span class="org-keyword">let</span> ((inhibit-message t))
                            (eval (<span class="org-keyword">pop</span> my/delayed-priority-high-configurations)))
                        (<span class="org-keyword">progn</span>
-                         (cancel-timer my/delayed-priority-high-configuration-timer)
-                         <span class="org-comment-delimiter">;; </span><span class="org-comment">(message "Priority High Finish!!!")</span>
-                         )))))
+                         (cancel-timer my/delayed-priority-high-configuration-timer))))))
             (<span class="org-keyword">setq</span> my/delayed-priority-low-configuration-timer
                   (run-with-timer
-                   0.3 0.0001
+                   0.2 0.001
                    (<span class="org-keyword">lambda</span> ()
                      (<span class="org-keyword">if</span> my/delayed-priority-low-configurations
                          (<span class="org-keyword">let</span> ((inhibit-message t))
                            (eval (<span class="org-keyword">pop</span> my/delayed-priority-low-configurations)))
                        (<span class="org-keyword">progn</span>
-                         (cancel-timer my/delayed-priority-low-configuration-timer)
-                         <span class="org-comment-delimiter">;; </span><span class="org-comment">(message "Priority Low Finish!!!")</span>
-                         )))))))
+                         (cancel-timer my/delayed-priority-low-configuration-timer))))))))
 
 (<span class="org-keyword">defmacro</span> <span class="org-function-name">with-delayed-execution-priority-high</span> (<span class="org-type">&amp;rest</span> body)
   (<span class="org-keyword">declare</span> (indent 0))
@@ -738,8 +745,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org7a6ec20" class="outline-3">
-<h3 id="org7a6ec20"><span class="section-number-3">3.6.</span> autoload-if-found</h3>
+<div id="outline-container-orgf73623c" class="outline-3">
+<h3 id="orgf73623c"><span class="section-number-3">3.6.</span> autoload-if-found</h3>
 <div class="outline-text-3" id="text-3-6">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;;;</span><span class="org-comment">###</span><span class="org-comment"><span class="org-warning">autoload</span></span>
@@ -753,8 +760,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org9ad2b0a" class="outline-3">
-<h3 id="org9ad2b0a"><span class="section-number-3">3.7.</span> el-get</h3>
+<div id="outline-container-org7201f0c" class="outline-3">
+<h3 id="org7201f0c"><span class="section-number-3">3.7.</span> el-get</h3>
 <div class="outline-text-3" id="text-3-7">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -780,12 +787,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org6f8758e" class="outline-2">
-<h2 id="org6f8758e"><span class="section-number-2">4.</span> Basic</h2>
+<div id="outline-container-orgc984b97" class="outline-2">
+<h2 id="orgc984b97"><span class="section-number-2">4.</span> Basic</h2>
 <div class="outline-text-2" id="text-4">
 </div>
-<div id="outline-container-org647a78f" class="outline-3">
-<h3 id="org647a78f"><span class="section-number-3">4.1.</span> 末尾のスペースを可視化する</h3>
+<div id="outline-container-org584e824" class="outline-3">
+<h3 id="org584e824"><span class="section-number-3">4.1.</span> 末尾のスペースを可視化する</h3>
 <div class="outline-text-3" id="text-4-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
@@ -805,8 +812,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org3be6b80" class="outline-3">
-<h3 id="org3be6b80"><span class="section-number-3">4.2.</span> 行番号を表示する</h3>
+<div id="outline-container-orgcf1af3f" class="outline-3">
+<h3 id="orgcf1af3f"><span class="section-number-3">4.2.</span> 行番号を表示する</h3>
 <div class="outline-text-3" id="text-4-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
@@ -820,8 +827,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org4f2aad7" class="outline-3">
-<h3 id="org4f2aad7"><span class="section-number-3">4.3.</span> C-kで行削除</h3>
+<div id="outline-container-org4a387ad" class="outline-3">
+<h3 id="org4a387ad"><span class="section-number-3">4.3.</span> C-kで行削除</h3>
 <div class="outline-text-3" id="text-4-3">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">with-eval-after-load</span> 'simple
@@ -830,8 +837,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org86d9d7c" class="outline-3">
-<h3 id="org86d9d7c"><span class="section-number-3">4.4.</span> カッコの中をハイライトする</h3>
+<div id="outline-container-org5c1e38e" class="outline-3">
+<h3 id="org5c1e38e"><span class="section-number-3">4.4.</span> カッコの中をハイライトする</h3>
 <div class="outline-text-3" id="text-4-4">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
@@ -843,8 +850,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgf55d40e" class="outline-3">
-<h3 id="orgf55d40e"><span class="section-number-3">4.5.</span> カッコが自動的に作られるようにする</h3>
+<div id="outline-container-org87b4a7f" class="outline-3">
+<h3 id="org87b4a7f"><span class="section-number-3">4.5.</span> カッコが自動的に作られるようにする</h3>
 <div class="outline-text-3" id="text-4-5">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
@@ -853,8 +860,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org423fd14" class="outline-3">
-<h3 id="org423fd14"><span class="section-number-3">4.6.</span> coding system</h3>
+<div id="outline-container-org1a3eacc" class="outline-3">
+<h3 id="org1a3eacc"><span class="section-number-3">4.6.</span> coding system</h3>
 <div class="outline-text-3" id="text-4-6">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution-priority-high
@@ -877,8 +884,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org5eca638" class="outline-3">
-<h3 id="org5eca638"><span class="section-number-3">4.7.</span> global-auto-revert-mode</h3>
+<div id="outline-container-org8072b43" class="outline-3">
+<h3 id="org8072b43"><span class="section-number-3">4.7.</span> global-auto-revert-mode</h3>
 <div class="outline-text-3" id="text-4-7">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
@@ -887,8 +894,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgca74b8c" class="outline-3">
-<h3 id="orgca74b8c"><span class="section-number-3">4.8.</span> yes/no to y/n</h3>
+<div id="outline-container-orgd9a9ee6" class="outline-3">
+<h3 id="orgd9a9ee6"><span class="section-number-3">4.8.</span> yes/no to y/n</h3>
 <div class="outline-text-3" id="text-4-8">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution-priority-high
@@ -897,8 +904,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgf69a373" class="outline-3">
-<h3 id="orgf69a373"><span class="section-number-3">4.9.</span> dired-use-ls-dired</h3>
+<div id="outline-container-org791d59f" class="outline-3">
+<h3 id="org791d59f"><span class="section-number-3">4.9.</span> dired-use-ls-dired</h3>
 <div class="outline-text-3" id="text-4-9">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">with-eval-after-load</span> 'dired-load-hook
@@ -908,8 +915,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org962bf4a" class="outline-3">
-<h3 id="org962bf4a"><span class="section-number-3">4.10.</span> keybind</h3>
+<div id="outline-container-orgc4a7995" class="outline-3">
+<h3 id="orgc4a7995"><span class="section-number-3">4.10.</span> keybind</h3>
 <div class="outline-text-3" id="text-4-10">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(keyboard-translate ?\C-h ?\C-?)
@@ -941,8 +948,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orge67980d" class="outline-3">
-<h3 id="orge67980d"><span class="section-number-3">4.11.</span> common lispを使う</h3>
+<div id="outline-container-orgd901b3e" class="outline-3">
+<h3 id="orgd901b3e"><span class="section-number-3">4.11.</span> common lispを使う</h3>
 <div class="outline-text-3" id="text-4-11">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -956,8 +963,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org6dff7b9" class="outline-3">
-<h3 id="org6dff7b9"><span class="section-number-3">4.12.</span> savehistを有効にする</h3>
+<div id="outline-container-org5ffd889" class="outline-3">
+<h3 id="org5ffd889"><span class="section-number-3">4.12.</span> savehistを有効にする</h3>
 <div class="outline-text-3" id="text-4-12">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution-priority-high 'savehist
@@ -966,8 +973,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orga2aeb1f" class="outline-3">
-<h3 id="orga2aeb1f"><span class="section-number-3">4.13.</span> [mac] clipboardに入るようにする</h3>
+<div id="outline-container-org8007156" class="outline-3">
+<h3 id="org8007156"><span class="section-number-3">4.13.</span> [mac] clipboardに入るようにする</h3>
 <div class="outline-text-3" id="text-4-13">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-and-compile</span>
@@ -988,41 +995,61 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orga0677ab" class="outline-3">
-<h3 id="orga0677ab"><span class="section-number-3">4.14.</span> native compを無効にする</h3>
+<div id="outline-container-org5586160" class="outline-3">
+<h3 id="org5586160"><span class="section-number-3">4.14.</span> pluginをnative compする</h3>
 <div class="outline-text-3" id="text-4-14">
 <div class="org-src-container">
-<pre class="src src-emacs-lisp">(<span class="org-keyword">with-eval-after-load</span> 'package
-  (<span class="org-keyword">setq</span> package-native-compile nil))
-
-(<span class="org-keyword">with-eval-after-load</span> 'comp
+<pre class="src src-emacs-lisp">(<span class="org-keyword">with-eval-after-load</span> 'comp
   (<span class="org-keyword">defun</span> <span class="org-function-name">my/native-comp-packages</span> ()
     (<span class="org-keyword">interactive</span>)
     (<span class="org-keyword">let</span> ((native-comp-async-jobs-number 8)
           (native-comp-speed 3))
       (native-compile-async <span class="org-string">"~/.emacs.d/init.el"</span>)
-      (native-compile-async <span class="org-string">"~/.emacs.d/el-get"</span> 'recursively)
-      (native-compile-async <span class="org-string">"~/.emacs.d/elpa"</span> 'recursively))))
+      (native-compile-async <span class="org-string">"~/.emacs.d/early-init.el"</span>)
+      (native-compile-async <span class="org-string">"~/.emacs.d/elpa"</span>)
+      (native-compile-async <span class="org-string">"~/.emacs.d/el-get"</span>))))
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-org2a761bd" class="outline-3">
-<h3 id="org2a761bd"><span class="section-number-3">4.15.</span> native compのwarningを抑える</h3>
+<div id="outline-container-org6788200" class="outline-3">
+<h3 id="org6788200"><span class="section-number-3">4.15.</span> native compを無効にする</h3>
 <div class="outline-text-3" id="text-4-15">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span class="org-keyword">with-eval-after-load</span> 'comp
+  (<span class="org-keyword">eval-and-compile</span>
+    (<span class="org-keyword">setq</span> package-native-compile nil)))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd3dcf95" class="outline-3">
+<h3 id="orgd3dcf95"><span class="section-number-3">4.16.</span> native compのwarningを抑える</h3>
+<div class="outline-text-3" id="text-4-16">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(custom-set-variables '(warning-suppress-types '((comp))))
 </pre>
 </div>
 </div>
 </div>
+<div id="outline-container-org6e64b8b" class="outline-3">
+<h3 id="org6e64b8b"><span class="section-number-3">4.17.</span> 同一bufferの名前を変える</h3>
+<div class="outline-text-3" id="text-4-17">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span class="org-keyword">with-eval-after-load</span> 'uniquify
+  (<span class="org-keyword">eval-and-compile</span>
+    (<span class="org-keyword">setq</span> uniquify-buffer-name-style 'post-forward-angle-brackets)))
+</pre>
 </div>
-<div id="outline-container-org33bf9fa" class="outline-2">
-<h2 id="org33bf9fa"><span class="section-number-2">5.</span> Utility</h2>
+</div>
+</div>
+</div>
+<div id="outline-container-org493da0d" class="outline-2">
+<h2 id="org493da0d"><span class="section-number-2">5.</span> Utility</h2>
 <div class="outline-text-2" id="text-5">
 </div>
-<div id="outline-container-org1bdd2eb" class="outline-3">
-<h3 id="org1bdd2eb"><span class="section-number-3">5.1.</span> dash</h3>
+<div id="outline-container-org74aff50" class="outline-3">
+<h3 id="org74aff50"><span class="section-number-3">5.1.</span> dash</h3>
 <div class="outline-text-3" id="text-5-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1035,8 +1062,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org221fe87" class="outline-3">
-<h3 id="org221fe87"><span class="section-number-3">5.2.</span> mustache</h3>
+<div id="outline-container-org7ff98e0" class="outline-3">
+<h3 id="org7ff98e0"><span class="section-number-3">5.2.</span> mustache</h3>
 <div class="outline-text-3" id="text-5-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1049,8 +1076,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgb8fe975" class="outline-3">
-<h3 id="orgb8fe975"><span class="section-number-3">5.3.</span> f</h3>
+<div id="outline-container-orgd5def94" class="outline-3">
+<h3 id="orgd5def94"><span class="section-number-3">5.3.</span> f</h3>
 <div class="outline-text-3" id="text-5-3">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1063,8 +1090,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org78a2d52" class="outline-3">
-<h3 id="org78a2d52"><span class="section-number-3">5.4.</span> s</h3>
+<div id="outline-container-orgf2b3a81" class="outline-3">
+<h3 id="orgf2b3a81"><span class="section-number-3">5.4.</span> s</h3>
 <div class="outline-text-3" id="text-5-4">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1077,8 +1104,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org399e9c3" class="outline-3">
-<h3 id="org399e9c3"><span class="section-number-3">5.5.</span> ht</h3>
+<div id="outline-container-orgb73b370" class="outline-3">
+<h3 id="orgb73b370"><span class="section-number-3">5.5.</span> ht</h3>
 <div class="outline-text-3" id="text-5-5">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1091,8 +1118,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org99ee215" class="outline-3">
-<h3 id="org99ee215"><span class="section-number-3">5.6.</span> lv</h3>
+<div id="outline-container-org4ae2050" class="outline-3">
+<h3 id="org4ae2050"><span class="section-number-3">5.6.</span> lv</h3>
 <div class="outline-text-3" id="text-5-6">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1105,8 +1132,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orga7da431" class="outline-3">
-<h3 id="orga7da431"><span class="section-number-3">5.7.</span> spinner</h3>
+<div id="outline-container-orge8a3594" class="outline-3">
+<h3 id="orge8a3594"><span class="section-number-3">5.7.</span> spinner</h3>
 <div class="outline-text-3" id="text-5-7">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1119,8 +1146,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orge27908a" class="outline-3">
-<h3 id="orge27908a"><span class="section-number-3">5.8.</span> shrink-path</h3>
+<div id="outline-container-orge5f8a59" class="outline-3">
+<h3 id="orge5f8a59"><span class="section-number-3">5.8.</span> shrink-path</h3>
 <div class="outline-text-3" id="text-5-8">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1133,8 +1160,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgf4f99ca" class="outline-3">
-<h3 id="orgf4f99ca"><span class="section-number-3">5.9.</span> compat</h3>
+<div id="outline-container-org8236c4f" class="outline-3">
+<h3 id="org8236c4f"><span class="section-number-3">5.9.</span> compat</h3>
 <div class="outline-text-3" id="text-5-9">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1148,12 +1175,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org3b86c43" class="outline-2">
-<h2 id="org3b86c43"><span class="section-number-2">6.</span> Language</h2>
+<div id="outline-container-org24bb9a0" class="outline-2">
+<h2 id="org24bb9a0"><span class="section-number-2">6.</span> Language</h2>
 <div class="outline-text-2" id="text-6">
 </div>
-<div id="outline-container-orgf27a1ba" class="outline-3">
-<h3 id="orgf27a1ba"><span class="section-number-3">6.1.</span> apache-mode</h3>
+<div id="outline-container-orgf90de6f" class="outline-3">
+<h3 id="orgf90de6f"><span class="section-number-3">6.1.</span> apache-mode</h3>
 <div class="outline-text-3" id="text-6-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1168,8 +1195,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org07cec52" class="outline-3">
-<h3 id="org07cec52"><span class="section-number-3">6.2.</span> c++-mode</h3>
+<div id="outline-container-org8f4deee" class="outline-3">
+<h3 id="org8f4deee"><span class="section-number-3">6.2.</span> c++-mode</h3>
 <div class="outline-text-3" id="text-6-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">with-eval-after-load</span> 'c++-mode
@@ -1178,8 +1205,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org52c47d4" class="outline-3">
-<h3 id="org52c47d4"><span class="section-number-3">6.3.</span> c-mode</h3>
+<div id="outline-container-orgfa5bf4f" class="outline-3">
+<h3 id="orgfa5bf4f"><span class="section-number-3">6.3.</span> c-mode</h3>
 <div class="outline-text-3" id="text-6-3">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">with-eval-after-load</span> 'c-mode
@@ -1188,8 +1215,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org3648845" class="outline-3">
-<h3 id="org3648845"><span class="section-number-3">6.4.</span> clojure-mode</h3>
+<div id="outline-container-orgbb5bd45" class="outline-3">
+<h3 id="orgbb5bd45"><span class="section-number-3">6.4.</span> clojure-mode</h3>
 <div class="outline-text-3" id="text-6-4">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1205,8 +1232,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org2156c33" class="outline-3">
-<h3 id="org2156c33"><span class="section-number-3">6.5.</span> cmake-mode</h3>
+<div id="outline-container-org703111e" class="outline-3">
+<h3 id="org703111e"><span class="section-number-3">6.5.</span> cmake-mode</h3>
 <div class="outline-text-3" id="text-6-5">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1221,8 +1248,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org4d58497" class="outline-3">
-<h3 id="org4d58497"><span class="section-number-3">6.6.</span> coffee-mode</h3>
+<div id="outline-container-org2e44122" class="outline-3">
+<h3 id="org2e44122"><span class="section-number-3">6.6.</span> coffee-mode</h3>
 <div class="outline-text-3" id="text-6-6">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1237,8 +1264,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org4cda32e" class="outline-3">
-<h3 id="org4cda32e"><span class="section-number-3">6.7.</span> csharp-mode</h3>
+<div id="outline-container-orgbd28bd6" class="outline-3">
+<h3 id="orgbd28bd6"><span class="section-number-3">6.7.</span> csharp-mode</h3>
 <div class="outline-text-3" id="text-6-7">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1253,8 +1280,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgedab2b8" class="outline-3">
-<h3 id="orgedab2b8"><span class="section-number-3">6.8.</span> css-mode</h3>
+<div id="outline-container-org0e2bf86" class="outline-3">
+<h3 id="org0e2bf86"><span class="section-number-3">6.8.</span> css-mode</h3>
 <div class="outline-text-3" id="text-6-8">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">with-eval-after-load</span> 'css-mode
@@ -1263,8 +1290,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org2fbfdb4" class="outline-3">
-<h3 id="org2fbfdb4"><span class="section-number-3">6.9.</span> csv-mode</h3>
+<div id="outline-container-org1fb4db6" class="outline-3">
+<h3 id="org1fb4db6"><span class="section-number-3">6.9.</span> csv-mode</h3>
 <div class="outline-text-3" id="text-6-9">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1279,8 +1306,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org0f966fb" class="outline-3">
-<h3 id="org0f966fb"><span class="section-number-3">6.10.</span> dart-mode</h3>
+<div id="outline-container-orgfb4f5eb" class="outline-3">
+<h3 id="orgfb4f5eb"><span class="section-number-3">6.10.</span> dart-mode</h3>
 <div class="outline-text-3" id="text-6-10">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1295,8 +1322,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org12f2113" class="outline-3">
-<h3 id="org12f2113"><span class="section-number-3">6.11.</span> docker-compose-mode</h3>
+<div id="outline-container-orgb48908c" class="outline-3">
+<h3 id="orgb48908c"><span class="section-number-3">6.11.</span> docker-compose-mode</h3>
 <div class="outline-text-3" id="text-6-11">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1311,8 +1338,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org50191ee" class="outline-3">
-<h3 id="org50191ee"><span class="section-number-3">6.12.</span> dockerfile-mode</h3>
+<div id="outline-container-orge068824" class="outline-3">
+<h3 id="orge068824"><span class="section-number-3">6.12.</span> dockerfile-mode</h3>
 <div class="outline-text-3" id="text-6-12">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1327,8 +1354,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgaaff48c" class="outline-3">
-<h3 id="orgaaff48c"><span class="section-number-3">6.13.</span> dotenv-mode</h3>
+<div id="outline-container-orgbfa6c37" class="outline-3">
+<h3 id="orgbfa6c37"><span class="section-number-3">6.13.</span> dotenv-mode</h3>
 <div class="outline-text-3" id="text-6-13">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1344,8 +1371,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orge6773c0" class="outline-3">
-<h3 id="orge6773c0"><span class="section-number-3">6.14.</span> emmet-mode</h3>
+<div id="outline-container-org490c94e" class="outline-3">
+<h3 id="org490c94e"><span class="section-number-3">6.14.</span> emmet-mode</h3>
 <div class="outline-text-3" id="text-6-14">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1370,8 +1397,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org728348a" class="outline-3">
-<h3 id="org728348a"><span class="section-number-3">6.15.</span> fish-mode</h3>
+<div id="outline-container-orge237120" class="outline-3">
+<h3 id="orge237120"><span class="section-number-3">6.15.</span> fish-mode</h3>
 <div class="outline-text-3" id="text-6-15">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1389,8 +1416,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org91ea7bd" class="outline-3">
-<h3 id="org91ea7bd"><span class="section-number-3">6.16.</span> git-modes</h3>
+<div id="outline-container-orgfc3d32e" class="outline-3">
+<h3 id="orgfc3d32e"><span class="section-number-3">6.16.</span> git-modes</h3>
 <div class="outline-text-3" id="text-6-16">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1410,8 +1437,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org50a6e00" class="outline-3">
-<h3 id="org50a6e00"><span class="section-number-3">6.17.</span> glsl-mode</h3>
+<div id="outline-container-orgfda6c3d" class="outline-3">
+<h3 id="orgfda6c3d"><span class="section-number-3">6.17.</span> glsl-mode</h3>
 <div class="outline-text-3" id="text-6-17">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1427,8 +1454,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org9ae14d6" class="outline-3">
-<h3 id="org9ae14d6"><span class="section-number-3">6.18.</span> go-mode</h3>
+<div id="outline-container-orga0f343d" class="outline-3">
+<h3 id="orga0f343d"><span class="section-number-3">6.18.</span> go-mode</h3>
 <div class="outline-text-3" id="text-6-18">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1449,8 +1476,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org85c660b" class="outline-3">
-<h3 id="org85c660b"><span class="section-number-3">6.19.</span> gradle-mode</h3>
+<div id="outline-container-org357c02c" class="outline-3">
+<h3 id="org357c02c"><span class="section-number-3">6.19.</span> gradle-mode</h3>
 <div class="outline-text-3" id="text-6-19">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1465,8 +1492,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org14ae3ca" class="outline-3">
-<h3 id="org14ae3ca"><span class="section-number-3">6.20.</span> graphql-mode</h3>
+<div id="outline-container-org42897b6" class="outline-3">
+<h3 id="org42897b6"><span class="section-number-3">6.20.</span> graphql-mode</h3>
 <div class="outline-text-3" id="text-6-20">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1482,8 +1509,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org3956c3e" class="outline-3">
-<h3 id="org3956c3e"><span class="section-number-3">6.21.</span> haskell-mode</h3>
+<div id="outline-container-org6d869b2" class="outline-3">
+<h3 id="org6d869b2"><span class="section-number-3">6.21.</span> haskell-mode</h3>
 <div class="outline-text-3" id="text-6-21">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1499,8 +1526,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org1ce9a5e" class="outline-3">
-<h3 id="org1ce9a5e"><span class="section-number-3">6.22.</span> java-mode</h3>
+<div id="outline-container-org6c1ae2d" class="outline-3">
+<h3 id="org6c1ae2d"><span class="section-number-3">6.22.</span> java-mode</h3>
 <div class="outline-text-3" id="text-6-22">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
@@ -1511,8 +1538,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgee8eb99" class="outline-3">
-<h3 id="orgee8eb99"><span class="section-number-3">6.23.</span> js2-mode</h3>
+<div id="outline-container-orgc028616" class="outline-3">
+<h3 id="orgc028616"><span class="section-number-3">6.23.</span> js2-mode</h3>
 <div class="outline-text-3" id="text-6-23">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1529,8 +1556,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org471def8" class="outline-3">
-<h3 id="org471def8"><span class="section-number-3">6.24.</span> json-mode</h3>
+<div id="outline-container-org4f6cfc3" class="outline-3">
+<h3 id="org4f6cfc3"><span class="section-number-3">6.24.</span> json-mode</h3>
 <div class="outline-text-3" id="text-6-24">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -1549,9 +1576,29 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgec04a3e" class="outline-3">
-<h3 id="orgec04a3e"><span class="section-number-3">6.25.</span> lisp-mode</h3>
+<div id="outline-container-org574cca9" class="outline-3">
+<h3 id="org574cca9"><span class="section-number-3">6.25.</span> jq-mode</h3>
 <div class="outline-text-3" id="text-6-25">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
+  (el-get-bundle 'jq-mode))
+
+(with-delayed-execution
+  (message <span class="org-string">"Install jq-mode..."</span>)
+  (add-to-list 'load-path (locate-user-emacs-file (concat <span class="org-string">"el-get/jq-mode"</span>)))
+  (<span class="org-keyword">when</span> (autoload-if-found '(jq-interactively) <span class="org-string">"jq-mode"</span> nil t)
+    (<span class="org-keyword">with-eval-after-load</span> 'json-mode
+      (define-key json-mode-map (kbd <span class="org-string">"C-c C-j"</span>) #'jq-interactively)))
+  (<span class="org-keyword">with-eval-after-load</span> 'ob-babel
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                 '((jq . t)))))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd38b755" class="outline-3">
+<h3 id="orgd38b755"><span class="section-number-3">6.26.</span> lisp-mode</h3>
+<div class="outline-text-3" id="text-6-26">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
   (<span class="org-keyword">when</span> (autoload-if-found '(lisp-mode) <span class="org-string">"lisp-mode"</span> nil t)
@@ -1561,9 +1608,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org8c48ba7" class="outline-3">
-<h3 id="org8c48ba7"><span class="section-number-3">6.26.</span> markdown-mode</h3>
-<div class="outline-text-3" id="text-6-26">
+<div id="outline-container-org9283617" class="outline-3">
+<h3 id="org9283617"><span class="section-number-3">6.27.</span> markdown-mode</h3>
+<div class="outline-text-3" id="text-6-27">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle markdown-mode))
@@ -1579,9 +1626,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org86cbfdc" class="outline-3">
-<h3 id="org86cbfdc"><span class="section-number-3">6.27.</span> makefile-mode</h3>
-<div class="outline-text-3" id="text-6-27">
+<div id="outline-container-org7d52d83" class="outline-3">
+<h3 id="org7d52d83"><span class="section-number-3">6.28.</span> makefile-mode</h3>
+<div class="outline-text-3" id="text-6-28">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
   (<span class="org-keyword">when</span> (autoload-if-found '(makefile-mode) <span class="org-string">"makefile-mode"</span> nil t)
@@ -1591,9 +1638,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org5b3c586" class="outline-3">
-<h3 id="org5b3c586"><span class="section-number-3">6.28.</span> neon-mode</h3>
-<div class="outline-text-3" id="text-6-28">
+<div id="outline-container-org398e6f5" class="outline-3">
+<h3 id="org398e6f5"><span class="section-number-3">6.29.</span> neon-mode</h3>
+<div class="outline-text-3" id="text-6-29">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'neon-mode))
@@ -1607,9 +1654,25 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org6728ed1" class="outline-3">
-<h3 id="org6728ed1"><span class="section-number-3">6.29.</span> nginx-mode</h3>
-<div class="outline-text-3" id="text-6-29">
+<div id="outline-container-org68ac5df" class="outline-3">
+<h3 id="org68ac5df"><span class="section-number-3">6.30.</span> nix-mode</h3>
+<div class="outline-text-3" id="text-6-30">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
+  (el-get-bundle 'nix-mode))
+
+(with-delayed-execution
+  (message <span class="org-string">"Install nix-mode..."</span>)
+  (add-to-list 'load-path (locate-user-emacs-file (concat <span class="org-string">"el-get/nix-mode"</span>)))
+  (<span class="org-keyword">when</span> (autoload-if-found '(nix-mode) <span class="org-string">"nix-mode"</span> nil t)
+    (add-to-list 'auto-mode-alist '(<span class="org-string">"\\.nix\\'"</span> . nix-mode))))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org8595704" class="outline-3">
+<h3 id="org8595704"><span class="section-number-3">6.31.</span> nginx-mode</h3>
+<div class="outline-text-3" id="text-6-31">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'nginx-mode))
@@ -1628,9 +1691,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgdc273b2" class="outline-3">
-<h3 id="orgdc273b2"><span class="section-number-3">6.30.</span> php-mode</h3>
-<div class="outline-text-3" id="text-6-30">
+<div id="outline-container-orgd0e9a58" class="outline-3">
+<h3 id="orgd0e9a58"><span class="section-number-3">6.32.</span> php-mode</h3>
+<div class="outline-text-3" id="text-6-32">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle <span class="org-string">"emacs-php/php-mode"</span>))
@@ -1647,9 +1710,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgd7e78cb" class="outline-3">
-<h3 id="orgd7e78cb"><span class="section-number-3">6.31.</span> phpt-mode</h3>
-<div class="outline-text-3" id="text-6-31">
+<div id="outline-container-org8f2f60c" class="outline-3">
+<h3 id="org8f2f60c"><span class="section-number-3">6.33.</span> phpt-mode</h3>
+<div class="outline-text-3" id="text-6-33">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'phpt-mode))
@@ -1663,9 +1726,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgc96dbab" class="outline-3">
-<h3 id="orgc96dbab"><span class="section-number-3">6.32.</span> plantuml-mode</h3>
-<div class="outline-text-3" id="text-6-32">
+<div id="outline-container-org96068a1" class="outline-3">
+<h3 id="org96068a1"><span class="section-number-3">6.34.</span> plantuml-mode</h3>
+<div class="outline-text-3" id="text-6-34">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'plantuml-mode))
@@ -1679,9 +1742,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org1c41789" class="outline-3">
-<h3 id="org1c41789"><span class="section-number-3">6.33.</span> prisma-mode</h3>
-<div class="outline-text-3" id="text-6-33">
+<div id="outline-container-org23bef5d" class="outline-3">
+<h3 id="org23bef5d"><span class="section-number-3">6.35.</span> prisma-mode</h3>
+<div class="outline-text-3" id="text-6-35">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'prisma-mode
@@ -1696,9 +1759,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org6575a9b" class="outline-3">
-<h3 id="org6575a9b"><span class="section-number-3">6.34.</span> processing-mode</h3>
-<div class="outline-text-3" id="text-6-34">
+<div id="outline-container-org0518914" class="outline-3">
+<h3 id="org0518914"><span class="section-number-3">6.36.</span> processing-mode</h3>
+<div class="outline-text-3" id="text-6-36">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'processing-mode))
@@ -1716,9 +1779,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org24e266a" class="outline-3">
-<h3 id="org24e266a"><span class="section-number-3">6.35.</span> python-mode</h3>
-<div class="outline-text-3" id="text-6-35">
+<div id="outline-container-org3225df7" class="outline-3">
+<h3 id="org3225df7"><span class="section-number-3">6.37.</span> python-mode</h3>
+<div class="outline-text-3" id="text-6-37">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'python-mode))
@@ -1732,9 +1795,26 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgc9df5e9" class="outline-3">
-<h3 id="orgc9df5e9"><span class="section-number-3">6.36.</span> ruby-mode</h3>
-<div class="outline-text-3" id="text-6-36">
+<div id="outline-container-org453fde5" class="outline-3">
+<h3 id="org453fde5"><span class="section-number-3">6.38.</span> robots-txt-mode</h3>
+<div class="outline-text-3" id="text-6-38">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
+  (el-get-bundle 'robots-txt-mode
+    <span class="org-builtin">:url</span> <span class="org-string">"https://github.com/emacs-php/robots-txt-mode.git"</span>))
+
+(with-delayed-execution
+  (message <span class="org-string">"Install robots-txt-mode..."</span>)
+  (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/robots-txt-mode"</span>))
+  (<span class="org-keyword">when</span> (autoload-if-found '(robots-txt-mode) <span class="org-string">"robots-txt-mode"</span> nil t)
+    (<span class="org-keyword">push</span> '(<span class="org-string">"/robots\\.txt\\'"</span> . robots-txt-mode) auto-mode-alist)))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orga2298dd" class="outline-3">
+<h3 id="orga2298dd"><span class="section-number-3">6.39.</span> ruby-mode</h3>
+<div class="outline-text-3" id="text-6-39">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'ruby-mode))
@@ -1761,9 +1841,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orga63a6a7" class="outline-3">
-<h3 id="orga63a6a7"><span class="section-number-3">6.37.</span> rust-mode</h3>
-<div class="outline-text-3" id="text-6-37">
+<div id="outline-container-orgff40f6c" class="outline-3">
+<h3 id="orgff40f6c"><span class="section-number-3">6.40.</span> rust-mode</h3>
+<div class="outline-text-3" id="text-6-40">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'rust-mode))
@@ -1778,9 +1858,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orga9076f1" class="outline-3">
-<h3 id="orga9076f1"><span class="section-number-3">6.38.</span> scala-mode</h3>
-<div class="outline-text-3" id="text-6-38">
+<div id="outline-container-orgf0fb398" class="outline-3">
+<h3 id="orgf0fb398"><span class="section-number-3">6.41.</span> scala-mode</h3>
+<div class="outline-text-3" id="text-6-41">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'scala-mode))
@@ -1794,9 +1874,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgc2e1f76" class="outline-3">
-<h3 id="orgc2e1f76"><span class="section-number-3">6.39.</span> scheme-mode</h3>
-<div class="outline-text-3" id="text-6-39">
+<div id="outline-container-org6d91949" class="outline-3">
+<h3 id="org6d91949"><span class="section-number-3">6.42.</span> scheme-mode</h3>
+<div class="outline-text-3" id="text-6-42">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
   (message <span class="org-string">"Install scheme..."</span>)
@@ -1808,9 +1888,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgbce1f19" class="outline-3">
-<h3 id="orgbce1f19"><span class="section-number-3">6.40.</span> scss-mode</h3>
-<div class="outline-text-3" id="text-6-40">
+<div id="outline-container-orge246783" class="outline-3">
+<h3 id="orge246783"><span class="section-number-3">6.43.</span> scss-mode</h3>
+<div class="outline-text-3" id="text-6-43">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'scss-mode))
@@ -1827,9 +1907,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org2cac1cc" class="outline-3">
-<h3 id="org2cac1cc"><span class="section-number-3">6.41.</span> slim-mode</h3>
-<div class="outline-text-3" id="text-6-41">
+<div id="outline-container-orgd324eed" class="outline-3">
+<h3 id="orgd324eed"><span class="section-number-3">6.44.</span> slim-mode</h3>
+<div class="outline-text-3" id="text-6-44">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'slim-mode))
@@ -1843,9 +1923,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgddd8523" class="outline-3">
-<h3 id="orgddd8523"><span class="section-number-3">6.42.</span> solidity-mode</h3>
-<div class="outline-text-3" id="text-6-42">
+<div id="outline-container-orgb56e165" class="outline-3">
+<h3 id="orgb56e165"><span class="section-number-3">6.45.</span> solidity-mode</h3>
+<div class="outline-text-3" id="text-6-45">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'solidity-mode))
@@ -1859,9 +1939,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org8a89451" class="outline-3">
-<h3 id="org8a89451"><span class="section-number-3">6.43.</span> ssh-config-mode</h3>
-<div class="outline-text-3" id="text-6-43">
+<div id="outline-container-orgc9ada13" class="outline-3">
+<h3 id="orgc9ada13"><span class="section-number-3">6.46.</span> ssh-config-mode</h3>
+<div class="outline-text-3" id="text-6-46">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'ssh-config-mode))
@@ -1878,23 +1958,25 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org41464ad" class="outline-3">
-<h3 id="org41464ad"><span class="section-number-3">6.44.</span> sql-mode</h3>
-<div class="outline-text-3" id="text-6-44">
+<div id="outline-container-org4ff8ebf" class="outline-3">
+<h3 id="org4ff8ebf"><span class="section-number-3">6.47.</span> sql-mode</h3>
+<div class="outline-text-3" id="text-6-47">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">with-eval-after-load</span> 'sql-mode
   (load-library <span class="org-string">"sql-indent"</span>)
   (load-library <span class="org-string">"sql-complete"</span>)
   (load-library <span class="org-string">"sql-transform"</span>)
   (<span class="org-keyword">eval-and-compile</span>
-    (<span class="org-keyword">setq</span> sql-indent-offset t)))
+    (<span class="org-keyword">setq</span> sql-indent-offset t)
+    (<span class="org-keyword">setq</span> indent-tabs-mode nil)
+    (<span class="org-keyword">setq</span> sql-mysql-login-params '(user password database server port))))
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-org8333f71" class="outline-3">
-<h3 id="org8333f71"><span class="section-number-3">6.45.</span> swift-mode</h3>
-<div class="outline-text-3" id="text-6-45">
+<div id="outline-container-org546aa00" class="outline-3">
+<h3 id="org546aa00"><span class="section-number-3">6.48.</span> swift-mode</h3>
+<div class="outline-text-3" id="text-6-48">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'swift-mode))
@@ -1908,9 +1990,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgd5420c7" class="outline-3">
-<h3 id="orgd5420c7"><span class="section-number-3">6.46.</span> terrafoprm-mode</h3>
-<div class="outline-text-3" id="text-6-46">
+<div id="outline-container-orgd802b9d" class="outline-3">
+<h3 id="orgd802b9d"><span class="section-number-3">6.49.</span> terrafoprm-mode</h3>
+<div class="outline-text-3" id="text-6-49">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'terraform-mode))
@@ -1925,9 +2007,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgafdaa64" class="outline-3">
-<h3 id="orgafdaa64"><span class="section-number-3">6.47.</span> text-mode</h3>
-<div class="outline-text-3" id="text-6-47">
+<div id="outline-container-orgd56f220" class="outline-3">
+<h3 id="orgd56f220"><span class="section-number-3">6.50.</span> text-mode</h3>
+<div class="outline-text-3" id="text-6-50">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
   (<span class="org-keyword">when</span> (autoload-if-found '(conf-space-mode) <span class="org-string">"text-mode"</span> nil t)
@@ -1939,9 +2021,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgc670de4" class="outline-3">
-<h3 id="orgc670de4"><span class="section-number-3">6.48.</span> toml-mode</h3>
-<div class="outline-text-3" id="text-6-48">
+<div id="outline-container-orgbd1c310" class="outline-3">
+<h3 id="orgbd1c310"><span class="section-number-3">6.51.</span> toml-mode</h3>
+<div class="outline-text-3" id="text-6-51">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'toml-mode))
@@ -1955,9 +2037,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org8f5dc61" class="outline-3">
-<h3 id="org8f5dc61"><span class="section-number-3">6.49.</span> typescript-mode</h3>
-<div class="outline-text-3" id="text-6-49">
+<div id="outline-container-orgdeb019a" class="outline-3">
+<h3 id="orgdeb019a"><span class="section-number-3">6.52.</span> typescript-mode</h3>
+<div class="outline-text-3" id="text-6-52">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'typescript-mode))
@@ -1984,9 +2066,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgf55aac1" class="outline-3">
-<h3 id="orgf55aac1"><span class="section-number-3">6.50.</span> v-mode</h3>
-<div class="outline-text-3" id="text-6-50">
+<div id="outline-container-orgb4388af" class="outline-3">
+<h3 id="orgb4388af"><span class="section-number-3">6.53.</span> v-mode</h3>
+<div class="outline-text-3" id="text-6-53">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'v-mode))
@@ -2004,9 +2086,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org191e203" class="outline-3">
-<h3 id="org191e203"><span class="section-number-3">6.51.</span> vue-mode</h3>
-<div class="outline-text-3" id="text-6-51">
+<div id="outline-container-orge56e595" class="outline-3">
+<h3 id="orge56e595"><span class="section-number-3">6.54.</span> vue-mode</h3>
+<div class="outline-text-3" id="text-6-54">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'ssass-mode)
@@ -2032,9 +2114,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org2d0040f" class="outline-3">
-<h3 id="org2d0040f"><span class="section-number-3">6.52.</span> vimrc-mode</h3>
-<div class="outline-text-3" id="text-6-52">
+<div id="outline-container-org4e55f07" class="outline-3">
+<h3 id="org4e55f07"><span class="section-number-3">6.55.</span> vimrc-mode</h3>
+<div class="outline-text-3" id="text-6-55">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'vimrc-mode))
@@ -2048,9 +2130,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org39a7507" class="outline-3">
-<h3 id="org39a7507"><span class="section-number-3">6.53.</span> wat-mode</h3>
-<div class="outline-text-3" id="text-6-53">
+<div id="outline-container-orga02906e" class="outline-3">
+<h3 id="orga02906e"><span class="section-number-3">6.56.</span> wat-mode</h3>
+<div class="outline-text-3" id="text-6-56">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'wat-mode <span class="org-builtin">:url</span> <span class="org-string">"https://github.com/devonsparks/wat-mode.git"</span>))
@@ -2064,9 +2146,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org5b71533" class="outline-3">
-<h3 id="org5b71533"><span class="section-number-3">6.54.</span> web-mode</h3>
-<div class="outline-text-3" id="text-6-54">
+<div id="outline-container-org20351a0" class="outline-3">
+<h3 id="org20351a0"><span class="section-number-3">6.57.</span> web-mode</h3>
+<div class="outline-text-3" id="text-6-57">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'web-mode))
@@ -2093,9 +2175,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org397bf63" class="outline-3">
-<h3 id="org397bf63"><span class="section-number-3">6.55.</span> yaml-mode</h3>
-<div class="outline-text-3" id="text-6-55">
+<div id="outline-container-org852037c" class="outline-3">
+<h3 id="org852037c"><span class="section-number-3">6.58.</span> yaml-mode</h3>
+<div class="outline-text-3" id="text-6-58">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'yaml-mode))
@@ -2111,16 +2193,16 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org49c88c3" class="outline-2">
-<h2 id="org49c88c3"><span class="section-number-2">7.</span> Lisp</h2>
+<div id="outline-container-org2f15e58" class="outline-2">
+<h2 id="org2f15e58"><span class="section-number-2">7.</span> Lisp</h2>
 <div class="outline-text-2" id="text-7">
 </div>
-<div id="outline-container-orgc15b52d" class="outline-3">
-<h3 id="orgc15b52d"><span class="section-number-3">7.1.</span> Basic</h3>
+<div id="outline-container-orged75787" class="outline-3">
+<h3 id="orged75787"><span class="section-number-3">7.1.</span> Basic</h3>
 <div class="outline-text-3" id="text-7-1">
 </div>
-<div id="outline-container-orge73c43e" class="outline-4">
-<h4 id="orge73c43e"><span class="section-number-4">7.1.1.</span> paredit</h4>
+<div id="outline-container-org2a47739" class="outline-4">
+<h4 id="org2a47739"><span class="section-number-4">7.1.1.</span> paredit</h4>
 <div class="outline-text-4" id="text-7-1-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2130,18 +2212,23 @@
   (message <span class="org-string">"Install paredit..."</span>)
   (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/paredit"</span>))
   (<span class="org-keyword">when</span> (autoload-if-found '(enable-paredit-mode) <span class="org-string">"paredit"</span> nil t)
+    <span class="org-comment-delimiter">;; </span><span class="org-comment">hooks</span>
     (add-hook 'lisp-mode-hook 'enable-paredit-mode)
     (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
     (add-hook 'clojure-mode-hook 'enable-paredit-mode)
     (add-hook 'lisp-interacton-mode-hook 'enable-paredit-mode)
+    (add-hook 'lisp-data-mode-hook 'enable-paredit-mode)
+    (add-hook 'eval-expression-minibuffer-setup-hook #'paredit-mode)
+
+    <span class="org-comment-delimiter">;; </span><span class="org-comment">global keybind</span>
     (global-set-key (kbd <span class="org-string">"C-c f"</span>) 'paredit-forward-slurp-sexp)
     (global-set-key (kbd <span class="org-string">"M-s"</span>) 'paredit-splice-sexp)))
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-orgd8725cb" class="outline-4">
-<h4 id="orgd8725cb"><span class="section-number-4">7.1.2.</span> rainbow-delimiter</h4>
+<div id="outline-container-orge18c649" class="outline-4">
+<h4 id="orge18c649"><span class="section-number-4">7.1.2.</span> rainbow-delimiter</h4>
 <div class="outline-text-4" id="text-7-1-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2158,12 +2245,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org5bfd2b5" class="outline-3">
-<h3 id="org5bfd2b5"><span class="section-number-3">7.2.</span> CommonLisp</h3>
+<div id="outline-container-org9943508" class="outline-3">
+<h3 id="org9943508"><span class="section-number-3">7.2.</span> CommonLisp</h3>
 <div class="outline-text-3" id="text-7-2">
 </div>
-<div id="outline-container-org913b946" class="outline-4">
-<h4 id="org913b946"><span class="section-number-4">7.2.1.</span> <span class="todo TODO">TODO</span> slime/slime-company</h4>
+<div id="outline-container-org876a82c" class="outline-4">
+<h4 id="org876a82c"><span class="section-number-4">7.2.1.</span> <span class="todo TODO">TODO</span> slime/slime-company</h4>
 <div class="outline-text-4" id="text-7-2-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">(eval-when-compile</span>
@@ -2184,8 +2271,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org35f38e8" class="outline-4">
-<h4 id="org35f38e8"><span class="section-number-4">7.2.2.</span> hyperspec</h4>
+<div id="outline-container-org91b3cf8" class="outline-4">
+<h4 id="org91b3cf8"><span class="section-number-4">7.2.2.</span> hyperspec</h4>
 <div class="outline-text-4" id="text-7-2-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
@@ -2213,8 +2300,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org5f78b72" class="outline-4">
-<h4 id="org5f78b72"><span class="section-number-4">7.2.3.</span> my/slime-history</h4>
+<div id="outline-container-orgaa01b13" class="outline-4">
+<h4 id="orgaa01b13"><span class="section-number-4">7.2.3.</span> my/slime-history</h4>
 <div class="outline-text-4" id="text-7-2-3">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
@@ -2233,12 +2320,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org5aa4270" class="outline-3">
-<h3 id="org5aa4270"><span class="section-number-3">7.3.</span> EmacsLisp</h3>
+<div id="outline-container-org73a7d9f" class="outline-3">
+<h3 id="org73a7d9f"><span class="section-number-3">7.3.</span> EmacsLisp</h3>
 <div class="outline-text-3" id="text-7-3">
 </div>
-<div id="outline-container-org577ca8f" class="outline-4">
-<h4 id="org577ca8f"><span class="section-number-4">7.3.1.</span> elisp-slime-nav</h4>
+<div id="outline-container-orgbfc80b3" class="outline-4">
+<h4 id="orgbfc80b3"><span class="section-number-4">7.3.1.</span> elisp-slime-nav</h4>
 <div class="outline-text-4" id="text-7-3-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2254,8 +2341,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org996324a" class="outline-4">
-<h4 id="org996324a"><span class="section-number-4">7.3.2.</span> nameless</h4>
+<div id="outline-container-org98510d1" class="outline-4">
+<h4 id="org98510d1"><span class="section-number-4">7.3.2.</span> nameless</h4>
 <div class="outline-text-4" id="text-7-3-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2271,8 +2358,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgc7ecfae" class="outline-4">
-<h4 id="orgc7ecfae"><span class="section-number-4">7.3.3.</span> my/ielm-history</h4>
+<div id="outline-container-org5075ccf" class="outline-4">
+<h4 id="org5075ccf"><span class="section-number-4">7.3.3.</span> my/ielm-history</h4>
 <div class="outline-text-4" id="text-7-3-3">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
@@ -2293,12 +2380,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org4849499" class="outline-3">
-<h3 id="org4849499"><span class="section-number-3">7.4.</span> Clojure</h3>
+<div id="outline-container-org5229045" class="outline-3">
+<h3 id="org5229045"><span class="section-number-3">7.4.</span> Clojure</h3>
 <div class="outline-text-3" id="text-7-4">
 </div>
-<div id="outline-container-org1c35980" class="outline-4">
-<h4 id="org1c35980"><span class="section-number-4">7.4.1.</span> cider</h4>
+<div id="outline-container-org2fb47b1" class="outline-4">
+<h4 id="org2fb47b1"><span class="section-number-4">7.4.1.</span> cider</h4>
 <div class="outline-text-4" id="text-7-4-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2320,25 +2407,44 @@
   (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/seq"</span>))
   (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/sesman"</span>))
   (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/cider"</span>))
-  (<span class="org-keyword">when</span> (autoload-if-found '(cider) <span class="org-string">"cider"</span> nil t)
-    (<span class="org-keyword">defun</span> <span class="org-function-name">my/cider-switch-to-last-clojure-buffer</span> ()
-      (<span class="org-keyword">interactive</span>)
-      (<span class="org-keyword">let*</span> ((window (split-window-right))
-             (buffer (my/find-cider-repl-buffer)))
-        (set-window-buffer window buffer)
-        (cider-switch-to-last-clojure-buffer)))
+
+  (<span class="org-keyword">when</span> (autoload-if-found '(cider
+                             cider-format-buffer
+                             cider-switch-to-last-clojure-buffer
+                             my/cider-switch-to-last-clojure-buffer) <span class="org-string"><span class="org-warning">"cider"</span></span><span class="org-warning"> nil t)</span>
+    (add-hook 'before-save-hook 'cider-format-buffer t t)
+
+    <span class="org-comment-delimiter">;; </span><span class="org-comment">(defun my/cider-switch-to-last-clojure-buffer ()</span>
+    <span class="org-comment-delimiter">;;   </span><span class="org-comment">(interactive)</span>
+    <span class="org-comment-delimiter">;;   </span><span class="org-comment">(let* ((window (split-window-right))</span>
+    <span class="org-comment-delimiter">;;          </span><span class="org-comment">(buffer (current-buffer)))</span>
+    <span class="org-comment-delimiter">;;     </span><span class="org-comment">(set-window-buffer window buffer)</span>
+    <span class="org-comment-delimiter">;;     </span><span class="org-comment">(cider-switch-to-last-clojure-buffer)))</span>
     <span class="org-comment-delimiter">;; </span><span class="org-comment">(define-key cider-mode-map (kbd "C-c C-z") #'my/cider-switch-to-last-clojure-buffer)</span>
-    <span class="org-comment-delimiter">;; </span><span class="org-comment">(with-eval-after-load 'cider</span>
-    <span class="org-comment-delimiter">;;   </span><span class="org-comment">(eval-and-compile</span>
-    <span class="org-comment-delimiter">;;     </span><span class="org-comment">(setq cider-repl-display-in-current-window t</span>
-    <span class="org-comment-delimiter">;;           </span><span class="org-comment">cider-font-lock-dynamically '(macro core function var))))</span>
-    ))
+    )
+
+  (<span class="org-keyword">with-eval-after-load</span> 'cider-mode
+    (<span class="org-keyword">eval-and-compile</span>
+      (<span class="org-keyword">setq</span> cider-font-lock-dynamically '(macro core function var))))
+
+  (<span class="org-keyword">with-eval-after-load</span> 'cider-repl
+    (<span class="org-keyword">eval-and-compile</span>
+      (<span class="org-keyword">setq</span> cider-repl-buffer-size-limit 1000000)
+      (<span class="org-keyword">setq</span> cider-repl-wrap-history t)
+      (<span class="org-keyword">setq</span> cider-repl-history-size 10000)
+      (<span class="org-keyword">setq</span> cider-repl-tab-command #'indent-for-tab-command)
+      (<span class="org-keyword">setq</span> cider-repl-display-in-current-window t)))
+
+  (<span class="org-keyword">with-eval-after-load</span> 'cider-eval
+    (<span class="org-keyword">eval-and-compile</span>
+      (<span class="org-keyword">setq</span> cider-show-error-buffer nil)
+      (<span class="org-keyword">setq</span> cider-auto-select-error-buffer nil))))
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-org4e84109" class="outline-4">
-<h4 id="org4e84109"><span class="section-number-4">7.4.2.</span> clojure-cheatsheet</h4>
+<div id="outline-container-orgc998ca1" class="outline-4">
+<h4 id="orgc998ca1"><span class="section-number-4">7.4.2.</span> clojure-cheatsheet</h4>
 <div class="outline-text-4" id="text-7-4-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2357,8 +2463,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org120ab40" class="outline-4">
-<h4 id="org120ab40"><span class="section-number-4">7.4.3.</span> kibit-helper</h4>
+<div id="outline-container-org5dcd14d" class="outline-4">
+<h4 id="org5dcd14d"><span class="section-number-4">7.4.3.</span> kibit-helper</h4>
 <div class="outline-text-4" id="text-7-4-3">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2372,8 +2478,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org8a5f1f0" class="outline-4">
-<h4 id="org8a5f1f0"><span class="section-number-4">7.4.4.</span> clj-refactor</h4>
+<div id="outline-container-org9be0be8" class="outline-4">
+<h4 id="org9be0be8"><span class="section-number-4">7.4.4.</span> clj-refactor</h4>
 <div class="outline-text-4" id="text-7-4-4">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2392,8 +2498,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org90c289c" class="outline-4">
-<h4 id="org90c289c"><span class="section-number-4">7.4.5.</span> inf-clojure</h4>
+<div id="outline-container-org125a10c" class="outline-4">
+<h4 id="org125a10c"><span class="section-number-4">7.4.5.</span> inf-clojure</h4>
 <div class="outline-text-4" id="text-7-4-5">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2410,16 +2516,16 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org35a51d9" class="outline-2">
-<h2 id="org35a51d9"><span class="section-number-2">8.</span> Awesome Package</h2>
+<div id="outline-container-orgf494b39" class="outline-2">
+<h2 id="orgf494b39"><span class="section-number-2">8.</span> Awesome Package</h2>
 <div class="outline-text-2" id="text-8">
 </div>
-<div id="outline-container-orgd7ef014" class="outline-3">
-<h3 id="orgd7ef014"><span class="section-number-3">8.1.</span> Check</h3>
+<div id="outline-container-orgdef9b1b" class="outline-3">
+<h3 id="orgdef9b1b"><span class="section-number-3">8.1.</span> Check</h3>
 <div class="outline-text-3" id="text-8-1">
 </div>
-<div id="outline-container-org072a42f" class="outline-4">
-<h4 id="org072a42f"><span class="section-number-4">8.1.1.</span> flycheck</h4>
+<div id="outline-container-org0c400bb" class="outline-4">
+<h4 id="org0c400bb"><span class="section-number-4">8.1.1.</span> flycheck</h4>
 <div class="outline-text-4" id="text-8-1-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2434,12 +2540,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org9eb1128" class="outline-3">
-<h3 id="org9eb1128"><span class="section-number-3">8.2.</span> Search</h3>
+<div id="outline-container-orgb28c812" class="outline-3">
+<h3 id="orgb28c812"><span class="section-number-3">8.2.</span> Search</h3>
 <div class="outline-text-3" id="text-8-2">
 </div>
-<div id="outline-container-org512b794" class="outline-4">
-<h4 id="org512b794"><span class="section-number-4">8.2.1.</span> el-get</h4>
+<div id="outline-container-org6c9a302" class="outline-4">
+<h4 id="org6c9a302"><span class="section-number-4">8.2.1.</span> el-get</h4>
 <div class="outline-text-4" id="text-8-2-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2452,8 +2558,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org4d52f54" class="outline-4">
-<h4 id="org4d52f54"><span class="section-number-4">8.2.2.</span> swiper</h4>
+<div id="outline-container-org7d64d88" class="outline-4">
+<h4 id="org7d64d88"><span class="section-number-4">8.2.2.</span> swiper</h4>
 <div class="outline-text-4" id="text-8-2-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
@@ -2467,8 +2573,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org9e3b13d" class="outline-4">
-<h4 id="org9e3b13d"><span class="section-number-4">8.2.3.</span> counsel</h4>
+<div id="outline-container-orgfde198c" class="outline-4">
+<h4 id="orgfde198c"><span class="section-number-4">8.2.3.</span> counsel</h4>
 <div class="outline-text-4" id="text-8-2-3">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution-priority-high
@@ -2479,8 +2585,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org7b4b689" class="outline-4">
-<h4 id="org7b4b689"><span class="section-number-4">8.2.4.</span> ivy</h4>
+<div id="outline-container-orgd5bc9f1" class="outline-4">
+<h4 id="orgd5bc9f1"><span class="section-number-4">8.2.4.</span> ivy</h4>
 <div class="outline-text-4" id="text-8-2-4">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution-priority-high
@@ -2495,8 +2601,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgb3c8019" class="outline-4">
-<h4 id="orgb3c8019"><span class="section-number-4">8.2.5.</span> ivy-rich</h4>
+<div id="outline-container-org566c585" class="outline-4">
+<h4 id="org566c585"><span class="section-number-4">8.2.5.</span> ivy-rich</h4>
 <div class="outline-text-4" id="text-8-2-5">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2515,12 +2621,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org805eea6" class="outline-3">
-<h3 id="org805eea6"><span class="section-number-3">8.3.</span> Theme</h3>
+<div id="outline-container-org2ff4d15" class="outline-3">
+<h3 id="org2ff4d15"><span class="section-number-3">8.3.</span> Theme</h3>
 <div class="outline-text-3" id="text-8-3">
 </div>
-<div id="outline-container-orgd49bd9f" class="outline-4">
-<h4 id="orgd49bd9f"><span class="section-number-4">8.3.1.</span> all-the-icons</h4>
+<div id="outline-container-org3a11d6c" class="outline-4">
+<h4 id="org3a11d6c"><span class="section-number-4">8.3.1.</span> all-the-icons</h4>
 <div class="outline-text-4" id="text-8-3-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2533,8 +2639,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org88666e9" class="outline-4">
-<h4 id="org88666e9"><span class="section-number-4">8.3.2.</span> all-the-icons-dired</h4>
+<div id="outline-container-orgf74fc24" class="outline-4">
+<h4 id="orgf74fc24"><span class="section-number-4">8.3.2.</span> all-the-icons-dired</h4>
 <div class="outline-text-4" id="text-8-3-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2551,8 +2657,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgcd14c5a" class="outline-4">
-<h4 id="orgcd14c5a"><span class="section-number-4">8.3.3.</span> all-the-icons-ivy-rich</h4>
+<div id="outline-container-orgf62bf23" class="outline-4">
+<h4 id="orgf62bf23"><span class="section-number-4">8.3.3.</span> all-the-icons-ivy-rich</h4>
 <div class="outline-text-4" id="text-8-3-3">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2575,8 +2681,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org14f2e45" class="outline-4">
-<h4 id="org14f2e45"><span class="section-number-4">8.3.4.</span> dashboard</h4>
+<div id="outline-container-orgf425f62" class="outline-4">
+<h4 id="orgf425f62"><span class="section-number-4">8.3.4.</span> dashboard</h4>
 <div class="outline-text-4" id="text-8-3-4">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2589,15 +2695,13 @@
   (<span class="org-keyword">with-eval-after-load</span> 'dashboard
     (<span class="org-keyword">eval-and-compile</span>
       (<span class="org-keyword">setq</span> dashboard-startup-banner 4)
-      (<span class="org-keyword">setq</span> dashboard-items '((recents . 15)
-                              (projects . 5)
-                              (bookmarks . 5))))))
+      (<span class="org-keyword">setq</span> dashboard-items '((recents . 10))))))
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-org6886f98" class="outline-4">
-<h4 id="org6886f98"><span class="section-number-4">8.3.5.</span> doom-themes</h4>
+<div id="outline-container-orgdeab0a6" class="outline-4">
+<h4 id="orgdeab0a6"><span class="section-number-4">8.3.5.</span> doom-themes</h4>
 <div class="outline-text-4" id="text-8-3-5">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2622,8 +2726,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgea2f1da" class="outline-4">
-<h4 id="orgea2f1da"><span class="section-number-4">8.3.6.</span> doom-modeline</h4>
+<div id="outline-container-org5dc9f8d" class="outline-4">
+<h4 id="org5dc9f8d"><span class="section-number-4">8.3.6.</span> doom-modeline</h4>
 <div class="outline-text-4" id="text-8-3-6">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2647,14 +2751,14 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgf2adf1a" class="outline-4">
-<h4 id="orgf2adf1a"><span class="section-number-4">8.3.7.</span> hl-line</h4>
+<div id="outline-container-org54544ac" class="outline-4">
+<h4 id="org54544ac"><span class="section-number-4">8.3.7.</span> hl-line</h4>
 <div class="outline-text-4" id="text-8-3-7">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
   (<span class="org-keyword">when</span> (autoload-if-found '(global-hl-line-mode) <span class="org-string">"hl-line-mode"</span> nil t)
-    (global-hl-line-mode))
-
+    (<span class="org-keyword">when</span> (not window-system)
+      (global-hl-line-mode)))
   (<span class="org-keyword">with-eval-after-load</span> 'hl-line
     (set-face-attribute 'hl-line nil <span class="org-builtin">:inherit</span> nil)
     (set-face-background 'hl-line <span class="org-string">"#444642"</span>)))
@@ -2662,8 +2766,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org7278db4" class="outline-4">
-<h4 id="org7278db4"><span class="section-number-4">8.3.8.</span> neotree</h4>
+<div id="outline-container-orgf75b742" class="outline-4">
+<h4 id="orgf75b742"><span class="section-number-4">8.3.8.</span> neotree</h4>
 <div class="outline-text-4" id="text-8-3-8">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2710,8 +2814,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org52ab92e" class="outline-4">
-<h4 id="org52ab92e"><span class="section-number-4">8.3.9.</span> nyan-mode</h4>
+<div id="outline-container-org1a912e2" class="outline-4">
+<h4 id="org1a912e2"><span class="section-number-4">8.3.9.</span> nyan-mode</h4>
 <div class="outline-text-4" id="text-8-3-9">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2731,12 +2835,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org4d26b35" class="outline-3">
-<h3 id="org4d26b35"><span class="section-number-3">8.4.</span> Project</h3>
+<div id="outline-container-orgee53fd2" class="outline-3">
+<h3 id="orgee53fd2"><span class="section-number-3">8.4.</span> Project</h3>
 <div class="outline-text-3" id="text-8-4">
 </div>
-<div id="outline-container-org12e47e4" class="outline-4">
-<h4 id="org12e47e4"><span class="section-number-4">8.4.1.</span> projectile</h4>
+<div id="outline-container-org33c645d" class="outline-4">
+<h4 id="org33c645d"><span class="section-number-4">8.4.1.</span> projectile</h4>
 <div class="outline-text-4" id="text-8-4-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2765,8 +2869,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgfaa937f" class="outline-4">
-<h4 id="orgfaa937f"><span class="section-number-4">8.4.2.</span> counsel-projectile</h4>
+<div id="outline-container-org2202daf" class="outline-4">
+<h4 id="org2202daf"><span class="section-number-4">8.4.2.</span> counsel-projectile</h4>
 <div class="outline-text-4" id="text-8-4-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2789,12 +2893,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org46fffff" class="outline-3">
-<h3 id="org46fffff"><span class="section-number-3">8.5.</span> Refactor</h3>
+<div id="outline-container-org87807d3" class="outline-3">
+<h3 id="org87807d3"><span class="section-number-3">8.5.</span> Refactor</h3>
 <div class="outline-text-3" id="text-8-5">
 </div>
-<div id="outline-container-org062d334" class="outline-4">
-<h4 id="org062d334"><span class="section-number-4">8.5.1.</span> emr</h4>
+<div id="outline-container-org7fefe82" class="outline-4">
+<h4 id="org7fefe82"><span class="section-number-4">8.5.1.</span> emr</h4>
 <div class="outline-text-4" id="text-8-5-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2816,12 +2920,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org65edbf8" class="outline-3">
-<h3 id="org65edbf8"><span class="section-number-3">8.6.</span> Completion</h3>
+<div id="outline-container-org57aa795" class="outline-3">
+<h3 id="org57aa795"><span class="section-number-3">8.6.</span> Completion</h3>
 <div class="outline-text-3" id="text-8-6">
 </div>
-<div id="outline-container-org20e67a4" class="outline-4">
-<h4 id="org20e67a4"><span class="section-number-4">8.6.1.</span> company</h4>
+<div id="outline-container-org7e3cff3" class="outline-4">
+<h4 id="org7e3cff3"><span class="section-number-4">8.6.1.</span> company</h4>
 <div class="outline-text-4" id="text-8-6-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2845,8 +2949,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orge2bb2ef" class="outline-4">
-<h4 id="orge2bb2ef"><span class="section-number-4">8.6.2.</span> company-box</h4>
+<div id="outline-container-orgd7147ec" class="outline-4">
+<h4 id="orgd7147ec"><span class="section-number-4">8.6.2.</span> company-box</h4>
 <div class="outline-text-4" id="text-8-6-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2866,8 +2970,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org4ac53cb" class="outline-4">
-<h4 id="org4ac53cb"><span class="section-number-4">8.6.3.</span> company-dockerfile</h4>
+<div id="outline-container-orgee4da0e" class="outline-4">
+<h4 id="orgee4da0e"><span class="section-number-4">8.6.3.</span> company-dockerfile</h4>
 <div class="outline-text-4" id="text-8-6-3">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2884,8 +2988,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgd24015f" class="outline-4">
-<h4 id="orgd24015f"><span class="section-number-4">8.6.4.</span> company-glsl</h4>
+<div id="outline-container-org0180715" class="outline-4">
+<h4 id="org0180715"><span class="section-number-4">8.6.4.</span> company-glsl</h4>
 <div class="outline-text-4" id="text-8-6-4">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2901,8 +3005,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org9ba45d7" class="outline-4">
-<h4 id="org9ba45d7"><span class="section-number-4">8.6.5.</span> company-c-headers</h4>
+<div id="outline-container-org520370d" class="outline-4">
+<h4 id="org520370d"><span class="section-number-4">8.6.5.</span> company-c-headers</h4>
 <div class="outline-text-4" id="text-8-6-5">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2918,8 +3022,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgaef0480" class="outline-4">
-<h4 id="orgaef0480"><span class="section-number-4">8.6.6.</span> company-shell</h4>
+<div id="outline-container-orgd579362" class="outline-4">
+<h4 id="orgd579362"><span class="section-number-4">8.6.6.</span> company-shell</h4>
 <div class="outline-text-4" id="text-8-6-6">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2937,8 +3041,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org5b63820" class="outline-4">
-<h4 id="org5b63820"><span class="section-number-4">8.6.7.</span> company-terraform</h4>
+<div id="outline-container-org5a9c92a" class="outline-4">
+<h4 id="org5a9c92a"><span class="section-number-4">8.6.7.</span> company-terraform</h4>
 <div class="outline-text-4" id="text-8-6-7">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2955,8 +3059,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org59be944" class="outline-4">
-<h4 id="org59be944"><span class="section-number-4">8.6.8.</span> company-nginx</h4>
+<div id="outline-container-orgc644d75" class="outline-4">
+<h4 id="orgc644d75"><span class="section-number-4">8.6.8.</span> company-nginx</h4>
 <div class="outline-text-4" id="text-8-6-8">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2972,8 +3076,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org53a3408" class="outline-4">
-<h4 id="org53a3408"><span class="section-number-4">8.6.9.</span> company-gemoji</h4>
+<div id="outline-container-orgf73db65" class="outline-4">
+<h4 id="orgf73db65"><span class="section-number-4">8.6.9.</span> company-gemoji</h4>
 <div class="outline-text-4" id="text-8-6-9">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -2991,12 +3095,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgc237d1e" class="outline-3">
-<h3 id="orgc237d1e"><span class="section-number-3">8.7.</span> Snippet</h3>
+<div id="outline-container-org181524d" class="outline-3">
+<h3 id="org181524d"><span class="section-number-3">8.7.</span> Snippet</h3>
 <div class="outline-text-3" id="text-8-7">
 </div>
-<div id="outline-container-orgcde90e7" class="outline-4">
-<h4 id="orgcde90e7"><span class="section-number-4">8.7.1.</span> yasnippet</h4>
+<div id="outline-container-org990cb14" class="outline-4">
+<h4 id="org990cb14"><span class="section-number-4">8.7.1.</span> yasnippet</h4>
 <div class="outline-text-4" id="text-8-7-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3014,8 +3118,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org33fe86c" class="outline-4">
-<h4 id="org33fe86c"><span class="section-number-4">8.7.2.</span> ivy-yasnippet</h4>
+<div id="outline-container-org472e39a" class="outline-4">
+<h4 id="org472e39a"><span class="section-number-4">8.7.2.</span> ivy-yasnippet</h4>
 <div class="outline-text-4" id="text-8-7-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3032,12 +3136,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgbe42114" class="outline-3">
-<h3 id="orgbe42114"><span class="section-number-3">8.8.</span> LSP</h3>
+<div id="outline-container-orgf78ca73" class="outline-3">
+<h3 id="orgf78ca73"><span class="section-number-3">8.8.</span> LSP</h3>
 <div class="outline-text-3" id="text-8-8">
 </div>
-<div id="outline-container-org21be46b" class="outline-4">
-<h4 id="org21be46b"><span class="section-number-4">8.8.1.</span> lsp-mode</h4>
+<div id="outline-container-org2e9c629" class="outline-4">
+<h4 id="org2e9c629"><span class="section-number-4">8.8.1.</span> lsp-mode</h4>
 <div class="outline-text-4" id="text-8-8-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3066,10 +3170,13 @@
   (autoload-if-found '(lsp lsp-deferred) <span class="org-string">"lsp-mode"</span> nil t)
 
   (<span class="org-keyword">with-eval-after-load</span> 'lsp-mode
+    (add-to-list 'lsp-file-watch-ignored-directories <span class="org-string">"[/\\\\]vendor"</span>)
+    (add-to-list 'lsp-file-watch-ignored-directories <span class="org-string">"[/\\\\]storage"</span>)
+    (add-to-list 'lsp-file-watch-ignored-directories <span class="org-string">"[/\\\\]docs"</span>)
+    (add-to-list 'lsp-file-watch-ignored-directories <span class="org-string">"[/\\\\]docker"</span>)
     (<span class="org-keyword">eval-and-compile</span>
       (<span class="org-keyword">setq</span> lsp-idle-delay 0.8)
-      (<span class="org-keyword">setq</span> lsp-log-io nil)
-      (add-to-list 'lsp-file-watch-ignored-directories <span class="org-string">"[/\\\\]vendor"</span>)))
+      (<span class="org-keyword">setq</span> lsp-log-io nil)))
 
   (<span class="org-keyword">with-eval-after-load</span> 'lsp-completion
     (<span class="org-keyword">eval-and-compile</span>
@@ -3087,8 +3194,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org1ff4207" class="outline-4">
-<h4 id="org1ff4207"><span class="section-number-4">8.8.2.</span> dap-mode</h4>
+<div id="outline-container-orgb405f98" class="outline-4">
+<h4 id="orgb405f98"><span class="section-number-4">8.8.2.</span> dap-mode</h4>
 <div class="outline-text-4" id="text-8-8-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3113,30 +3220,32 @@
   (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/dap-mode"</span>))
 
   (<span class="org-keyword">when</span> (autoload-if-found '(dap-mode) <span class="org-string">"dap-mode"</span> nil t)
-    (dap-mode 1)
+    (add-hook 'lsp-mode-hook 'dap-mode))
+
+  (<span class="org-keyword">with-eval-after-load</span> 'dap-mode
     (define-key dap-mode-map (kbd <span class="org-string">"C-c d"</span>) 'dap-breakpoint-toggle))
 
   (<span class="org-keyword">when</span> (autoload-if-found '(dap-ui-mode) <span class="org-string">"dap-ui"</span> nil t)
-    (dap-ui-mode 1)
-    (dap-ui-controls-mode 1))
+    (add-hook 'dap-mode-hook 'dap-ui-mode)
+    (add-hook 'dap-mode-hook 'dap-ui-controls-mode))
 
   (<span class="org-keyword">when</span> (autoload-if-found '(dap-tooltip-mode) <span class="org-string">"dap-mouse"</span> nil t)
-    (tooltip-mode 1)
-    (dap-tooltip-mode 1))
+    (add-hook 'dap-mode-hook 'tooltip-mode)
+    (add-hook 'dap-mode-hook 'dap-tooltip-mode))
 
   (<span class="org-keyword">when</span> (autoload-if-found '(dap-php-setup) <span class="org-string">"dap-php"</span> nil t)
     (add-hook 'php-mode-hook 'dap-php-setup))
 
   (<span class="org-keyword">with-eval-after-load</span> 'dap-php
+    (dap-register-debug-template <span class="org-string">"Laravel Run Configuration"</span>
+                                 (list <span class="org-builtin">:type</span> <span class="org-string">"php"</span>
+                                       <span class="org-builtin">:request</span> <span class="org-string">"launch"</span>
+                                       <span class="org-builtin">:mode</span> <span class="org-string">"remote"</span>
+                                       <span class="org-builtin">:host</span> <span class="org-string">"localhost"</span>
+                                       <span class="org-builtin">:port</span> <span class="org-string">"9003"</span>))
     (<span class="org-keyword">eval-and-compile</span>
       (<span class="org-keyword">setq</span> dap-php-debug-path <span class="org-string">"~/.ghq/github.com/xdebug/vscode-php-debug"</span>)
-      (<span class="org-keyword">setq</span> dap-php-debug-program `(<span class="org-string">"node"</span> ,(f-join dap-php-debug-path <span class="org-string">"out/phpDebug.js"</span>)))
-      (dap-register-debug-template <span class="org-string">"Laravel Run Configuration"</span>
-                                   (list <span class="org-builtin">:type</span> <span class="org-string">"php"</span>
-                                         <span class="org-builtin">:request</span> <span class="org-string">"launch"</span>
-                                         <span class="org-builtin">:mode</span> <span class="org-string">"remote"</span>
-                                         <span class="org-builtin">:host</span> <span class="org-string">"localhost"</span>
-                                         <span class="org-builtin">:port</span> <span class="org-string">"9003"</span>))))
+      (<span class="org-keyword">setq</span> dap-php-debug-program `(<span class="org-string">"node"</span> ,(f-join dap-php-debug-path <span class="org-string">"out/phpDebug.js"</span>)))))
 
   (<span class="org-keyword">when</span> (autoload-if-found '(dap-node-setup) <span class="org-string">"dap-node"</span> nil t)
     (add-hook 'js2-mode-hook 'dap-node-setup))
@@ -3150,8 +3259,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org60f604d" class="outline-4">
-<h4 id="org60f604d"><span class="section-number-4">8.8.3.</span> lsp-ui</h4>
+<div id="outline-container-org7a38e9d" class="outline-4">
+<h4 id="org7a38e9d"><span class="section-number-4">8.8.3.</span> lsp-ui</h4>
 <div class="outline-text-4" id="text-8-8-3">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3172,12 +3281,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org3afa127" class="outline-3">
-<h3 id="org3afa127"><span class="section-number-3">8.9.</span> Git</h3>
+<div id="outline-container-org2c2078b" class="outline-3">
+<h3 id="org2c2078b"><span class="section-number-3">8.9.</span> Git</h3>
 <div class="outline-text-3" id="text-8-9">
 </div>
-<div id="outline-container-org9192e3d" class="outline-4">
-<h4 id="org9192e3d"><span class="section-number-4">8.9.1.</span> magit</h4>
+<div id="outline-container-org20871f9" class="outline-4">
+<h4 id="org20871f9"><span class="section-number-4">8.9.1.</span> magit</h4>
 <div class="outline-text-4" id="text-8-9-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3197,23 +3306,24 @@
   (<span class="org-keyword">when</span> (autoload-if-found '(global-git-commit-mode) <span class="org-string">"git-commit"</span> nil t)
     (global-git-commit-mode))
 
-  (<span class="org-keyword">with-eval-after-load</span> 'magit
-    (<span class="org-keyword">eval-and-compile</span>
-      (<span class="org-keyword">setq</span> magit-refresh-status-buffer nil)))
-
   (with-delayed-execution
-    (<span class="org-keyword">when</span> (autoload-if-found '(magit-status) <span class="org-string">"magit"</span>)
+    (<span class="org-keyword">when</span> (autoload-if-found '(magit-status magit-blame) <span class="org-string">"magit"</span>)
       (<span class="org-keyword">defun</span> <span class="org-function-name">my/magit-status</span> ()
         (<span class="org-keyword">interactive</span>)
         (<span class="org-keyword">let</span> ((default-directory (locate-dominating-file default-directory <span class="org-string">".git"</span>)))
           (magit-status)))
-      (global-set-key (kbd <span class="org-string">"C-x g"</span>) #'my/magit-status))))
+      (global-set-key (kbd <span class="org-string">"C-x g"</span>) #'my/magit-status)
+      (global-set-key (kbd <span class="org-string">"C-x G"</span>) #'magit-blame))
+
+    (<span class="org-keyword">with-eval-after-load</span> 'magit
+      (<span class="org-keyword">eval-and-compile</span>
+        (<span class="org-keyword">setq</span> magit-refresh-status-buffer nil)))))
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-orgb6bd9e3" class="outline-4">
-<h4 id="orgb6bd9e3"><span class="section-number-4">8.9.2.</span> magit-forge</h4>
+<div id="outline-container-org13f3382" class="outline-4">
+<h4 id="org13f3382"><span class="section-number-4">8.9.2.</span> magit-forge</h4>
 <div class="outline-text-4" id="text-8-9-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3237,12 +3347,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org34b5834" class="outline-3">
-<h3 id="org34b5834"><span class="section-number-3">8.10.</span> Shell</h3>
+<div id="outline-container-org62ddd60" class="outline-3">
+<h3 id="org62ddd60"><span class="section-number-3">8.10.</span> Shell</h3>
 <div class="outline-text-3" id="text-8-10">
 </div>
-<div id="outline-container-org50b7de6" class="outline-4">
-<h4 id="org50b7de6"><span class="section-number-4">8.10.1.</span> exec-path-from-shell</h4>
+<div id="outline-container-orgd26f831" class="outline-4">
+<h4 id="orgd26f831"><span class="section-number-4">8.10.1.</span> exec-path-from-shell</h4>
 <div class="outline-text-4" id="text-8-10-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3263,12 +3373,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org57d4919" class="outline-3">
-<h3 id="org57d4919"><span class="section-number-3">8.11.</span> Cpp</h3>
+<div id="outline-container-org7335c1f" class="outline-3">
+<h3 id="org7335c1f"><span class="section-number-3">8.11.</span> Cpp</h3>
 <div class="outline-text-3" id="text-8-11">
 </div>
-<div id="outline-container-org255b222" class="outline-4">
-<h4 id="org255b222"><span class="section-number-4">8.11.1.</span> clang-format</h4>
+<div id="outline-container-org9446e8a" class="outline-4">
+<h4 id="org9446e8a"><span class="section-number-4">8.11.1.</span> clang-format</h4>
 <div class="outline-text-4" id="text-8-11-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3285,8 +3395,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgd0a00ab" class="outline-4">
-<h4 id="orgd0a00ab"><span class="section-number-4">8.11.2.</span> inferior-cling</h4>
+<div id="outline-container-orgc64636f" class="outline-4">
+<h4 id="orgc64636f"><span class="section-number-4">8.11.2.</span> inferior-cling</h4>
 <div class="outline-text-4" id="text-8-11-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3300,12 +3410,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgd7240fa" class="outline-3">
-<h3 id="orgd7240fa"><span class="section-number-3">8.12.</span> JavaScript/TypeScript</h3>
+<div id="outline-container-org000d555" class="outline-3">
+<h3 id="org000d555"><span class="section-number-3">8.12.</span> JavaScript/TypeScript</h3>
 <div class="outline-text-3" id="text-8-12">
 </div>
-<div id="outline-container-org8b16897" class="outline-4">
-<h4 id="org8b16897"><span class="section-number-4">8.12.1.</span> js2-refactor</h4>
+<div id="outline-container-org46a8df4" class="outline-4">
+<h4 id="org46a8df4"><span class="section-number-4">8.12.1.</span> js2-refactor</h4>
 <div class="outline-text-4" id="text-8-12-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3320,8 +3430,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgcfe72b7" class="outline-4">
-<h4 id="orgcfe72b7"><span class="section-number-4">8.12.2.</span> tree-sitter</h4>
+<div id="outline-container-org0ff483f" class="outline-4">
+<h4 id="org0ff483f"><span class="section-number-4">8.12.2.</span> tree-sitter</h4>
 <div class="outline-text-4" id="text-8-12-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3365,12 +3475,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org3d87b0f" class="outline-3">
-<h3 id="org3d87b0f"><span class="section-number-3">8.13.</span> Ruby</h3>
+<div id="outline-container-org4b2dc77" class="outline-3">
+<h3 id="org4b2dc77"><span class="section-number-3">8.13.</span> Ruby</h3>
 <div class="outline-text-3" id="text-8-13">
 </div>
-<div id="outline-container-orgb6f07db" class="outline-4">
-<h4 id="orgb6f07db"><span class="section-number-4">8.13.1.</span> robe</h4>
+<div id="outline-container-org816e969" class="outline-4">
+<h4 id="org816e969"><span class="section-number-4">8.13.1.</span> robe</h4>
 <div class="outline-text-4" id="text-8-13-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3387,8 +3497,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orge67e007" class="outline-4">
-<h4 id="orge67e007"><span class="section-number-4">8.13.2.</span> rubocop</h4>
+<div id="outline-container-org8523c14" class="outline-4">
+<h4 id="org8523c14"><span class="section-number-4">8.13.2.</span> rubocop</h4>
 <div class="outline-text-4" id="text-8-13-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3403,8 +3513,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org495c5d7" class="outline-4">
-<h4 id="org495c5d7"><span class="section-number-4">8.13.3.</span> ruby-refactor</h4>
+<div id="outline-container-org20961f9" class="outline-4">
+<h4 id="org20961f9"><span class="section-number-4">8.13.3.</span> ruby-refactor</h4>
 <div class="outline-text-4" id="text-8-13-3">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3419,8 +3529,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org14a5866" class="outline-4">
-<h4 id="org14a5866"><span class="section-number-4">8.13.4.</span> inf-ruby</h4>
+<div id="outline-container-org6e6a610" class="outline-4">
+<h4 id="org6e6a610"><span class="section-number-4">8.13.4.</span> inf-ruby</h4>
 <div class="outline-text-4" id="text-8-13-4">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3446,12 +3556,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgfbd4f03" class="outline-3">
-<h3 id="orgfbd4f03"><span class="section-number-3">8.14.</span> SQL</h3>
+<div id="outline-container-org0afae69" class="outline-3">
+<h3 id="org0afae69"><span class="section-number-3">8.14.</span> SQL</h3>
 <div class="outline-text-3" id="text-8-14">
 </div>
-<div id="outline-container-org9f684a5" class="outline-4">
-<h4 id="org9f684a5"><span class="section-number-4">8.14.1.</span> sql-indent</h4>
+<div id="outline-container-org220c73e" class="outline-4">
+<h4 id="org220c73e"><span class="section-number-4">8.14.1.</span> sql-indent</h4>
 <div class="outline-text-4" id="text-8-14-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3469,12 +3579,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org15d741a" class="outline-3">
-<h3 id="org15d741a"><span class="section-number-3">8.15.</span> PHP</h3>
+<div id="outline-container-org773fca0" class="outline-3">
+<h3 id="org773fca0"><span class="section-number-3">8.15.</span> PHP</h3>
 <div class="outline-text-3" id="text-8-15">
 </div>
-<div id="outline-container-org723357f" class="outline-4">
-<h4 id="org723357f"><span class="section-number-4">8.15.1.</span> psysh</h4>
+<div id="outline-container-org65010b6" class="outline-4">
+<h4 id="org65010b6"><span class="section-number-4">8.15.1.</span> psysh</h4>
 <div class="outline-text-4" id="text-8-15-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3487,8 +3597,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgff056e6" class="outline-4">
-<h4 id="orgff056e6"><span class="section-number-4">8.15.2.</span> laravel-tinker-repl</h4>
+<div id="outline-container-org8de45b0" class="outline-4">
+<h4 id="org8de45b0"><span class="section-number-4">8.15.2.</span> laravel-tinker-repl</h4>
 <div class="outline-text-4" id="text-8-15-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3503,8 +3613,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgc742ebc" class="outline-4">
-<h4 id="orgc742ebc"><span class="section-number-4">8.15.3.</span> emacs-php-doc-block</h4>
+<div id="outline-container-orgf118f67" class="outline-4">
+<h4 id="orgf118f67"><span class="section-number-4">8.15.3.</span> emacs-php-doc-block</h4>
 <div class="outline-text-4" id="text-8-15-3">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3519,12 +3629,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org56d1c7c" class="outline-3">
-<h3 id="org56d1c7c"><span class="section-number-3">8.16.</span> Markdown</h3>
+<div id="outline-container-org63e1ee7" class="outline-3">
+<h3 id="org63e1ee7"><span class="section-number-3">8.16.</span> Markdown</h3>
 <div class="outline-text-3" id="text-8-16">
 </div>
-<div id="outline-container-orgad0ebfa" class="outline-4">
-<h4 id="orgad0ebfa"><span class="section-number-4">8.16.1.</span> poly-markdown</h4>
+<div id="outline-container-org99ab038" class="outline-4">
+<h4 id="org99ab038"><span class="section-number-4">8.16.1.</span> poly-markdown</h4>
 <div class="outline-text-4" id="text-8-16-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3540,13 +3650,37 @@
 </div>
 </div>
 </div>
+<div id="outline-container-org498085d" class="outline-4">
+<h4 id="org498085d"><span class="section-number-4">8.16.2.</span> markdown-preview-mode</h4>
+<div class="outline-text-4" id="text-8-16-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
+  (el-get-bundle 'web-server)
+  (el-get-bundle 'websocket)
+  (el-get-bundle 'markdown-preview-mode))
+
+(with-delayed-execution
+  (message <span class="org-string">"Install markdown-preview-mode..."</span>)
+  (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/web-server"</span>))
+  (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/websocket"</span>))
+  (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/markdown-preview-mode"</span>))
+
+  (autoload-if-found '(markdown-preview-open-browser markdown-preview-mode) <span class="org-string">"markdown-preview-mode"</span> nil t)
+
+  (<span class="org-keyword">with-eval-after-load</span> 'markdown-preview-mode
+    (<span class="org-keyword">eval-and-compile</span>
+      (<span class="org-keyword">setq</span> markdown-preview-stylesheets (list <span class="org-string">"http://thomasf.github.io/solarized-css/solarized-light.min.css"</span>)))))
+</pre>
 </div>
-<div id="outline-container-orgff294e1" class="outline-3">
-<h3 id="orgff294e1"><span class="section-number-3">8.17.</span> Fish</h3>
+</div>
+</div>
+</div>
+<div id="outline-container-orga6f37ab" class="outline-3">
+<h3 id="orga6f37ab"><span class="section-number-3">8.17.</span> Fish</h3>
 <div class="outline-text-3" id="text-8-17">
 </div>
-<div id="outline-container-org4689741" class="outline-4">
-<h4 id="org4689741"><span class="section-number-4">8.17.1.</span> fish-repl</h4>
+<div id="outline-container-org13fadf2" class="outline-4">
+<h4 id="org13fadf2"><span class="section-number-4">8.17.1.</span> fish-repl</h4>
 <div class="outline-text-4" id="text-8-17-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3562,12 +3696,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org6e36da9" class="outline-3">
-<h3 id="org6e36da9"><span class="section-number-3">8.18.</span> NodeJS</h3>
+<div id="outline-container-orgcb04f22" class="outline-3">
+<h3 id="orgcb04f22"><span class="section-number-3">8.18.</span> NodeJS</h3>
 <div class="outline-text-3" id="text-8-18">
 </div>
-<div id="outline-container-org60fcc74" class="outline-4">
-<h4 id="org60fcc74"><span class="section-number-4">8.18.1.</span> nodejs-repl</h4>
+<div id="outline-container-org45cd4f9" class="outline-4">
+<h4 id="org45cd4f9"><span class="section-number-4">8.18.1.</span> nodejs-repl</h4>
 <div class="outline-text-4" id="text-8-18-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3591,12 +3725,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org1fc40b5" class="outline-3">
-<h3 id="org1fc40b5"><span class="section-number-3">8.19.</span> File</h3>
+<div id="outline-container-org63ce8ea" class="outline-3">
+<h3 id="org63ce8ea"><span class="section-number-3">8.19.</span> File</h3>
 <div class="outline-text-3" id="text-8-19">
 </div>
-<div id="outline-container-org27266b9" class="outline-4">
-<h4 id="org27266b9"><span class="section-number-4">8.19.1.</span> recentf</h4>
+<div id="outline-container-org058a738" class="outline-4">
+<h4 id="org058a738"><span class="section-number-4">8.19.1.</span> recentf</h4>
 <div class="outline-text-4" id="text-8-19-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
@@ -3613,8 +3747,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgbc7466e" class="outline-4">
-<h4 id="orgbc7466e"><span class="section-number-4">8.19.2.</span> open-junk-file</h4>
+<div id="outline-container-org8d9416a" class="outline-4">
+<h4 id="org8d9416a"><span class="section-number-4">8.19.2.</span> open-junk-file</h4>
 <div class="outline-text-4" id="text-8-19-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3639,12 +3773,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgb6b0177" class="outline-3">
-<h3 id="orgb6b0177"><span class="section-number-3">8.20.</span> Cursor</h3>
+<div id="outline-container-org0dc8f47" class="outline-3">
+<h3 id="org0dc8f47"><span class="section-number-3">8.20.</span> Cursor</h3>
 <div class="outline-text-3" id="text-8-20">
 </div>
-<div id="outline-container-orgb7823c6" class="outline-4">
-<h4 id="orgb7823c6"><span class="section-number-4">8.20.1.</span> multiple-cursors</h4>
+<div id="outline-container-org7fa4d6d" class="outline-4">
+<h4 id="org7fa4d6d"><span class="section-number-4">8.20.1.</span> multiple-cursors</h4>
 <div class="outline-text-4" id="text-8-20-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3661,12 +3795,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org8d376f0" class="outline-3">
-<h3 id="org8d376f0"><span class="section-number-3">8.21.</span> Other</h3>
+<div id="outline-container-orgdf390da" class="outline-3">
+<h3 id="orgdf390da"><span class="section-number-3">8.21.</span> Other</h3>
 <div class="outline-text-3" id="text-8-21">
 </div>
-<div id="outline-container-org49d3566" class="outline-4">
-<h4 id="org49d3566"><span class="section-number-4">8.21.1.</span> ansi-color</h4>
+<div id="outline-container-orga89b8ce" class="outline-4">
+<h4 id="orga89b8ce"><span class="section-number-4">8.21.1.</span> ansi-color</h4>
 <div class="outline-text-4" id="text-8-21-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
@@ -3680,8 +3814,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orga302c12" class="outline-4">
-<h4 id="orga302c12"><span class="section-number-4">8.21.2.</span> auto-save-buffers-enhanced</h4>
+<div id="outline-container-orgb4f9590" class="outline-4">
+<h4 id="orgb4f9590"><span class="section-number-4">8.21.2.</span> auto-save-buffers-enhanced</h4>
 <div class="outline-text-4" id="text-8-21-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3698,8 +3832,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgc7474d8" class="outline-4">
-<h4 id="orgc7474d8"><span class="section-number-4">8.21.3.</span> amx</h4>
+<div id="outline-container-orgbf9c69d" class="outline-4">
+<h4 id="orgbf9c69d"><span class="section-number-4">8.21.3.</span> amx</h4>
 <div class="outline-text-4" id="text-8-21-3">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3713,8 +3847,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orga5d087c" class="outline-4">
-<h4 id="orga5d087c"><span class="section-number-4">8.21.4.</span> avy</h4>
+<div id="outline-container-orgce3fdb0" class="outline-4">
+<h4 id="orgce3fdb0"><span class="section-number-4">8.21.4.</span> avy</h4>
 <div class="outline-text-4" id="text-8-21-4">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3731,8 +3865,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org6bd18cb" class="outline-4">
-<h4 id="org6bd18cb"><span class="section-number-4">8.21.5.</span> avy-zap</h4>
+<div id="outline-container-org0d5adb7" class="outline-4">
+<h4 id="org0d5adb7"><span class="section-number-4">8.21.5.</span> avy-zap</h4>
 <div class="outline-text-4" id="text-8-21-5">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -3747,9 +3881,20 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org30a4190" class="outline-4">
-<h4 id="org30a4190"><span class="section-number-4">8.21.6.</span> define-word</h4>
+<div id="outline-container-org199ffa3" class="outline-4">
+<h4 id="org199ffa3"><span class="section-number-4">8.21.6.</span> browse-url</h4>
 <div class="outline-text-4" id="text-8-21-6">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span class="org-keyword">with-eval-after-load</span> 'browse-url
+  (<span class="org-keyword">eval-and-compile</span>
+    (<span class="org-keyword">setq</span> browse-url-browser-function 'eww-browse-url)))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org9015ac4" class="outline-4">
+<h4 id="org9015ac4"><span class="section-number-4">8.21.7.</span> define-word</h4>
+<div class="outline-text-4" id="text-8-21-7">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'define-word))
@@ -3773,9 +3918,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org00785f9" class="outline-4">
-<h4 id="org00785f9"><span class="section-number-4">8.21.7.</span> ddskk</h4>
-<div class="outline-text-4" id="text-8-21-7">
+<div id="outline-container-org44c4b80" class="outline-4">
+<h4 id="org44c4b80"><span class="section-number-4">8.21.8.</span> ddskk</h4>
+<div class="outline-text-4" id="text-8-21-8">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'ddskk))
@@ -3797,9 +3942,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org8e528f7" class="outline-4">
-<h4 id="org8e528f7"><span class="section-number-4">8.21.8.</span> editorconfig</h4>
-<div class="outline-text-4" id="text-8-21-8">
+<div id="outline-container-orgd6180cd" class="outline-4">
+<h4 id="orgd6180cd"><span class="section-number-4">8.21.9.</span> editorconfig</h4>
+<div class="outline-text-4" id="text-8-21-9">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'editorconfig))
@@ -3814,9 +3959,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org344d94e" class="outline-4">
-<h4 id="org344d94e"><span class="section-number-4">8.21.9.</span> esup</h4>
-<div class="outline-text-4" id="text-8-21-9">
+<div id="outline-container-org2c4c455" class="outline-4">
+<h4 id="org2c4c455"><span class="section-number-4">8.21.10.</span> esup</h4>
+<div class="outline-text-4" id="text-8-21-10">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'esup))
@@ -3829,9 +3974,20 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org77b8b4b" class="outline-4">
-<h4 id="org77b8b4b"><span class="section-number-4">8.21.10.</span> expand-region</h4>
-<div class="outline-text-4" id="text-8-21-10">
+<div id="outline-container-org61a821f" class="outline-4">
+<h4 id="org61a821f"><span class="section-number-4">8.21.11.</span> epa-file</h4>
+<div class="outline-text-4" id="text-8-21-11">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(with-delayed-execution
+  (<span class="org-keyword">when</span> (autoload-if-found '(epa-file-enable) <span class="org-string">"epa-file"</span> nil t)
+    (epa-file-enable)))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgc3dc917" class="outline-4">
+<h4 id="orgc3dc917"><span class="section-number-4">8.21.12.</span> expand-region</h4>
+<div class="outline-text-4" id="text-8-21-12">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'expand-region))
@@ -3846,9 +4002,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org0b1fabb" class="outline-4">
-<h4 id="org0b1fabb"><span class="section-number-4">8.21.11.</span> font-lock-studio</h4>
-<div class="outline-text-4" id="text-8-21-11">
+<div id="outline-container-orga3343c2" class="outline-4">
+<h4 id="orga3343c2"><span class="section-number-4">8.21.13.</span> font-lock-studio</h4>
+<div class="outline-text-4" id="text-8-21-13">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'font-lock-studio))
@@ -3860,25 +4016,47 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org441e006" class="outline-4">
-<h4 id="org441e006"><span class="section-number-4">8.21.12.</span> <span class="todo TODO">TODO</span> gcmh</h4>
-<div class="outline-text-4" id="text-8-21-12">
+<div id="outline-container-orga4ab95b" class="outline-4">
+<h4 id="orga4ab95b"><span class="section-number-4">8.21.14.</span> gcmh</h4>
+<div class="outline-text-4" id="text-8-21-14">
 <div class="org-src-container">
-<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">(eval-when-compile</span>
-<span class="org-comment-delimiter">;;   </span><span class="org-comment">(el-get-bundle 'gcmh))</span>
+<pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
+  (el-get-bundle 'gcmh))
 
-<span class="org-comment-delimiter">;; </span><span class="org-comment">(with-delayed-execution</span>
-<span class="org-comment-delimiter">;;   </span><span class="org-comment">(message "Install gcmh...")</span>
-<span class="org-comment-delimiter">;;   </span><span class="org-comment">(add-to-list 'load-path (locate-user-emacs-file "el-get/gcmh"))</span>
-<span class="org-comment-delimiter">;;   </span><span class="org-comment">(when (autoload-if-found '(gcmh-mode) "gcmh" nil t)</span>
-<span class="org-comment-delimiter">;;     </span><span class="org-comment">(gcmh-mode 1)))</span>
+(with-delayed-execution
+  (message <span class="org-string">"Install gcmh..."</span>)
+  (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/gcmh"</span>))
+  (<span class="org-keyword">when</span> (autoload-if-found '(gcmh-mode) <span class="org-string">"gcmh"</span> nil t)
+    (<span class="org-keyword">defvar</span> <span class="org-variable-name">my/gcmh-status</span> nil)
+
+    (gcmh-mode 1)
+
+    (advice-add #'garbage-collect
+                <span class="org-builtin">:before</span>
+                (<span class="org-keyword">defun</span> <span class="org-function-name">my/gcmh-log-start</span> (<span class="org-type">&amp;rest</span> _)
+                  (<span class="org-keyword">when</span> gcmh-verbose
+                    (<span class="org-keyword">setq</span> my/gcmh-status <span class="org-string">"Running GC..."</span>))))
+
+    (advice-add #'gcmh-message
+                <span class="org-builtin">:override</span>
+                (<span class="org-keyword">defun</span> <span class="org-function-name">my/gcmh-message</span> (format-string <span class="org-type">&amp;rest</span> args)
+                  (<span class="org-keyword">setq</span> akirak/gcmh-status
+                        (apply #'format-message format-string args))
+                  (run-with-timer 2 nil
+                                  (<span class="org-keyword">lambda</span> ()
+                                    (<span class="org-keyword">setq</span> my/gcmh-status nil)))))
+
+    (<span class="org-keyword">with-eval-after-load</span> 'gcmh
+      (<span class="org-keyword">eval-and-compile</span>
+        (<span class="org-keyword">setq</span> gcmh-verbose t)
+        (<span class="org-keyword">setq</span> gcmh-idle-delay 15)))))
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-org213c7ff" class="outline-4">
-<h4 id="org213c7ff"><span class="section-number-4">8.21.13.</span> google-this</h4>
-<div class="outline-text-4" id="text-8-21-13">
+<div id="outline-container-orgcccb890" class="outline-4">
+<h4 id="orgcccb890"><span class="section-number-4">8.21.15.</span> google-this</h4>
+<div class="outline-text-4" id="text-8-21-15">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'google-this))
@@ -3892,9 +4070,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org9b8a2b1" class="outline-4">
-<h4 id="org9b8a2b1"><span class="section-number-4">8.21.14.</span> goto-addr</h4>
-<div class="outline-text-4" id="text-8-21-14">
+<div id="outline-container-orgaed428f" class="outline-4">
+<h4 id="orgaed428f"><span class="section-number-4">8.21.16.</span> goto-addr</h4>
+<div class="outline-text-4" id="text-8-21-16">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
   (<span class="org-keyword">when</span> (autoload-if-found '(goto-address-prog-mode goto-address-mode) <span class="org-string">"goto-address"</span> nil t)
@@ -3904,9 +4082,33 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgc2fc927" class="outline-4">
-<h4 id="orgc2fc927"><span class="section-number-4">8.21.15.</span> highlight-indent-guides</h4>
-<div class="outline-text-4" id="text-8-21-15">
+<div id="outline-container-orgfb043ff" class="outline-4">
+<h4 id="orgfb043ff"><span class="section-number-4">8.21.17.</span> hl-todo</h4>
+<div class="outline-text-4" id="text-8-21-17">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
+  (el-get-bundle 'hl-todo))
+
+(with-delayed-execution
+  (message <span class="org-string">"Install hl-todo..."</span>)
+  (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/hl-todo"</span>))
+  (<span class="org-keyword">when</span> (autoload-if-found '(global-hl-todo-mode) <span class="org-string">"hl-todo"</span> nil t)
+    (global-hl-todo-mode))
+  (<span class="org-keyword">with-eval-after-load</span> 'hl-todo
+    (<span class="org-keyword">eval-and-compile</span>
+      (<span class="org-keyword">setq</span> hl-todo-keyword-faces
+            '((<span class="org-string">"TODO"</span>   . <span class="org-string">"#FF0000"</span>)
+              (<span class="org-string">"FIXME"</span>  . <span class="org-string">"#FF0000"</span>)
+              (<span class="org-string">"DEBUG"</span>  . <span class="org-string">"#A020F0"</span>)
+              (<span class="org-string">"GOTCHA"</span> . <span class="org-string">"#FF4500"</span>)
+              (<span class="org-string">"STUB"</span>   . <span class="org-string">"#1E90FF"</span>))))))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orge07124d" class="outline-4">
+<h4 id="orge07124d"><span class="section-number-4">8.21.18.</span> highlight-indent-guides</h4>
+<div class="outline-text-4" id="text-8-21-18">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'highlight-indent-guides))
@@ -3923,9 +4125,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgde0c1b3" class="outline-4">
-<h4 id="orgde0c1b3"><span class="section-number-4">8.21.16.</span> htmlize</h4>
-<div class="outline-text-4" id="text-8-21-16">
+<div id="outline-container-orgb308fe2" class="outline-4">
+<h4 id="orgb308fe2"><span class="section-number-4">8.21.19.</span> htmlize</h4>
+<div class="outline-text-4" id="text-8-21-19">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'htmlize))
@@ -3938,9 +4140,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org77e3212" class="outline-4">
-<h4 id="org77e3212"><span class="section-number-4">8.21.17.</span> keyfreq</h4>
-<div class="outline-text-4" id="text-8-21-17">
+<div id="outline-container-orgde55c30" class="outline-4">
+<h4 id="orgde55c30"><span class="section-number-4">8.21.20.</span> keyfreq</h4>
+<div class="outline-text-4" id="text-8-21-20">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'keyfreq))
@@ -3956,9 +4158,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org9b4fa95" class="outline-4">
-<h4 id="org9b4fa95"><span class="section-number-4">8.21.18.</span> lorem ipsum</h4>
-<div class="outline-text-4" id="text-8-21-18">
+<div id="outline-container-org56a20ca" class="outline-4">
+<h4 id="org56a20ca"><span class="section-number-4">8.21.21.</span> lorem ipsum</h4>
+<div class="outline-text-4" id="text-8-21-21">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'lorem-ipsum))
@@ -3974,9 +4176,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgf16b62e" class="outline-4">
-<h4 id="orgf16b62e"><span class="section-number-4">8.21.19.</span> minimap</h4>
-<div class="outline-text-4" id="text-8-21-19">
+<div id="outline-container-org249c3c3" class="outline-4">
+<h4 id="org249c3c3"><span class="section-number-4">8.21.22.</span> minimap</h4>
+<div class="outline-text-4" id="text-8-21-22">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'minimap))
@@ -3995,9 +4197,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org416127b" class="outline-4">
-<h4 id="org416127b"><span class="section-number-4">8.21.20.</span> origami</h4>
-<div class="outline-text-4" id="text-8-21-20">
+<div id="outline-container-org685c59f" class="outline-4">
+<h4 id="org685c59f"><span class="section-number-4">8.21.23.</span> origami</h4>
+<div class="outline-text-4" id="text-8-21-23">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'origami))
@@ -4013,9 +4215,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orge5ec6fc" class="outline-4">
-<h4 id="orge5ec6fc"><span class="section-number-4">8.21.21.</span> persistent-scratch</h4>
-<div class="outline-text-4" id="text-8-21-21">
+<div id="outline-container-org2f6d0c9" class="outline-4">
+<h4 id="org2f6d0c9"><span class="section-number-4">8.21.24.</span> persistent-scratch</h4>
+<div class="outline-text-4" id="text-8-21-24">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'persistent-scratch))
@@ -4032,9 +4234,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgbfd9054" class="outline-4">
-<h4 id="orgbfd9054"><span class="section-number-4">8.21.22.</span> popwin</h4>
-<div class="outline-text-4" id="text-8-21-22">
+<div id="outline-container-org4bc9747" class="outline-4">
+<h4 id="org4bc9747"><span class="section-number-4">8.21.25.</span> popwin</h4>
+<div class="outline-text-4" id="text-8-21-25">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'popwin))
@@ -4049,9 +4251,45 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orga07d9eb" class="outline-4">
-<h4 id="orga07d9eb"><span class="section-number-4">8.21.23.</span> smartparens</h4>
-<div class="outline-text-4" id="text-8-21-23">
+<div id="outline-container-org057c80f" class="outline-4">
+<h4 id="org057c80f"><span class="section-number-4">8.21.26.</span> power-mode</h4>
+<div class="outline-text-4" id="text-8-21-26">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
+  (el-get-bundle 'power-mode
+                 <span class="org-builtin">:url</span> <span class="org-string">"https://github.com/elizagamedev/power-mode.el.git"</span>))
+
+(with-delayed-execution
+  (message <span class="org-string">"Install power-mode..."</span>)
+  (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/power-mode"</span>))
+  (autoload-if-found '(power-mode) <span class="org-string">"power-mode"</span> nil t))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgfef51a6" class="outline-4">
+<h4 id="orgfef51a6"><span class="section-number-4">8.21.27.</span> redacted</h4>
+<div class="outline-text-4" id="text-8-21-27">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
+  (el-get-bundle 'redacted
+                 <span class="org-builtin">:url</span> <span class="org-string">"https://github.com/bkaestner/redacted.el.git"</span>))
+
+(with-delayed-execution
+  (message <span class="org-string">"Install redacted..."</span>)
+  (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/redacted"</span>))
+  (<span class="org-keyword">when</span> (<span class="org-keyword">require</span> '<span class="org-constant">redacted</span>)
+    (<span class="org-keyword">defun</span> <span class="org-function-name">my/redacted-mode</span> ()
+      (<span class="org-keyword">interactive</span>)
+      (read-only-mode (<span class="org-keyword">if</span> redacted-mode -1 1))
+      (redacted-mode (<span class="org-keyword">if</span> redacted-mode -1 1)))))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org3b4a944" class="outline-4">
+<h4 id="org3b4a944"><span class="section-number-4">8.21.28.</span> smartparens</h4>
+<div class="outline-text-4" id="text-8-21-28">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'smartparens))
@@ -4064,9 +4302,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org334cd17" class="outline-4">
-<h4 id="org334cd17"><span class="section-number-4">8.21.24.</span> smart-jump</h4>
-<div class="outline-text-4" id="text-8-21-24">
+<div id="outline-container-orga221098" class="outline-4">
+<h4 id="orga221098"><span class="section-number-4">8.21.29.</span> smart-jump</h4>
+<div class="outline-text-4" id="text-8-21-29">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'smart-jump))
@@ -4079,9 +4317,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orge7ef664" class="outline-4">
-<h4 id="orge7ef664"><span class="section-number-4">8.21.25.</span> subword</h4>
-<div class="outline-text-4" id="text-8-21-25">
+<div id="outline-container-orga41f7f4" class="outline-4">
+<h4 id="orga41f7f4"><span class="section-number-4">8.21.30.</span> subword</h4>
+<div class="outline-text-4" id="text-8-21-30">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
   (<span class="org-keyword">when</span> (autoload-if-found '(my/delete-forward-block) <span class="org-string">"subword"</span> nil t)
@@ -4103,9 +4341,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgf5fc074" class="outline-4">
-<h4 id="orgf5fc074"><span class="section-number-4">8.21.26.</span> tab-bar</h4>
-<div class="outline-text-4" id="text-8-21-26">
+<div id="outline-container-orgabe3fe4" class="outline-4">
+<h4 id="orgabe3fe4"><span class="section-number-4">8.21.31.</span> tab-bar</h4>
+<div class="outline-text-4" id="text-8-21-31">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution-priority-high
   (<span class="org-keyword">when</span> (autoload-if-found '(tab-bar-mode tab-bar-history-mode) <span class="org-string">"tab-bar"</span> nil t)
@@ -4137,13 +4375,6 @@
     (advice-add #'tab-bar-switch-to-tab <span class="org-builtin">:around</span> #'my/advice-completing-read-to-ivy))
 
   (<span class="org-keyword">with-eval-after-load</span> 'projectile
-    (<span class="org-keyword">defun</span> <span class="org-function-name">my/set-tab-name-default</span> (<span class="org-type">&amp;rest</span> _)
-      (<span class="org-keyword">let</span> ((proj-name (projectile-project-name)))
-        (<span class="org-keyword">when</span> proj-name
-          (tab-bar-rename-tab proj-name))))
-    (advice-add 'tab-bar-new-tab <span class="org-builtin">:after</span> #'my/set-tab-name-default)
-    (add-hook 'window-setup-hook #'my/set-tab-name-default)
-
     (<span class="org-keyword">defun</span> <span class="org-function-name">my/tab-bar-rename-tab</span> ()
       (<span class="org-keyword">interactive</span>)
       (<span class="org-keyword">let</span> ((proj-name (projectile-project-name)))
@@ -4158,9 +4389,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orge1807f7" class="outline-4">
-<h4 id="orge1807f7"><span class="section-number-4">8.21.27.</span> undo-tree</h4>
-<div class="outline-text-4" id="text-8-21-27">
+<div id="outline-container-org4758c36" class="outline-4">
+<h4 id="org4758c36"><span class="section-number-4">8.21.32.</span> undo-tree</h4>
+<div class="outline-text-4" id="text-8-21-32">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'queue)
@@ -4180,9 +4411,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgc55b86e" class="outline-4">
-<h4 id="orgc55b86e"><span class="section-number-4">8.21.28.</span> uuid</h4>
-<div class="outline-text-4" id="text-8-21-28">
+<div id="outline-container-org34aa106" class="outline-4">
+<h4 id="org34aa106"><span class="section-number-4">8.21.33.</span> uuid</h4>
+<div class="outline-text-4" id="text-8-21-33">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'uuid
@@ -4200,29 +4431,26 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org578b3dd" class="outline-4">
-<h4 id="org578b3dd"><span class="section-number-4">8.21.29.</span> redacted</h4>
-<div class="outline-text-4" id="text-8-21-29">
+<div id="outline-container-org2100136" class="outline-4">
+<h4 id="org2100136"><span class="section-number-4">8.21.34.</span> view-lock-mode</h4>
+<div class="outline-text-4" id="text-8-21-34">
 <div class="org-src-container">
-<pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
-  (el-get-bundle 'redacted
-                 <span class="org-builtin">:url</span> <span class="org-string">"https://github.com/bkaestner/redacted.el.git"</span>))
+<pre class="src src-emacs-lisp">(<span class="org-keyword">eval-and-compile</span>
+  (el-get-bundle 'view-lock-mode
+                 <span class="org-builtin">:url</span> <span class="org-string">"https://github.com/s-fubuki/view-lock-mode.git"</span>))
 
 (with-delayed-execution
-  (message <span class="org-string">"Install redacted..."</span>)
-  (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/redacted"</span>))
-  (<span class="org-keyword">when</span> (<span class="org-keyword">require</span> '<span class="org-constant">redacted</span>)
-    (<span class="org-keyword">defun</span> <span class="org-function-name">my/redacted-mode</span> ()
-      (<span class="org-keyword">interactive</span>)
-      (read-only-mode (<span class="org-keyword">if</span> redacted-mode -1 1))
-      (redacted-mode (<span class="org-keyword">if</span> redacted-mode -1 1)))))
+  (message <span class="org-string">"Install view-lock-mode..."</span>)
+  (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/view-lock-mode"</span>))
+  (<span class="org-keyword">when</span> (autoload-if-found '(view-lock-timer-setup) <span class="org-string">"view-lock-mode"</span> nil t)
+    (add-hook 'view-mode-hook #'view-lock-timer-setup)))
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-org904b381" class="outline-4">
-<h4 id="org904b381"><span class="section-number-4">8.21.30.</span> <span class="todo TODO">TODO</span> wanderlust</h4>
-<div class="outline-text-4" id="text-8-21-30">
+<div id="outline-container-org6f29130" class="outline-4">
+<h4 id="org6f29130"><span class="section-number-4">8.21.35.</span> <span class="todo TODO">TODO</span> wanderlust</h4>
+<div class="outline-text-4" id="text-8-21-35">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">(eval-when-compile</span>
 <span class="org-comment-delimiter">;;   </span><span class="org-comment">(el-get-bundle 'wanderlust</span>
@@ -4238,9 +4466,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgba2faad" class="outline-4">
-<h4 id="orgba2faad"><span class="section-number-4">8.21.31.</span> which-key</h4>
-<div class="outline-text-4" id="text-8-21-31">
+<div id="outline-container-org7277f1a" class="outline-4">
+<h4 id="org7277f1a"><span class="section-number-4">8.21.36.</span> which-key</h4>
+<div class="outline-text-4" id="text-8-21-36">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'which-key))
@@ -4254,9 +4482,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgf58bec8" class="outline-4">
-<h4 id="orgf58bec8"><span class="section-number-4">8.21.32.</span> whitespace</h4>
-<div class="outline-text-4" id="text-8-21-32">
+<div id="outline-container-org2ad47c3" class="outline-4">
+<h4 id="org2ad47c3"><span class="section-number-4">8.21.37.</span> whitespace</h4>
+<div class="outline-text-4" id="text-8-21-37">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
   (<span class="org-keyword">when</span> (autoload-if-found '(global-whitespace-mode) <span class="org-string">"whitespace"</span> nil t)
@@ -4272,9 +4500,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org04ccfa1" class="outline-4">
-<h4 id="org04ccfa1"><span class="section-number-4">8.21.33.</span> woman</h4>
-<div class="outline-text-4" id="text-8-21-33">
+<div id="outline-container-org5d35464" class="outline-4">
+<h4 id="org5d35464"><span class="section-number-4">8.21.38.</span> woman</h4>
+<div class="outline-text-4" id="text-8-21-38">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(autoload 'woman
   <span class="org-string">"woman"</span> <span class="org-doc">"Decode and browse a UN*X man page."</span> t)
@@ -4285,9 +4513,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org899664f" class="outline-4">
-<h4 id="org899664f"><span class="section-number-4">8.21.34.</span> writer-mode</h4>
-<div class="outline-text-4" id="text-8-21-34">
+<div id="outline-container-orgbb2e31a" class="outline-4">
+<h4 id="orgbb2e31a"><span class="section-number-4">8.21.39.</span> writer-mode</h4>
+<div class="outline-text-4" id="text-8-21-39">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'visual-fill-column)
@@ -4317,9 +4545,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orge601c00" class="outline-4">
-<h4 id="orge601c00"><span class="section-number-4">8.21.35.</span> zoom-window</h4>
-<div class="outline-text-4" id="text-8-21-35">
+<div id="outline-container-orgc33112b" class="outline-4">
+<h4 id="orgc33112b"><span class="section-number-4">8.21.40.</span> zoom-window</h4>
+<div class="outline-text-4" id="text-8-21-40">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
   (el-get-bundle 'zoom-window))
@@ -4335,12 +4563,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgf719a45" class="outline-2">
-<h2 id="orgf719a45"><span class="section-number-2">9.</span> Elfeed</h2>
+<div id="outline-container-org140d3b9" class="outline-2">
+<h2 id="org140d3b9"><span class="section-number-2">9.</span> Elfeed</h2>
 <div class="outline-text-2" id="text-9">
 </div>
-<div id="outline-container-org1de581a" class="outline-3">
-<h3 id="org1de581a"><span class="section-number-3">9.1.</span> elfeed</h3>
+<div id="outline-container-org311ad97" class="outline-3">
+<h3 id="org311ad97"><span class="section-number-3">9.1.</span> elfeed</h3>
 <div class="outline-text-3" id="text-9-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -4352,14 +4580,14 @@
   (autoload-if-found '(elfeed) <span class="org-string">"elfeed"</span> nil t)
   (<span class="org-keyword">with-eval-after-load</span> 'elfeed
     (<span class="org-keyword">eval-and-compile</span>
-      (<span class="org-keyword">setq</span> elfeed-search-filter <span class="org-string">"@3-days-ago +unread"</span>)
+      (<span class="org-keyword">setq</span> elfeed-search-filter <span class="org-string">"@1-week-ago +unread"</span>)
       (<span class="org-keyword">setq</span> browse-url-browser-function 'eww-browse-url))))
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-org666b660" class="outline-3">
-<h3 id="org666b660"><span class="section-number-3">9.2.</span> elfeed-org</h3>
+<div id="outline-container-orgfd5c89f" class="outline-3">
+<h3 id="orgfd5c89f"><span class="section-number-3">9.2.</span> elfeed-org</h3>
 <div class="outline-text-3" id="text-9-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -4372,18 +4600,19 @@
     (elfeed-org))
   (<span class="org-keyword">with-eval-after-load</span> 'elfeed-org
     (<span class="org-keyword">eval-and-compile</span>
-      (<span class="org-keyword">setq</span> rmh-elfeed-org-files '(<span class="org-string">"~/.emacs.d/elfeed.org"</span>)))))
+      (<span class="org-keyword">setq</span> rmh-elfeed-org-files '(<span class="org-string">"~/.emacs.d/elfeed.org"</span>))
+      (<span class="org-keyword">setq</span> rmh-elfeed-org-auto-ignore-invalid-feeds t))))
 </pre>
 </div>
 </div>
 </div>
 </div>
-<div id="outline-container-org75af39d" class="outline-2">
-<h2 id="org75af39d"><span class="section-number-2">10.</span> Eshell</h2>
+<div id="outline-container-org7d88ffa" class="outline-2">
+<h2 id="org7d88ffa"><span class="section-number-2">10.</span> Eshell</h2>
 <div class="outline-text-2" id="text-10">
 </div>
-<div id="outline-container-orga0dda7b" class="outline-3">
-<h3 id="orga0dda7b"><span class="section-number-3">10.1.</span> basic</h3>
+<div id="outline-container-org7762503" class="outline-3">
+<h3 id="org7762503"><span class="section-number-3">10.1.</span> basic</h3>
 <div class="outline-text-3" id="text-10-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">with-eval-after-load</span> 'eshell
@@ -4416,8 +4645,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgf0e8b42" class="outline-3">
-<h3 id="orgf0e8b42"><span class="section-number-3">10.2.</span> eshell-z</h3>
+<div id="outline-container-org12efa18" class="outline-3">
+<h3 id="org12efa18"><span class="section-number-3">10.2.</span> eshell-z</h3>
 <div class="outline-text-3" id="text-10-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -4433,37 +4662,37 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgc880f36" class="outline-3">
-<h3 id="orgc880f36"><span class="section-number-3">10.3.</span> <span class="todo TODO">TODO</span> aweshell</h3>
+<div id="outline-container-orga19571c" class="outline-3">
+<h3 id="orga19571c"><span class="section-number-3">10.3.</span> <span class="todo TODO">TODO</span> aweshell</h3>
 <div class="outline-text-3" id="text-10-3">
 <div class="org-src-container">
-<pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
-  (el-get-bundle 'aweshell
-                 <span class="org-builtin">:url</span> <span class="org-string">"https://github.com/takeokunn/aweshell.git"</span>))
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">(eval-when-compile</span>
+<span class="org-comment-delimiter">;;   </span><span class="org-comment">(el-get-bundle 'aweshell</span>
+<span class="org-comment-delimiter">;;                  </span><span class="org-comment">:url "https://github.com/takeokunn/aweshell.git"))</span>
 
-(with-delayed-execution
-  (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/aweshell"</span>))
+<span class="org-comment-delimiter">;; </span><span class="org-comment">(with-delayed-execution</span>
+<span class="org-comment-delimiter">;;   </span><span class="org-comment">(add-to-list 'load-path (locate-user-emacs-file "el-get/aweshell"))</span>
 
-  <span class="org-comment-delimiter">;; </span><span class="org-comment">(when (require 'eshell-did-you-mean)</span>
-  <span class="org-comment-delimiter">;;   </span><span class="org-comment">(eshell-did-you-mean-setup))</span>
+<span class="org-comment-delimiter">;;   </span><span class="org-comment">;; (when (require 'eshell-did-you-mean)</span>
+<span class="org-comment-delimiter">;;   </span><span class="org-comment">;;   (eshell-did-you-mean-setup))</span>
 
-  <span class="org-comment-delimiter">;; </span><span class="org-comment">(when (require 'esh-opt)</span>
-  <span class="org-comment-delimiter">;;   </span><span class="org-comment">(autoload 'epe-theme-lambda "eshell-prompt-extras")</span>
-  <span class="org-comment-delimiter">;;   </span><span class="org-comment">(setq eshell-prompt-function 'epe-theme-lambda)</span>
-  <span class="org-comment-delimiter">;;   </span><span class="org-comment">(setq aweshell-auto-suggestion-p nil))</span>
+<span class="org-comment-delimiter">;;   </span><span class="org-comment">;; (when (require 'esh-opt)</span>
+<span class="org-comment-delimiter">;;   </span><span class="org-comment">;;   (autoload 'epe-theme-lambda "eshell-prompt-extras")</span>
+<span class="org-comment-delimiter">;;   </span><span class="org-comment">;;   (setq eshell-prompt-function 'epe-theme-lambda)</span>
+<span class="org-comment-delimiter">;;   </span><span class="org-comment">;;   (setq aweshell-auto-suggestion-p nil))</span>
 
-  <span class="org-comment-delimiter">;; </span><span class="org-comment">(when (require 'aweshell)</span>
-  <span class="org-comment-delimiter">;;   </span><span class="org-comment">(defun my/ivy-aweshell-history ()</span>
-  <span class="org-comment-delimiter">;;     </span><span class="org-comment">(interactive)</span>
-  <span class="org-comment-delimiter">;;     </span><span class="org-comment">(insert (ivy-read "Aweshell history: " (aweshell-parse-shell-history))))</span>
-  <span class="org-comment-delimiter">;;   </span><span class="org-comment">(define-key eshell-command-map (kbd "C-c C-r") 'my/ivy-aweshell-history))</span>
-  )
+<span class="org-comment-delimiter">;;   </span><span class="org-comment">;; (when (require 'aweshell)</span>
+<span class="org-comment-delimiter">;;   </span><span class="org-comment">;;   (defun my/ivy-aweshell-history ()</span>
+<span class="org-comment-delimiter">;;   </span><span class="org-comment">;;     (interactive)</span>
+<span class="org-comment-delimiter">;;   </span><span class="org-comment">;;     (insert (ivy-read "Aweshell history: " (aweshell-parse-shell-history))))</span>
+<span class="org-comment-delimiter">;;   </span><span class="org-comment">;;   (define-key eshell-command-map (kbd "C-c C-r") 'my/ivy-aweshell-history))</span>
+<span class="org-comment-delimiter">;;   </span><span class="org-comment">)</span>
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-orga7bdb5d" class="outline-3">
-<h3 id="orga7bdb5d"><span class="section-number-3">10.4.</span> emacs-fish-completion</h3>
+<div id="outline-container-org0182bfa" class="outline-3">
+<h3 id="org0182bfa"><span class="section-number-3">10.4.</span> emacs-fish-completion</h3>
 <div class="outline-text-3" id="text-10-4">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -4481,12 +4710,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgf9990b3" class="outline-2">
-<h2 id="orgf9990b3"><span class="section-number-2">11.</span> Org Mode</h2>
+<div id="outline-container-org783f90c" class="outline-2">
+<h2 id="org783f90c"><span class="section-number-2">11.</span> Org Mode</h2>
 <div class="outline-text-2" id="text-11">
 </div>
-<div id="outline-container-org2883442" class="outline-3">
-<h3 id="org2883442"><span class="section-number-3">11.1.</span> basic</h3>
+<div id="outline-container-orgb4d87f2" class="outline-3">
+<h3 id="orgb4d87f2"><span class="section-number-3">11.1.</span> basic</h3>
 <div class="outline-text-3" id="text-11-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(global-set-key (kbd <span class="org-string">"C-c a"</span>) 'org-agenda)
@@ -4513,8 +4742,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orga0ac6f6" class="outline-3">
-<h3 id="orga0ac6f6"><span class="section-number-3">11.2.</span> org-id</h3>
+<div id="outline-container-orgcee38b6" class="outline-3">
+<h3 id="orgcee38b6"><span class="section-number-3">11.2.</span> org-id</h3>
 <div class="outline-text-3" id="text-11-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
@@ -4530,24 +4759,23 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org8c4e2cb" class="outline-3">
-<h3 id="org8c4e2cb"><span class="section-number-3">11.3.</span> org-crypt</h3>
+<div id="outline-container-org9b3f894" class="outline-3">
+<h3 id="org9b3f894"><span class="section-number-3">11.3.</span> org-crypt</h3>
 <div class="outline-text-3" id="text-11-3">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(with-delayed-execution
   (message <span class="org-string">"Install org-crypt..."</span>)
   (<span class="org-keyword">with-eval-after-load</span> 'org-crypt
-    (<span class="org-keyword">when</span> (autoload-if-found '(org-crypt-use-before-save-magic) <span class="org-string">"org-crypt"</span> nil t)
+    (<span class="org-keyword">when</span> (autoload-if-found '(org-encrypt-entry org-decrypt-entry org-crypt-use-before-save-magic) <span class="org-string">"org-crypt"</span> nil t)
       (org-crypt-use-before-save-magic)
       (<span class="org-keyword">eval-and-compile</span>
-        (<span class="org-keyword">setq</span> org-crypt-key <span class="org-string">"bararararatty@gmail.com"</span>)
         (<span class="org-keyword">setq</span> org-tags-exclude-from-inheritance '(<span class="org-string">"crypt"</span>))))))
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-orgca1a3c8" class="outline-3">
-<h3 id="orgca1a3c8"><span class="section-number-3">11.4.</span> org-babel</h3>
+<div id="outline-container-orga0185aa" class="outline-3">
+<h3 id="orga0185aa"><span class="section-number-3">11.4.</span> org-babel</h3>
 <div class="outline-text-3" id="text-11-4">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -4562,9 +4790,11 @@
   (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/ob-go"</span>))
   (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/ob-rust"</span>))
   (add-to-list 'load-path (locate-user-emacs-file <span class="org-string">"el-get/ob-typescript"</span>))
+
   (<span class="org-keyword">with-eval-after-load</span> 'ob-core
     (<span class="org-keyword">eval-and-compile</span>
       (<span class="org-keyword">setq</span> org-confirm-babel-evaluate nil)))
+
   (<span class="org-keyword">with-eval-after-load</span> 'ob-babel
     (org-babel-do-load-languages 'org-babel-load-languages
                                  '((shell . t)
@@ -4579,8 +4809,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org48d1238" class="outline-3">
-<h3 id="org48d1238"><span class="section-number-3">11.5.</span> org-journal</h3>
+<div id="outline-container-orgb941b23" class="outline-3">
+<h3 id="orgb941b23"><span class="section-number-3">11.5.</span> org-journal</h3>
 <div class="outline-text-3" id="text-11-5">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -4598,8 +4828,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org3224363" class="outline-3">
-<h3 id="org3224363"><span class="section-number-3">11.6.</span> org-superstar</h3>
+<div id="outline-container-org6a63caa" class="outline-3">
+<h3 id="org6a63caa"><span class="section-number-3">11.6.</span> org-superstar</h3>
 <div class="outline-text-3" id="text-11-6">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -4617,8 +4847,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgc08b589" class="outline-3">
-<h3 id="orgc08b589"><span class="section-number-3">11.7.</span> org-generate</h3>
+<div id="outline-container-org6ae08ae" class="outline-3">
+<h3 id="org6ae08ae"><span class="section-number-3">11.7.</span> org-generate</h3>
 <div class="outline-text-3" id="text-11-7">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -4635,8 +4865,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org84391c8" class="outline-3">
-<h3 id="org84391c8"><span class="section-number-3">11.8.</span> org-pomodoro</h3>
+<div id="outline-container-orgb2df2ed" class="outline-3">
+<h3 id="orgb2df2ed"><span class="section-number-3">11.8.</span> org-pomodoro</h3>
 <div class="outline-text-3" id="text-11-8">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -4651,8 +4881,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org4b8b71f" class="outline-3">
-<h3 id="org4b8b71f"><span class="section-number-3">11.9.</span> org-view-mode</h3>
+<div id="outline-container-org1c45dbd" class="outline-3">
+<h3 id="org1c45dbd"><span class="section-number-3">11.9.</span> org-view-mode</h3>
 <div class="outline-text-3" id="text-11-9">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">eval-when-compile</span>
@@ -4669,12 +4899,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgc28e49e" class="outline-2">
-<h2 id="orgc28e49e"><span class="section-number-2">12.</span> EAF</h2>
+<div id="outline-container-org2e3c0e4" class="outline-2">
+<h2 id="org2e3c0e4"><span class="section-number-2">12.</span> EAF</h2>
 <div class="outline-text-2" id="text-12">
 </div>
-<div id="outline-container-orgdcb8b3a" class="outline-3">
-<h3 id="orgdcb8b3a"><span class="section-number-3">12.1.</span> basic</h3>
+<div id="outline-container-org37fc4a8" class="outline-3">
+<h3 id="org37fc4a8"><span class="section-number-3">12.1.</span> basic</h3>
 <div class="outline-text-3" id="text-12-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">(add-to-list 'load-path "~/.ghq/github.com/emacs-eaf/emacs-application-framework")</span>
@@ -4705,12 +4935,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org0ff847f" class="outline-2">
-<h2 id="org0ff847f"><span class="section-number-2">13.</span> MyFunc</h2>
+<div id="outline-container-orge22d48a" class="outline-2">
+<h2 id="orge22d48a"><span class="section-number-2">13.</span> MyFunc</h2>
 <div class="outline-text-2" id="text-13">
 </div>
-<div id="outline-container-orgb33088a" class="outline-3">
-<h3 id="orgb33088a"><span class="section-number-3">13.1.</span> my/beginning-of-intendation</h3>
+<div id="outline-container-org65e5770" class="outline-3">
+<h3 id="org65e5770"><span class="section-number-3">13.1.</span> my/beginning-of-intendation</h3>
 <div class="outline-text-3" id="text-13-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">my/beginning-of-intendation</span> ()
@@ -4721,8 +4951,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgabe34e2" class="outline-3">
-<h3 id="orgabe34e2"><span class="section-number-3">13.2.</span> my/before-set-auto-mode</h3>
+<div id="outline-container-org610e8ba" class="outline-3">
+<h3 id="org610e8ba"><span class="section-number-3">13.2.</span> my/before-set-auto-mode</h3>
 <div class="outline-text-3" id="text-13-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">my/before-set-auto-mode</span> ()
@@ -4737,8 +4967,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgab32b23" class="outline-3">
-<h3 id="orgab32b23"><span class="section-number-3">13.3.</span> my/copy-buffer</h3>
+<div id="outline-container-org0c6ceb4" class="outline-3">
+<h3 id="org0c6ceb4"><span class="section-number-3">13.3.</span> my/copy-buffer</h3>
 <div class="outline-text-3" id="text-13-3">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">my/copy-buffer</span> ()
@@ -4752,8 +4982,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org3ea3fba" class="outline-3">
-<h3 id="org3ea3fba"><span class="section-number-3">13.4.</span> my/ghq-get</h3>
+<div id="outline-container-org57dfcb8" class="outline-3">
+<h3 id="org57dfcb8"><span class="section-number-3">13.4.</span> my/ghq-get</h3>
 <div class="outline-text-3" id="text-13-4">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">my/ghq-get</span> ()
@@ -4770,8 +5000,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org829de70" class="outline-3">
-<h3 id="org829de70"><span class="section-number-3">13.5.</span> my/gh-browse</h3>
+<div id="outline-container-org4ead7f7" class="outline-3">
+<h3 id="org4ead7f7"><span class="section-number-3">13.5.</span> my/gh-browse</h3>
 <div class="outline-text-3" id="text-13-5">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">my/gh-browse</span> ()
@@ -4787,8 +5017,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgdbe9c30" class="outline-3">
-<h3 id="orgdbe9c30"><span class="section-number-3">13.6.</span> my/indent-all</h3>
+<div id="outline-container-org0bec311" class="outline-3">
+<h3 id="org0bec311"><span class="section-number-3">13.6.</span> my/indent-all</h3>
 <div class="outline-text-3" id="text-13-6">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">my/indent-buffer</span> ()
@@ -4802,8 +5032,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org96977a2" class="outline-3">
-<h3 id="org96977a2"><span class="section-number-3">13.7.</span> my/move-line</h3>
+<div id="outline-container-org8ae1dad" class="outline-3">
+<h3 id="org8ae1dad"><span class="section-number-3">13.7.</span> my/move-line</h3>
 <div class="outline-text-3" id="text-13-7">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">my/move-line</span> (arg)
@@ -4830,8 +5060,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orgcad3fc1" class="outline-3">
-<h3 id="orgcad3fc1"><span class="section-number-3">13.8.</span> my/reload-major-mode</h3>
+<div id="outline-container-org53e4c69" class="outline-3">
+<h3 id="org53e4c69"><span class="section-number-3">13.8.</span> my/reload-major-mode</h3>
 <div class="outline-text-3" id="text-13-8">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">my/reload-major-mode</span> ()
@@ -4845,8 +5075,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org059d3eb" class="outline-3">
-<h3 id="org059d3eb"><span class="section-number-3">13.9.</span> my/toggle-read-only-mode</h3>
+<div id="outline-container-orgdf38cd7" class="outline-3">
+<h3 id="orgdf38cd7"><span class="section-number-3">13.9.</span> my/toggle-read-only-mode</h3>
 <div class="outline-text-3" id="text-13-9">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">my/toggle-read-only-mode</span> ()
@@ -4858,8 +5088,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org89b62a2" class="outline-3">
-<h3 id="org89b62a2"><span class="section-number-3">13.10.</span> my/toggle-kill-emacs</h3>
+<div id="outline-container-orgd7570cd" class="outline-3">
+<h3 id="orgd7570cd"><span class="section-number-3">13.10.</span> my/toggle-kill-emacs</h3>
 <div class="outline-text-3" id="text-13-10">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">defvar</span> <span class="org-variable-name">my/kill-emacs-keybind-p</span> t)
@@ -4879,8 +5109,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org8276acd" class="outline-3">
-<h3 id="org8276acd"><span class="section-number-3">13.11.</span> my/get-class-name-by-file-name</h3>
+<div id="outline-container-org040bb64" class="outline-3">
+<h3 id="org040bb64"><span class="section-number-3">13.11.</span> my/get-class-name-by-file-name</h3>
 <div class="outline-text-3" id="text-13-11">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">my/get-class-name-by-file-name</span> ()
@@ -4894,12 +5124,12 @@
 </div>
 </div>
 </div>
-<div id="outline-container-orga4e5d0a" class="outline-2">
-<h2 id="orga4e5d0a"><span class="section-number-2">14.</span> footer</h2>
+<div id="outline-container-org9d516e6" class="outline-2">
+<h2 id="org9d516e6"><span class="section-number-2">14.</span> footer</h2>
 <div class="outline-text-2" id="text-14">
 </div>
-<div id="outline-container-orgd6aafa1" class="outline-3">
-<h3 id="orgd6aafa1"><span class="section-number-3">14.1.</span> Magic File Name を有効にする</h3>
+<div id="outline-container-org1a0c2f8" class="outline-3">
+<h3 id="org1a0c2f8"><span class="section-number-3">14.1.</span> Magic File Name を有効にする</h3>
 <div class="outline-text-3" id="text-14-1">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">setq</span> file-name-handler-alist my/saved-file-name-handler-alist)
@@ -4907,8 +5137,8 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org99cea3d" class="outline-3">
-<h3 id="org99cea3d"><span class="section-number-3">14.2.</span> profilerを終了する</h3>
+<div id="outline-container-org879bd53" class="outline-3">
+<h3 id="org879bd53"><span class="section-number-3">14.2.</span> profilerを終了する</h3>
 <div class="outline-text-3" id="text-14-2">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span class="org-keyword">when</span> my/enable-profile
@@ -4922,7 +5152,7 @@
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: takeokunn</p>
-<p class="date">Created: 2022-06-12 Sun 20:52</p>
+<p class="date">Created: 2022-06-18 Sat 19:39</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
