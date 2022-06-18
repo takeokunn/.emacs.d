@@ -2759,7 +2759,7 @@
     #+end_src
 *** view-lock-mode
 #+begin_src emacs-lisp
-  (eval-and-compile
+  (eval-when-compile
     (el-get-bundle 'view-lock-mode
                    :url "https://github.com/s-fubuki/view-lock-mode.git"))
 
@@ -2862,10 +2862,15 @@
        (message "Install elfeed...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/elfeed"))
        (autoload-if-found '(elfeed) "elfeed" nil t)
+
        (with-eval-after-load 'elfeed
          (eval-and-compile
            (setq elfeed-search-filter "@1-week-ago +unread")
-           (setq browse-url-browser-function 'eww-browse-url))))
+           (setq browse-url-browser-function 'eww-browse-url)))
+
+       (with-eval-after-load 'elfeed-curl
+         (eval-and-compile
+           (setq elfeed-curl-max-connections 8))))
    #+end_src
 ** elfeed-org
    #+begin_src emacs-lisp
