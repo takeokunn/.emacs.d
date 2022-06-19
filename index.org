@@ -1492,16 +1492,17 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes/extensions"))
         (when (require 'doom-themes)
-          (load-theme 'doom-dracula t)
+          (load-theme 'doom-dracula t))
+        (with-eval-after-load 'doom-themes
           (eval-and-compile
             (setq doom-themes-enable-bold t)
             (setq doom-themes-enable-italic t)))
-        (when (require 'doom-themes-ext-org)
-          (with-eval-after-load 'org-mode
-            (doom-themes-enable-org-fontification)))
-        (when (require 'doom-themes-ext-neotree)
-          (with-eval-after-load 'neotree
-            (doom-themes-neotree-config))))
+
+        (when (autoload-if-found '(doom-themes-enable-org-fontification) "doom-themes-ext-org" nil t)
+          (doom-themes-enable-org-fontification))
+
+        (when (autoload-if-found '(doom-themes-neotree-config) "doom-themes-ext-neotree" nil t)
+          (doom-themes-neotree-config)))
 
     #+END_SRC
 *** doom-modeline
@@ -1819,21 +1820,24 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-mode"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-mode/clients"))
 
-        (defun my/load-lsp-libs ()
-          (require 'lsp-mode)
-          (require 'lsp-diagnostics)
-          (require 'lsp-completion)
-          (require 'lsp-dired)
-          (require 'lsp-icons)
-          (require 'lsp-modeline)
-          (require 'lsp-headerline)
-          (require 'lsp-v))
+        (when (autoload-if-found '(lsp-lens) "lsp-lens" nil t)
+          (add-hook 'lsp-mode-hook #'lsp-lens-mode))
 
-        (add-hook 'lsp-mode-hook 'my/load-lsp-libs)
-        (add-hook 'lsp-mode-hook 'flycheck-mode)
-        (add-hook 'lsp-mode-hook 'lsp-lens-mode)
+        (when (autoload-if-found '(lsp-diagnostics-mode) "lsp-diagnostics" nil t)
+          (add-hook 'lsp-mode-hook #'lsp-diagnostics-mode))
 
-        (autoload-if-found '(lsp lsp-deferred) "lsp-mode" nil t)
+        (when (autoload-if-found '(lsp-completion-mode) "lsp-completion" nil t)
+          (add-hook 'lsp-mode-hook #'lsp-completion-mode))
+
+        (when (autoload-if-found '(lsp-dired-mode) "lsp-dired" nil t)
+          (add-hook 'lsp-mode-hook #'lsp-dired-mode))
+
+        (when (autoload-if-found '(lsp-modeline-code-actions-mode lsp-modeline-diagnostics-mode) "lsp-modeline" nil t)
+          (add-hook 'lsp-mode-hook #'lsp-modeline-code-actions-mode)
+          (add-hook 'lsp-mode-hook #'lsp-modeline-diagnostics-mode))
+
+        (when (autoload-if-found '(lsp-headerline-breadcrumb-mode) "lsp-headerline" nil t)
+          (add-hook 'lsp-mode-hook #'lsp-headerline-breadcrumb-mode))
 
         (with-eval-after-load 'lsp-mode
           (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]vendor")
@@ -1842,7 +1846,11 @@
           (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]docker")
           (eval-and-compile
             (setq lsp-idle-delay 0.8)
+            (setq lsp-enable-links nil)
             (setq lsp-log-io nil)))
+
+        (with-eval-after-load 'flycheck
+          (add-hook 'lsp-mode-hook #'flycheck-mode))
 
         (with-eval-after-load 'lsp-completion
           (eval-and-compile
@@ -1926,7 +1934,7 @@
         (message "Install lsp-ui...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-ui"))
         (when (autoload-if-found '(lsp-ui-mode) "lsp-ui" nil t)
-          (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+          (add-hook 'lsp-mode-hook #'lsp-ui-mode))
         (with-eval-after-load 'lsp-ui
           (eval-and-compile
             (setq lsp-ui-doc-include-signature t)
@@ -2637,7 +2645,7 @@
       (with-delayed-execution
         (message "Install redacted...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/redacted"))
-        (when (require 'redacted)
+        (when (autoload-if-found '(my/redacted-mode) "redacted" nil t)
           (defun my/redacted-mode ()
             (interactive)
             (read-only-mode (if redacted-mode -1 1))
@@ -2994,7 +3002,7 @@
    #+begin_src emacs-lisp
      (with-delayed-execution
        (message "Install org-id...")
-       (require 'org-id)
+       (autoload-if-found '(org-id-store-link) "org-id" nil t)
        (with-eval-after-load 'org-id
          (eval-and-compile
            (setq org-id-locations-file (expand-file-name ".org-id-locations" org-directory))
