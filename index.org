@@ -433,7 +433,8 @@
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/clojure-mode")))
        (when (autoload-if-found '(clojure-mode) "clojure-mode" nil t)
          (push '("\\.clj$" . clojure-mode) auto-mode-alist)
-         (push '("\\.cljs$" . clojure-mode) auto-mode-alist)))
+         (push '("\\.cljs$" . clojure-mode) auto-mode-alist)
+         (push '("\\.cljstyle$" . clojure-mode) auto-mode-alist)))
    #+END_SRC
 ** cmake-mode
    #+BEGIN_SRC emacs-lisp
@@ -542,13 +543,15 @@
          (add-hook 'web-mode-hook 'emmet-mode)
          (add-hook 'css-mode-hook 'emmet-mode)
          (add-hook 'nxml-mode-hook 'emmet-mode)
+         (add-hook 'php-blade-mode 'emmet-mode)
          (add-hook 'typescript-tsx-mode-hook 'emmet-mode))
        (with-eval-after-load 'emmet-mode
-         (eval-and-compile
-           (setq emmet-indent-after-insert nil))
          (when (boundp 'emmet-mode-keymap)
            (define-key emmet-mode-keymap (kbd "C-j") nil)
-           (define-key emmet-mode-keymap (kbd "M-j") 'emmet-expand-line))))
+           (define-key emmet-mode-keymap (kbd "M-j") 'emmet-expand-line))
+         (eval-and-compile
+           (setq emmet-self-closing-tag-style "")
+           (setq emmet-indent-after-insert nil))))
    #+END_SRC
 ** fish-mode
    #+BEGIN_SRC emacs-lisp
@@ -628,6 +631,9 @@
      (with-delayed-execution
        (message "Install graphql-mode...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/graphql-mode")))
+       (when (autoload-if-found '(graphql-mode) "graphql-mode" nil t)
+         (add-to-list 'auto-mode-alist '("\\.graphql\\'" . graphql-mode))
+         (add-to-list 'auto-mode-alist '("\\.graphql\\'" . graphql-mode)))
        (with-eval-after-load 'graphql-mode
          (eval-and-compile
            (setq graphql-indent-level 4))))
@@ -912,8 +918,8 @@
        (when (autoload-if-found '(scss-mode) "scss-mode" nil t)
          (push '("\\.scss$" . scss-mode) auto-mode-alist)
          (add-hook 'scss-mode-hook #'(lambda ()
-                                       (setq lsp-diagnostics-provider :none)
-                                       (lsp-deferred)))))
+                                       (let ((lsp-diagnostics-provider :none))
+                                         (lsp-deferred))))))
    #+end_src
 ** slim-mode
    #+BEGIN_SRC emacs-lisp
@@ -953,14 +959,10 @@
    #+END_SRC
 ** sql-mode
    #+begin_src emacs-lisp
-     (with-eval-after-load 'sql-mode
+     (with-eval-after-load 'sql
        (load-library "sql-indent")
-       (load-library "sql-complete")
-       (load-library "sql-transform")
        (eval-and-compile
-         (setq sql-indent-offset t)
-         (setq indent-tabs-mode nil)
-         (setq sql-mysql-login-params '(user password database server port))))
+         (setq sql-mysql-login-params '(server port user password database))))
    #+end_src
 ** swift-mode
    #+begin_src emacs-lisp
@@ -1101,18 +1103,25 @@
          (push '("\\.html?\\'" . web-mode) auto-mode-alist)
          (push '("\\.erb?\\'" . web-mode) auto-mode-alist)
          (push '("\\.gsp?\\'" . web-mode) auto-mode-alist)
-         (push '("\\.blade.php\\'" . web-mode) auto-mode-alist)
-         (push '("\\.svg\\'" . web-mode) auto-mode-alist)
-         (add-hook 'web-mode-hook 'lsp))
+         (push '("\\.svg\\'" . web-mode) auto-mode-alist))
        (with-eval-after-load 'web-mode
          (eval-and-compile
-           (add-to-list 'web-mode-comment-formats '("blade" . "{{--"))
-           (setq web-mode-engines-alist '(("blade"  . "\\.blade\\.")))
            (setq web-mode-comment-style 2)
            (setq web-mode-enable-auto-pairing nil)
-           (setq web-mode-enable-auto-indentation nil)
-           (setq emmet-self-closing-tag-style ""))))
+           (setq web-mode-enable-auto-indentation nil))))
    #+END_SRC
+** web-php-blade-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'web-php-blade-mode
+                   :url "https://github.com/takeokunn/web-php-blade-mode.git"))
+
+  (with-delayed-execution
+    (message "Install web-php-blade-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/web-php-blade-mode"))
+    (when (autoload-if-found '(web-php-blade-mode) "web-php-blade-mode" nil t)
+      (push '("\\.blade.php\\'" . web-php-blade-mode) auto-mode-alist)))
+#+end_src
 ** yaml-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
