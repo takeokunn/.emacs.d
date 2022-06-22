@@ -145,48 +145,16 @@
   <link rel="preconnect" href="$1">
 #+end_src
 *** web-php-blade-mode/
-**** section
+**** auth
 #+begin_src snippet
   # -*- mode: snippet -*-
-  # name: section
-  # key: section
+  # name: auth
+  # key: auth
   # --
-  @section('$1')
+  @auth${1:('user')}
       $0
-  @endsection
-#+end_src
-**** if
-#+begin_src snippet
-  # -*- mode: snippet -*-
-  # name: if
-  # key: if
-  # --
+  @endauth
 
-  @if ($1)
-      $0
-  ${2:@elseif ()}
-  ${3:@else}
-  @endif
-#+end_src
-**** unless
-#+begin_src snippet
-  # -*- mode: snippet -*-
-  # name: unless
-  # key: unless
-  # --
-  @unless ($1)
-      $0
-  @endunless
-#+end_src
-**** isset
-#+begin_src snippet
-  # -*- mode: snippet -*-
-  # name: isset
-  # key: isset
-  # --
-  @isset($1)
-      $0
-  @endisset
 #+end_src
 **** empty
 #+begin_src snippet
@@ -198,19 +166,25 @@
       $0
   @endempty
 #+end_src
-**** switch
+**** env
 #+begin_src snippet
   # -*- mode: snippet -*-
-  # name: switch
-  # key: switch
+  # name: env
+  # key: env
   # --
-  @switch($1)
-      @case($2)
-          $0
-          @break
-      @default
-          @break
-  @endswitch
+  @env(['${1:staging}'])
+      $0
+  @endenv
+#+end_src
+**** error
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: error
+  # key: error
+  # --
+  @error('${1:title}')
+      $0
+  @enderror
 #+end_src
 **** for
 #+begin_src snippet
@@ -233,15 +207,53 @@
   @endforeach
 
 #+end_src
-**** while
+**** guest
 #+begin_src snippet
   # -*- mode: snippet -*-
-  # name: while
-  # key: while
+  # name: guest
+  # key: guest
   # --
-  @while ($1)
+  @guest
       $0
-  @endwhile
+  @endguest
+#+end_src
+**** if
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: if
+  # key: if
+  # --
+  @if ($1)$0
+  ${2:@elseif ()}
+  @endif
+#+end_src
+**** include
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: include
+  # key: include
+  # --
+  @include('$0')
+#+end_src
+**** isset
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: isset
+  # key: isset
+  # --
+  @isset($1)
+      $0
+  @endisset
+#+end_src
+**** once
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: once
+  # key: once
+  # --
+  @once
+      $0
+  @endonce
 #+end_src
 **** php
 #+begin_src snippet
@@ -253,15 +265,67 @@
       $0
   @endphp
 #+end_src
-**** once
+**** production
 #+begin_src snippet
   # -*- mode: snippet -*-
-  # name: once
-  # key: once
+  # name: production
+  # key: production
   # --
-  @once
+  @production
       $0
-  @endonce
+  @endproduction
+#+end_src
+**** section
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: section
+  # key: section
+  # --
+  @section('${1:content}')
+      $0
+  @endsection
+#+end_src
+**** switch
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: switch
+  # key: switch
+  # --
+  @switch($1)
+      @case($2)
+          $0
+          @break
+      @default
+          @break
+  @endswitch
+#+end_src
+**** unless
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: unless
+  # key: unless
+  # --
+  @unless ($1)
+      $0
+  @endunless
+#+end_src
+**** yield
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: yield
+  # key: yeild
+  # --
+  @yeild('$0')
+#+end_src
+**** while
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: while
+  # key: while
+  # --
+  @while ($1)
+      $0
+  @endwhile
 #+end_src
 *** css-mode/
 **** template
