@@ -20,11 +20,11 @@
        # key: html
        # --
        <!DOCTYPE html>
-       <html lang="ja">
+       <html lang="${1:ja}">
        <head>
            <meta http-equiv="X-UA-Compatible" content="ie=edge">
            <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
-           <title>$1</title>
+           <title>$2</title>
        </head>
        <body>
            $0
@@ -47,7 +47,7 @@
        # key: form
        # name: form
        # --
-       <form method="$1" action="$2">
+       <form${1: method="$2"}${3: action="$4"}>
            $0
        </form>
      #+end_src
@@ -65,7 +65,7 @@
        # name: input
        # key: input
        # --
-       <input type="$1" name="$2" value="$3">
+       <input${1: type="$2"}${3: name="$4"}${5: value="$6"}>
      #+end_src
 **** img
      #+begin_src snippet
@@ -73,7 +73,7 @@
        # name: img
        # key: img
        # --
-       <img src="$1" alt="$2">
+       <img src="$1"${2: alt="$3"}>
      #+end_src
 **** favicon
      #+begin_src snippet
@@ -89,9 +89,9 @@
        # name: meta
        # key: meta
        # --
-       <meta name="title" content="">
-       <meta name="description" content="">
-       <meta name="keywords" content="">
+       <meta name="title" content="${1:title}">
+       <meta name="description" content="${2:description}">
+       <meta name="keywords" content="${3:keywords}">
      #+end_src
 **** ogp
      #+begin_src snippet
@@ -586,11 +586,10 @@
        <?php
        declare(strict_types=1);
 
-       namespace $2;
+       namespace $1;
 
-       final class ${1:`(yas-php-get-class-name-by-file-name)`}
-       {
-       $0
+       final class ${2:`(yas-php-get-class-name-by-file-name)`}${3: extends $4}${5: implements $6}
+       {$0
        }
      #+end_src
 **** var_dump
@@ -738,7 +737,6 @@ $0
 begin
     $0
 end
-
 #+END_SRC
 **** breakpoint
  #+BEGIN_SRC snippet
@@ -756,7 +754,6 @@ end
 for ${1:var} in ${2:stuff}
     $0
 end
-
 #+END_SRC
 **** function
 #+BEGIN_SRC snippet
@@ -766,7 +763,6 @@ end
 function ${1:name}
     $0
 end
-
 #+END_SRC
 **** if
 #+BEGIN_SRC snippet
@@ -779,7 +775,6 @@ else
     ${3:other}
 end
 $0
-
 #+END_SRC
 **** switch
 #+BEGIN_SRC snippet
@@ -790,7 +785,6 @@ switch ${1:condition}
     case ${2:*}
          ${0}
 end
-
 #+END_SRC
 **** while
 #+BEGIN_SRC snippet
@@ -800,7 +794,6 @@ end
 while ${1:cond}
     $0
 end
-
 #+END_SRC
 *** fundamental-mode/
 **** current-date
@@ -940,8 +933,6 @@ ${1:$$(yas-choose-value '("fix" "hotfix" "add" "update" "change" "clean" "disabl
                default:
        }
      #+end_src
-****
-****
 **** test
      #+begin_src snippet
        # name: test
@@ -1078,7 +1069,7 @@ if (${1:condition}) {
   # name: log (console.log)
   # key: log
   # --
-  console.log("$2 >> ", ${1:var})
+  console.log(${2:"$3 >> ", }${1:var})
 #+END_SRC
 **** import
 #+BEGIN_SRC snippet
@@ -1735,6 +1726,27 @@ ${1:$(let* ((col (current-column))
   $0
 #+END_SRC
 *** sql-mode/
+**** constraint
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: constraint
+  # key: constraint
+  # --
+  CONSTRAINT [${1:PK_Name}] PRIMARY KEY ${2:CLUSTERED} ([${3:ColumnName}])
+#+end_src
+**** create
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: create
+  # key: create
+  # --
+  CREATE TABLE [${1:dbo}].[${2:TableName}]
+  (
+                  ${3:Id}		${4:INT IDENTITY(1,1)}		${5:NOT NULL}
+  $0
+          CONSTRAINT [${6:PK_}] PRIMARY KEY ${7:CLUSTERED} ([$3])
+  )
+#+end_src
 **** insert
 #+BEGIN_SRC snippet
 # name: insert
@@ -1959,11 +1971,11 @@ abstract class ${1:Class} {
            $0
        </template>
 
-       <script lang="${1:ts}">
+       <script${1: lang="${2:ts}"}>
 
        </script>
 
-       <style ${2:scoped}>
+       <style${3: scoped}>
 
        </style>
      #+end_src
