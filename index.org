@@ -245,11 +245,6 @@
      (global-set-key (kbd "C-c i") 'find-function)
      (global-set-key (kbd "C-x C-o") 'other-window)
 
-     (global-set-key (kbd "C-x a") 'windmove-left)
-     (global-set-key (kbd "C-x s") 'windmove-down)
-     (global-set-key (kbd "C-x d") 'windmove-right)
-     (global-set-key (kbd "C-x w") 'windmove-up)
-
      (global-set-key (kbd "C-x l") 'next-buffer)
      (global-set-key (kbd "C-x h") 'previous-buffer)
 
@@ -765,6 +760,19 @@
          (eval-and-compile
            (setq nginx-indent-tabs-mode t))))
    #+END_SRC
+** nov-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'esxml :url "https://github.com/tali713/esxml.git")
+    (el-get-bundle 'nov :url "https://depp.brause.cc/nov.el.git"))
+
+  (with-delayed-execution
+    (message "Install nov-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/esxml")))
+    (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/nov")))
+    (when (autoload-if-found '(nov-mode) "nov" nil t)
+      (push '("\\.epub\\'" . nov-mode) auto-mode-alist)))
+#+end_src
 ** php-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
@@ -2622,6 +2630,18 @@
             (eval-and-compile
               (setq persistent-scratch-autosave-interval 100)))))
     #+end_src
+*** TODO pdf-tools
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'pdf-tools))
+
+  (with-delayed-execution
+    (message "Install pdf-tools...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/pdf-tools/lisp"))
+    ;; (when (autoload-if-found '(pdf-tools-install) "pdf-tools" nil t)
+    ;;   (pdf-tools-install))
+    )
+#+end_src
 *** popwin
     #+begin_src emacs-lisp
       (eval-when-compile
@@ -2680,6 +2700,17 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/smart-jump"))
         (with-eval-after-load 'smart-jump))
     #+end_src
+*** string-inflection
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'string-inflection
+                   :url "https://github.com/akicho8/string-inflection.git"))
+
+  (with-delayed-execution
+    (message "Install string-inflection...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/string-inflection"))
+    (autoload-if-found '(string-inflection-all-cycle) "string-inflection" nil t))
+#+end_src
 *** subword
     #+begin_src emacs-lisp
       (with-delayed-execution
