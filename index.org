@@ -396,6 +396,15 @@
     (message "Install compat...")
     (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/compat"))))
 #+end_src
+** posframe
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'posframe))
+
+  (with-delayed-execution-priority-high
+    (message "Install posframe...")
+    (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/posframe"))))
+#+end_src
 * Language
 ** apache-mode
 #+begin_src emacs-lisp
@@ -1128,7 +1137,7 @@
     (message "Install web-php-blade-mode...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/web-php-blade-mode"))
     (when (autoload-if-found '(web-php-blade-mode) "web-php-blade-mode" nil t)
-      (push '("\\.blade.php\\'" . web-php-blade-mode) auto-mode-alist)))
+      (push '("\\.blade.php$" . web-php-blade-mode) auto-mode-alist)))
 #+end_src
 ** yaml-mode
    #+BEGIN_SRC emacs-lisp
@@ -2411,13 +2420,33 @@
         (when (autoload-if-found '(skk-mode) "skk" nil t)
           (global-set-key (kbd "C-x C-j") 'skk-mode))
 
-        (with-eval-after-load 'ddskk
+        (with-eval-after-load 'skk-vars
           (eval-and-compile
-            (setq skk-byte-compile-init-file t)
-            (setq skk-isearch-mode-enable 'always)
-            (setq skk-preload t)
+            (setq skk-byte-compile-init-file t)))
+
+        (with-eval-after-load 'skk-vars
+          (eval-and-compile
+            (setq skk-isearch-mode-enable 'always)))
+
+        (with-eval-after-load 'skk-vars
+          (eval-and-compile
+            (setq skk-preload t)))
+
+        (with-eval-after-load 'skk
+          (eval-and-compile
             (setq default-input-method "japanese-skk"))))
     #+END_SRC
+*** ddskk-posframe
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ddskk-posframe))
+
+  (with-delayed-execution
+    (message "Install ddskk-posframe...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ddskk-posframe"))
+    (when (autoload-if-found '(ddskk-posframe-mode) "ddskk-posframe" nil t)
+      (add-hook 'skk-mode-hook #'ddskk-posframe-mode)))
+#+end_src
 *** editorconfig
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
