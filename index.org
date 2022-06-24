@@ -2694,6 +2694,17 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/power-mode"))
     (autoload-if-found '(power-mode) "power-mode" nil t))
 #+end_src
+*** proced
+#+begin_src emacs-lisp
+  (add-hook 'proced-mode-hook #'(lambda ()
+                                    (proced-toggle-auto-update 1)))
+
+  (with-eval-after-load 'proced
+    (define-key proced-mode-map (kbd "j") #'next-line)
+    (define-key proced-mode-map (kbd "k") #'previous-line)
+    (eval-and-compile
+      (setq proced-format 'long)))
+#+end_src
 *** redacted
     #+begin_src emacs-lisp
       (eval-when-compile
