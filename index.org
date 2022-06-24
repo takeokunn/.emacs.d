@@ -2949,16 +2949,28 @@
      (with-delayed-execution
        (message "Install elfeed...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/elfeed"))
-       (autoload-if-found '(elfeed) "elfeed" nil t)
+
+       (defconst my/elfeed-search-filter "@1-week-ago +unread")
+
+       (when (autoload-if-found '(elfeed) "elfeed" nil t)
+         (global-set-key (kbd "C-x w") #'elfeed))
 
        (with-eval-after-load 'elfeed
          (eval-and-compile
-           (setq elfeed-search-filter "@1-week-ago +unread")
+           (setq elfeed-search-filter my/elfeed-search-filter)
            (setq browse-url-browser-function 'eww-browse-url)))
 
        (with-eval-after-load 'elfeed-curl
          (eval-and-compile
-           (setq elfeed-curl-max-connections 8))))
+           (setq elfeed-curl-max-connections 8)))
+
+       (with-eval-after-load 'ivy
+         (defun my/elfeed-ivy-filter ()
+           (interactive)
+           (let ((filtered-tag (ivy-completing-read "Choose Tags: " (elfeed-db-get-all-tags))))
+             (setq elfeed-search-filter (concat my/elfeed-search-filter " +" filtered-tag))
+             (elfeed-search-update--force)))
+         (define-key elfeed-search-mode-map (kbd "+") #'my/elfeed-ivy-filter)))
    #+end_src
 ** elfeed-org
    #+begin_src emacs-lisp
