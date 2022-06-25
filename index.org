@@ -1411,6 +1411,20 @@
         (message "Install swiper...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/swiper")))
     #+end_src
+*** prescient
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'prescient))
+
+  (with-delayed-execution-priority-high
+    (message "Install prescient...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/prescient"))
+    (when (autoload-if-found '(prescient-persist-mode) "prescient" nil t)
+      (prescient-persist-mode))
+    (with-eval-after-load 'prescient
+      (eval-and-compile
+        (setq prescient-aggressive-file-save t))))
+#+end_src
 *** swiper
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
@@ -1433,11 +1447,11 @@
       (with-delayed-execution-priority-high
         (when (autoload-if-found '(ivy-mode ivy-read ivy-completing-read) "ivy" nil t)
           (add-hook 'minibuffer-setup-hook (lambda ()
-                                             (ivy-mode 1)))
-          (with-eval-after-load 'ivy
-            (eval-and-compile
-              (setq enable-recursive-minibuffers t)
-              (setq ivy-use-virtual-buffers t)))))
+                                             (ivy-mode 1))))
+        (with-eval-after-load 'ivy
+          (eval-and-compile
+            (setq enable-recursive-minibuffers t)
+            (setq ivy-use-virtual-buffers t))))
     #+end_src
 *** ivy-rich
     #+BEGIN_SRC emacs-lisp
@@ -1448,11 +1462,22 @@
         (message "Install ivy-rich...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-rich"))
         (when (autoload-if-found '(ivy-rich-mode) "ivy-rich" nil t)
-          (ivy-rich-mode 1)
-          (with-eval-after-load 'ivy-rich
-            (eval-and-compile
-              (setq ivy-rich-path-style 'abbrev)))))
+          (ivy-rich-mode 1))
+        (with-eval-after-load 'ivy-rich
+          (eval-and-compile
+            (setq ivy-rich-path-style 'abbrev))))
     #+END_SRC
+*** ivy-prescient
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ivy-prescient))
+
+  (with-delayed-execution-priority-high
+    (message "Install ivy-prescient...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-prescient"))
+    (when (autoload-if-found '(ivy-prescient-mode) "ivy-prescient" nil t)
+      (ivy-prescient-mode)))
+#+end_src
 ** Theme
 *** all-the-icons
     #+BEGIN_SRC emacs-lisp
@@ -2566,7 +2591,7 @@
                 ("GOTCHA" . "#FF4500")
                 ("STUB"   . "#1E90FF"))))))
 #+end_src
-*** highlight-indent-guides
+*** TODO highlight-indent-guides
 #+begin_src emacs-lisp
   (eval-when-compile
     (el-get-bundle 'highlight-indent-guides))
@@ -2575,7 +2600,8 @@
     (message "Install highlight-indent-guides...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/highlight-indent-guides"))
     (when (autoload-if-found '(highlight-indent-guides-mode) "highlight-indent-guides" nil t)
-      (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
+      ;; (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+      )
     (with-eval-after-load 'highlight-indent-guides
       (eval-and-compile
         (setq highlight-indent-guides-method 'bitmap))))
@@ -2696,14 +2722,15 @@
 #+end_src
 *** proced
 #+begin_src emacs-lisp
-  (add-hook 'proced-mode-hook #'(lambda ()
-                                    (proced-toggle-auto-update 1)))
-
-  (with-eval-after-load 'proced
-    (define-key proced-mode-map (kbd "j") #'next-line)
-    (define-key proced-mode-map (kbd "k") #'previous-line)
-    (eval-and-compile
-      (setq proced-format 'long)))
+  (with-delayed-execution
+    (when (autoload-if-found '(proced) "proced" nil t)
+      (add-hook 'proced-mode-hook #'(lambda ()
+                                      (proced-toggle-auto-update 1))))
+    (with-eval-after-load 'proced
+      (define-key proced-mode-map (kbd "j") #'next-line)
+      (define-key proced-mode-map (kbd "k") #'previous-line)
+      (eval-and-compile
+        (setq proced-format 'long))))
 #+end_src
 *** redacted
     #+begin_src emacs-lisp
