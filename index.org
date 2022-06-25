@@ -24,10 +24,10 @@
 * Boot
 ** env
    #+begin_src emacs-lisp
-     (defconst my/loading-profile-p nil
+     (defconst my/loading-profile-p t
        "If non-nil, use built-in profiler.el.")
 
-     (defconst my/enable-profile nil
+     (defconst my/enable-profile t
        "If true, enable profile")
    #+end_src
 ** profile
@@ -314,6 +314,14 @@
     (eval-and-compile
       (setq uniquify-buffer-name-style 'post-forward-angle-brackets)))
 #+end_src
+** killできないようにする
+   #+begin_src emacs-lisp
+     (eval-and-compile
+       (with-current-buffer "*scratch*"
+         (emacs-lock-mode 'kill))
+       (with-current-buffer "*Messages*"
+         (emacs-lock-mode 'kill)))
+   #+end_src
 * Utility
 ** dash
    #+begin_src emacs-lisp
@@ -1411,20 +1419,6 @@
         (message "Install swiper...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/swiper")))
     #+end_src
-*** prescient
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'prescient))
-
-  (with-delayed-execution-priority-high
-    (message "Install prescient...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/prescient"))
-    (when (autoload-if-found '(prescient-persist-mode) "prescient" nil t)
-      (prescient-persist-mode))
-    (with-eval-after-load 'prescient
-      (eval-and-compile
-        (setq prescient-aggressive-file-save t))))
-#+end_src
 *** swiper
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
@@ -1467,17 +1461,6 @@
           (eval-and-compile
             (setq ivy-rich-path-style 'abbrev))))
     #+END_SRC
-*** ivy-prescient
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'ivy-prescient))
-
-  (with-delayed-execution-priority-high
-    (message "Install ivy-prescient...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-prescient"))
-    (when (autoload-if-found '(ivy-prescient-mode) "ivy-prescient" nil t)
-      (ivy-prescient-mode)))
-#+end_src
 ** Theme
 *** all-the-icons
     #+BEGIN_SRC emacs-lisp
@@ -1832,6 +1815,43 @@
           (when (boundp 'company-backends)
             (push 'company-gemoji company-backends))))
     #+end_src
+** Prescient
+*** prescient
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'prescient))
+
+  (with-delayed-execution-priority-high
+    (message "Install prescient...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/prescient"))
+    (when (autoload-if-found '(prescient-persist-mode) "prescient" nil t)
+      (prescient-persist-mode))
+    (with-eval-after-load 'prescient
+      (eval-and-compile
+        (setq prescient-aggressive-file-save t))))
+#+end_src
+*** ivy-prescient
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ivy-prescient))
+
+  (with-delayed-execution-priority-high
+    (message "Install ivy-prescient...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-prescient"))
+    (when (autoload-if-found '(ivy-prescient-mode) "ivy-prescient" nil t)
+      (ivy-prescient-mode)))
+#+end_src
+*** company-prescient
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'company-prescient))
+
+  (with-delayed-execution-priority-high
+    (message "Install company-prescient...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/company-prescient"))
+    (when (autoload-if-found '(company-prescient-mode) "company-prescient" nil t)
+      (company-prescient-mode)))
+#+end_src
 ** Snippet
 *** yasnippet
     #+begin_src emacs-lisp
@@ -2797,6 +2817,18 @@
                         (point))))
                 (kill-region (point) (min syntax-move-point subword-move-point)))))))
     #+end_src
+*** syntax-subword
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'syntax-subword
+                   :url "https://github.com/jpkotta/syntax-subword.git"))
+
+  (with-delayed-execution
+    (message "Install syntax-subword...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/syntax-subword"))
+    (when (autoload-if-found '(syntax-subword-mode) "syntax-subword" nil t)
+      (global-syntax-subword-mode)))
+#+end_src
 *** tab-bar
 #+begin_src emacs-lisp
   (with-delayed-execution-priority-high
