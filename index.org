@@ -24,10 +24,10 @@
 * Boot
 ** env
    #+begin_src emacs-lisp
-     (defconst my/loading-profile-p t
+     (defconst my/loading-profile-p nil
        "If non-nil, use built-in profiler.el.")
 
-     (defconst my/enable-profile t
+     (defconst my/enable-profile nil
        "If true, enable profile")
    #+end_src
 ** profile
@@ -444,8 +444,10 @@
        (message "Install clojure-mode")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/clojure-mode")))
        (when (autoload-if-found '(clojure-mode) "clojure-mode" nil t)
+         (add-hook 'clojure-mode-hook #'lsp)
+         (add-hook 'clojurescript-mode-hook #'lsp)
          (push '("\\.clj$" . clojure-mode) auto-mode-alist)
-         (push '("\\.cljs$" . clojure-mode) auto-mode-alist)
+         (push '("\\.cljs$" . clojurescript-mode) auto-mode-alist)
          (push '("\\.cljstyle$" . clojure-mode) auto-mode-alist)))
    #+END_SRC
 ** cmake-mode
@@ -497,6 +499,18 @@
        (when (autoload-if-found '(csv-mode) "csv-mode" nil t)
          (push '("\\.csv$" . csv-mode) auto-mode-alist)))
    #+END_SRC
+** cuda-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'cuda-mode))
+
+  (with-delayed-execution
+    (message "Install cuda-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/cuda-mode")))
+    (when (autoload-if-found '(cuda-mode) "cuda-mode" nil t)
+      (push '("\\.cu$" . cuda-mode) auto-mode-alist)
+      (push '("\\.cu$" . cuda-mode) auto-mode-alist)))
+#+end_src
 ** dart-mode
    #+begin_src emacs-lisp
      (eval-when-compile
@@ -508,6 +522,18 @@
        (when (autoload-if-found '(dart-mode) "dart-mode" nil t)
          (push '("\\.dart$" . dart-mode) auto-mode-alist)))
    #+end_src
+** direnv-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'direnv))
+
+  (with-delayed-execution
+    (message "Install direnv-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/direnv"))
+    (when (autoload-if-found '(direnv-mode direnv-envrc-mode) "direnv" nil t)
+      (add-to-list 'auto-mode-alist '("\\.envrc\\'" . direnv-envrc-mode))
+      (direnv-mode)))
+#+end_src
 ** docker-compose-mode
    #+begin_src emacs-lisp
      (eval-when-compile
@@ -801,7 +827,7 @@
        (when (autoload-if-found '(php-mode) "php-mode" nil t)
          (push '("\\.php$" . php-mode) auto-mode-alist)
          (add-hook 'php-mode-hook #'(lambda ()
-                                      (let ((lsp-enabled-clients '(phpactor)))
+                                      (let ((lsp-enabled-clients '(iph)))
                                         (lsp))))))
    #+END_SRC
 ** phpt-mode
@@ -1381,10 +1407,11 @@
     (message "Install clj-refactor...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/inflections"))
     (add-to-list 'load-path (locate-user-emacs-file "el-get/clj-refactor"))
-    (when (autoload-if-found '(clj-refactor-mode cljr-add-keybindings-with-prefix) "clj-refactor" nil t)
-      (add-hook 'clojure-mode-hook #'(lambda ()
-                                       (clj-refactor-mode 1)
-                                       (cljr-add-keybindings-with-prefix "C-c C-m")))))
+    ;; (when (autoload-if-found '(clj-refactor-mode cljr-add-keybindings-with-prefix) "clj-refactor" nil t)
+    ;;   (add-hook 'clojure-mode-hook #'(lambda ()
+    ;;                                    (clj-refactor-mode 1)
+    ;;                                    (cljr-add-keybindings-with-prefix "C-c C-m"))))
+    )
 #+end_src
 *** inf-clojure
 #+begin_src emacs-lisp
@@ -1846,7 +1873,7 @@
   (eval-when-compile
     (el-get-bundle 'company-prescient))
 
-  (with-delayed-execution-priority-high
+  (with-delayed-execution
     (message "Install company-prescient...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/company-prescient"))
     (when (autoload-if-found '(company-prescient-mode) "company-prescient" nil t)
@@ -1934,7 +1961,11 @@
         (with-eval-after-load 'lsp-icons
           (eval-and-compile
             (unless window-system
-              (setq lsp-headerline-breadcrumb-icons-enable nil)))))
+              (setq lsp-headerline-breadcrumb-icons-enable nil))))
+
+        (with-eval-after-load 'lsp-php
+          (eval-and-compile
+            (setq lsp-intelephense-php-version "8.1"))))
     #+END_SRC
 *** dap-mode
     #+BEGIN_SRC emacs-lisp
@@ -2079,7 +2110,7 @@
 
         (with-eval-after-load 'exec-path-from-shell
           (eval-and-compile
-            (setq exec-path-from-shell-variables '("PATH" "GEM_HOME" "GOROOT" "GOPATH" "LSP_USE_PLISTS")))))
+            (setq exec-path-from-shell-variables '("PATH" "GEM_HOME" "GOROOT" "GOPATH" "LSP_USE_PLISTS" "JAVA_HOME" "JAVA_CMD")))))
     #+END_SRC
 ** Cpp
 *** clang-format
@@ -2363,7 +2394,7 @@
 
       (with-delayed-execution
         (add-to-list 'load-path (locate-user-emacs-file "el-get/multiple-cursors"))
-        (when (require 'multiple-cursors)
+        (when (autoload-if-found '(mc/mark-next-like-this mc/mark-previous-like-this mc/mark-all-like-this) "multiple-cursors" nil t)
           (global-set-key (kbd "C->") 'mc/mark-next-like-this)
           (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
           (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)))
@@ -2400,7 +2431,9 @@
       (with-delayed-execution-priority-high
         (message "Install amx...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/amx"))
-        (with-eval-after-load 'amx))
+        (with-eval-after-load 'amx
+          (eval-and-compile
+            (setq amx-history-length 100))))
     #+END_SRC
 *** avy
     #+begin_src emacs-lisp
@@ -2531,6 +2564,17 @@
     (when (autoload-if-found '(er/expand-region er/contract-region) "expand-region" nil t)
       (transient-mark-mode)
       (global-set-key (kbd "C-M-@") 'er/expand-region)))
+#+end_src
+*** fancy-narrow
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'fancy-narrow))
+
+  (with-delayed-execution
+    (message "Install fancy-narrow...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/fancy-narrow"))
+    (when (autoload-if-found '(fancy-narrow-mode) "fancy-narrow" nil t)
+      (fancy-narrow-mode)))
 #+end_src
 *** font-lock-studio
     #+BEGIN_SRC emacs-lisp
@@ -2705,18 +2749,6 @@
             (eval-and-compile
               (setq persistent-scratch-autosave-interval 100)))))
     #+end_src
-*** TODO pdf-tools
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'pdf-tools))
-
-  (with-delayed-execution
-    (message "Install pdf-tools...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/pdf-tools/lisp"))
-    ;; (when (autoload-if-found '(pdf-tools-install) "pdf-tools" nil t)
-    ;;   (pdf-tools-install))
-    )
-#+end_src
 *** popwin
     #+begin_src emacs-lisp
       (eval-when-compile
@@ -2726,8 +2758,7 @@
         (message "Install popwin...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/popwin"))
         (when (autoload-if-found '(popwin-mode) "popwin" nil t)
-          (add-hook 'emacs-startup-hook (lambda ()
-                                          (popwin-mode 1)))))
+          (popwin-mode 1)))
     #+end_src
 *** power-mode
 #+begin_src emacs-lisp
@@ -2826,7 +2857,7 @@
   (with-delayed-execution
     (message "Install syntax-subword...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/syntax-subword"))
-    (when (autoload-if-found '(syntax-subword-mode) "syntax-subword" nil t)
+    (when (autoload-if-found '(global-syntax-subword-mode) "syntax-subword" nil t)
       (global-syntax-subword-mode)))
 #+end_src
 *** tab-bar
@@ -3011,10 +3042,11 @@
 
        (defconst my/elfeed-search-filter "@1-week-ago +unread")
 
-       (when (autoload-if-found '(elfeed) "elfeed" nil t)
+       (when (autoload-if-found '(elfeed my/elfeed-ivy-filter) "elfeed" nil t)
          (global-set-key (kbd "C-x w") #'elfeed))
 
        (with-eval-after-load 'elfeed
+         (define-key elfeed-search-mode-map (kbd "+") #'my/elfeed-ivy-filter)
          (eval-and-compile
            (setq elfeed-search-filter my/elfeed-search-filter)
            (setq browse-url-browser-function 'eww-browse-url)))
@@ -3028,8 +3060,7 @@
            (interactive)
            (let ((filtered-tag (ivy-completing-read "Choose Tags: " (elfeed-db-get-all-tags))))
              (setq elfeed-search-filter (concat my/elfeed-search-filter " +" filtered-tag))
-             (elfeed-search-update--force)))
-         (define-key elfeed-search-mode-map (kbd "+") #'my/elfeed-ivy-filter)))
+             (elfeed-search-update--force)))))
    #+end_src
 ** elfeed-org
    #+begin_src emacs-lisp
