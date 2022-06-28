@@ -291,7 +291,7 @@
   (with-eval-after-load 'comp
     (defun my/native-comp-packages ()
       (interactive)
-      (let ((native-comp-async-jobs-number 8)
+      (let ((native-comp-async-jobs-number 4)
             (native-comp-speed 3))
         (native-compile-async "~/.emacs.d/init.el")
         (native-compile-async "~/.emacs.d/early-init.el")
@@ -444,11 +444,9 @@
        (message "Install clojure-mode")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/clojure-mode")))
        (when (autoload-if-found '(clojure-mode) "clojure-mode" nil t)
-         (add-hook 'clojure-mode-hook #'lsp)
-         (add-hook 'clojurescript-mode-hook #'lsp)
          (push '("\\.clj$" . clojure-mode) auto-mode-alist)
          (push '("\\.cljs$" . clojurescript-mode) auto-mode-alist)
-         (push '("\\.cljstyle$" . clojure-mode) auto-mode-alist)))
+         (add-hook 'clojure-mode-hook 'lsp-deferred)))
    #+END_SRC
 ** cmake-mode
    #+BEGIN_SRC emacs-lisp
@@ -1918,6 +1916,8 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-mode"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-mode/clients"))
 
+        (autoload-if-found '(lsp lsp-deferred) "lsp-mode" nil t)
+
         (when (autoload-if-found '(lsp-lens) "lsp-lens" nil t)
           (add-hook 'lsp-mode-hook #'lsp-lens-mode))
 
@@ -2110,7 +2110,7 @@
 
         (with-eval-after-load 'exec-path-from-shell
           (eval-and-compile
-            (setq exec-path-from-shell-variables '("PATH" "GEM_HOME" "GOROOT" "GOPATH" "LSP_USE_PLISTS" "JAVA_HOME" "JAVA_CMD")))))
+            (setq exec-path-from-shell-variables '("PATH" "GEM_HOME" "GOROOT" "GOPATH" "LSP_USE_PLISTS")))))
     #+END_SRC
 ** Cpp
 *** clang-format
@@ -2776,8 +2776,7 @@
   (with-delayed-execution
     (when (autoload-if-found '(proced) "proced" nil t)
       (add-hook 'proced-mode-hook #'(lambda ()
-                                      (proced-toggle-auto-update 1))))
-    (with-eval-after-load 'proced
+                                      (proced-toggle-auto-update 1)))
       (define-key proced-mode-map (kbd "j") #'next-line)
       (define-key proced-mode-map (kbd "k") #'previous-line)
       (eval-and-compile
