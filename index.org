@@ -322,7 +322,7 @@
        (with-current-buffer "*Messages*"
          (emacs-lock-mode 'kill)))
    #+end_src
-* Utility
+ Utility
 ** dash
    #+begin_src emacs-lisp
      (eval-when-compile
@@ -1539,6 +1539,8 @@
         (autoload-if-found '(dashboard-refresh-buffer) "dashboard" nil t)
         (with-eval-after-load 'dashboard
           (eval-and-compile
+            (setq dashboard-startup-banner 'logo)
+            (setq dashboard-set-file-icons t)
             (setq dashboard-startup-banner 4)
             (setq dashboard-items '((recents . 10))))))
     #+end_src
@@ -2525,6 +2527,24 @@
     (when (autoload-if-found '(ddskk-posframe-mode) "ddskk-posframe" nil t)
       (add-hook 'skk-mode-hook #'ddskk-posframe-mode)))
 #+end_src
+*** dimmer.el
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'dimmer))
+
+  (with-eval-after-load 'dimmer
+    (message "Install dimmer...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/dimmer"))
+    (when (autoload-if-found '(dimmer-configure-which-key
+                               dimmer-configure-org
+                               dimmer-mode
+                               dimmer-configure-company-box)
+                             "dimmer" nil t)
+      (dimmer-configure-which-key)
+      (dimmer-configure-org)
+      (dimmer-configure-company-box)
+      (dimmer-mode t)))
+#+end_src
 *** editorconfig
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -2649,11 +2669,12 @@
     (with-eval-after-load 'hl-todo
       (eval-and-compile
         (setq hl-todo-keyword-faces
-              '(("TODO"   . "#FF0000")
-                ("FIXME"  . "#FF0000")
-                ("DEBUG"  . "#A020F0")
-                ("GOTCHA" . "#FF4500")
-                ("STUB"   . "#1E90FF"))))))
+              '(("TODO" . "#cc9393")
+                ("FIXME" . "#cc9393")
+                ("NOW" . "#dca3a3")
+                ("WAIT" . "#d0bf8f")
+                ("DONE" . "#afd8af"))))))
+
 #+end_src
 *** TODO highlight-indent-guides
 #+begin_src emacs-lisp
@@ -2776,9 +2797,8 @@
   (with-delayed-execution
     (when (autoload-if-found '(proced) "proced" nil t)
       (add-hook 'proced-mode-hook #'(lambda ()
-                                      (proced-toggle-auto-update 1)))
-      (define-key proced-mode-map (kbd "j") #'next-line)
-      (define-key proced-mode-map (kbd "k") #'previous-line)
+                                      (proced-toggle-auto-update 1))))
+    (with-eval-after-load 'proced
       (eval-and-compile
         (setq proced-format 'long))))
 #+end_src
@@ -3002,7 +3022,6 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/visual-fill-column"))
     (add-to-list 'load-path (locate-user-emacs-file "el-get/writeroom-mode"))
     (when (autoload-if-found '(writeroom-mode
-                               writeroom-mode-map
                                writeroom-decrease-width
                                writeroom-increase-width
                                writeroom-adjust-width
@@ -3012,11 +3031,11 @@
                                          (linum-mode -1)
                                          (display-line-numbers-mode))))
     (with-eval-after-load 'writeroom-mode
-      (eval-and-compile
-        (setq writeroom-width 200))
       (define-key writeroom-mode-map (kbd "C-M-<") #'writeroom-decrease-width)
       (define-key writeroom-mode-map (kbd "C-M->") #'writeroom-increase-width)
-      (define-key writeroom-mode-map (kbd "C-M-=") #'writeroom-adjust-width)))
+      (define-key writeroom-mode-map (kbd "C-M-=") #'writeroom-adjust-width)
+      (eval-and-compile
+        (setq writeroom-width 200))))
 #+end_src
 *** zoom-window
 #+begin_src emacs-lisp
@@ -3156,51 +3175,19 @@
         (global-fish-completion-mode))))
 #+end_src
 * Org Mode
-** basic
+** org
    #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-c a") 'org-agenda)
-     (global-set-key (kbd "C-c c") 'org-capture)
-
      (with-eval-after-load 'org
        (define-key org-mode-map (kbd "C-c ,") 'org-insert-structure-template)
        (define-key org-mode-map (kbd "C-c C-,") 'org-insert-structure-template)
        (eval-and-compile
-         (setq org-use-speed-commands t)
-         (setq org-agenda-todo-ignore-with-date t)
          (setq org-directory "~/org")
          (setq org-agenda-files '("~/org/agenda"))
-         (setq org-todo-keywords '((sequence "TODO(t)" "TODAY" "WAIT(w)" "|" "DONE(d)")))
-         (setq org-capture-templates '(("t" "Todo" entry (file+datetree "~/org/todo.org")
-                                        "* %?")
-                                       ("m" "Memo" entry (file "~/org/memo.org")
-                                        "* %?")))
+         (setq org-todo-keywords '((sequence "TODO(t)" "NOW(n)" "WAIT(w)" "|" "DONE(d)")))
          (setq org-startup-folded 'fold)
-         (setq org-archive-location `,(format "~/org/archive/%s.org"
-                                              (format-time-string "%Y" (current-time))))
-         (setq org-link '(t (:foreground "#ebe087" :underline t)))))
+         (setq org-archive-location `,(format (expand-file-name "archive/%s.org::" org-directory)
+                                              (format-time-string "%Y-%m-%d" (current-time))))))
    #+END_SRC
-** org-id
-   #+begin_src emacs-lisp
-     (with-delayed-execution
-       (message "Install org-id...")
-       (autoload-if-found '(org-id-store-link) "org-id" nil t)
-       (with-eval-after-load 'org-id
-         (eval-and-compile
-           (setq org-id-locations-file (expand-file-name ".org-id-locations" org-directory))
-           (setq org-id-track-globally t)
-           (setq org-id-extra-files (append org-agenda-text-search-extra-files))
-           (setq org-id-link-to-org-use-id 'create-if-interactive))))
-   #+end_src
-** org-crypt
-   #+begin_src emacs-lisp
-     (with-delayed-execution
-       (message "Install org-crypt...")
-       (with-eval-after-load 'org-crypt
-         (when (autoload-if-found '(org-encrypt-entry org-decrypt-entry org-crypt-use-before-save-magic) "org-crypt" nil t)
-           (org-crypt-use-before-save-magic)
-           (eval-and-compile
-             (setq org-tags-exclude-from-inheritance '("crypt"))))))
-   #+end_src
 ** org-babel
    #+begin_src emacs-lisp
      (eval-when-compile
@@ -3231,6 +3218,103 @@
                                         (rust . t)
                                         (typescript . t)))))
    #+end_src
+** ob-async
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ob-async))
+
+  (with-delayed-execution
+    (message "Install ob-async...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-async"))
+    (when (autoload-if-found '(ob-async-org-babel-execute-src-block) "ob-async" nil t)
+      (defalias 'org-babel-execute-src-block:async 'ob-async-org-babel-execute-src-block)))
+#+end_src
+** org-link
+#+begin_src emacs-lisp
+  (when (autoload-if-found '(org-store-link) "ol" nil t)
+    (global-set-key (kbd "C-c l") #'org-store-link))
+#+end_src
+** org-faces
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-faces
+    (eval-and-compile
+      (setq org-link '(t (:foreground "#ebe087" :underline t)))))
+#+end_src
+** org-agenda
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-agenda
+    (global-set-key (kbd "C-c a") 'org-agenda)
+    (eval-and-compile
+      (setq org-agenda-span 'day)
+      (setq org-agenda-start-on-weekday 0)
+      (setq org-agenda-todo-ignore-with-date t)))
+#+end_src
+** org-super-agenda
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ts)
+    (el-get-bundle 'org-super-agenda))
+
+  (with-delayed-execution
+    (message "Install org-super-agenda...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ts"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-super-agenda"))
+    (when (autoload-if-found '(org-super-agenda-mode) "org-super-agenda" nil t)
+      (add-hook 'org-agenda-mode-hook #'org-super-agenda-mode))
+    (with-eval-after-load 'org-super-agenda
+      (setq org-super-agenda-groups '((:name "NOW"
+                                             :time-grid t)
+                                      (:todo "TODO" :order 8)
+                                      (:todo "WAITING" :order 8)
+                                      (:todo "WAITING" :order 8)))))
+#+end_src
+** org-clock
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-clock
+    (setq org-clock-out-remove-zero-time-clocks t)
+    (setq org-clock-clocked-in-display 'mode-line))
+#+end_src
+** org-keys
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-keys
+    (eval-and-compile
+      (setq org-use-extra-keys t)
+      (setq org-use-speed-commands t)))
+#+end_src
+** org-capture
+#+begin_src emacs-lisp
+  (when (autoload-if-found '(org-capture) "org-capture" nil t)
+    (global-set-key (kbd "C-c c") 'org-capture))
+
+  (with-eval-after-load 'org-capture
+    (eval-and-compile
+      (setq org-capture-templates `(("t" "Todo" entry (file+datetree ,(expand-file-name "todo.org" org-directory))
+                                    "* %?")
+                                   ("m" "Memo" entry (file ,(expand-file-name "memo.org" org-directory))
+                                    "* %?")
+                                   ("j" "Journal" entry (file+datetree ,(expand-file-name "journal.org" org-directory))
+                                    "* %?\nEntered on %U\n  %i\n  %a")))))
+#+end_src
+** org-id
+   #+begin_src emacs-lisp
+     (with-delayed-execution
+       (message "Install org-id...")
+       (autoload-if-found '(org-id-store-link) "org-id" nil t)
+       (with-eval-after-load 'org-id
+         (eval-and-compile
+           (setq org-id-locations-file (expand-file-name ".org-id-locations" org-directory))
+           (setq org-id-extra-files (append org-agenda-text-search-extra-files))
+           (setq org-id-link-to-org-use-id t))))
+   #+end_src
+** org-crypt
+   #+begin_src emacs-lisp
+     (with-delayed-execution
+       (when (autoload-if-found '(org-encrypt-entry org-decrypt-entry org-crypt-use-before-save-magic) "org-crypt" nil t)
+           (org-crypt-use-before-save-magic))
+       (with-eval-after-load 'org-crypt
+         (eval-and-compile
+           (setq org-crypt-key "bararararatty@gmail.com"))))
+   #+end_src
 ** org-journal
    #+begin_src emacs-lisp
      (eval-when-compile
@@ -3241,8 +3325,8 @@
        (add-to-list 'load-path (locate-user-emacs-file "el-get/org-journal"))
        (with-eval-after-load 'org-journal
          (eval-and-compile
-           (setq org-journal-dir "~/org/journal")
-           (setq org-journal-file-type 'weekly)
+           (setq org-journal-dir (expand-file-name "journal" org-directory))
+           (setq org-journal-start-on-weekday 7)
            (setq org-journal-prefix-key "C-c j"))))
    #+end_src
 ** org-superstar
@@ -3251,6 +3335,7 @@
        (el-get-bundle 'org-superstar))
 
      (with-delayed-execution-priority-high
+       (message "Install org-superstar...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/org-superstar"))
        (when (autoload-if-found '(org-superstar-mode) "org-superstar")
          (add-hook 'org-mode-hook 'org-superstar-mode))
@@ -3270,7 +3355,7 @@
        (with-eval-after-load 'org-generate
          (eval-and-compile
            (setq org-generate-file `,(locate-user-emacs-file "yasnippets.org"))
-           (setq org-generate-root "yasnippets"))))
+           (setq org-generate-root "snippets"))))
    #+end_src
 ** org-pomodoro
    #+begin_src emacs-lisp
@@ -3291,9 +3376,7 @@
      (with-delayed-execution
        (message "Install org-view-mode...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/org-view-mode"))
-       ;; (when (autoload-if-found '() "org-view-mode" nil t)
-       ;;   (with-eval-after-load 'org-view-mode))
-       )
+       (autoload-if-found '(org-view-mode) "org-view-mode" nil t))
    #+end_src
 * EAF
 ** basic
