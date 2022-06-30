@@ -138,18 +138,44 @@
            (url-retrieve-synchronously
             "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
          (goto-char (point-max))
-         (eval-print-last-sexp)))
+         (eval-print-last-sexp))
+
+       (with-eval-after-load 'el-get-bundle
+         (eval-and-compile
+           (setq el-get-bundle-sync nil)))
+
+       (with-eval-after-load 'el-get-custom
+         (eval-and-compile
+           (setq el-get-git-shallow-clone t)))
+
+       (with-eval-after-load 'el-get-custom
+         (eval-and-compile
+           (setq el-get-verbose nil)))
+
+       (with-eval-after-load 'el-get-core
+         (eval-and-compile
+           (setq el-get-default-process-sync t))))
 
      (with-delayed-execution
        (message "Install el-get...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/el-get"))
        (require 'el-get)
-       (with-eval-after-load 'el-get
+
+       (with-eval-after-load 'el-get-bundle
          (eval-and-compile
-           (setq el-get-git-shallow-clone t
-                 el-get-verbose nil
-                 el-get-silent-update t
-                 el-get-default-process-sync t))))
+           (setq el-get-bundle-sync nil)))
+
+       (with-eval-after-load 'el-get-custom
+         (eval-and-compile
+           (setq el-get-git-shallow-clone t)))
+
+       (with-eval-after-load 'el-get-custom
+         (eval-and-compile
+           (setq el-get-verbose nil)))
+
+       (with-eval-after-load 'el-get-core
+         (eval-and-compile
+           (setq el-get-default-process-sync t))))
    #+end_src
 * Basic
 ** 末尾のスペースを可視化する
@@ -253,6 +279,13 @@
 
      (when window-system
        (global-set-key (kbd "C-x C-c") nil))
+
+     (global-set-key [return] #'(lambda ()
+                                  (interactive)
+                                  (message "Don't use RETURN!!! Press C-m!! C-m!!!")))
+     (global-set-key [tab] #'(lambda ()
+                                  (interactive)
+                                  (message "Don't use TAB!!! Press C-i!! C-i!!!")))
    #+END_SRC
 ** common lispを使う
    #+begin_src emacs-lisp
@@ -611,13 +644,27 @@
      (with-delayed-execution
        (message "Install git-modes...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/git-modes")))
-       (when (autoload-if-found '(gitignore-mode gitconfig-mode) "git-modes" nil t)
+       (when (autoload-if-found '(gitignore-mode gitconfig-mode gitattributes-mode) "git-modes" nil t)
+         ;; gitignore-mode
          (push '("\\.dockerignore$" . gitignore-mode) auto-mode-alist)
-         (push '("\\.gitconfig$" . gitconfig-mode) auto-mode-alist)
-         (push '("\\.git-pr-release$" . gitconfig-mode) auto-mode-alist)
          (push '("\\.gitignore$" . gitignore-mode) auto-mode-alist)
          (push '("\\.prettierignore$" . gitignore-mode) auto-mode-alist)
-         (push '("\\.editorconfig$" . gitconfig-mode) auto-mode-alist)))
+         (push '("/git/ignore\\'" . gitignore-mode) auto-mode-alist)
+
+         ;; gitconfig-mode
+         (push '("\\.git-pr-release$" . gitconfig-mode) auto-mode-alist)
+         (push '("\\.editorconfig$" . gitconfig-mode) auto-mode-alist)
+         (push '("\\.gitconfig$" . gitconfig-mode) auto-mode-alist)
+         (push '("/\\.git/config\\'" . gitconfig-mode) auto-mode-alist)
+         (push '("/modules/.*/config\\'" . gitconfig-mode) auto-mode-alist)
+         (push '("/git/config\\'" . gitconfig-mode) auto-mode-alist)
+         (push '("/\\.gitmodules\\'" . gitconfig-mode) auto-mode-alist)
+         (push '("/etc/gitconfig\\'" . gitconfig-mode) auto-mode-alist)
+
+         ;; gitattributes
+         (push '("/\\.gitattributes\\'" . gitattributes-mode) auto-mode-alist)
+         (push '("/info/attributes\\'" . gitattributes-mode) auto-mode-alist)
+         (push '("/git/attributes\\'" . gitattributes-mode) auto-mode-alist)))
    #+end_src
 ** glsl-mode
    #+BEGIN_SRC emacs-lisp
@@ -1648,12 +1695,38 @@
         (message "Install nyan-mode...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/nyan-mode"))
         (when (autoload-if-found '(nyan-mode) "nyan-mode" nil t)
-          (add-hook 'doom-modeline-mode-hook 'nyan-mode))
+          (nyan-mode))
         (with-eval-after-load 'nyan-mode
           (eval-and-compile
-            (setq nyan-cat-face-number 4)
+            (setq nyan-cat-face-number 5)
             (setq nyan-animate-nyancat t))))
     #+END_SRC
+*** volatile-highlights
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'volatile-highlights))
+
+  (with-delayed-execution
+    (message "Install volatile-highlights...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/volatile-highlights"))
+    (when (autoload-if-found '(volatile-highlights-mode) "volatile-highlights" nil t)
+      (volatile-highlights-mode t)))
+#+end_src
+*** TODO fill-column-indicator
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'fill-column-indicator))
+
+  (with-delayed-execution
+    (message "Install fill-column-indicator...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/fill-column-indicator"))
+    (when (autoload-if-found '(fci-mode) "fill-column-indicator" nil t)
+      ;; (add-hook 'prog-mode-hook #'fci-mode)
+      )
+    (with-eval-after-load 'fill-column-indicator
+      (eval-and-compile
+        (setq fci-rule-column 120))))
+#+end_src
 ** Project
 *** projectile
     #+begin_src emacs-lisp
@@ -1940,17 +2013,17 @@
           (add-hook 'lsp-mode-hook #'lsp-headerline-breadcrumb-mode))
 
         (with-eval-after-load 'lsp-mode
+          ;; ignore path
           (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]vendor")
           (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]storage")
           (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]docs")
-          (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]docker")
+
+          ;; enable flycheck
+          (add-hook 'lsp-mode-hook #'flycheck-mode)
           (eval-and-compile
             (setq lsp-idle-delay 0.8)
             (setq lsp-enable-links nil)
             (setq lsp-log-io nil)))
-
-        (with-eval-after-load 'flycheck
-          (add-hook 'lsp-mode-hook #'flycheck-mode))
 
         (with-eval-after-load 'lsp-completion
           (eval-and-compile
@@ -2037,13 +2110,50 @@
       (with-delayed-execution
         (message "Install lsp-ui...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-ui"))
+
         (when (autoload-if-found '(lsp-ui-mode) "lsp-ui" nil t)
           (add-hook 'lsp-mode-hook #'lsp-ui-mode))
-        (with-eval-after-load 'lsp-ui
+
+        ;; lsp-ui-doc
+        (with-eval-after-load 'lsp-ui-doc
           (eval-and-compile
+            (setq lsp-ui-doc-show-with-cursor t)
+            (setq lsp-ui-doc-use-webkit t)
             (setq lsp-ui-doc-include-signature t)
             (setq lsp-ui-doc-delay 0.7)
-            (setq lsp-ui-doc-max-height 30))))
+            (setq lsp-ui-doc-max-height 30)))
+
+        ;; lsp-ui-peek
+        (autoload-if-found '(lsp-ui-peek-find-references lsp-ui-peek-find-definitions lsp-ui-peek-find-implementation) "lsp-ui-peek" nil t)
+        (with-eval-after-load 'lsp-ui-peek
+          (eval-and-compile
+            (setq lsp-ui-peek-enable t)
+            (setq lsp-ui-peek-peek-height 30)
+            (setq lsp-ui-peek-list-width 60)
+            (setq lsp-ui-peek-fontify 'on-demand)))
+
+        ;; lsp-ui-imenu
+        (autoload-if-found '(lsp-ui-imenu) "lsp-ui-imenu" nil t)
+        (with-eval-after-load 'lsp-ui-imenu
+          (eval-and-compile
+            (setq lsp-ui-imenu-enable t)
+            (setq lsp-ui-imenu-kind-position 'top)))
+
+        ;; lsp-ui-sideline
+        (autoload-if-found '(lsp-ui-sideline-mode) "lsp-ui-sideline" nil t)
+        (with-eval-after-load 'lsp-ui-sideline
+          (eval-and-compile
+            (eval-and-compile
+              (setq lsp-ui-sideline-show-hover t))))
+
+        ;; keybind
+        (with-eval-after-load 'lsp-mode
+          (define-key lsp-mode-map (kbd "C-c C-r") #'lsp-ui-peek-find-references)
+          (define-key lsp-mode-map (kbd "C-c C-j") #'lsp-ui-peek-find-definitions)
+          (define-key lsp-mode-map (kbd "C-c C-i") #'lsp-ui-peek-find-implementation)
+          (define-key lsp-mode-map (kbd "C-c C-m") #'lsp-ui-imenu)
+          (define-key lsp-mode-map (kbd "C-c C-s") #'lsp-ui-sideline-mode)
+          (define-key lsp-mode-map (kbd "C-c C-d") #'lsp-ui-doc-mode)))
     #+END_SRC
 ** Git
 *** magit
@@ -2527,7 +2637,14 @@
     (when (autoload-if-found '(ddskk-posframe-mode) "ddskk-posframe" nil t)
       (add-hook 'skk-mode-hook #'ddskk-posframe-mode)))
 #+end_src
-*** dimmer.el
+*** delsel
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install ddskk-delsel...")
+    (when (autoload-if-found '(delete-selection-mode) "delsel" nil t)
+      (delete-selection-mode)))
+#+end_src
+*** dimmer
 #+begin_src emacs-lisp
   (eval-when-compile
     (el-get-bundle 'dimmer))
@@ -2676,7 +2793,7 @@
                 ("DONE" . "#afd8af"))))))
 
 #+end_src
-*** TODO highlight-indent-guides
+*** highlight-indent-guides
 #+begin_src emacs-lisp
   (eval-when-compile
     (el-get-bundle 'highlight-indent-guides))
@@ -2684,9 +2801,12 @@
   (with-delayed-execution
     (message "Install highlight-indent-guides...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/highlight-indent-guides"))
-    (when (autoload-if-found '(highlight-indent-guides-mode) "highlight-indent-guides" nil t)
-      ;; (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-      )
+
+    (autoload-if-found '(highlight-indent-guides-mode) "highlight-indent-guides" nil t)
+
+    (with-eval-after-load 'yaml-mode
+      (add-hook 'yaml-mode-hook 'highlight-indent-guides-mode))
+
     (with-eval-after-load 'highlight-indent-guides
       (eval-and-compile
         (setq highlight-indent-guides-method 'bitmap))))
@@ -3185,6 +3305,7 @@
          (setq org-agenda-files '("~/org/agenda"))
          (setq org-todo-keywords '((sequence "TODO(t)" "NOW(n)" "WAIT(w)" "|" "DONE(d)")))
          (setq org-startup-folded 'fold)
+         (setq org-startup-truncated nil)
          (setq org-archive-location `,(format (expand-file-name "archive/%s.org::" org-directory)
                                               (format-time-string "%Y-%m-%d" (current-time))))))
    #+END_SRC
@@ -3289,11 +3410,11 @@
   (with-eval-after-load 'org-capture
     (eval-and-compile
       (setq org-capture-templates `(("t" "Todo" entry (file+datetree ,(expand-file-name "todo.org" org-directory))
-                                    "* %?")
-                                   ("m" "Memo" entry (file ,(expand-file-name "memo.org" org-directory))
-                                    "* %?")
-                                   ("j" "Journal" entry (file+datetree ,(expand-file-name "journal.org" org-directory))
-                                    "* %?\nEntered on %U\n  %i\n  %a")))))
+                                     "* %?")
+                                    ("m" "Memo" entry (file ,(expand-file-name "memo.org" org-directory))
+                                     "* %?")
+                                    ("j" "Journal" entry (file+datetree ,(expand-file-name "journal.org" org-directory))
+                                     "* %?\nEntered on %U\n  %i\n  %a")))))
 #+end_src
 ** org-id
    #+begin_src emacs-lisp
