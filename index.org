@@ -320,8 +320,7 @@
 ** 同一bufferの名前を変える
 #+begin_src emacs-lisp
   (with-eval-after-load 'uniquify
-    (eval-and-compile
-      (setq uniquify-buffer-name-style 'post-forward-angle-brackets)))
+    (setq uniquify-buffer-name-style 'post-forward-angle-brackets))
 #+end_src
 ** killできないようにする
    #+begin_src emacs-lisp
@@ -1712,22 +1711,6 @@
     (when (autoload-if-found '(volatile-highlights-mode) "volatile-highlights" nil t)
       (volatile-highlights-mode t)))
 #+end_src
-*** fill-column-indicator
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'fill-column-indicator))
-
-  (with-delayed-execution
-    (message "Install fill-column-indicator...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/fill-column-indicator"))
-    (autoload-if-found '(fci-mode) "fill-column-indicator" nil t)
-
-    (with-eval-after-load 'php-mode
-      (add-hook 'php-mode-hook #'fci-mode))
-
-    (with-eval-after-load 'fill-column-indicator
-      (setq fci-rule-column 120)))
-#+end_src
 ** Project
 *** projectile
     #+begin_src emacs-lisp
@@ -2481,9 +2464,9 @@
           (recentf-mode 1))
         (with-eval-after-load 'recentf
           (setq recentf-max-saved-items 10000)
-            (setq recentf-auto-cleanup 'never)
-            (setq recentf-save-file  "~/.emacs.d/.recentf")
-            (setq recentf-exclude '(".recentf"))))
+          (setq recentf-auto-cleanup 'never)
+          (setq recentf-save-file  "~/.emacs.d/.recentf")
+          (setq recentf-exclude '(".recentf"))))
     #+END_SRC
 *** open-junk-file
     #+BEGIN_SRC emacs-lisp
