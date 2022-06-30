@@ -356,6 +356,7 @@
          (emacs-lock-mode 'kill)))
    #+end_src
  Utility
+* Libraries
 ** dash
    #+begin_src emacs-lisp
      (eval-when-compile
@@ -461,12 +462,12 @@
 ** c++-mode
    #+begin_src emacs-lisp
      (with-eval-after-load 'c++-mode
-       (add-hook 'c++-mode-hook 'lsp-deferred))
+       (add-hook 'c++-mode-hook #'lsp-deferred))
    #+end_src
 ** c-mode
    #+begin_src emacs-lisp
      (with-eval-after-load 'c-mode
-       (add-hook 'c-mode-hook 'lsp-deferred))
+       (add-hook 'c-mode-hook #'lsp-deferred))
    #+end_src
 ** clojure-mode
    #+BEGIN_SRC emacs-lisp
@@ -476,10 +477,13 @@
      (with-delayed-execution
        (message "Install clojure-mode")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/clojure-mode")))
+
        (when (autoload-if-found '(clojure-mode) "clojure-mode" nil t)
          (push '("\\.clj$" . clojure-mode) auto-mode-alist)
-         (push '("\\.cljs$" . clojurescript-mode) auto-mode-alist)
-         (add-hook 'clojure-mode-hook 'lsp-deferred)))
+         (push '("\\.cljs$" . clojurescript-mode) auto-mode-alist))
+
+       (with-eval-after-load 'clojure-mode
+         (add-hook 'clojure-mode-hook #'lsp-deferred)))
    #+END_SRC
 ** cmake-mode
    #+BEGIN_SRC emacs-lisp
@@ -517,7 +521,7 @@
 ** css-mode
    #+begin_src emacs-lisp
      (with-eval-after-load 'css-mode
-       (add-hook 'css-mode-hook 'lsp-deferred))
+       (add-hook 'css-mode-hook #'lsp-deferred))
    #+end_src
 ** csv-mode
    #+BEGIN_SRC emacs-lisp
@@ -607,17 +611,29 @@
      (with-delayed-execution
        (message "Install emmet-mode...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/emmet-mode")))
-       (when (autoload-if-found '(emmet-mode) "emmet-mode" nil t)
-         (add-hook 'html-mode-hook 'emmet-mode)
-         (add-hook 'web-mode-hook 'emmet-mode)
-         (add-hook 'css-mode-hook 'emmet-mode)
-         (add-hook 'nxml-mode-hook 'emmet-mode)
-         (add-hook 'php-blade-mode 'emmet-mode)
-         (add-hook 'typescript-tsx-mode-hook 'emmet-mode))
+       (autoload-if-found '(emmet-mode) "emmet-mode" nil t)
+
+       (with-eval-after-load 'html-mode
+         (add-hook 'html-mode-hook #'emmet-mode))
+
+       (with-eval-after-load 'web-mode
+         (add-hook 'web-mode-hook #'emmet-mode))
+
+       (with-eval-after-load 'css-mode
+         (add-hook 'css-mode-hook #'emmet-mode))
+
+       (with-eval-after-load 'nxml-mode
+         (add-hook 'nxml-mode-hook #'emmet-mode))
+
+       (with-eval-after-load 'web-php-blade-mode
+         (add-hook 'web-php-blade-mode #'emmet-mode))
+
+       (with-eval-after-load 'typescript-tsx-mode
+         (add-hook 'typescript-tsx-mode-hook #'emmet-mode))
+
        (with-eval-after-load 'emmet-mode
-         (when (boundp 'emmet-mode-keymap)
-           (define-key emmet-mode-keymap (kbd "C-j") nil)
-           (define-key emmet-mode-keymap (kbd "M-j") 'emmet-expand-line))
+         (define-key emmet-mode-keymap (kbd "C-j") nil)
+         (define-key emmet-mode-keymap (kbd "M-j") 'emmet-expand-line)
          (eval-and-compile
            (setq emmet-self-closing-tag-style "")
            (setq emmet-indent-after-insert nil))))
@@ -686,12 +702,14 @@
      (with-delayed-execution
        (message "Install go-mode...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/go-mode")))
+
        (when (autoload-if-found '(go-mode) "go-mode" nil t)
          (push '("\\.go$" . go-mode) auto-mode-alist)
          (push '("^go.mod$" . go-dot-mod-mode) auto-mode-alist))
+
        (with-eval-after-load 'go-mode
-         (add-hook 'go-mode-hook 'lsp-deferred)
-         (add-hook 'before-save-hook 'gofmt-before-save)
+         (add-hook 'go-mode-hook #'lsp-deferred)
+         (add-hook 'before-save-hook #'gofmt-before-save)
          (eval-and-compile
            (setq gofmt-command "goimports"))))
    #+END_SRC
@@ -751,7 +769,7 @@
        (when (autoload-if-found '(js2-mode) "js2-mode" nil t)
          (push '("\\.js$" . js2-mode) auto-mode-alist))
        (with-eval-after-load 'js2-mode
-         (add-hook 'js2-mode-hook 'lsp-deferred)))
+         (add-hook 'js2-mode-hook #'lsp-deferred)))
    #+END_SRC
 ** json-mode
    #+BEGIN_SRC emacs-lisp
@@ -869,8 +887,11 @@
      (with-delayed-execution
        (message "Install php-mode...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/php-mode/lisp"))
+
        (when (autoload-if-found '(php-mode) "php-mode" nil t)
-         (push '("\\.php$" . php-mode) auto-mode-alist)
+         (push '("\\.php$" . php-mode) auto-mode-alist))
+
+       (with-eval-after-load 'php-mode
          (add-hook 'php-mode-hook #'(lambda ()
                                       (let ((lsp-enabled-clients '(iph)))
                                         (lsp))))))
@@ -980,8 +1001,10 @@
        (message "Install rust-mode...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/rust-mode"))
        (when (autoload-if-found '(rust-mode) "rust-mode" nil t)
-         (push '("\\.rs$" . rust-mode) auto-mode-alist)
-         (add-hook 'rust-mode-hook 'lsp)))
+         (push '("\\.rs$" . rust-mode) auto-mode-alist))
+
+       (with-eval-after-load 'rust-mode
+         (add-hook 'rust-mode-hook #'lsp)))
    #+END_SRC
 ** scala-mode
    #+BEGIN_SRC emacs-lisp
@@ -998,10 +1021,10 @@
    #+begin_src emacs-lisp
      (with-delayed-execution
        (message "Install scheme...")
-       (when (require 'scheme)
-         (with-eval-after-load 'scheme
-           (eval-and-compile
-             (setq scheme-program-name "gosh -i")))))
+       (require 'scheme)
+       (with-eval-after-load 'scheme
+         (eval-and-compile
+           (setq scheme-program-name "gosh -i"))))
    #+end_src
 ** scss-mode
    #+begin_src emacs-lisp
@@ -1011,8 +1034,11 @@
      (with-delayed-execution
        (message "Install scss-mode...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/scss-mode"))
+
        (when (autoload-if-found '(scss-mode) "scss-mode" nil t)
-         (push '("\\.scss$" . scss-mode) auto-mode-alist)
+         (push '("\\.scss$" . scss-mode) auto-mode-alist))
+
+       (with-eval-after-load 'scss-mode
          (add-hook 'scss-mode-hook #'(lambda ()
                                        (let ((lsp-diagnostics-provider :none))
                                          (lsp-deferred))))))
@@ -1117,15 +1143,16 @@
 
          ;; for ts/deno
          (push '("\\.ts$" . typescript-mode) auto-mode-alist)
-         (defun run-local-vars-mode-hook ()
+         (defun my/run-local-vars-mode-hook ()
            "Run `major-mode' hook after the local variables have been processed."
            (run-hooks (intern (concat (symbol-name major-mode) "-local-vars-hook"))))
-         (add-hook 'hack-local-variables-hook 'run-local-vars-mode-hook)
+
+         (add-hook 'hack-local-variables-hook #'my/run-local-vars-mode-hook)
          (add-hook 'typescript-mode-local-vars-hook #'lsp)
 
          ;; for tsx
          (push '("\\.tsx$" . typescript-tsx-mode) auto-mode-alist)
-         (add-hook 'typescript-tsx-mode-hook 'lsp-deferred)))
+         (add-hook 'typescript-tsx-mode-hook #'lsp-deferred)))
    #+END_SRC
 ** v-mode
    #+begin_src emacs-lisp
@@ -1135,12 +1162,13 @@
      (with-delayed-execution
        (message "Install v-mode...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/v-mode"))
+
        (when (autoload-if-found '(v-mode v-menu v-format-buffer) "v-mode" nil t)
          (push '("\\(\\.v?v\\|\\.vsh\\)$" . v-mode) auto-mode-alist))
+
        (with-eval-after-load 'v-mode
-         (when (boundp 'v-mode-map)
-           (define-key v-mode-map (kbd "M-z") 'v-menu)
-           (define-key v-mode-map (kbd "C-c C-f") 'v-format-buffer))))
+         (define-key v-mode-map (kbd "M-z") #'v-menu)
+         (define-key v-mode-map (kbd "C-c C-f") #'v-format-buffer)))
    #+end_src
 ** vue-mode
    #+BEGIN_SRC emacs-lisp
@@ -1240,18 +1268,25 @@
       (with-delayed-execution-priority-high
         (message "Install paredit...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/paredit"))
-        (when (autoload-if-found '(enable-paredit-mode) "paredit" nil t)
-          ;; hooks
-          (add-hook 'lisp-mode-hook 'enable-paredit-mode)
-          (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
-          (add-hook 'clojure-mode-hook 'enable-paredit-mode)
-          (add-hook 'lisp-interacton-mode-hook 'enable-paredit-mode)
-          (add-hook 'lisp-data-mode-hook 'enable-paredit-mode)
-          (add-hook 'eval-expression-minibuffer-setup-hook #'paredit-mode)
+        (autoload-if-found '(enable-paredit-mode paredit-forward-slurp-sexp paredit-splice-sexp) "paredit" nil t)
 
-          ;; global keybind
-          (global-set-key (kbd "C-c f") 'paredit-forward-slurp-sexp)
-          (global-set-key (kbd "M-s") 'paredit-splice-sexp)))
+        (global-set-key (kbd "C-c f") #'paredit-forward-slurp-sexp)
+        (global-set-key (kbd "M-s") #'paredit-splice-sexp)
+
+        (with-eval-after-load 'lisp-mode
+          (add-hook 'lisp-mode-hook #'enable-paredit-mode)
+          (add-hook 'lisp-data-mode-hook #'enable-paredit-mode))
+
+        (with-eval-after-load 'emacs-lisp-mode
+          (add-hook 'emacs-lisp-mode-hook #'enable-paredit-mode))
+
+        (with-eval-after-load 'clojure-mode
+          (add-hook 'clojure-mode-hook #'enable-paredit-mode))
+
+        (with-eval-after-load 'lisp-interaction-mode
+          (add-hook 'lisp-interacton-mode-hook #'enable-paredit-mode))
+
+        (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode))
     #+END_SRC
 *** rainbow-delimiter
     #+BEGIN_SRC emacs-lisp
@@ -1261,9 +1296,9 @@
       (with-delayed-execution
         (message "Install rainbow-delimiters...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/rainbow-delimiters"))
-        (when (autoload-if-found '(rainbow-delimiters-mode-enable) "rainbow-delimiters" nil t)
-          (with-eval-after-load 'rainbow-delimiters
-            (add-hook 'prog-mode-hook 'rainbow-delimiters-mode-enable))))
+        (autoload-if-found '(rainbow-delimiters-mode-enable) "rainbow-delimiters" nil t)
+        (with-eval-after-load 'prog-mode
+          (add-hook 'prog-mode-hook #'rainbow-delimiters-mode-enable)))
     #+END_SRC
 ** CommonLisp
 *** TODO slime/slime-company
@@ -1330,9 +1365,14 @@
       (with-delayed-execution
         (message "Install eslisp-slime-nav...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/elisp-slime-nav"))
-        (with-eval-after-load 'elisp-slime-nav
-          (add-hook 'emacs-lisp-mode-hook 'elisp-slime-nav-mode)
-          (add-hook 'ielm-mode-hook 'elisp-slime-nav-mode)))
+
+        (autoload-if-found '(elisp-slime-nav-mode) "elisp-slime-nav" nil t)
+
+        (with-eval-after-load 'elisp-mode
+          (add-hook 'emacs-lisp-mode-hook #'elisp-slime-nav-mode))
+
+        (with-eval-after-load 'ielm
+          (add-hook 'ielm-mode-hook #'elisp-slime-nav-mode)))
     #+END_SRC
 *** nameless
     #+BEGIN_SRC emacs-lisp
@@ -1343,8 +1383,8 @@
         (message "Install nameless...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/nameless"))
         (when (autoload-if-found '(nameless-mode) "nameless" nil t)
-          (add-hook 'ielm-mode-hook 'nameless-mode)
-          (add-hook 'emacs-lisp-mode-hook 'nameless-mode)))
+          (add-hook 'ielm-mode-hook #'nameless-mode)
+          (add-hook 'emacs-lisp-mode-hook #'nameless-mode)))
     #+END_SRC
 *** my/ielm-history
     #+BEGIN_SRC emacs-lisp
@@ -1498,22 +1538,21 @@
           (defun my/swiper ()
             (interactive)
             (let ((word (thing-at-point 'symbol 'no-properties)))
-              (swiper word)))
-          (global-set-key (kbd "C-o") 'my/swiper)))
+              (swiper word))))
+        (global-set-key (kbd "C-o") #'my/swiper))
     #+END_SRC
 *** counsel
     #+begin_src emacs-lisp
       (with-delayed-execution-priority-high
         (when (autoload-if-found '(counsel-mode counsel-compile) "counsel" nil t)
-          (global-set-key (kbd "C-x m") 'counsel-compile)
-          (counsel-mode 1)))
+          (counsel-mode 1))
+        (global-set-key (kbd "C-x m") 'counsel-compile))
     #+end_src
 *** ivy
     #+begin_src emacs-lisp
       (with-delayed-execution-priority-high
         (when (autoload-if-found '(ivy-mode ivy-read ivy-completing-read) "ivy" nil t)
-          (add-hook 'minibuffer-setup-hook (lambda ()
-                                             (ivy-mode 1))))
+          (add-hook 'minibuffer-setup-hook #'ivy-mode))
         (with-eval-after-load 'ivy
           (eval-and-compile
             (setq enable-recursive-minibuffers t)
@@ -1552,9 +1591,9 @@
         (message "Install all-the-icons-dired...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons-dired"))
         (when (autoload-if-found '(all-the-icons-dired-mode) "all-the-icons-dired")
-          (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+          (add-hook 'dired-mode-hook #'all-the-icons-dired-mode))
         (with-eval-after-load 'all-the-icons-dired-mode
-          (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)))
+          (add-hook 'dired-mode-hook #'all-the-icons-dired-mode)))
     #+end_src
 *** all-the-icons-ivy-rich
     #+begin_src emacs-lisp
@@ -1599,8 +1638,10 @@
       (with-delayed-execution-priority-high
         (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes/extensions"))
+
         (when (require 'doom-themes)
           (load-theme 'doom-dracula t))
+
         (with-eval-after-load 'doom-themes
           (eval-and-compile
             (setq doom-themes-enable-bold t)
@@ -1620,8 +1661,7 @@
 
       (with-delayed-execution-priority-high
         (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-modeline"))
-        (when (autoload-if-found '(doom-modeline-mode line-number-mode column-number-mode) "doom-modeline" nil t)
-          (add-hook 'after-init-hook 'doom-modeline-mode)
+        (when (autoload-if-found '(doom-modeline-mode) "doom-modeline" nil t)
           (doom-modeline-mode 1)
           (line-number-mode 0)
           (column-number-mode 0))
@@ -1651,16 +1691,19 @@
       (with-delayed-execution-priority-high
         (message "Install neotree...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/neotree"))
+
         (when (autoload-if-found '(my/neotree-toggle) "neotree" nil t)
-          (global-set-key (kbd "C-q") 'my/neotree-toggle))
-        (with-eval-after-load 'neotree
           (defun my/neotree-toggle ()
             (interactive)
             (let ((default-directory (locate-dominating-file default-directory ".git")))
               (if (and (fboundp 'neo-global--window-exists-p)
                        (neo-global--window-exists-p))
                   (neotree-hide)
-                (neotree-dir default-directory))))
+                (neotree-dir default-directory)))))
+
+        (global-set-key (kbd "C-q") 'my/neotree-toggle)
+
+        (with-eval-after-load 'neotree
           (eval-and-compile
             (setq neo-autorefresh nil)
             (setq neo-theme 'nerd2)
@@ -1736,19 +1779,22 @@
       (with-delayed-execution-priority-high
         (message "Install projectile...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/projectile"))
-        (when (autoload-if-found '(projectile-mode projectile-command-map my/update-projectile-known-projects) "projectile" nil t)
-          (global-set-key (kbd "M-p") 'projectile-command-map)
-          (global-set-key (kbd "C-c p") 'projectile-command-map)
 
+        (when (autoload-if-found '(projectile-mode my/update-projectile-known-projects) "projectile" nil t)
           (projectile-mode +1)
-          (add-hook 'projectile-mode-hook 'my/update-projectile-known-projects)
           (defun my/update-projectile-known-projects ()
             (interactive)
             (setq projectile-known-projects (mapcar
                                              (lambda (x)
                                                (abbreviate-file-name (concat x "/")))
                                              (split-string (shell-command-to-string "ghq list --full-path"))))))
+
+        (global-set-key (kbd "M-p") 'projectile-command-map)
+        (global-set-key (kbd "C-c p") 'projectile-command-map)
+
         (with-eval-after-load 'projectile
+          (add-hook 'projectile-mode-hook #'my/update-projectile-known-projects)
+
           (eval-and-compile
             (setq projectile-switch-project-action 'projectile-dired)
             (setq projectile-enable-caching t))))
@@ -1761,10 +1807,10 @@
       (with-delayed-execution-priority-high
         (message "Install counsel-projectile...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/counsel-projectile"))
+
         (when (autoload-if-found '(counsel-projectile-mode) "counsel-projectile" nil t)
-          (define-key projectile-mode-map (kbd "M-p") 'projectile-command-map)
-          (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
           (counsel-projectile-mode +1))
+
         (with-eval-after-load 'counsel-projectile
           (eval-and-compile
             (setq counsel-projectile-grep-initial-input '(ivy-thing-at-point))
@@ -1786,7 +1832,8 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/list-utils"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/iedit"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/emr"))
-        (when (autoload-if-found '(emr-show-refactor-menu) "emr" nil t)
+        (autoload-if-found '(emr-show-refactor-menu) "emr" nil t)
+        (with-eval-after-load 'prog-mode
           (define-key prog-mode-map (kbd "M-RET") 'emr-show-refactor-menu)))
     #+END_SRC
 ** Completion
@@ -1798,17 +1845,21 @@
       (with-delayed-execution
         (message "Install company...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/company"))
+
         (when (autoload-if-found '(global-company-mode) "company" nil t)
           (global-company-mode))
+
         (with-eval-after-load 'company
           (define-key company-active-map (kbd "C-n") 'company-select-next)
           (define-key company-active-map (kbd "C-p") 'company-select-previous)
-          (when (require 'company-css)
-            (push 'company-css company-backends))
-          (when (require 'company-elisp)
-            (push 'company-elisp company-backends))
           (eval-and-compile
-            (setq company-minimum-prefix-length 2))))
+            (setq company-minimum-prefix-length 2)))
+
+        (with-eval-after-load 'company-css
+          (push 'company-css company-backends))
+
+        (with-eval-after-load 'company-elisp
+          (push 'company-elisp company-backends)))
     #+END_SRC
 *** company-box
 #+begin_src emacs-lisp
@@ -1822,9 +1873,10 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/company-box"))
     (when (autoload-if-found '(company-box-mode) "company-box" nil t)
       (when window-system
-        (add-hook 'company-mode-hook 'company-box-mode)))
-    (with-eval-after-load 'company-box
-      (setq company-box-doc-enable nil)))
+      (add-hook 'company-mode-hook 'company-box-mode)))
+    (with-eval-after-load 'company-box-doc
+      (eval-and-compile
+        (setq company-box-doc-enable nil))))
 #+end_src
 *** company-dockerfile
     #+begin_src emacs-lisp
@@ -1835,9 +1887,9 @@
       (with-delayed-execution
         (message "Install company-dockerfile...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/company-dockerfile"))
-        (when (autoload-if-found '(company-dockerfile) "company-dockerfile" nil t)
-          (when (boundp 'company-backends)
-            (push 'company-dockerfile company-backends))))
+        (autoload-if-found '(company-dockerfile) "company-dockerfile" nil t)
+        (with-eval-after-load 'company
+          (push 'company-dockerfile company-backends)))
     #+end_src
 *** company-glsl
     #+BEGIN_SRC emacs-lisp
@@ -1847,9 +1899,9 @@
       (with-delayed-execution
         (message "Install company-glsl...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/company-glsl"))
-        (when (autoload-if-found '(company-glsl) "company-glsl" nil t)
-          (when (boundp 'company-backends)
-            (push 'company-glsl company-backends))))
+        (autoload-if-found '(company-glsl) "company-glsl" nil t)
+        (with-eval-after-load 'company
+          (push 'company-glsl company-backends)))
     #+END_SRC
 *** company-c-headers
     #+begin_src emacs-lisp
@@ -1859,9 +1911,9 @@
       (with-delayed-execution
         (message "Install company-c-headers...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/company-c-headers"))
-        (when (autoload-if-found '(company-c-headers) "company-c-headers" nil t)
-          (when (boundp 'company-backends)
-            (push 'company-c-headers company-backends))))
+        (autoload-if-found '(company-c-headers) "company-c-headers" nil t)
+        (with-eval-after-load 'company
+          (push 'company-c-headers company-backends)))
     #+end_src
 *** company-shell
     #+begin_src emacs-lisp
@@ -1871,11 +1923,11 @@
       (with-delayed-execution
         (message "Install company-shell...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/company-shell"))
-        (when (autoload-if-found '(company-shell company-shell-env company-fish-shell) "company-shell" nil t)
-          (when (boundp 'company-backends)
-            (push 'company-shell company-backends)
-            (push 'company-shell-env company-backends)
-            (push 'company-fish-shell company-backends))))
+        (autoload-if-found '(company-shell company-shell-env company-fish-shell) "company-shell" nil t)
+        (with-eval-after-load 'company
+          (push 'company-shell company-backends)
+          (push 'company-shell-env company-backends)
+          (push 'company-fish-shell company-backends)))
     #+end_src
 *** company-terraform
     #+begin_src emacs-lisp
@@ -1885,10 +1937,9 @@
       (with-delayed-execution
         (message "Install company-terraform...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/company-terraform"))
-        (when (autoload-if-found '(company-terraform) "company-terraform" nil t)
-          (with-eval-after-load 'company
-            (when (boundp 'company-backends)
-              (push 'company-terraform company-backends)))))
+        (autoload-if-found '(company-terraform) "company-terraform" nil t)
+        (with-eval-after-load 'company
+          (push 'company-terraform company-backends)))
     #+end_src
 *** company-nginx
     #+begin_src emacs-lisp
@@ -1898,9 +1949,9 @@
       (with-delayed-execution
         (message "Install company-nginx...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/company-nginx"))
-        (when (autoload-if-found '(company-nginx) "company-nginx" nil t)
-          (when (boundp 'company-backends)
-            (push 'company-nginx company-backends))))
+        (autoload-if-found '(company-nginx) "company-nginx" nil t)
+        (with-eval-after-load 'company
+          (push 'company-nginx company-backends)))
     #+end_src
 *** company-gemoji
     #+begin_src emacs-lisp
@@ -1911,9 +1962,9 @@
       (with-delayed-execution
         (message "Install company-gemoji...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/company-gemoji"))
-        (when (autoload-if-found '(company-gemoji) "company-gemoji" nil t)
-          (when (boundp 'company-backends)
-            (push 'company-gemoji company-backends))))
+        (autoload-if-found '(company-gemoji) "company-gemoji" nil t)
+        (with-eval-after-load 'company
+          (push 'company-gemoji company-backends)))
     #+end_src
 ** Prescient
 *** prescient
@@ -2066,21 +2117,21 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/dap-mode"))
 
         (when (autoload-if-found '(dap-mode) "dap-mode" nil t)
-          (add-hook 'lsp-mode-hook 'dap-mode))
+          (add-hook 'lsp-mode-hook #'dap-mode))
 
         (with-eval-after-load 'dap-mode
-          (define-key dap-mode-map (kbd "C-c d") 'dap-breakpoint-toggle))
+          (define-key dap-mode-map (kbd "C-c d") #'dap-breakpoint-toggle))
 
         (when (autoload-if-found '(dap-ui-mode) "dap-ui" nil t)
-          (add-hook 'dap-mode-hook 'dap-ui-mode)
-          (add-hook 'dap-mode-hook 'dap-ui-controls-mode))
+          (add-hook 'dap-mode-hook #'dap-ui-mode)
+          (add-hook 'dap-mode-hook #'dap-ui-controls-mode))
 
         (when (autoload-if-found '(dap-tooltip-mode) "dap-mouse" nil t)
-          (add-hook 'dap-mode-hook 'tooltip-mode)
-          (add-hook 'dap-mode-hook 'dap-tooltip-mode))
+          (add-hook 'dap-mode-hook #'tooltip-mode)
+          (add-hook 'dap-mode-hook #'dap-tooltip-mode))
 
         (when (autoload-if-found '(dap-php-setup) "dap-php" nil t)
-          (add-hook 'php-mode-hook 'dap-php-setup))
+          (add-hook 'php-mode-hook #'dap-php-setup))
 
         (with-eval-after-load 'dap-php
           (dap-register-debug-template "Laravel Run Configuration"
@@ -2094,13 +2145,13 @@
             (setq dap-php-debug-program `("node" ,(f-join dap-php-debug-path "out/phpDebug.js")))))
 
         (when (autoload-if-found '(dap-node-setup) "dap-node" nil t)
-          (add-hook 'js2-mode-hook 'dap-node-setup))
+          (add-hook 'js2-mode-hook #'dap-node-setup))
 
         (when (autoload-if-found '(dap-go-setup) "dap-go" nil t)
-          (add-hook 'go-mode-hook 'dap-go-setup))
+          (add-hook 'go-mode-hook #'dap-go-setup))
 
         (when (autoload-if-found '(dap-ruby-setup) "dap-ruby" nil t)
-          (add-hook 'ruby-mode-hook 'dap-ruby-setup)))
+          (add-hook 'ruby-mode-hook #'dap-ruby-setup)))
     #+END_SRC
 *** lsp-ui
     #+BEGIN_SRC emacs-lisp
@@ -2143,8 +2194,8 @@
         (autoload-if-found '(lsp-ui-sideline-mode) "lsp-ui-sideline" nil t)
         (with-eval-after-load 'lsp-ui-sideline
           (eval-and-compile
-            (eval-and-compile
-              (setq lsp-ui-sideline-show-hover t))))
+            (setq lsp-ui-sideline-enable nil)
+            (setq lsp-ui-sideline-show-hover t)))
 
         ;; keybind
         (with-eval-after-load 'lsp-mode
@@ -2172,21 +2223,22 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/magit-pop"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/with-editor/lisp"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/magit/lisp"))
+
         (when (autoload-if-found '(global-git-commit-mode) "git-commit" nil t)
           (global-git-commit-mode))
 
-        (with-delayed-execution
-          (when (autoload-if-found '(magit-status magit-blame) "magit")
-            (defun my/magit-status ()
-              (interactive)
-              (let ((default-directory (locate-dominating-file default-directory ".git")))
-                (magit-status)))
-            (global-set-key (kbd "C-x g") #'my/magit-status)
-            (global-set-key (kbd "C-x G") #'magit-blame))
+        (when (autoload-if-found '(magit-status magit-blame) "magit")
+          (defun my/magit-status ()
+            (interactive)
+            (let ((default-directory (locate-dominating-file default-directory ".git")))
+              (magit-status))))
 
-          (with-eval-after-load 'magit
-            (eval-and-compile
-              (setq magit-refresh-status-buffer nil)))))
+        (global-set-key (kbd "C-x g") #'my/magit-status)
+        (global-set-key (kbd "C-x G") #'magit-blame)
+
+        (with-eval-after-load 'magit
+          (eval-and-compile
+            (setq magit-refresh-status-buffer nil))))
     #+END_SRC
 *** magit-forge
     #+begin_src emacs-lisp
@@ -2233,10 +2285,11 @@
       (with-delayed-execution
         (message "Install clang-format...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/clang-format"))
-        (when (autoload-if-found '(clang-format-buffer) "clang-format" nil t)
-          (add-hook 'before-save-hook (lambda ()
-                                        (when (member major-mode '(c-mode c++-mode))
-                                          (clang-format-buffer))))))
+        (autoload-if-found '(clang-format-buffer) "clang-format" nil t)
+        (with-eval-after-load 'clang-format
+          (add-hook 'before-save-hook #'(lambda ()
+                                          (when (member major-mode '(c-mode c++-mode))
+                                            (clang-format-buffer))))))
     #+end_src
 *** inferior-cling
     #+begin_src emacs-lisp
@@ -2256,8 +2309,8 @@
       (with-delayed-execution
         (add-to-list 'load-path (locate-user-emacs-file "el-get/js2-refactor"))
         (when (autoload-if-found '(js2-refactor-mode) "js2-refactor" nil t)
-          (add-hook 'js2-mode-hook 'js2-refactor-mode)
-          (add-hook 'typescript-mode-hook 'js2-refactor-mode)))
+          (add-hook 'js2-mode-hook #'js2-refactor-mode)
+          (add-hook 'typescript-mode-hook #'js2-refactor-mode)))
     #+END_SRC
 *** tree-sitter
     #+begin_src emacs-lisp
@@ -2307,10 +2360,11 @@
       (with-delayed-execution
         (message "Install robe...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/robe"))
-        (when (autoload-if-found '(robe-mode inf-ruby-console-auto) "robe" nil t)
-          (add-hook 'ruby-mode-hook 'robe-mode)
-          (when (boundp 'company-backends)
-            (push 'company-robe company-backends))))
+        (autoload-if-found '(robe-mode inf-ruby-console-auto) "robe" nil t)
+        (with-eval-after-load 'company
+          (push 'company-robe company-backends))
+        (with-eval-after-load 'ruby-mode
+          (add-hook 'ruby-mode-hook #'robe-mode)))
     #+end_src
 *** rubocop
     #+begin_src emacs-lisp
@@ -2321,7 +2375,7 @@
         (message "Install rubocop...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/rubocop"))
         (when (autoload-if-found '(rubocop-mode) "rubocop" nil t)
-          (add-hook 'ruby-mode-hook 'rubocop-mode)))
+          (add-hook 'ruby-mode-hook #'rubocop-mode)))
     #+end_src
 *** ruby-refactor
     #+BEGIN_SRC emacs-lisp
@@ -2332,7 +2386,7 @@
         (message "Install ruby-refactor...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/ruby-refactor"))
         (when (autoload-if-found '(ruby-refactor-mode-launch) "ruby-refactor" nil t)
-          (add-hook 'ruby-mode-hook 'ruby-refactor-mode-launch)))
+          (add-hook 'ruby-mode-hook #'ruby-refactor-mode-launch)))
     #+END_SRC
 *** inf-ruby
     #+BEGIN_SRC emacs-lisp
@@ -2342,9 +2396,9 @@
       (with-delayed-execution
         (message "Install inf-ruby...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/inf-ruby"))
-        (when (autoload-if-found '(inf-ruby inf-ruby-minor-mode) "inf-ruby")
+        (when (autoload-if-found '(inf-ruby inf-ruby-minor-mode my/irb-history) "inf-ruby")
           (add-hook 'ruby-mode-hook 'inf-ruby-minor-mode)
-          (defun takeokunn/irb-history ()
+          (defun my/irb-history ()
             (interactive)
             (when (and (fboundp '-distinct)
                        (fboundp 's-lines)
@@ -2454,23 +2508,23 @@
       (with-delayed-execution
         (message "Install nodejs-repl...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/nodejs-repl"))
-        (when (autoload-if-found '(nodejs-repl) "nodejs-repl" nil t)
-          (add-hook 'js-mode-hook
-                    (lambda ()
-                      (define-key js-mode-map (kbd "C-x C-e") 'nodejs-repl-send-last-expression)
-                      (define-key js-mode-map (kbd "C-c C-j") 'nodejs-repl-send-line)
-                      (define-key js-mode-map (kbd "C-c C-r") 'nodejs-repl-send-region)
-                      (define-key js-mode-map (kbd "C-c C-c") 'nodejs-repl-send-buffer)
-                      (define-key js-mode-map (kbd "C-c C-l") 'nodejs-repl-load-file)
-                      (define-key js-mode-map (kbd "C-c C-z") 'nodejs-repl-switch-to-repl)))))
+        (autoload-if-found '(nodejs-repl) "nodejs-repl" nil t)
+
+        (with-eval-after-load 'js2-mode
+          (add-hook 'nodejs-repl-mode-hook #'(lambda ()
+                                               (define-key js2-mode-map (kbd "C-x C-e") 'nodejs-repl-send-last-expression)
+                                               (define-key js2-mode-map (kbd "C-c C-j") 'nodejs-repl-send-line)
+                                               (define-key js2-mode-map (kbd "C-c C-r") 'nodejs-repl-send-region)
+                                               (define-key js2-mode-map (kbd "C-c C-c") 'nodejs-repl-send-buffer)
+                                               (define-key js2-mode-map (kbd "C-c C-l") 'nodejs-repl-load-file)
+                                               (define-key js2-mode-map (kbd "C-c C-z") 'nodejs-repl-switch-to-repl)))))
     #+end_src
 ** File
 *** recentf
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
         (when (autoload-if-found '(recentf-mode) "recentf" nil t)
-          (add-hook 'emacs-startup-hook (lambda ()
-                                          (recentf-mode 1))))
+          (recentf-mode 1))
         (with-eval-after-load 'recentf
           (eval-and-compile
             (setq recentf-max-saved-items 10000)
@@ -2486,14 +2540,16 @@
       (with-delayed-execution
         (message "Install open-junk-file...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/open-junk-file"))
+
         (when (autoload-if-found '(open-junk-file my/open-junk-file) "open-junk-file" nil t)
           (defun my/open-junk-file ()
             (interactive)
             (ivy-mode 0)
             (let ((default-directory (format-time-string "~/.emacs.d/.junk/%Y-%m%d-%H%M%S." (current-time))))
               (open-junk-file))
-            (ivy-mode 1))
-          (global-set-key (kbd "C-x j") 'my/open-junk-file))
+            (ivy-mode 1)))
+
+        (global-set-key (kbd "C-x j") 'my/open-junk-file)
         (with-eval-after-load 'open-junk-file
           (eval-and-compile
             (setq open-junk-file-format ""))))
@@ -2612,14 +2668,8 @@
 
         (with-eval-after-load 'skk-vars
           (eval-and-compile
-            (setq skk-byte-compile-init-file t)))
-
-        (with-eval-after-load 'skk-vars
-          (eval-and-compile
-            (setq skk-isearch-mode-enable 'always)))
-
-        (with-eval-after-load 'skk-vars
-          (eval-and-compile
+            (setq skk-byte-compile-init-file t)
+            (setq skk-isearch-mode-enable 'always)
             (setq skk-preload t)))
 
         (with-eval-after-load 'skk
@@ -2634,7 +2684,8 @@
   (with-delayed-execution
     (message "Install ddskk-posframe...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/ddskk-posframe"))
-    (when (autoload-if-found '(ddskk-posframe-mode) "ddskk-posframe" nil t)
+    (autoload-if-found '(ddskk-posframe-mode) "ddskk-posframe" nil t)
+    (with-eval-after-load 'skk
       (add-hook 'skk-mode-hook #'ddskk-posframe-mode)))
 #+end_src
 *** delsel
@@ -2842,10 +2893,10 @@
       (with-delayed-execution
         (message "Install lorem-ipsum...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/lorem-ipsum"))
-        (when (autoload-if-found '(lorem-ipsum-insert-sentences lorem-ipsum-insert-paragraphs lorem-ipsum-insert-list) "lorem-ipsum" nil t)
-          (global-set-key (kbd "C-c C-l s") 'lorem-ipsum-insert-sentences)
-          (global-set-key (kbd "C-c C-l p") 'lorem-ipsum-insert-paragraphs)
-          (global-set-key (kbd "C-c C-l l") 'lorem-ipsum-insert-list)))
+        (autoload-if-found '(lorem-ipsum-insert-sentences lorem-ipsum-insert-paragraphs lorem-ipsum-insert-list) "lorem-ipsum" nil t)
+        (global-set-key (kbd "C-c C-l s") #'lorem-ipsum-insert-sentences)
+        (global-set-key (kbd "C-c C-l p") #'lorem-ipsum-insert-paragraphs)
+        (global-set-key (kbd "C-c C-l l") #'lorem-ipsum-insert-list))
     #+end_src
 *** minimap
     #+begin_src emacs-lisp
@@ -2872,9 +2923,9 @@
         (message "Install origami...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/origami"))
         (when (autoload-if-found '(global-origami-mode origami-recursively-toggle-node origami-recursively-toggle-node) "origami" nil t)
-          (global-origami-mode)
-          (global-set-key (kbd "C-c t") 'origami-recursively-toggle-node)
-          (global-set-key (kbd "C-c C-t") 'origami-recursively-toggle-node)))
+          (global-origami-mode))
+        (global-set-key (kbd "C-c t") 'origami-recursively-toggle-node)
+        (global-set-key (kbd "C-c C-t") 'origami-recursively-toggle-node))
     #+end_src
 *** persistent-scratch
     #+begin_src emacs-lisp
@@ -2885,10 +2936,10 @@
         (message "Install persistent-scratch...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/persistent-scratch"))
         (when (autoload-if-found '(persistent-scratch-setup-default) "persistent-scratch" nil t)
-          (persistent-scratch-setup-default)
-          (with-eval-after-load 'persistent-scratch
-            (eval-and-compile
-              (setq persistent-scratch-autosave-interval 100)))))
+          (persistent-scratch-setup-default))
+        (with-eval-after-load 'persistent-scratch
+          (eval-and-compile
+            (setq persistent-scratch-autosave-interval 100))))
     #+end_src
 *** popwin
     #+begin_src emacs-lisp
@@ -3005,10 +3056,10 @@
     (when (autoload-if-found '(tab-bar-mode tab-bar-history-mode) "tab-bar" nil t)
       (when (window-system)
         (tab-bar-mode 1)
-        (tab-bar-history-mode 1))
-      (global-set-key (kbd "C-x C-t") tab-prefix-map))
+        (tab-bar-history-mode 1)))
 
     (with-eval-after-load 'tab-bar
+      (global-set-key (kbd "C-x C-t") tab-prefix-map)
       (eval-and-compile
         (setq tab-bar-close-button-show nil)
         (setq tab-bar-close-last-tab-choice nil)
@@ -3053,8 +3104,8 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/queue"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/undo-tree"))
         (when (autoload-if-found '(global-undo-tree-mode) "undo-tree" nil t)
-          (require 'queue)
-          (global-undo-tree-mode))
+          (when (require 'queue)
+            (global-undo-tree-mode)))
         (with-eval-after-load 'undo-tree
           (eval-and-compile
             (setq undo-tree-auto-save-history nil))))
@@ -3141,16 +3192,17 @@
     (message "Install writeroom-mode...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/visual-fill-column"))
     (add-to-list 'load-path (locate-user-emacs-file "el-get/writeroom-mode"))
-    (when (autoload-if-found '(writeroom-mode
-                               writeroom-decrease-width
-                               writeroom-increase-width
-                               writeroom-adjust-width
-                               writeroom-width)
-                             "writeroom-mode" nil t)
-      (add-hook 'writeroom-mode-hook #'(lambda ()
-                                         (linum-mode -1)
-                                         (display-line-numbers-mode))))
+    (autoload-if-found '(writeroom-mode
+                         writeroom-decrease-width
+                         writeroom-increase-width
+                         writeroom-adjust-width
+                         writeroom-width)
+                       "writeroom-mode" nil t)
+
     (with-eval-after-load 'writeroom-mode
+      (add-hook 'writeroom-mode-hook #'(lambda ()
+                                       (linum-mode -1)
+                                       (display-line-numbers-mode)))
       (define-key writeroom-mode-map (kbd "C-M-<") #'writeroom-decrease-width)
       (define-key writeroom-mode-map (kbd "C-M->") #'writeroom-increase-width)
       (define-key writeroom-mode-map (kbd "C-M-=") #'writeroom-adjust-width)
@@ -3165,8 +3217,8 @@
   (with-delayed-execution
     (message "Install zoom-window...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/zoom-window"))
-    (when (autoload-if-found '(zoom-window-zoom) "zoom-window" nil t)
-      (global-set-key (kbd "C-x C-z") 'zoom-window-zoom)))
+    (autoload-if-found '(zoom-window-zoom) "zoom-window" nil t)
+    (global-set-key (kbd "C-x C-z") #'zoom-window-zoom))
 #+end_src
 * Elfeed
 ** elfeed
@@ -3180,8 +3232,8 @@
 
        (defconst my/elfeed-search-filter "@1-week-ago +unread")
 
-       (when (autoload-if-found '(elfeed my/elfeed-ivy-filter) "elfeed" nil t)
-         (global-set-key (kbd "C-x w") #'elfeed))
+       (autoload-if-found '(elfeed) "elfeed" nil t)
+       (global-set-key (kbd "C-x w") #'elfeed)
 
        (with-eval-after-load 'elfeed
          (define-key elfeed-search-mode-map (kbd "+") #'my/elfeed-ivy-filter)
