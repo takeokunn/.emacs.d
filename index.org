@@ -2101,6 +2101,7 @@
 
         ;; lsp-ui-doc
         (with-eval-after-load 'lsp-ui-doc
+          (setq lsp-ui-doc-enable nil)
           (setq lsp-ui-doc-show-with-cursor t)
           (setq lsp-ui-doc-use-webkit t)
           (setq lsp-ui-doc-include-signature t)
@@ -2124,7 +2125,7 @@
         ;; lsp-ui-sideline
         (autoload-if-found '(lsp-ui-sideline-mode) "lsp-ui-sideline" nil t)
         (with-eval-after-load 'lsp-ui-sideline
-          (setq lsp-ui-sideline-enable nil)
+          (setq lsp-ui-sideline-enable t)
           (setq lsp-ui-sideline-show-hover t))
 
         ;; keybind
@@ -3447,6 +3448,10 @@
      (with-delayed-execution
        (message "Install org-generate...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/org-generate"))
+       (autoload-if-found '(my/org-generate org-generate) "org-generate" nil t)
+       (defun my/org-generate ()
+         (interactive)
+         (org-generate "snippet/default"))
        (with-eval-after-load 'org-generate
          (setq org-generate-file `,(locate-user-emacs-file "yasnippets.org"))
          (setq org-generate-root "snippets")))
