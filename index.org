@@ -862,9 +862,7 @@
          (push '("\\.php$" . php-mode) auto-mode-alist))
 
        (with-eval-after-load 'php-mode
-         (add-hook 'php-mode-hook #'(lambda ()
-                                      (let ((lsp-enabled-clients '(iph)))
-                                        (lsp))))))
+         (add-hook 'php-mode-hook #'lsp-deferred)))
    #+END_SRC
 ** phpt-mode
    #+begin_src emacs-lisp
@@ -1391,22 +1389,17 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/sesman"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/cider"))
 
-        (when (autoload-if-found '(cider
-                                   cider-format-buffer
-                                   cider-switch-to-last-clojure-buffer
-                                   my/cider-switch-to-last-clojure-buffer) "cider" nil t)
-          (add-hook 'before-save-hook 'cider-format-buffer t t)
-
-          ;; (defun my/cider-switch-to-last-clojure-buffer ()
-          ;;   (interactive)
-          ;;   (let* ((window (split-window-right))
-          ;;          (buffer (current-buffer)))
-          ;;     (set-window-buffer window buffer)
-          ;;     (cider-switch-to-last-clojure-buffer)))
-          ;; (define-key cider-mode-map (kbd "C-c C-z") #'my/cider-switch-to-last-clojure-buffer)
-          )
+        (autoload-if-found '(cider cider-format-buffer cider-switch-to-last-clojure-buffer) "cider" nil t)
+        (add-hook 'before-save-hook #'cider-format-buffer t t)
 
         (with-eval-after-load 'cider-mode
+          (defun my/cider-switch-to-last-clojure-buffer ()
+            (interactive)
+            (let* ((window (split-window-right))
+                   (buffer (current-buffer)))
+              (set-window-buffer window buffer)
+              (cider-switch-to-last-clojure-buffer)))
+          (define-key cider-mode-map (kbd "C-c C-z") #'my/cider-switch-to-last-clojure-buffer)
           (setq cider-font-lock-dynamically '(macro core function var)))
 
         (with-eval-after-load 'cider-repl
@@ -1497,11 +1490,11 @@
 *** swiper
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
-        (when (autoload-if-found '(my/swiper) "swiper" nil t)
-          (defun my/swiper ()
-            (interactive)
-            (let ((word (thing-at-point 'symbol 'no-properties)))
-              (swiper word))))
+        (autoload-if-found '(my/swiper) "swiper" nil t)
+        (defun my/swiper ()
+          (interactive)
+          (let ((word (thing-at-point 'symbol 'no-properties)))
+            (swiper word)))
         (global-set-key (kbd "C-o") #'my/swiper))
     #+END_SRC
 *** counsel
@@ -1567,11 +1560,11 @@
           (all-the-icons-ivy-rich-mode 1))
         (with-eval-after-load 'all-the-icons-ivy-rich
           (setq all-the-icons-ivy-rich-icon t)
-            (setq all-the-icons-ivy-rich-color-icon t)
-            (setq all-the-icons-ivy-rich-icon-size 1.0)
-            (setq all-the-icons-ivy-rich-project t)
-            (setq all-the-icons-ivy-rich-field-width 80)
-            (setq inhibit-compacting-font-caches t)))
+          (setq all-the-icons-ivy-rich-color-icon t)
+          (setq all-the-icons-ivy-rich-icon-size 1.0)
+          (setq all-the-icons-ivy-rich-project t)
+          (setq all-the-icons-ivy-rich-field-width 80)
+          (setq inhibit-compacting-font-caches t)))
     #+end_src
 *** dashboard
     #+begin_src emacs-lisp
@@ -1722,13 +1715,14 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/projectile"))
 
         (when (autoload-if-found '(projectile-mode my/update-projectile-known-projects) "projectile" nil t)
-          (projectile-mode +1)
-          (defun my/update-projectile-known-projects ()
-            (interactive)
-            (setq projectile-known-projects (mapcar
-                                             (lambda (x)
-                                               (abbreviate-file-name (concat x "/")))
-                                             (split-string (shell-command-to-string "ghq list --full-path"))))))
+          (projectile-mode +1))
+
+        (defun my/update-projectile-known-projects ()
+          (interactive)
+          (setq projectile-known-projects (mapcar
+                                           (lambda (x)
+                                             (abbreviate-file-name (concat x "/")))
+                                           (split-string (shell-command-to-string "ghq list --full-path")))))
 
         (global-set-key (kbd "M-p") #'projectile-command-map)
         (global-set-key (kbd "C-c p") #'projectile-command-map)
@@ -1982,27 +1976,23 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-mode/clients"))
 
         (autoload-if-found '(lsp lsp-deferred) "lsp-mode" nil t)
-
-        (when (autoload-if-found '(lsp-lens) "lsp-lens" nil t)
-          (add-hook 'lsp-mode-hook #'lsp-lens-mode))
-
-        (when (autoload-if-found '(lsp-diagnostics-mode) "lsp-diagnostics" nil t)
-          (add-hook 'lsp-mode-hook #'lsp-diagnostics-mode))
-
-        (when (autoload-if-found '(lsp-completion-mode) "lsp-completion" nil t)
-          (add-hook 'lsp-mode-hook #'lsp-completion-mode))
-
-        (when (autoload-if-found '(lsp-dired-mode) "lsp-dired" nil t)
-          (add-hook 'lsp-mode-hook #'lsp-dired-mode))
-
-        (when (autoload-if-found '(lsp-modeline-code-actions-mode lsp-modeline-diagnostics-mode) "lsp-modeline" nil t)
-          (add-hook 'lsp-mode-hook #'lsp-modeline-code-actions-mode)
-          (add-hook 'lsp-mode-hook #'lsp-modeline-diagnostics-mode))
-
-        (when (autoload-if-found '(lsp-headerline-breadcrumb-mode) "lsp-headerline" nil t)
-          (add-hook 'lsp-mode-hook #'lsp-headerline-breadcrumb-mode))
+        (autoload-if-found '(lsp-lens) "lsp-lens" nil t)
+        (autoload-if-found '(lsp-diagnostics-mode) "lsp-diagnostics" nil t)
+        (autoload-if-found '(lsp-completion-mode) "lsp-completion" nil t)
+        (autoload-if-found '(lsp-dired-mode) "lsp-dired" nil t)
+        (autoload-if-found '(lsp-modeline-code-actions-mode lsp-modeline-diagnostics-mode) "lsp-modeline" nil t)
+        (autoload-if-found '(lsp-headerline-breadcrumb-mode) "lsp-headerline" nil t)
 
         (with-eval-after-load 'lsp-mode
+          ;; hook
+          (add-hook 'lsp-mode-hook #'lsp-lens-mode)
+          (add-hook 'lsp-mode-hook #'lsp-diagnostics-mode)
+          (add-hook 'lsp-mode-hook #'lsp-completion-mode)
+          (add-hook 'lsp-mode-hook #'lsp-dired-mode)
+          (add-hook 'lsp-mode-hook #'lsp-modeline-code-actions-mode)
+          (add-hook 'lsp-mode-hook #'lsp-modeline-diagnostics-mode)
+          (add-hook 'lsp-mode-hook #'lsp-headerline-breadcrumb-mode)
+
           ;; ignore path
           (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]vendor")
           (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]storage")
@@ -2016,6 +2006,7 @@
           (setq lsp-log-io nil))
 
         (with-eval-after-load 'lsp-completion
+          (setq lsp-completion-no-cache t)
           (setq lsp-prefer-capf t))
 
         (with-eval-after-load 'lsp-diagnostics
@@ -2026,7 +2017,9 @@
             (setq lsp-headerline-breadcrumb-icons-enable nil)))
 
         (with-eval-after-load 'lsp-php
-          (setq lsp-intelephense-php-version "8.1")))
+          (setq lsp-intelephense-clear-cache t)
+          (setq lsp-intelephense-php-version "8.1")
+          (setq lsp-intelephense-telemetry-enabled t)))
     #+END_SRC
 *** dap-mode
     #+BEGIN_SRC emacs-lisp
@@ -2051,21 +2044,25 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/hydra"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/dap-mode"))
 
-        (when (autoload-if-found '(dap-mode) "dap-mode" nil t)
+        (autoload-if-found '(dap-mode dap-breakpoint-toggle) "dap-mode" nil t)
+        (autoload-if-found '(dap-ui-mode dap-ui-controls-mode) "dap-ui" nil t)
+        (autoload-if-found '(dap-tooltip-mode) "dap-mouse" nil t)
+        (autoload-if-found '(dap-php-setup) "dap-php" nil t)
+        (autoload-if-found '(dap-node-setup) "dap-node" nil t)
+        (autoload-if-found '(dap-go-setup) "dap-go" nil t)
+        (autoload-if-found '(dap-ruby-setup) "dap-ruby" nil t)
+
+        (with-eval-after-load 'lsp-mode
           (add-hook 'lsp-mode-hook #'dap-mode))
 
         (with-eval-after-load 'dap-mode
-          (define-key dap-mode-map (kbd "C-c d") #'dap-breakpoint-toggle))
-
-        (when (autoload-if-found '(dap-ui-mode) "dap-ui" nil t)
+          (define-key dap-mode-map (kbd "C-c d") #'dap-breakpoint-toggle)
           (add-hook 'dap-mode-hook #'dap-ui-mode)
-          (add-hook 'dap-mode-hook #'dap-ui-controls-mode))
-
-        (when (autoload-if-found '(dap-tooltip-mode) "dap-mouse" nil t)
+          (add-hook 'dap-mode-hook #'dap-ui-controls-mode)
           (add-hook 'dap-mode-hook #'tooltip-mode)
           (add-hook 'dap-mode-hook #'dap-tooltip-mode))
 
-        (when (autoload-if-found '(dap-php-setup) "dap-php" nil t)
+        (with-eval-after-load 'php-mode
           (add-hook 'php-mode-hook #'dap-php-setup))
 
         (with-eval-after-load 'dap-php
@@ -2078,13 +2075,13 @@
           (setq dap-php-debug-path "~/.ghq/github.com/xdebug/vscode-php-debug")
           (setq dap-php-debug-program `("node" ,(f-join dap-php-debug-path "out/phpDebug.js"))))
 
-        (when (autoload-if-found '(dap-node-setup) "dap-node" nil t)
+        (with-eval-after-load 'js2-mode
           (add-hook 'js2-mode-hook #'dap-node-setup))
 
-        (when (autoload-if-found '(dap-go-setup) "dap-go" nil t)
+        (with-eval-after-load 'go-mode
           (add-hook 'go-mode-hook #'dap-go-setup))
 
-        (when (autoload-if-found '(dap-ruby-setup) "dap-ruby" nil t)
+        (with-eval-after-load 'ruby-mode
           (add-hook 'ruby-mode-hook #'dap-ruby-setup)))
     #+END_SRC
 *** lsp-ui
@@ -2096,7 +2093,10 @@
         (message "Install lsp-ui...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-ui"))
 
-        (when (autoload-if-found '(lsp-ui-mode) "lsp-ui" nil t)
+        (autoload-if-found '(lsp-ui-mode) "lsp-ui" nil t)
+
+        ;; hook
+        (with-eval-after-load 'lsp-mode
           (add-hook 'lsp-mode-hook #'lsp-ui-mode))
 
         ;; lsp-ui-doc
@@ -2158,11 +2158,12 @@
         (when (autoload-if-found '(global-git-commit-mode) "git-commit" nil t)
           (global-git-commit-mode))
 
-        (when (autoload-if-found '(magit-status magit-blame) "magit")
-          (defun my/magit-status ()
-            (interactive)
-            (let ((default-directory (locate-dominating-file default-directory ".git")))
-              (magit-status))))
+        (autoload-if-found '(magit-status magit-blame) "magit")
+
+        (defun my/magit-status ()
+          (interactive)
+          (let ((default-directory (locate-dominating-file default-directory ".git")))
+            (magit-status)))
 
         (global-set-key (kbd "C-x g") #'my/magit-status)
         (global-set-key (kbd "C-x G") #'magit-blame)
@@ -2260,7 +2261,6 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/tree-sitter"))
 
         (when (autoload-if-found '(tree-sitter-mode tree-sitter-require tree-sitter-hl-add-patterns) "tree-sitter" nil t)
-          (add-hook 'typescript-tsx-mode-hook 'tree-sitter-mode)
           (when (require 'tree-sitter-langs)
             (tree-sitter-require 'tsx))
           (tree-sitter-hl-add-patterns 'tsx
@@ -2280,6 +2280,9 @@
                           (.offset! @property.definition 0 1 0 -1)))])
 
           (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx)))
+
+        (with-eval-after-load 'typescript-mode
+          (add-hook 'typescript-tsx-mode-hook #'tree-sitter-mode))
 
         (when (autoload-if-found '(tree-sitter-hl-mode) "tree-sitter-hl" nil t)
           (add-hook 'tree-sitter-after-on-hook 'tree-sitter-hl-mode)))
@@ -2319,9 +2322,7 @@
       (with-delayed-execution
         (message "Install ruby-refactor...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/ruby-refactor"))
-
         (autoload-if-found '(ruby-refactor-mode-launch) "ruby-refactor" nil t)
-
         (with-eval-after-load 'ruby-mode
           (add-hook 'ruby-mode-hook #'ruby-refactor-mode-launch)))
     #+END_SRC
@@ -2333,20 +2334,18 @@
       (with-delayed-execution
         (message "Install inf-ruby...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/inf-ruby"))
-        (when (autoload-if-found '(inf-ruby inf-ruby-minor-mode my/irb-history) "inf-ruby" nil t)
-          (defun my/irb-history ()
-            (interactive)
-            (when (and (fboundp '-distinct)
-                       (fboundp 's-lines)
-                       (fboundp 'f-read-text))
-              (insert
-               (completing-read
-                "choose history: "
-                (mapcar #'list (-distinct (s-lines (f-read-text "~/.irb_history")))))))))
-
+        (autoload-if-found '(inf-ruby inf-ruby-minor-mode) "inf-ruby" nil t)
+        (defun my/irb-history ()
+          (interactive)
+          (when (and (fboundp '-distinct)
+                     (fboundp 's-lines)
+                     (fboundp 'f-read-text))
+            (insert
+             (completing-read
+              "choose history: "
+              (mapcar #'list (-distinct (s-lines (f-read-text "~/.irb_history"))))))))
         (with-eval-after-load 'ruby-mode
           (add-hook 'ruby-mode-hook #'inf-ruby-minor-mode)))
-
     #+END_SRC
 ** SQL
 *** sql-indent
@@ -2357,10 +2356,11 @@
       (with-delayed-execution
         (message "Install sql-indent...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/sql-indent"))
-        (when (autoload-if-found '(sqlind-setup sqlind-minor-mode) "sql-indent" nil t)
+        (autoload-if-found '(sqlind-setup sqlind-minor-mode) "sql-indent" nil t)
+        (with-eval-after-load 'sql-mode
           (add-hook 'sql-mode-hook (lambda ()
-                                     (sqlind-setup)
-                                     (sqlind-minor-mode)))))
+                                         (sqlind-setup)
+                                         (sqlind-minor-mode)))))
     #+END_SRC
 ** PHP
 *** psysh
@@ -2463,16 +2463,21 @@
       (with-delayed-execution
         (message "Install nodejs-repl...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/nodejs-repl"))
-        (autoload-if-found '(nodejs-repl) "nodejs-repl" nil t)
+        (autoload-if-found '(nodejs-repl
+                             nodejs-repl-send-last-expression
+                             nodejs-repl-send-line
+                             nodejs-repl-send-region
+                             nodejs-repl-send-buffer
+                             nodejs-repl-load-file
+                             nodejs-repl-switch-to-repl) "nodejs-repl" nil t)
 
         (with-eval-after-load 'js2-mode
-          (add-hook 'nodejs-repl-mode-hook #'(lambda ()
-                                               (define-key js2-mode-map (kbd "C-x C-e") #'nodejs-repl-send-last-expression)
-                                               (define-key js2-mode-map (kbd "C-c C-j") #'nodejs-repl-send-line)
-                                               (define-key js2-mode-map (kbd "C-c C-r") #'nodejs-repl-send-region)
-                                               (define-key js2-mode-map (kbd "C-c C-c") #'nodejs-repl-send-buffer)
-                                               (define-key js2-mode-map (kbd "C-c C-l") #'nodejs-repl-load-file)
-                                               (define-key js2-mode-map (kbd "C-c C-z") #'nodejs-repl-switch-to-repl)))))
+          (define-key js2-mode-map (kbd "C-x C-e") #'nodejs-repl-send-last-expression)
+          (define-key js2-mode-map (kbd "C-c C-j") #'nodejs-repl-send-line)
+          (define-key js2-mode-map (kbd "C-c C-r") #'nodejs-repl-send-region)
+          (define-key js2-mode-map (kbd "C-c C-c") #'nodejs-repl-send-buffer)
+          (define-key js2-mode-map (kbd "C-c C-l") #'nodejs-repl-load-file)
+          (define-key js2-mode-map (kbd "C-c C-z") #'nodejs-repl-switch-to-repl)))
     #+end_src
 ** File
 *** recentf
@@ -2495,7 +2500,9 @@
         (message "Install open-junk-file...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/open-junk-file"))
 
-        (when (autoload-if-found '(open-junk-file my/open-junk-file) "open-junk-file" nil t)
+        (autoload-if-found '(open-junk-file) "open-junk-file" nil t)
+
+        (with-eval-after-load 'ivy-mode
           (defun my/open-junk-file ()
             (interactive)
             (ivy-mode 0)
@@ -2516,10 +2523,10 @@
 
       (with-delayed-execution
         (add-to-list 'load-path (locate-user-emacs-file "el-get/multiple-cursors"))
-        (when (autoload-if-found '(mc/mark-next-like-this mc/mark-previous-like-this mc/mark-all-like-this) "multiple-cursors" nil t)
-          (global-set-key (kbd "C->") #'mc/mark-next-like-this)
-          (global-set-key (kbd "C-<") #'mc/mark-previous-like-this)
-          (global-set-key (kbd "C-c C-<") #'mc/mark-all-like-this)))
+        (autoload-if-found '(mc/mark-next-like-this mc/mark-previous-like-this mc/mark-all-like-this) "multiple-cursors" nil t)
+        (global-set-key (kbd "C->") #'mc/mark-next-like-this)
+        (global-set-key (kbd "C-<") #'mc/mark-previous-like-this)
+        (global-set-key (kbd "C-c C-<") #'mc/mark-all-like-this))
     #+END_SRC
 ** Other
 *** ansi-color
@@ -2567,8 +2574,8 @@
       (with-delayed-execution
         (message "Install avy...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/avy"))
-        (when (autoload-if-found '(avy-goto-word-1) "avy" nil t)
-          (global-set-key (kbd "C-:") 'avy-goto-word-1))
+        (autoload-if-found '(avy-goto-word-1) "avy" nil t)
+        (global-set-key (kbd "C-:") 'avy-goto-word-1)
         (with-eval-after-load 'avy
           (setq avy-background t)))
     #+end_src
@@ -2580,8 +2587,8 @@
       (with-delayed-execution
         (message "Install avy-zap...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/avy-zap"))
-        (when (autoload-if-found '(avy-zap-up-to-char-dwim) "avy-zap" nil t)
-          (global-set-key (kbd "M-z") 'avy-zap-up-to-char-dwim)))
+        (autoload-if-found '(avy-zap-up-to-char-dwim) "avy-zap" nil t)
+        (global-set-key (kbd "M-z") 'avy-zap-up-to-char-dwim))
     #+end_src
 *** browse-url
 #+begin_src emacs-lisp
@@ -2771,8 +2778,10 @@
 *** goto-addr
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
-        (when (autoload-if-found '(goto-address-prog-mode goto-address-mode) "goto-address" nil t)
-          (add-hook 'prog-mode-hook #'goto-address-prog-mode)
+        (autoload-if-found '(goto-address-prog-mode goto-address-mode) "goto-address" nil t)
+        (with-eval-after-load 'prog-mode
+          (add-hook 'prog-mode-hook #'goto-address-prog-mode))
+        (with-eval-after-load 'text-mode
           (add-hook 'text-mode-hook #'goto-address-mode)))
     #+END_SRC
 *** hl-todo
@@ -2802,12 +2811,9 @@
   (with-delayed-execution
     (message "Install highlight-indent-guides...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/highlight-indent-guides"))
-
     (autoload-if-found '(highlight-indent-guides-mode) "highlight-indent-guides" nil t)
-
     (with-eval-after-load 'yaml-mode
       (add-hook 'yaml-mode-hook #'highlight-indent-guides-mode))
-
     (with-eval-after-load 'highlight-indent-guides
       (setq highlight-indent-guides-method 'bitmap)))
 #+end_src
@@ -2974,21 +2980,21 @@
 *** subword
     #+begin_src emacs-lisp
       (with-delayed-execution
-        (when (autoload-if-found '(my/delete-forward-block) "subword" nil t)
-          (global-set-key (kbd "M-d") 'my/delete-forward-block)
-          (defun my/delete-forward-block ()
-            (interactive)
-            (if (eobp)
-                (message "End of buffer")
-              (let* ((syntax-move-point
-                      (save-excursion
-                        (skip-syntax-forward (string (char-syntax (char-after))))
-                        (point)))
-                     (subword-move-point
-                      (save-excursion
-                        (subword-forward)
-                        (point))))
-                (kill-region (point) (min syntax-move-point subword-move-point)))))))
+        (autoload-if-found '(my/delete-forward-block) "subword" nil t)
+        (global-set-key (kbd "M-d") 'my/delete-forward-block)
+        (defun my/delete-forward-block ()
+          (interactive)
+          (if (eobp)
+              (message "End of buffer")
+            (let* ((syntax-move-point
+                    (save-excursion
+                      (skip-syntax-forward (string (char-syntax (char-after))))
+                      (point)))
+                   (subword-move-point
+                    (save-excursion
+                      (subword-forward)
+                      (point))))
+              (kill-region (point) (min syntax-move-point subword-move-point))))))
     #+end_src
 *** syntax-subword
 #+begin_src emacs-lisp
@@ -3069,11 +3075,11 @@
       (with-delayed-execution
         (message "Install uuid...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/uuid"))
-        (when (autoload-if-found '(my/uuid) "uuid" nil t)
-          (defun my/uuid ()
-            (interactive)
-            (insert (uuid-string)))
-          (defalias 'my/uuid 'uuid)))
+        (autoload-if-found '(uuid-string) "uuid" nil t)
+        (defun my/uuid ()
+          (interactive)
+          (insert (uuid-string)))
+        (defalias 'my/uuid 'uuid))
     #+end_src
 *** view-lock-mode
 #+begin_src emacs-lisp
@@ -3118,10 +3124,9 @@
           (if window-system
               (global-whitespace-mode 1)))
         (with-eval-after-load 'whitespace
-          (eval-and-compile
-            (setq whitespace-style '(face tabs tab-mark spaces space-mark))
-            (setq whitespace-display-mappings '((space-mark ?\u3000 [?\u25a1])
-                                                (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t]))))))
+          (setq whitespace-style '(face tabs tab-mark spaces space-mark))
+          (setq whitespace-display-mappings '((space-mark ?\u3000 [?\u25a1])
+                                              (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t])))))
     #+END_SRC
 *** woman
     #+begin_src emacs-lisp
@@ -3347,8 +3352,8 @@
 #+end_src
 ** org-link
 #+begin_src emacs-lisp
-  (when (autoload-if-found '(org-store-link) "ol" nil t)
-    (global-set-key (kbd "C-c l") #'org-store-link))
+  (autoload-if-found '(org-store-link) "ol" nil t)
+  (global-set-key (kbd "C-c l") #'org-store-link)
 #+end_src
 ** org-faces
 #+begin_src emacs-lisp
@@ -3374,11 +3379,10 @@
     (message "Install org-super-agenda...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/ts"))
     (add-to-list 'load-path (locate-user-emacs-file "el-get/org-super-agenda"))
-    (when (autoload-if-found '(org-super-agenda-mode) "org-super-agenda" nil t)
-      (add-hook 'org-agenda-mode-hook #'org-super-agenda-mode))
+    (autoload-if-found '(org-super-agenda-mode) "org-super-agenda" nil t)
     (with-eval-after-load 'org-super-agenda
-      (setq org-super-agenda-groups '((:name "NOW"
-                                             :time-grid t)
+      (add-hook 'org-agenda-mode-hook #'org-super-agenda-mode)
+      (setq org-super-agenda-groups '((:name "NOW" :time-grid t)
                                       (:todo "TODO" :order 8)
                                       (:todo "WAITING" :order 8)
                                       (:todo "WAITING" :order 8)))))
@@ -3605,8 +3609,8 @@
        (interactive)
        (my/move-line -1))
 
-     (global-set-key (kbd "M-N") 'my/move-line-down)
-     (global-set-key (kbd "M-P") 'my/move-line-up)
+     (global-set-key (kbd "M-N") #'my/move-line-down)
+     (global-set-key (kbd "M-P") #'my/move-line-up)
    #+end_src
 ** my/reload-major-mode
    #+BEGIN_SRC emacs-lisp
@@ -3624,7 +3628,7 @@
        (interactive)
        (read-only-mode))
 
-     (global-set-key (kbd "C-x C-q") 'my/toggle-read-only-mode)
+     (global-set-key (kbd "C-x C-q") #'my/toggle-read-only-mode)
    #+end_src
 ** my/toggle-kill-emacs
    #+begin_src emacs-lisp
