@@ -141,17 +141,16 @@
          (eval-print-last-sexp))
 
        (with-eval-after-load 'el-get-custom
-         (eval-and-compile
-           (setq el-get-git-shallow-clone t))))
+         (setq el-get-git-shallow-clone t)))
 
      (with-delayed-execution
        (message "Install el-get...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/el-get"))
-       (require 'el-get)
 
-      (with-eval-after-load 'el-get-custom
-         (eval-and-compile
-           (setq el-get-git-shallow-clone t))))
+       (autoload-if-found '(el-get-bundle) "el-get" nil t)
+
+       (with-eval-after-load 'el-get-custom
+         (setq el-get-git-shallow-clone t)))
    #+end_src
 * Basic
 ** 末尾のスペースを可視化する
@@ -191,7 +190,7 @@
        (show-paren-mode t)
 
        (with-eval-after-load 'paren
-         (setq-default show-paren-style 'mixed)))
+         (setq show-paren-style 'mixed)))
    #+END_SRC
 ** カッコが自動的に作られるようにする
    #+BEGIN_SRC emacs-lisp
@@ -280,16 +279,14 @@
 #+end_src
 ** [mac] clipboardに入るようにする
    #+begin_src emacs-lisp
-     (eval-and-compile
+     (with-delayed-execution-priority-high
        (defun my/copy-from-osx ()
          (shell-command-to-string "pbpaste"))
-
        (defun my/paste-to-osx (text)
          (let ((process-connection-type nil))
            (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
              (process-send-string proc text)
              (process-send-eof proc))))
-
        (when (and (string= system-type "darwin")
                   (not window-system))
          (setq interprogram-cut-function 'my/paste-to-osx)
@@ -301,7 +298,8 @@
     (defun my/native-comp-packages ()
       (interactive)
       (let ((native-comp-async-jobs-number 4)
-            (native-comp-speed 3))
+            (native-comp-speed 3)
+            (native-comp-always-compile t))
         (native-compile-async "~/.emacs.d/init.el")
         (native-compile-async "~/.emacs.d/early-init.el")
         (native-compile-async "~/.emacs.d/el-get" 'recursively)
@@ -310,8 +308,7 @@
 ** native compを無効にする
 #+begin_src emacs-lisp
   (with-eval-after-load 'comp
-    (eval-and-compile
-      (setq package-native-compile nil)))
+    (setq package-native-compile nil))
 #+end_src
 ** native compのwarningを抑える
 #+begin_src emacs-lisp
@@ -421,6 +418,15 @@
   (with-delayed-execution-priority-high
     (message "Install posframe...")
     (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/posframe"))))
+#+end_src
+** queue
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'queue))
+
+  (with-delayed-execution
+    (message "Install queue...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/queue")))
 #+end_src
 * Language
 ** apache-mode
@@ -1641,7 +1647,7 @@
         (message "Install neotree...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/neotree"))
 
-        (autoload-if-found '(my/neotree-toggle neotree-hide neotree-dir) "neotree" nil t)
+        (autoload-if-found '(neotree-hide neotree-dir) "neotree" nil t)
 
         (defun my/neotree-toggle ()
           (interactive)
@@ -1651,32 +1657,32 @@
                 (neotree-hide)
               (neotree-dir default-directory))))
 
+        (if window-system
+            (defun neo-buffer--insert-fold-symbol (name &optional file-name)
+              (or
+               (and
+                (equal name 'open)
+                (insert
+                 (format " %s "
+                         (all-the-icons-icon-for-dir file-name "down"))))
+               (and
+                (equal name 'close)
+                (insert
+                 (format " %s "
+                         (all-the-icons-icon-for-dir file-name "right"))))
+               (and
+                (equal name 'leaf)
+                (insert
+                 (format " %s "
+                         (all-the-icons-icon-for-file file-name)))))))
+
         (global-set-key (kbd "C-q") #'my/neotree-toggle)
 
         (with-eval-after-load 'neotree
-          (eval-and-compile
-            (setq neo-autorefresh nil)
-            (setq neo-theme 'nerd2)
-            (setq neo-show-hidden-files t)
-            (setq neo-window-fixed-size nil))
-          (if window-system
-              (defun neo-buffer--insert-fold-symbol (name &optional file-name)
-                (or
-                 (and
-                  (equal name 'open)
-                  (insert
-                   (format " %s "
-                           (all-the-icons-icon-for-dir file-name "down"))))
-                 (and
-                  (equal name 'close)
-                  (insert
-                   (format " %s "
-                           (all-the-icons-icon-for-dir file-name "right"))))
-                 (and
-                  (equal name 'leaf)
-                  (insert
-                   (format " %s "
-                           (all-the-icons-icon-for-file file-name)))))))))
+          (setq neo-autorefresh nil)
+          (setq neo-theme 'nerd2)
+          (setq neo-show-hidden-files t)
+          (setq neo-window-fixed-size nil)))
 
     #+END_SRC
 *** nyan-mode
@@ -2021,6 +2027,15 @@
           (setq lsp-intelephense-php-version "8.1")
           (setq lsp-intelephense-telemetry-enabled t)))
     #+END_SRC
+*** lsp-docker
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'lsp-docker))
+
+  (with-delayed-execution
+    (message "Install lsp-docker...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-docker")))
+#+end_src
 *** dap-mode
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -2577,6 +2592,7 @@
         (autoload-if-found '(avy-goto-word-1) "avy" nil t)
         (global-set-key (kbd "C-:") 'avy-goto-word-1)
         (with-eval-after-load 'avy
+          (setq avy-all-windows nil)
           (setq avy-background t)))
     #+end_src
 *** avy-zap
@@ -2741,28 +2757,28 @@
     (message "Install gcmh...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/gcmh"))
     (when (autoload-if-found '(gcmh-mode) "gcmh" nil t)
-      (defvar my/gcmh-status nil)
+      (gcmh-mode 1))
 
-      (gcmh-mode 1)
+    (defvar my/gcmh-status nil)
 
-      (advice-add #'garbage-collect
-                  :before
-                  (defun my/gcmh-log-start (&rest _)
-                    (when gcmh-verbose
-                      (setq my/gcmh-status "Running GC..."))))
+    (advice-add #'garbage-collect
+                :before
+                (defun my/gcmh-log-start (&rest _)
+                  (when gcmh-verbose
+                    (setq my/gcmh-status "Running GC..."))))
 
-      (advice-add #'gcmh-message
-                  :override
-                  (defun my/gcmh-message (format-string &rest args)
-                    (setq akirak/gcmh-status
-                          (apply #'format-message format-string args))
-                    (run-with-timer 2 nil
-                                    (lambda ()
-                                      (setq my/gcmh-status nil)))))
+    (advice-add #'gcmh-message
+                :override
+                (defun my/gcmh-message (format-string &rest args)
+                  (setq my/gcmh-status
+                        (apply #'format-message format-string args))
+                  (run-with-timer 2 nil
+                                  (lambda ()
+                                    (setq my/gcmh-status nil)))))
 
-      (with-eval-after-load 'gcmh
-        (setq gcmh-verbose t)
-        (setq gcmh-idle-delay 15))))
+    (with-eval-after-load 'gcmh
+      (setq gcmh-verbose t)
+      (setq gcmh-idle-delay 15)))
 #+end_src
 *** google-this
     #+BEGIN_SRC emacs-lisp
@@ -3053,16 +3069,13 @@
 *** undo-tree
     #+begin_src emacs-lisp
       (eval-when-compile
-        (el-get-bundle 'queue)
         (el-get-bundle 'undo-tree))
 
       (with-delayed-execution
         (message "Install undo-tree...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/queue"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/undo-tree"))
         (when (autoload-if-found '(global-undo-tree-mode) "undo-tree" nil t)
-          (when (require 'queue)
-            (global-undo-tree-mode)))
+          (global-undo-tree-mode))
         (with-eval-after-load 'undo-tree
           (setq undo-tree-auto-save-history nil)))
     #+end_src
@@ -3292,9 +3305,9 @@
   (with-delayed-execution
     (message "Install emacs-fish-completion")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/emacs-fish-completion"))
-    (when (autoload-if-found '(global-fish-completion-mode) "fish-completion" nil t)
-      (when (and (executable-find "fish"))
-        (global-fish-completion-mode))))
+    (autoload-if-found '(global-fish-completion-mode) "fish-completion" nil t)
+    (when (and (executable-find "fish"))
+      (global-fish-completion-mode)))
 #+end_src
 * Org Mode
 ** org
@@ -3401,17 +3414,16 @@
 #+end_src
 ** org-capture
 #+begin_src emacs-lisp
-  (autoload-if-found '(org-capture) "org-capture" nil t)
-
-  (global-set-key (kbd "C-c c") 'org-capture)
-
-  (with-eval-after-load 'org-capture
-    (setq org-capture-templates `(("t" "Todo" entry (file+datetree ,(expand-file-name "todo.org" org-directory))
-                                   "* %?")
-                                  ("m" "Memo" entry (file ,(expand-file-name "memo.org" org-directory))
-                                   "* %?")
-                                  ("j" "Journal" entry (file+datetree ,(expand-file-name "journal.org" org-directory))
-                                   "* %?\nEntered on %U\n  %i\n  %a"))))
+  (with-delayed-execution
+    (autoload-if-found '(org-capture) "org-capture" nil t)
+    (global-set-key (kbd "C-c c") #'org-capture)
+    (with-eval-after-load 'org-capture
+      (setq org-capture-templates `(("t" "Todo" entry (file+datetree ,(expand-file-name "todo.org" org-directory))
+                                     "* %?")
+                                    ("m" "Memo" entry (file ,(expand-file-name "memo.org" org-directory))
+                                     "* %?")
+                                    ("j" "Journal" entry (file+datetree ,(expand-file-name "journal.org" org-directory))
+                                     "* %?\nEntered on %U\n  %i\n  %a")))))
 #+end_src
 ** org-id
    #+begin_src emacs-lisp
@@ -3469,7 +3481,7 @@
      (with-delayed-execution
        (message "Install org-generate...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/org-generate"))
-       (autoload-if-found '(my/org-generate org-generate) "org-generate" nil t)
+       (autoload-if-found '(org-generate) "org-generate" nil t)
        (defun my/org-generate ()
          (interactive)
          (org-generate "snippet/default"))
