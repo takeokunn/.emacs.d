@@ -156,18 +156,26 @@
 ** 末尾のスペースを可視化する
    #+BEGIN_SRC emacs-lisp
      (with-delayed-execution
-       (dolist
-           (mode '(comint-mode
-                   eshell-mode
-                   eww-mode
-                   term-mode
-                   twittering-mode
-                   minibuffer-inactive-mode
-                   dashboard-mode
-                   fundamental-mode))
+       (defun my/disable-show-trailing-whitespace ()
+         (setq show-trailing-whitespace nil))
 
-         (add-hook (intern (concat (symbol-name mode) "-hook"))
-                   #'(lambda () (setq show-trailing-whitespace nil)))))
+       (with-eval-after-load 'comint
+         (add-hook 'comint-mode-hook #'my/disable-show-trailing-whitespace))
+
+       (with-eval-after-load 'eshell
+         (add-hook 'eshell-mode-hook #'my/disable-show-trailing-whitespace))
+
+       (with-eval-after-load 'eww
+         (add-hook 'eww-mode-hook #'my/disable-show-trailing-whitespace))
+
+       (with-eval-after-load 'minibuffer
+         (add-hook 'minibuffer-inactive-mode-hook #'my/disable-show-trailing-whitespace))
+
+       (with-eval-after-load 'dashboard
+         (add-hook 'dashboard-mode-hook #'my/disable-show-trailing-whitespace))
+
+       (with-eval-after-load 'simple
+         (add-hook 'fundamental-mode-hook #'my/disable-show-trailing-whitespace)))
    #+END_SRC
 ** 行番号を表示する
    #+BEGIN_SRC emacs-lisp
@@ -2168,9 +2176,7 @@
         (message "Install yasnippet...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/yasnippet"))
         (when (autoload-if-found '(yas-global-mode) "yasnippet" nil t)
-          (yas-global-mode 1))
-        (with-eval-after-load 'yasnippet
-          (setq tab-width 4)))
+          (yas-global-mode 1)))
     #+end_src
 *** ivy-yasnippet
     #+begin_src emacs-lisp
@@ -2754,6 +2760,15 @@
     (with-eval-after-load 'compile
       (add-hook 'compilation-filter-hook #'(lambda ()
                                              (ansi-color-apply-on-region (point-min) (point-max))))))
+#+end_src
+*** auto-insert
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (autoload-if-found '(auto-insert-mode define-auto-insert) "autoinsert" nil t)
+    (auto-insert-mode)
+    (define-auto-insert "\.php" "template.php")
+    (with-eval-after-load 'autoinsert
+      (setq auto-insert-directory "~/.emacs.d/auto-insert")))
 #+end_src
 *** auto-save-buffers-enhanced
     #+begin_src emacs-lisp
@@ -3437,6 +3452,44 @@
          (eshell)
          (rename-buffer (concat "$" name)))
        (defalias 'eshell-create 'my/eshell-create)
+
+       (defun my/eshell-send-detached-input (&optional arg)
+         "ref: https://irreal.org/blog/?p=10212
+
+     Send the current Eshell input to a compilation buffer.
+     With universal prefix argument bury the compilation buffer and
+     send a notification when the process has exited."
+         (interactive "p")
+         (let* ((cmd (buffer-substring
+                      eshell-last-output-end (point-max)))
+                (hostname (car (split-string
+                                (or
+                                 (file-remote-p default-directory 'host)
+                                 (system-name))
+                                "\\.")))
+                (compile-command nil)
+                (compilation-buffer-name-function
+                 (lambda (major-mode)
+                   (format "D# %s (%s)" cmd hostname)))
+                (compilation-buffer (compile cmd)))
+           (when (equal arg 4)
+             (with-current-buffer compilation-buffer
+               (switch-to-prev-buffer (get-buffer-window (current-buffer)))
+               (setq-local compilation-finish-functions
+                           `((lambda (buffer str)
+                               (notifications-notify
+                                :body ,cmd
+                                :timeout 8000
+                                :category "detached_process"
+                                :actions '("default" "Switch to buffer")
+                                :on-action (lambda (id key) (switch-to-buffer-other-window ,(buffer-name compilation-buffer)))
+                                :title (format "Process running in '%s' finished!" ,hostname)
+                                :urgency (if (string-prefix-p "finished" str) 'normal 'critical)))))))
+           (eshell-add-input-to-history cmd)
+           (eshell-reset)))
+
+       ;; keybind
+       (define-key eshell-mode-map (kbd "C-c b") #'my/eshell-send-detached-input)
 
        ;; shell function
        (defun eshell/ff (&rest args)
