@@ -504,6 +504,16 @@
     (message "Install posframe...")
     (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/posframe"))))
 #+end_src
+** popup
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'popup))
+
+  (with-delayed-execution
+    (message "Install popup...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/popup")))
+
+#+end_src
 ** queue
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -1429,6 +1439,19 @@
          (push '("\\.ya?ml$" . yaml-mode) auto-mode-alist)
          (push '("phpstan.neon" . yaml-mode) auto-mode-alist)))
    #+END_SRC
+** zig-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'zig-mode))
+
+  (with-delayed-execution
+    (message "Install zig-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/zig-mode"))
+    (when (autoload-if-found '(zig-mode) "zig-mode" nil t)
+      (push '("\\.zig$" . zig-mode) auto-mode-alist))
+    (with-eval-after-load 'zig-mode
+      (add-hook 'zig-mode-hook #'lsp-deferred)))
+#+end_src
 * Lisp
 ** Basic
 *** paredit
@@ -2304,7 +2327,7 @@
 
         ;; lsp-ui-doc
         (with-eval-after-load 'lsp-ui-doc
-          (setq lsp-ui-doc-enable nil)
+          (setq lsp-ui-doc-enable t)
           (setq lsp-ui-doc-show-with-cursor t)
           (setq lsp-ui-doc-use-webkit t)
           (setq lsp-ui-doc-include-signature t)
@@ -2328,7 +2351,7 @@
         ;; lsp-ui-sideline
         (autoload-if-found '(lsp-ui-sideline-mode) "lsp-ui-sideline" nil t)
         (with-eval-after-load 'lsp-ui-sideline
-          (setq lsp-ui-sideline-enable t)
+          (setq lsp-ui-sideline-enable nil)
           (setq lsp-ui-sideline-show-hover t))
 
         ;; keybind
@@ -2692,13 +2715,12 @@
 
         (autoload-if-found '(open-junk-file) "open-junk-file" nil t)
 
-        (with-eval-after-load 'ivy-mode
-          (defun my/open-junk-file ()
-            (interactive)
-            (ivy-mode 0)
-            (let ((default-directory (format-time-string "~/.emacs.d/.junk/%Y-%m%d-%H%M%S." (current-time))))
-              (open-junk-file))
-            (ivy-mode 1)))
+        (defun my/open-junk-file ()
+          (interactive)
+          (ivy-mode 0)
+          (let ((default-directory (format-time-string "~/.emacs.d/.junk/%Y-%m%d-%H%M%S." (current-time))))
+            (open-junk-file))
+          (ivy-mode 1))
 
         (global-set-key (kbd "C-x j") #'my/open-junk-file)
 
