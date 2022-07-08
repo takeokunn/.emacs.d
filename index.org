@@ -1000,6 +1000,17 @@
       (org-babel-do-load-languages 'org-babel-load-languages
                                    '((jq . t)))))
 #+end_src
+** kotlin-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'kotlin-mode))
+
+  (with-delayed-execution
+    (message "Install kotlin-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/kotlin-mode"))
+    (when (autoload-if-found '(kotlin-mode) "kotlin-mode" nil t)
+      (push '("\\.kts?\\'" . kotlin-mode) auto-mode-alist)))
+#+end_src
 ** lisp-mode
    #+BEGIN_SRC emacs-lisp
      (with-delayed-execution
@@ -1816,6 +1827,24 @@
           (setq dashboard-startup-banner 4)
           (setq dashboard-items '((recents . 10)))))
     #+end_src
+*** dimmer
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'dimmer))
+
+  (with-eval-after-load 'dimmer
+    (message "Install dimmer...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/dimmer"))
+    (when (autoload-if-found '(dimmer-configure-which-key
+                               dimmer-configure-org
+                               dimmer-configure-company-box
+                               dimmer-mode)
+                             "dimmer" nil t)
+      (dimmer-configure-which-key)
+      (dimmer-configure-org)
+      (dimmer-configure-company-box)
+      (dimmer-mode t)))
+#+end_src
 *** doom-themes
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -1928,6 +1957,21 @@
           (setq nyan-cat-face-number 5)
           (setq nyan-animate-nyancat t)))
     #+END_SRC
+*** redacted
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'redacted
+                       :url "https://github.com/bkaestner/redacted.el.git"))
+
+      (with-delayed-execution
+        (message "Install redacted...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/redacted"))
+        (autoload-if-found '(redacted-mode) "redacted" nil t)
+        (defun my/redacted-mode ()
+          (interactive)
+          (read-only-mode (if redacted-mode -1 1))
+          (redacted-mode (if redacted-mode -1 1))))
+    #+end_src
 *** volatile-highlights
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -2746,6 +2790,65 @@
         (global-set-key (kbd "C-<") #'mc/mark-previous-like-this)
         (global-set-key (kbd "C-c C-<") #'mc/mark-all-like-this))
     #+END_SRC
+** Avy
+*** avy
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'avy))
+
+      (with-delayed-execution
+        (message "Install avy...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/avy"))
+        (autoload-if-found '(avy-goto-word-1) "avy" nil t)
+        (global-set-key (kbd "C-:") 'avy-goto-word-1)
+        (with-eval-after-load 'avy
+          (setq avy-all-windows nil)
+          (setq avy-background t)))
+    #+end_src
+*** avy-zap
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'avy-zap))
+
+      (with-delayed-execution
+        (message "Install avy-zap...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/avy-zap"))
+        (autoload-if-found '(avy-zap-up-to-char-dwim) "avy-zap" nil t)
+        (global-set-key (kbd "M-z") 'avy-zap-up-to-char-dwim))
+    #+end_src
+** ddskk
+*** ddskk
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'ddskk))
+
+      (with-delayed-execution-priority-high
+        (message "Install ddskk...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/ddskk"))
+        (autoload-if-found '(skk-mode) "skk" nil t)
+
+        (global-set-key (kbd "C-x C-j") 'skk-mode)
+
+        (with-eval-after-load 'skk
+          (setq default-input-method "japanese-skk"))
+
+        (with-eval-after-load 'skk-vars
+          (setq skk-byte-compile-init-file t)
+          (setq skk-isearch-mode-enable 'always)
+          (setq skk-preload t)))
+    #+END_SRC
+*** ddskk-posframe
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ddskk-posframe))
+
+  (with-delayed-execution
+    (message "Install ddskk-posframe...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ddskk-posframe"))
+    (autoload-if-found '(ddskk-posframe-mode) "ddskk-posframe" nil t)
+    (with-eval-after-load 'skk
+      (add-hook 'skk-mode-hook #'ddskk-posframe-mode)))
+#+end_src
 ** Other
 *** ansi-color
 #+begin_src emacs-lisp
@@ -2793,31 +2896,6 @@
         (with-eval-after-load 'amx
           (setq amx-history-length 100)))
     #+END_SRC
-*** avy
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'avy))
-
-      (with-delayed-execution
-        (message "Install avy...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/avy"))
-        (autoload-if-found '(avy-goto-word-1) "avy" nil t)
-        (global-set-key (kbd "C-:") 'avy-goto-word-1)
-        (with-eval-after-load 'avy
-          (setq avy-all-windows nil)
-          (setq avy-background t)))
-    #+end_src
-*** avy-zap
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'avy-zap))
-
-      (with-delayed-execution
-        (message "Install avy-zap...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/avy-zap"))
-        (autoload-if-found '(avy-zap-up-to-char-dwim) "avy-zap" nil t)
-        (global-set-key (kbd "M-z") 'avy-zap-up-to-char-dwim))
-    #+end_src
 *** browse-url
 #+begin_src emacs-lisp
   (with-eval-after-load 'browse-url
@@ -2843,62 +2921,12 @@
                   (webster . takeokunn/define-word--display-in-buffer)
                   (weblio . takeokunn/define-word--display-in-buffer)))))
     #+end_src
-*** ddskk
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'ddskk))
-
-      (with-delayed-execution-priority-high
-        (message "Install ddskk...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/ddskk"))
-        (autoload-if-found '(skk-mode) "skk" nil t)
-
-        (global-set-key (kbd "C-x C-j") 'skk-mode)
-
-        (with-eval-after-load 'skk
-          (setq default-input-method "japanese-skk"))
-
-        (with-eval-after-load 'skk-vars
-          (setq skk-byte-compile-init-file t)
-          (setq skk-isearch-mode-enable 'always)
-          (setq skk-preload t)))
-    #+END_SRC
-*** ddskk-posframe
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'ddskk-posframe))
-
-  (with-delayed-execution
-    (message "Install ddskk-posframe...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/ddskk-posframe"))
-    (autoload-if-found '(ddskk-posframe-mode) "ddskk-posframe" nil t)
-    (with-eval-after-load 'skk
-      (add-hook 'skk-mode-hook #'ddskk-posframe-mode)))
-#+end_src
 *** delsel
 #+begin_src emacs-lisp
   (with-delayed-execution
     (message "Install ddskk-delsel...")
     (when (autoload-if-found '(delete-selection-mode) "delsel" nil t)
       (delete-selection-mode)))
-#+end_src
-*** dimmer
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'dimmer))
-
-  (with-eval-after-load 'dimmer
-    (message "Install dimmer...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/dimmer"))
-    (when (autoload-if-found '(dimmer-configure-which-key
-                               dimmer-configure-org
-                               dimmer-configure-company-box
-                               dimmer-mode)
-                             "dimmer" nil t)
-      (dimmer-configure-which-key)
-      (dimmer-configure-org)
-      (dimmer-configure-company-box)
-      (dimmer-mode t)))
 #+end_src
 *** editorconfig
     #+BEGIN_SRC emacs-lisp
@@ -3159,21 +3187,6 @@
     (with-eval-after-load 'proced
       (setq proced-format 'long)))
 #+end_src
-*** redacted
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'redacted
-                       :url "https://github.com/bkaestner/redacted.el.git"))
-
-      (with-delayed-execution
-        (message "Install redacted...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/redacted"))
-        (autoload-if-found '(my/redacted-mode redacted-mode) "redacted" nil t)
-        (defun my/redacted-mode ()
-          (interactive)
-          (read-only-mode (if redacted-mode -1 1))
-          (redacted-mode (if redacted-mode -1 1))))
-    #+end_src
 *** smartparens
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -3443,83 +3456,70 @@
 * Eshell
 ** basic
    #+begin_src emacs-lisp
-     (with-eval-after-load 'eshell
-       ;; my function
-       (defun my/eshell-create (name)
-         (interactive
-          (let ((proj-name (projectile-project-name)))
-            (concat "sName: " proj-name)))
-         (eshell)
-         (rename-buffer (concat "$" name)))
-       (defalias 'eshell-create 'my/eshell-create)
-
-       (defun my/eshell-send-detached-input (&optional arg)
-         "ref: https://irreal.org/blog/?p=10212
-
-     Send the current Eshell input to a compilation buffer.
-     With universal prefix argument bury the compilation buffer and
-     send a notification when the process has exited."
-         (interactive "p")
-         (let* ((cmd (buffer-substring
-                      eshell-last-output-end (point-max)))
-                (hostname (car (split-string
-                                (or
-                                 (file-remote-p default-directory 'host)
-                                 (system-name))
-                                "\\.")))
-                (compile-command nil)
-                (compilation-buffer-name-function
-                 (lambda (major-mode)
-                   (format "D# %s (%s)" cmd hostname)))
-                (compilation-buffer (compile cmd)))
-           (when (equal arg 4)
-             (with-current-buffer compilation-buffer
-               (switch-to-prev-buffer (get-buffer-window (current-buffer)))
-               (setq-local compilation-finish-functions
-                           `((lambda (buffer str)
-                               (notifications-notify
-                                :body ,cmd
-                                :timeout 8000
-                                :category "detached_process"
-                                :actions '("default" "Switch to buffer")
-                                :on-action (lambda (id key) (switch-to-buffer-other-window ,(buffer-name compilation-buffer)))
-                                :title (format "Process running in '%s' finished!" ,hostname)
-                                :urgency (if (string-prefix-p "finished" str) 'normal 'critical)))))))
-           (eshell-add-input-to-history cmd)
-           (eshell-reset)))
-
-       ;; keybind
-       (define-key eshell-mode-map (kbd "C-c b") #'my/eshell-send-detached-input)
-
+     (with-delayed-execution
        ;; shell function
        (defun eshell/ff (&rest args)
          (find-file (car args)))
 
-       ;; config
-       (defvar eshell-cmpl-ignore-case t)
-       (defvar eshell-glob-include-dot-dot nil)
-       (defvar eshell-ask-to-save-history (quote always))
-       (defvar eshell-history-size 100000)
-       (defvar eshell-hist-ignoredups t)
+       (defun eshell/new()
+         (eshell 'N))
 
+       ;; configurations
+       (with-eval-after-load 'esh-mode
+         (define-key eshell-mode-map (kbd "C-c b") #'my/eshell-send-detached-input)
+         (define-key eshell-mode-map (kbd "M-p") #'eshell-previous-matching-input-from-input))
 
-       ;; alias
-       (defvar *shell-alias* '(("ll" "ls -la")
-                               ("cdd" "cd ~/Desktop")))
-       (defvar eshell-command-aliases-list (append *shell-alias*)))
+       (with-eval-after-load 'em-cmpl
+         (setq eshell-cmpl-ignore-case t))
+
+       (with-eval-after-load 'em-glob
+         (setq eshell-glob-include-dot-files t)
+         (setq eshell-glob-include-dot-dot nil)
+         (setq eshell-glob-show-progress t))
+
+       (with-eval-after-load 'em-hist
+         (setq eshell-history-size 100000)
+         (setq eshell-hist-ignoredups t))
+
+       (with-eval-after-load 'eshell-mode
+         (setq eshell-command-aliases-list '(("ll" "ls -la")
+                                             ("cdd" "cd ~/Desktop")))))
    #+end_src
 ** eshell-z
    #+begin_src emacs-lisp
      (eval-when-compile
-       (el-get-bundle xuchunyang/eshell-z))
+       (el-get-bundle 'eshell-z))
 
      (with-delayed-execution
        (message "Install eshell-z...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/eshell-z"))
-       ;; (when (autoload-if-found '(eshell-z) "eshell-z" nil t)
-       ;;   (define-key eshell-command-map (kbd "C-c C-q") 'eshell-z))
-       )
+       (autoload-if-found '(eshell-z) "eshell-z" nil t)
+       (with-eval-after-load 'esh-mode
+         (define-key eshell-mode-map (kbd "C-c C-q") #'eshell-z)))
    #+end_src
+** eshell-did-you-mean
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'eshell-did-you-mean))
+
+  (with-delayed-execution
+    (message "Install eshell-did-you-mean...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/eshell-did-you-mean"))
+    (when (autoload-if-found '(eshell-did-you-mean-setup) "eshell-did-you-mean" nil t)
+      (eshell-did-you-mean-setup)))
+#+end_src
+** eshell-prompt-extras
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'eshell-prompt-extras))
+
+  (with-delayed-execution
+    (message "Install eshell-prompt-extras...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/eshell-prompt-extras"))
+    (autoload-if-found '(epe-theme-lambda) "eshell-prompt-extras" nil t)
+    (with-eval-after-load 'em-prompt
+      (setq eshell-prompt-function #'epe-theme-lambda)))
+#+end_src
 ** TODO aweshell
    #+BEGIN_SRC emacs-lisp
      ;; (eval-when-compile
@@ -3528,21 +3528,14 @@
 
      ;; (with-delayed-execution
      ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/aweshell"))
-
-     ;;   ;; (when (require 'eshell-did-you-mean)
-     ;;   ;;   (eshell-did-you-mean-setup))
-
-     ;;   ;; (when (require 'esh-opt)
-     ;;   ;;   (autoload 'epe-theme-lambda "eshell-prompt-extras")
-     ;;   ;;   (setq eshell-prompt-function 'epe-theme-lambda)
-     ;;   ;;   (setq aweshell-auto-suggestion-p nil))
-
-     ;;   ;; (when (require 'aweshell)
-     ;;   ;;   (defun my/ivy-aweshell-history ()
-     ;;   ;;     (interactive)
-     ;;   ;;     (insert (ivy-read "Aweshell history: " (aweshell-parse-shell-history))))
-     ;;   ;;   (define-key eshell-command-map (kbd "C-c C-r") 'my/ivy-aweshell-history))
-     ;;   )
+     ;;   (autoload-if-found '(aweshell-parse-shell-history aweshell-autosuggest) "aweshell" nil t)
+     ;;   (defun my/ivy-aweshell-history ()
+     ;;     (interactive)
+     ;;     (insert (ivy-read "Aweshell history: " (aweshell-parse-shell-history))))
+     ;;   (with-eval-after-load 'company
+     ;;     (push 'aweshell-autosuggest company-backends))
+     ;;   (with-eval-after-load 'esh-mode
+     ;;     (define-key eshell-mode-map (kbd "C-c C-r") #'my/ivy-aweshell-history)))
    #+END_SRC
 ** emacs-fish-completion
 #+begin_src emacs-lisp
