@@ -1194,6 +1194,17 @@
          (push '("\\.hs$" . haskell-mode) auto-mode-alist)
          (push '("\\.cable$" . haskell-mode) auto-mode-alist)))
    #+END_SRC
+** hy-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'hy-mode))
+
+  (with-delayed-execution
+    (message "Install hy-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/hy-mode"))
+    (when (autoload-if-found '(hy-mode) "hy-mode" nil t)
+      (push '("\\.hy$" . hy-mode) auto-mode-alist)))
+#+end_src
 ** java-mode
 #+begin_src emacs-lisp
   (with-delayed-execution
@@ -1262,6 +1273,17 @@
          (push '("\\.lemrc$" . lisp-mode) auto-mode-alist)
          (push '("\\.Cask$" . lisp-mode) auto-mode-alist)))
    #+END_SRC
+** lua-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'lua-mode))
+
+  (with-delayed-execution
+    (message "Install lua-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/lua-mode"))
+    (when (autoload-if-found '(lua-mode) "lua-mode" nil t)
+      (push '("\\.lua$" . lua-mode) auto-mode-alist)))
+#+end_src
 ** markdown-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
@@ -1291,7 +1313,18 @@
     (message "Install neon-mode...")
     (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/neon-mode")))
     (when (autoload-if-found '(neon-mode) "neon-mode" nil t)
-      (add-to-list 'auto-mode-alist '("\\.neon\\'" . neon-mode))))
+      (push '("\\.neon$" . neon-mode) auto-mode-alist)))
+#+end_src
+** ninja-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ninja-mode))
+
+  (with-delayed-execution
+    (message "Install ninja-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ninja-mode"))
+    (when (autoload-if-found '(ninja-mode) "ninja-mode" nil t)
+      (push '("\\.ninja$" . ninja-mode) auto-mode-alist)))
 #+end_src
 ** nix-mode
 #+begin_src emacs-lisp
@@ -1705,6 +1738,18 @@
          (push '("\\.ya?ml$" . yaml-mode) auto-mode-alist)
          (push '("phpstan.neon" . yaml-mode) auto-mode-alist)))
    #+END_SRC
+** yarn-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'yarn-mode))
+
+  (with-delayed-execution
+    (message "Install yarn-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/yarn-mode"))
+    (when (autoload-if-found '(yarn-mode) "yarn-mode" nil t)
+      (push '("yarn\\.lock\\'" . yarn-mode) auto-mode-alist)))
+
+#+end_src
 ** zig-mode
 #+begin_src emacs-lisp
   (eval-when-compile
