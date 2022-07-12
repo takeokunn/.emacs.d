@@ -683,6 +683,25 @@
     (message "Install helm...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/helm")))
 #+end_src
+** hide-lines
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle "vapniks/hide-lines"
+                   :url "https://github.com/vapniks/hide-lines.git"))
+
+  (with-delayed-execution
+    (message "Install hide-lines...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/hide-lines")))
+#+end_src
+** hsluv
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'hsluv))
+
+  (with-delayed-execution
+    (message "Install hsluv...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/hsluv")))
+#+end_src
 ** ht
    #+begin_src emacs-lisp
      (eval-when-compile
@@ -737,6 +756,15 @@
        (message "Install mustache...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/mustache"))))
    #+end_src
+** ov
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ov))
+
+  (with-delayed-execution
+    (message "Install ov...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ov")))
+#+end_src
 ** pfuture
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -1238,7 +1266,8 @@
        (when (autoload-if-found '(json-mode) "json-mode" nil t)
          (push '("\\.json$" . json-mode) auto-mode-alist)
          (push '("\\.textlintrc$" . json-mode) auto-mode-alist)
-         (push '("\\.prettierrc$" . json-mode) auto-mode-alist)))
+         (push '("\\.prettierrc$" . json-mode) auto-mode-alist)
+         (push '("\\composer.lock$" . json-mode) auto-mode-alist)))
    #+END_SRC
 ** jq-mode
 #+begin_src emacs-lisp
@@ -1578,6 +1607,17 @@
        (when (autoload-if-found '(swift-mode) "swift-mode" nil t)
          (push '("\\.swift$" . swift-mode) auto-mode-alist)))
    #+end_src
+** syslog-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'syslog-mode))
+
+  (with-delayed-execution
+    (message "Install syslog-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/syslog-mode"))
+    (when (autoload-if-found '(syslog-mode) "syslog-mode" nil t)
+      (push '("\\.log$" . syslog-mode) auto-mode-alist)))
+#+end_src
 ** terraform-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
@@ -1748,7 +1788,6 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/yarn-mode"))
     (when (autoload-if-found '(yarn-mode) "yarn-mode" nil t)
       (push '("yarn\\.lock\\'" . yarn-mode) auto-mode-alist)))
-
 #+end_src
 ** zig-mode
 #+begin_src emacs-lisp
@@ -2933,7 +2972,7 @@
         (message "Install psysh...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/psysh")))
     #+end_src
-*** TODO laravel-tinker-repl
+*** laravel-tinker-repl
     #+begin_src emacs-lisp
       (eval-when-compile
         (el-get-bundle "takeokunn/laravel-tinker-repl.el")
@@ -2971,7 +3010,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/emacs-php-doc-block"))
     (autoload-if-found '(php-doc-block) "php-doc-block" nil t))
 #+end_src
-*** phpstan.el
+*** phpstan
 #+begin_src emacs-lisp
   (eval-when-compile
     (el-get-bundle 'phpstan
