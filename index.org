@@ -1616,7 +1616,7 @@
     (message "Install syslog-mode...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/syslog-mode"))
     (when (autoload-if-found '(syslog-mode) "syslog-mode" nil t)
-      (push '("\\.log$" . syslog-mode) auto-mode-alist)))
+      (add-to-list 'auto-mode-alist '("\\.log$" . syslog-mode))))
 #+end_src
 ** terraform-mode
    #+BEGIN_SRC emacs-lisp
@@ -1764,7 +1764,7 @@
     (message "Install web-php-blade-mode...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/web-php-blade-mode"))
     (when (autoload-if-found '(web-php-blade-mode) "web-php-blade-mode" nil t)
-      (push '("\\.blade.php$" . web-php-blade-mode) auto-mode-alist)))
+      (add-to-list 'auto-mode-alist '("\\.blade.php$" . web-php-blade-mode))))
 #+end_src
 ** yaml-mode
    #+BEGIN_SRC emacs-lisp
@@ -2394,7 +2394,8 @@
         (with-eval-after-load 'company
           (define-key company-active-map (kbd "C-n") #'company-select-next)
           (define-key company-active-map (kbd "C-p") #'company-select-previous)
-          (setq company-minimum-prefix-length 2))
+          (setq company-minimum-prefix-length 2)
+          (setq company-idle-delay 0.5))
 
         (with-eval-after-load 'company-css
           (push 'company-css company-backends))
@@ -2625,6 +2626,16 @@
           (setq lsp-intelephense-php-version "8.1")
           (setq lsp-intelephense-telemetry-enabled t)))
     #+END_SRC
+*** lsp-php-key
+-----BEGIN PGP MESSAGE-----
+
+jA0ECQMCrkfrMEfad/300sABAUtPyC55UH5zmHhnm81lbwRhKH01wNFmgxQt3lIh
+QTeR40jICDbTu/CJLngDJnq26GThQdDztg0OJkVHJ17mytWreilBbXPUnKo2axQ4
+5NN5TJjfnPKutro6dARd6aK8Cy1AEk6JEHDu3l/TvRNaJ5u8LgId0poaTd7e5cfu
+jsZecntGEc5ThntAGuqIQmTFDothZR2awQrde2pWUDebMpnlE+smp5MC4Qv6iufc
+R7RToxAHjWYMDUAwLCG/njsPjQ==
+=j0CZ
+-----END PGP MESSAGE-----
 *** lsp-treemacs
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -2632,7 +2643,10 @@
 
   (with-delayed-execution
     (message "Install lsp-treemacs...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-treemacs")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-treemacs"))
+
+    (with-eval-after-load 'lsp-treemacs
+      (setq lsp-treemacs-error-list-current-project-only t)))
 #+end_src
 *** lsp-docker
 #+begin_src emacs-lisp
@@ -2714,7 +2728,7 @@
           (setq lsp-ui-doc-show-with-cursor t)
           (setq lsp-ui-doc-use-webkit t)
           (setq lsp-ui-doc-include-signature t)
-          (setq lsp-ui-doc-delay 0.7)
+          (setq lsp-ui-doc-delay 1)
           (setq lsp-ui-doc-max-height 30))
 
         ;; lsp-ui-peek
@@ -4038,7 +4052,8 @@
        (when (autoload-if-found '(org-encrypt-entry org-decrypt-entry org-crypt-use-before-save-magic) "org-crypt" nil t)
            (org-crypt-use-before-save-magic))
        (with-eval-after-load 'org-crypt
-         (setq org-crypt-key "bararararatty@gmail.com")))
+         (setq org-crypt-key nil)
+         (setq org-tags-exclude-from-inheritance '("crypt"))))
    #+end_src
 ** org-journal
    #+begin_src emacs-lisp
