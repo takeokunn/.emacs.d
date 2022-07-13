@@ -2964,6 +2964,9 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
         (add-to-list 'load-path (locate-user-emacs-file "el-get/js2-refactor"))
         (autoload-if-found '(js2-refactor-mode) "js2-refactor" nil t)
 
+        (with-eval-after-load 'js2-refactor
+          (setq js2r-use-strict t))
+
         (with-eval-after-load 'js2-mode
           (add-hook 'js2-mode-hook #'js2-refactor-mode))
 
@@ -3325,6 +3328,9 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
     (autoload 'ansi-color-for-comint-mode-on "ansi-color" "Set `ansi-color-for-comint-mode' to t." t)
     (autoload-if-found '(ansi-color-for-comint-mode-on) "ansi-color" nil t)
 
+    (with-eval-after-load 'eshell-mode
+      (add-hook 'eshell-mode-hook #'ansi-color-for-comint-mode-on))
+
     (with-eval-after-load 'shell-mode
       (add-hook 'shell-mode-hook #'ansi-color-for-comint-mode-on))
 
@@ -3548,7 +3554,6 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
               ("NOW" . "#dca3a3")
               ("WAIT" . "#d0bf8f")
               ("DONE" . "#afd8af")))))
-
 #+end_src
 *** highlight-indent-guides
 #+begin_src emacs-lisp
