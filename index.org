@@ -335,7 +335,6 @@
        (with-current-buffer "*Messages*"
          (emacs-lock-mode 'kill)))
    #+end_src
- Utility
 ** fontset
 #+begin_src emacs-lisp
   (with-delayed-execution
@@ -579,7 +578,7 @@
 
     (my/reset-default-fontset))
 #+end_src
-* Libraries
+* Utitlity
 ** alert
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -1032,6 +1031,17 @@
        (when (autoload-if-found '(dart-mode) "dart-mode" nil t)
          (push '("\\.dart$" . dart-mode) auto-mode-alist)))
    #+end_src
+** dhall-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'dhall-mode))
+
+  (with-delayed-execution
+    (message "Install dhall-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/dhall-mode"))
+    (when (autoload-if-found '(dhall-mode) "dhall-mode" nil t)
+      (push '("\\.dhall\\'" . dhall-mode) auto-mode-alist)))
+#+end_src
 ** direnv-mode
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -1053,7 +1063,7 @@
        (message "Install docker-comopse-mode...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/docker-compose-mode")))
        (when (autoload-if-found '(docker-compose-mode) "docker-compose-mode" nil t)
-         (push '("\\docker-compose*" . docker-compose-mode) auto-mode-alist)))
+         (add-to-list 'auto-mode-alist '("\\docker-compose*" . docker-compose-mode))))
    #+end_src
 ** dockerfile-mode
    #+BEGIN_SRC emacs-lisp
@@ -1112,6 +1122,32 @@
          (setq emmet-self-closing-tag-style "")
          (setq emmet-indent-after-insert nil)))
    #+END_SRC
+** elixir-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'elixir-mode))
+
+  (with-delayed-execution
+    (message "Install elixir-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/elixir-mode"))
+    (when (autoload-if-found '(elixir-mode) "elixir-mode" nil t)
+      (push '("\\.elixir\\'" . elixir-mode) auto-mode-alist)
+      (push '("\\.ex\\'" . elixir-mode) auto-mode-alist)
+      (push '("\\.exs\\'" . elixir-mode) auto-mode-alist)
+      (push '("mix\\.lock" . elixir-mode) auto-mode-alist)))
+#+end_src
+** elm-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'elm-mode))
+
+  (with-delayed-execution
+    (message "Install elm-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/elm-mode"))
+    (when (autoload-if-found '(elm-mode) "elm-mode" nil t)
+      (push '("\\.elm$" . elm-mode) auto-mode-alist)))
+
+#+end_src
 ** fish-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
@@ -1210,6 +1246,19 @@
        (with-eval-after-load 'graphql-mode
          (setq graphql-indent-level 4)))
    #+end_src
+** hack-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'hack-mode))
+
+  (with-delayed-execution
+    (message "Install hack-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/hack-mode")))
+    (when (autoload-if-found '(hack-mode) "hack-mode" nil t)
+      (push '("\\.hack$" . hack-mode) auto-mode-alist)
+      (push '("\\.hck$" . hack-mode) auto-mode-alist)
+      (push '("\\.hhi$" . hack-mode) auto-mode-alist)))
+#+end_src
 ** haskell-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
@@ -1344,6 +1393,17 @@
     (when (autoload-if-found '(neon-mode) "neon-mode" nil t)
       (push '("\\.neon$" . neon-mode) auto-mode-alist)))
 #+end_src
+** nim-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'nim-mode))
+
+  (with-delayed-execution
+    (message "Install nim-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/nim-mode")))
+    (when (autoload-if-found '(nim-mode) "nim-mode" nil t)
+      (add-to-list 'auto-mode-alist '("\\.nim\\'" . nim-mode))))
+#+end_src
 ** ninja-mode
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -1391,6 +1451,17 @@
     (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/nov")))
     (when (autoload-if-found '(nov-mode) "nov" nil t)
       (push '("\\.epub\\'" . nov-mode) auto-mode-alist)))
+#+end_src
+** pcap-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'pcap-mode))
+
+  (with-delayed-execution
+    (message "Install pcap-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/pcap")))
+    (when (autoload-if-found '(pcap-mode) "pcap" nil t)
+      (push '("\\.pcap$" . pcap-mode) auto-mode-alist)))
 #+end_src
 ** php-mode
    #+BEGIN_SRC emacs-lisp
@@ -2088,8 +2159,10 @@
     #+begin_src emacs-lisp
       (with-delayed-execution-priority-high
         (autoload-if-found '(ivy-mode ivy-read ivy-completing-read) "ivy" nil t)
+        (autoload-if-found '(ivy-avy) "ivy-avy" nil t)
         (add-hook 'minibuffer-setup-hook #'ivy-mode)
         (with-eval-after-load 'ivy
+          (define-key ivy-minibuffer-map (kbd "C-'") 'ivy-avy)
           (setq enable-recursive-minibuffers t)
           (setq ivy-use-virtual-buffers t)))
     #+end_src
@@ -2508,6 +2581,43 @@
         (with-eval-after-load 'company
           (push 'company-gemoji company-backends)))
     #+end_src
+*** company-lua
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'company-lua))
+
+  (with-delayed-execution
+    (message "Install company-lua...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/company-lua"))
+    (autoload-if-found '(company-lua) "company-lua" nil t)
+    (with-eval-after-load 'company
+      (push 'company-lua company-backends)))
+#+end_src
+*** company-org-block
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'company-org-block))
+
+  (with-delayed-execution
+    (message "Install company-org-block...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/company-org-block"))
+    (autoload-if-found '(company-org-block) "company-org-block" nil t)
+    (with-eval-after-load 'company
+      (push 'company-org-block company-backends)))
+
+#+end_src
+*** company-solidity
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'company-solidity))
+
+  (with-delayed-execution
+    (message "Install company-solidity...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/company-solidity"))
+    (autoload-if-found '(company-solidity) "company-solidity" t)
+    (with-eval-after-load 'company
+      (push 'company-solidity company-backends)))
+#+end_src
 ** Prescient
 *** prescient
 #+begin_src emacs-lisp
@@ -2580,7 +2690,7 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-mode"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-mode/clients"))
 
-        (autoload-if-found '(lsp lsp-deferred) "lsp-mode" nil t)
+        (autoload-if-found '(lsp lsp-deferred lsp-org) "lsp-mode" nil t)
         (autoload-if-found '(lsp-lens) "lsp-lens" nil t)
         (autoload-if-found '(lsp-diagnostics-mode) "lsp-diagnostics" nil t)
         (autoload-if-found '(lsp-completion-mode) "lsp-completion" nil t)
@@ -3411,6 +3521,16 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
         (with-eval-after-load 'text-mode
           (add-hook 'text-mode-hook #'goto-address-mode)))
     #+END_SRC
+*** hacker-typer
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'hacker-typer))
+
+  (with-delayed-execution
+    (message "Install hacker-typer...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/hacker-typer"))
+    (autoload-if-found '(hacker-typer) "hacker-typer" nil t))
+#+end_src
 *** hl-todo
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -3891,6 +4011,17 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
     (autoload-if-found '(epe-theme-lambda) "eshell-prompt-extras" nil t)
     (with-eval-after-load 'em-prompt
       (setq eshell-prompt-function #'epe-theme-lambda)))
+#+end_src
+** eshell-syntax-highlight
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'eshell-syntax-highlighting))
+
+  (with-delayed-execution
+    (message "Install eshell-syntax-highlighting...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/eshell-syntax-highlighting"))
+    (when (autoload-if-found '(eshell-syntax-highlighting-global-mode) "eshell-syntax-highlighting" nil t)
+      (eshell-syntax-highlighting-global-mode)))
 #+end_src
 ** aweshell
    #+BEGIN_SRC emacs-lisp
