@@ -156,6 +156,8 @@
 ** 末尾のスペースを可視化する
    #+BEGIN_SRC emacs-lisp
      (with-delayed-execution
+       (message "Install disable-show-trailing-whitespace...")
+
        (defun my/disable-show-trailing-whitespace ()
          (setq show-trailing-whitespace nil))
 
@@ -180,6 +182,7 @@
 ** 行番号を表示する
    #+BEGIN_SRC emacs-lisp
      (with-delayed-execution
+       (message "Install linum...")
        (with-eval-after-load 'linum
          (eval-and-compile
            (setq linum-delay t)))
@@ -195,6 +198,7 @@
 ** カッコの中をハイライトする
    #+BEGIN_SRC emacs-lisp
      (with-delayed-execution
+       (message "Install show-paren-mode...")
        (show-paren-mode t)
 
        (with-eval-after-load 'paren
@@ -203,11 +207,14 @@
 ** カッコが自動的に作られるようにする
    #+BEGIN_SRC emacs-lisp
      (with-delayed-execution
+       (message "Install electric-pair-mode...")
        (electric-pair-mode 1))
    #+END_SRC
 ** coding system
    #+begin_src emacs-lisp
      (with-delayed-execution-priority-high
+       (message "Install language...")
+
        ;; language and locale
        (set-language-environment "Japanese")
        (setq system-time-locale "C")
@@ -227,6 +234,7 @@
 ** global-auto-revert-mode
    #+begin_src emacs-lisp
      (with-delayed-execution
+       (message "Install global-auto-revert-mode...")
        (global-auto-revert-mode t))
    #+end_src
 ** yes/no to y/n
@@ -282,7 +290,8 @@
    #+end_src
 ** savehistを有効にする
 #+begin_src emacs-lisp
-  (with-delayed-execution-priority-high 'savehist
+  (with-delayed-execution-priority-high
+    (message "Install savehist...")
     (savehist-mode 1))
 #+end_src
 ** [mac] clipboardに入るようにする
@@ -918,7 +927,15 @@
   (with-delayed-execution-priority-high
     (message "Install websocket...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/websocket")))
+#+end_src
+** xelb
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'xelb))
 
+  (with-delayed-execution-priority-high
+    (message "Install xelb...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/xelb")))
 #+end_src
 * Language
 ** apache-mode
@@ -2135,12 +2152,12 @@
         (el-get-bundle abo-abo/swiper))
 
       (with-delayed-execution-priority-high
-        (message "Install swiper...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/swiper")))
     #+end_src
 *** swiper
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
+        (message "Install swiper...")
         (autoload-if-found '(my/swiper) "swiper" nil t)
         (defun my/swiper ()
           (interactive)
@@ -2151,6 +2168,7 @@
 *** counsel
     #+begin_src emacs-lisp
       (with-delayed-execution-priority-high
+        (message "Install counsel...")
         (when (autoload-if-found '(counsel-mode counsel-compile) "counsel" nil t)
           (counsel-mode 1))
         (global-set-key (kbd "C-x m") 'counsel-compile))
@@ -2158,6 +2176,7 @@
 *** ivy
     #+begin_src emacs-lisp
       (with-delayed-execution-priority-high
+        (message "Install ivy...")
         (autoload-if-found '(ivy-mode ivy-read ivy-completing-read) "ivy" nil t)
         (autoload-if-found '(ivy-avy) "ivy-avy" nil t)
         (add-hook 'minibuffer-setup-hook #'ivy-mode)
@@ -2258,6 +2277,7 @@
         (el-get-bundle 'doom-themes))
 
       (with-delayed-execution-priority-high
+        (message "Install doom-themes...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes/extensions"))
 
@@ -2281,6 +2301,7 @@
         (el-get-bundle 'doom-modeline))
 
       (with-delayed-execution-priority-high
+        (message "Install doom-modeline...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-modeline"))
         (when (autoload-if-found '(doom-modeline-mode) "doom-modeline" nil t)
           (doom-modeline-mode 1)
@@ -2296,6 +2317,7 @@
 *** hl-line
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
+        (message "Install hl-line...")
         (when (autoload-if-found '(global-hl-line-mode) "hl-line-mode" nil t)
           (when (not window-system)
             (global-hl-line-mode)))
@@ -2961,6 +2983,7 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
         (el-get-bundle 'js2-refactor))
 
       (with-delayed-execution
+        (message "Install js2-refactor...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/js2-refactor"))
         (autoload-if-found '(js2-refactor-mode) "js2-refactor" nil t)
 
@@ -3156,6 +3179,7 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
         (el-get-bundle 'poly-markdown))
 
       (with-delayed-execution
+        (message "Install polymode...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/polymode"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/poly-markdown"))
         (when (autoload-if-found '(poly-markdown-mode) "poly-markdown" nil t)
@@ -3217,6 +3241,7 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
 *** recentf
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
+        (message "Install recentf...")
         (when (autoload-if-found '(recentf-mode) "recentf" nil t)
           (recentf-mode 1))
         (with-eval-after-load 'recentf
@@ -3255,6 +3280,7 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
         (el-get-bundle 'multiple-cursors))
 
       (with-delayed-execution
+        (message "Install multiple-cursors...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/multiple-cursors"))
         (autoload-if-found '(mc/mark-next-like-this mc/mark-previous-like-this mc/mark-all-like-this) "multiple-cursors" nil t)
         (global-set-key (kbd "C->") #'mc/mark-next-like-this)
@@ -3341,6 +3367,7 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
 *** auto-insert
 #+begin_src emacs-lisp
   (with-delayed-execution
+    (message "Install autoinsert...")
     (autoload-if-found '(auto-insert-mode define-auto-insert) "autoinsert" nil t)
     (auto-insert-mode)
     (define-auto-insert "\.php" "template.php")
@@ -3398,7 +3425,7 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
 *** delsel
 #+begin_src emacs-lisp
   (with-delayed-execution
-    (message "Install ddskk-delsel...")
+    (message "Install delsel...")
     (when (autoload-if-found '(delete-selection-mode) "delsel" nil t)
       (delete-selection-mode)))
 #+end_src
@@ -3440,6 +3467,7 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
 *** epa-file
 #+begin_src emacs-lisp
   (with-delayed-execution
+    (message "Install epa-file...")
     (when (autoload-if-found '(epa-file-enable) "epa-file" nil t)
       (epa-file-enable)))
 #+end_src
@@ -3521,6 +3549,7 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
 *** goto-addr
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
+        (message "Install goto-addr...")
         (autoload-if-found '(goto-address-prog-mode goto-address-mode) "goto-address" nil t)
         (with-eval-after-load 'prog-mode
           (add-hook 'prog-mode-hook #'goto-address-prog-mode))
@@ -3677,6 +3706,7 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
 *** proced
 #+begin_src emacs-lisp
   (with-delayed-execution
+    (message "Install proced...")
     (autoload-if-found '(proced) "proced" nil t)
     (add-hook 'proced-mode-hook #'(lambda ()
                                     (proced-toggle-auto-update 1)))
@@ -3717,6 +3747,7 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
 *** subword
     #+begin_src emacs-lisp
       (with-delayed-execution
+        (message "Install subword...")
         (autoload-if-found '(my/delete-forward-block) "subword" nil t)
         (global-set-key (kbd "M-d") #'my/delete-forward-block)
         (defun my/delete-forward-block ()
@@ -3748,6 +3779,7 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
 *** tab-bar
 #+begin_src emacs-lisp
   (with-delayed-execution-priority-high
+    (message "Install tab-bar...")
     (when (autoload-if-found '(tab-bar-mode tab-bar-history-mode) "tab-bar" nil t)
       (tab-bar-mode 1)
       (tab-bar-history-mode 1))
@@ -3853,6 +3885,7 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
 *** whitespace
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
+        (message "Install whitespace...")
         (when (autoload-if-found '(global-whitespace-mode) "whitespace" nil t)
           (if window-system
               (global-whitespace-mode 1)))
@@ -3953,6 +3986,8 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
 ** basic
    #+begin_src emacs-lisp
      (with-delayed-execution
+       (message "Install eshell...")
+
        ;; shell function
        (defun eshell/ff (&rest args)
          (find-file (car args)))
@@ -3977,7 +4012,7 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
          (setq eshell-history-size 100000)
          (setq eshell-hist-ignoredups t))
 
-       (with-eval-after-load 'eshell-mode
+       (with-eval-after-load 'em-alias
          (setq eshell-command-aliases-list '(("ll" "ls -la")
                                              ("cdd" "cd ~/Desktop")))))
    #+end_src
@@ -4035,6 +4070,7 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
                       :url "https://github.com/takeokunn/aweshell.git"))
 
      (with-delayed-execution
+       (message "Install aweshell...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/aweshell"))
        (autoload-if-found '(aweshell-parse-shell-history aweshell-autosuggest) "aweshell" nil t)
        (defun my/ivy-aweshell-history ()
@@ -4062,6 +4098,7 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
 ** org
    #+BEGIN_SRC emacs-lisp
      (with-eval-after-load 'org
+       (message "Install org...")
        (define-key org-mode-map (kbd "C-c ,") #'org-insert-structure-template)
        (define-key org-mode-map (kbd "C-c C-,") #'org-insert-structure-template)
        (setq org-directory "~/org")
@@ -4294,6 +4331,59 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
   ;; (require 'eaf-netease-cloud-music)
   ;; (require 'eaf-git)
   ;; (require 'eaf-system-monitor)
+#+end_src
+* EXWM
+** exwm
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'exwm))
+
+  (with-delayed-execution
+    (message "Install exwm...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/exwm"))
+
+    (when (autoload-if-found '(exwm-enable) "exwm" nil t)
+      (exwm-enable))
+
+    (when (autoload-if-found '(exwm-systemtray-enable) "exwm-systemtray" nil t)
+      (exwm-systemtray-enable))
+
+    (autoload-if-found '(exwm-input-set-key) "exwm-input" nil t)
+
+    (with-eval-after-load 'exwm-core
+      (add-hook 'exwm-mode-hook #'display-battery-mode))
+
+    (with-eval-after-load 'exwm-workspace
+      (setq exwm-workspace-number 3)))
+#+end_src
+** exwm-edit
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'exwm-edit))
+
+  (with-delayed-execution
+    (message "Install exwm-edit...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/exwm-edit"))
+    (autoload-if-found '(exwm-edit--compose) "exwm-edit")
+    (with-eval-after-load 'exwm
+      (exwm-input-set-key (kbd "C-c '") #'exwm-edit--compose)
+      (exwm-input-set-key (kbd "C-c C-'") #'exwm-edit--compose)))
+#+end_src
+** exwm-modeline
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'exwm-modeline))
+
+  (with-delayed-execution
+    (message "Install exwm-modeline...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/exwm-modeline"))
+    (autoload-if-found '(exwm-modeline-mode) "exwm-modeline")
+
+    (with-eval-after-load 'exwm-core
+      (add-hook 'exwm-mode-hook #'exwm-modeline-mode))
+
+    (with-eval-after-load 'exwm-modeline
+      (setq exwm-modeline-short t)))
 #+end_src
 * MyFunc
 ** my/beginning-of-intendation
