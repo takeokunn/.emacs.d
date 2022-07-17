@@ -1944,75 +1944,75 @@
 ** CommonLisp
 *** slime
     #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'slime))
+      ;; (eval-when-compile
+      ;;   (el-get-bundle 'slime))
 
-      (with-delayed-execution
-        (message "Install slime...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/contrib"))
+      ;; (with-delayed-execution
+      ;;   (message "Install slime...")
+      ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/slime"))
+      ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/contrib"))
 
-        (autoload-if-found '(slime slime-setup) "slime" nil t)
+      ;;   (autoload-if-found '(slime slime-setup) "slime" nil t)
 
-        (defun my/roswell-configdir ()
-          (substring (shell-command-to-string "ros roswell-internal-use version confdir") 0 -1))
+      ;;   (defun my/roswell-configdir ()
+      ;;     (substring (shell-command-to-string "ros roswell-internal-use version confdir") 0 -1))
 
-        (defun my/roswell-opt (var)
-          (with-temp-buffer
-            (insert-file-contents (concat (my/roswell-configdir) "config"))
-            (goto-char (point-min))
-            (re-search-forward (concat "^" var "\t[^\t]+\t\\(.*\\)$"))
-            (match-string 1)))
+      ;;   (defun my/roswell-opt (var)
+      ;;     (with-temp-buffer
+      ;;       (insert-file-contents (concat (my/roswell-configdir) "config"))
+      ;;       (goto-char (point-min))
+      ;;       (re-search-forward (concat "^" var "\t[^\t]+\t\\(.*\\)$"))
+      ;;       (match-string 1)))
 
-        (defun my/roswell-directory (type)
-          (concat
-           (my/roswell-configdir)
-           "lisp/"
-           type
-           "/"
-           (my/roswell-opt (concat type ".version"))
-           "/"))
+      ;;   (defun my/roswell-directory (type)
+      ;;     (concat
+      ;;      (my/roswell-configdir)
+      ;;      "lisp/"
+      ;;      type
+      ;;      "/"
+      ;;      (my/roswell-opt (concat type ".version"))
+      ;;      "/"))
 
-        (defun my/slime-history ()
-          (interactive)
-          (if (and (fboundp '-distinct)
-                   (fboundp 'f-read-text))
-              (insert
-               (completing-read
-                "choice history: "
-                (-distinct (read (f-read-text "~/.slime-history.eld")))))))
+      ;;   (defun my/slime-history ()
+      ;;     (interactive)
+      ;;     (if (and (fboundp '-distinct)
+      ;;              (fboundp 'f-read-text))
+      ;;         (insert
+      ;;          (completing-read
+      ;;           "choice history: "
+      ;;           (-distinct (read (f-read-text "~/.slime-history.eld")))))))
 
-        ;; setup
-        ;; (slime-setup '(slime-fancy))
+      ;;   ;; setup
+      ;;   ;; (slime-setup '(slime-fancy))
 
-        ;; require
-        (with-eval-after-load 'slime
-          (setq slime-path `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
-          (setq slime-backend `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
-          (setq inferior-lisp-program "ros -Q run"))
+      ;;   ;; require
+      ;;   (with-eval-after-load 'slime
+      ;;     (setq slime-path `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
+      ;;     (setq slime-backend `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
+      ;;     (setq inferior-lisp-program "ros -Q run"))
 
-        (with-eval-after-load 'slime-repl
-          (define-key slime-repl-mode-map (kbd "C-c C-r") #'my/slime-history)))
+      ;;   (with-eval-after-load 'slime-repl
+      ;;     (define-key slime-repl-mode-map (kbd "C-c C-r") #'my/slime-history)))
     #+END_SRC
 *** slime-company
 #+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'slime-company))
+  ;; (eval-when-compile
+  ;;   (el-get-bundle 'slime-company))
 
-  (with-delayed-execution
-    (message "Install slime-company...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
-    (autoload-if-found '(slime-company-maybe-enable) "slime-company" nil t)
+  ;; (with-delayed-execution
+  ;;   (message "Install slime-company...")
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
+  ;;   (autoload-if-found '(slime-company-maybe-enable) "slime-company" nil t)
 
-    ;; (slime-setup '(slime-company))
+  ;;   ;; (slime-setup '(slime-company))
 
-    (with-eval-after-load 'slime
-      (add-hook slime-mode-hook #'slime-company-maybe-enable)
-      (add-hook slime-mode-hook #'slime-company-maybe-enable)
-      (add-hook sldb-mode-hook #'slime-company-maybe-enable))
+  ;;   (with-eval-after-load 'slime
+  ;;     (add-hook slime-mode-hook #'slime-company-maybe-enable)
+  ;;     (add-hook slime-mode-hook #'slime-company-maybe-enable)
+  ;;     (add-hook sldb-mode-hook #'slime-company-maybe-enable))
 
-    (with-eval-after-load 'slime-repl
-      (add-hook slime-repl-mode-hook #'slime-company-maybe-enable)))
+  ;;   (with-eval-after-load 'slime-repl
+  ;;     (add-hook slime-repl-mode-hook #'slime-company-maybe-enable)))
 #+end_src
 *** hyperspec
     #+begin_src emacs-lisp
@@ -4114,8 +4114,8 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
        (defun my/ivy-aweshell-history ()
          (interactive)
          (insert (ivy-read "Aweshell history: " (aweshell-parse-shell-history))))
-       (with-eval-after-load 'company
-         (push 'aweshell-autosuggest company-backends))
+       ;; (with-eval-after-load 'company
+       ;;   (push 'aweshell-autosuggest company-backends))
        (with-eval-after-load 'esh-mode
          (define-key eshell-mode-map (kbd "C-c C-r") #'my/ivy-aweshell-history)))
    #+END_SRC
@@ -4402,10 +4402,10 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
   (with-delayed-execution
     (message "Install exwm-edit...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/exwm-edit"))
-    (autoload-if-found '(exwm-edit--compose) "exwm-edit")
+    (autoload-if-found '(exwm-edit--compose-minibuffer) "exwm-edit" nil t)
     (with-eval-after-load 'exwm
-      (exwm-input-set-key (kbd "C-c '") #'exwm-edit--compose)
-      (exwm-input-set-key (kbd "C-c C-'") #'exwm-edit--compose)))
+      (exwm-input-set-key (kbd "C-c '") #'exwm-edit--compose-minibuffer)
+      (exwm-input-set-key (kbd "C-c C-'") #'exwm-edit--compose-minibuffer)))
 #+end_src
 ** exwm-modeline
 #+begin_src emacs-lisp
