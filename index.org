@@ -585,7 +585,8 @@
         (set-fontset-font t '(#x20000 . #x2a6ff) "Hanazono Mincho B Regular")
         (set-fontset-font t '(#x2a700 . #x2fffd) "Hanazono Mincho C Regular")))
 
-    (my/reset-default-fontset))
+    (when (functionp 'set-fontset-font)
+      (my/reset-default-fontset)))
 #+end_src
 * Utitlity
 ** alert
@@ -1949,13 +1950,16 @@
       (with-delayed-execution
         (message "Install slime...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/slime"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/contrib"))
+
+        (autoload-if-found '(slime slime-setup) "slime" nil t)
 
         (defun my/roswell-configdir ()
           (substring (shell-command-to-string "ros roswell-internal-use version confdir") 0 -1))
 
         (defun my/roswell-opt (var)
           (with-temp-buffer
-            (insert-file-contents (concat (roswell-configdir) "config"))
+            (insert-file-contents (concat (my/roswell-configdir) "config"))
             (goto-char (point-min))
             (re-search-forward (concat "^" var "\t[^\t]+\t\\(.*\\)$"))
             (match-string 1)))
@@ -1969,13 +1973,6 @@
            (my/roswell-opt (concat type ".version"))
            "/"))
 
-        (defun my/roswell ()
-          (let ((slime-directory (my/roswell-directory "slime")))
-            (add-to-list 'load-path slime-directory)
-            (setq slime-backend (expand-file-name "swank-loader.lisp" slime-directory))
-            (setq slime-path slime-directory)
-            (slime-setup my/roswell-slime-contribs)))
-
         (defun my/slime-history ()
           (interactive)
           (if (and (fboundp '-distinct)
@@ -1985,12 +1982,13 @@
                 "choice history: "
                 (-distinct (read (f-read-text "~/.slime-history.eld")))))))
 
-        ;; require
-        (require 'slime)
-        (require 'slime-autoloads)
-        (my/roswell)
+        ;; setup
+        ;; (slime-setup '(slime-fancy))
 
+        ;; require
         (with-eval-after-load 'slime
+          (setq slime-path `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
+          (setq slime-backend `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
           (setq inferior-lisp-program "ros -Q run"))
 
         (with-eval-after-load 'slime-repl
@@ -2004,12 +2002,22 @@
   (with-delayed-execution
     (message "Install slime-company...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
-    (autoload-if-found '(slime-company) "slime-company" nil t)
-    (slime-setup '(slime-fancy slime-company)))
+    (autoload-if-found '(slime-company-maybe-enable) "slime-company" nil t)
+
+    ;; (slime-setup '(slime-company))
+
+    (with-eval-after-load 'slime
+      (add-hook slime-mode-hook #'slime-company-maybe-enable)
+      (add-hook slime-mode-hook #'slime-company-maybe-enable)
+      (add-hook sldb-mode-hook #'slime-company-maybe-enable))
+
+    (with-eval-after-load 'slime-repl
+      (add-hook slime-repl-mode-hook #'slime-company-maybe-enable)))
 #+end_src
 *** hyperspec
     #+begin_src emacs-lisp
       (with-delayed-execution
+        (message "Install hyperspec...")
         (autoload-if-found '(hyperspec-lookup) "hyperspec" nil t)
 
         (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
