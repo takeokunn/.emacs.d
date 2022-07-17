@@ -3163,30 +3163,20 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
 *** laravel-tinker-repl
     #+begin_src emacs-lisp
       (eval-when-compile
-        (el-get-bundle "takeokunn/laravel-tinker-repl.el")
-        (el-get-bundle 'xcscope)
-        (el-get-bundle "takeokunn/company-laravel-tinker-repl"))
+	(el-get-bundle "takeokunn/laravel-tinker-repl.el"))
 
       (with-delayed-execution
-        (message "Install laravel-tinker-repl...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/laravel-tinker-repl.el"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/xcscope"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/company-laravel-tinker-repl"))
+	(message "Install laravel-tinker-repl...")
+	(add-to-list 'load-path (locate-user-emacs-file "el-get/laravel-tinker-repl.el"))
+	(autoload-if-found '(laravel-tinker-repl) "laravel-tinker-repl" nil t)
 
-        (autoload-if-found '(laravel-tinker-repl) "laravel-tinker-repl" nil t)
-        (autoload-if-found '(ac-php-remake-tags-all) "ac-php-core" nil t)
-        (autoload-if-found '(company-ac-php-backend) "company-php" nil t)
+	(with-eval-after-load 'laravel-tinker-repl
+	  (define-key laravel-tinker-repl-mode-map (kbd "TAB") #'completion-at-point)
+	  (define-key laravel-tinker-repl-mode-map (kbd "C-c C-c") #'laravel-tinker-repl-quit-or-cancel))
 
-        (with-eval-after-load 'company
-          (push 'company-ac-php-backend company-backends))
-
-        (with-eval-after-load 'laravel-tinker-repl
-          (define-key laravel-tinker-repl-mode-map (kbd "TAB") #'completion-at-point)
-          (define-key laravel-tinker-repl-mode-map (kbd "C-c C-c") #'laravel-tinker-repl-quit-or-cancel))
-
-        (with-eval-after-load 'php-mode
-          (define-key php-mode-map (kbd "C-c C-c") #'laravel-tinker-repl-send-line)
-          (define-key php-mode-map (kbd "C-c C-z") #'laravel-tinker-repl-switch-to-repl)))
+	(with-eval-after-load 'php-mode
+	  (define-key php-mode-map (kbd "C-c C-c") #'laravel-tinker-repl-send-line)
+	  (define-key php-mode-map (kbd "C-c C-z") #'laravel-tinker-repl-switch-to-repl)))
     #+end_src
 *** emacs-php-doc-block
 #+begin_src emacs-lisp
@@ -3802,6 +3792,16 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
                       (point))))
               (kill-region (point) (min syntax-move-point subword-move-point))))))
     #+end_src
+*** sudo-edit
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'sudo-edit))
+
+  (with-delayed-execution
+    (message "Install sudo-edit...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/sudo-edit"))
+    (autoload-if-found '(sudo-edit-current-file) "sudo-edit" nil t))
+#+end_src
 *** syntax-subword
 #+begin_src emacs-lisp
   (eval-when-compile
