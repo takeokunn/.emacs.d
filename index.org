@@ -2790,6 +2790,9 @@
           ;; enable flycheck
           (add-hook 'lsp-mode-hook #'flycheck-mode)
 
+          ;; keybind
+          (define-key lsp-mode-map (kbd "TAB") #'completion-at-point)
+
           (setq lsp-idle-delay 0.8)
           (setq lsp-enable-links nil)
           (setq lsp-log-io nil))
@@ -3351,7 +3354,7 @@
         (autoload-if-found '(avy-zap-up-to-char-dwim) "avy-zap" nil t)
         (global-set-key (kbd "M-z") 'avy-zap-up-to-char-dwim))
     #+end_src
-** ddskk
+** DDSKK
 *** ddskk
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -3408,7 +3411,7 @@
     (with-eval-after-load 'skk
       (add-hook 'skk-mode-hook #'ddskk-posframe-mode)))
 #+end_src
-** Other
+** Color
 *** ansi-color
 #+begin_src emacs-lisp
   (with-delayed-execution
@@ -3416,7 +3419,7 @@
     (autoload 'ansi-color-for-comint-mode-on "ansi-color" "Set `ansi-color-for-comint-mode' to t." t)
     (autoload-if-found '(ansi-color-for-comint-mode-on) "ansi-color" nil t)
 
-    (with-eval-after-load 'eshell-mode
+    (with-eval-after-load 'esh-mode
       (add-hook 'eshell-mode-hook #'ansi-color-for-comint-mode-on))
 
     (with-eval-after-load 'shell-mode
@@ -3425,6 +3428,42 @@
     (with-eval-after-load 'compile
       (add-hook 'compilation-filter-hook #'(lambda ()
                                              (ansi-color-apply-on-region (point-min) (point-max))))))
+#+end_src
+*** xterm-color
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'xterm-color))
+
+  (with-delayed-execution
+    (message "Install xterm-color...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/xterm-color"))
+
+    (autoload-if-found '(xterm-color-filter) "xterm-color" nil t)
+
+    (with-eval-after-load 'xterm-color
+      (setenv "TERM" "xterm-256color")
+      (setq xterm-color-preserve-properties t))
+
+    (with-eval-after-load 'esh-mode
+      (add-to-list 'eshell-preoutput-filter-functions #'xterm-color-filter)
+      (setq eshell-output-filter-functions (remove 'eshell-handle-ansi-color eshell-output-filter-functions))))
+#+end_src
+** Other
+*** ace-window
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ace-window))
+
+  (with-delayed-execution
+    (message "Install ace-window...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ace-window"))
+    (autoload-if-found '(ace-window) "ace-window" nil t)
+    (global-set-key (kbd "C-x o") #'ace-window)
+    (with-eval-after-load 'ace-window
+      (setq aw-scope 'frame)
+      (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+      (setq aw-minibuffer-flag t)
+      (setq aw-char-position 'left)))
 #+end_src
 *** auto-insert
 #+begin_src emacs-lisp
@@ -4135,24 +4174,26 @@
     (when (autoload-if-found '(eshell-syntax-highlighting-global-mode) "eshell-syntax-highlighting" nil t)
       (eshell-syntax-highlighting-global-mode)))
 #+end_src
-** aweshell
-   #+BEGIN_SRC emacs-lisp
-     (eval-when-compile
-       (el-get-bundle 'aweshell
-                      :url "https://github.com/takeokunn/aweshell.git"))
+** esh-autosuggest
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'esh-autosuggest))
 
-     (with-delayed-execution
-       (message "Install aweshell...")
-       (add-to-list 'load-path (locate-user-emacs-file "el-get/aweshell"))
-       (autoload-if-found '(aweshell-parse-shell-history aweshell-autosuggest) "aweshell" nil t)
-       (defun my/ivy-aweshell-history ()
-         (interactive)
-         (insert (ivy-read "Aweshell history: " (aweshell-parse-shell-history))))
-       ;; (with-eval-after-load 'company
-       ;;   (push 'aweshell-autosuggest company-backends))
-       (with-eval-after-load 'esh-mode
-         (define-key eshell-mode-map (kbd "C-c C-r") #'my/ivy-aweshell-history)))
-   #+END_SRC
+  (with-delayed-execution
+    (message "Install esh-autosuggest...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/esh-autosuggest"))
+    (autoload-if-found '(esh-autosuggest-mode) "esh-autosuggest" nil t)
+
+    (defun my/setup-eshell-ivy-completion ()
+      (setq-local ivy-display-functions-alist
+                  (remq (assoc 'ivy-completion-in-region ivy-display-functions-alist)
+                        ivy-display-functions-alist)))
+
+    (with-eval-after-load 'esh-mode
+      (add-hook 'eshell-mode-hook #'esh-autosuggest-mode)
+      (add-hook 'eshell-mode-hook #'my/setup-eshell-ivy-completion)
+      (define-key eshell-mode-map [remap eshell-pcomplete] #'completion-at-point)))
+#+end_src
 ** emacs-fish-completion
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -4595,7 +4636,7 @@
       (file-name-sans-extension (or (buffer-file-name)
                                     (buffer-name (current-buffer)))))))
 #+end_src
-* footer
+* Footer
 ** Magic File Name を有効にする
    #+begin_src emacs-lisp
      (setq file-name-handler-alist my/saved-file-name-handler-alist)
