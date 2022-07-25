@@ -344,6 +344,13 @@
        (with-current-buffer "*Messages*"
          (emacs-lock-mode 'kill)))
    #+end_src
+** 日時表示
+#+begin_src emacs-lisp
+  (with-eval-after-load 'time
+    (setq display-time-string-forms '((format "%s/%s(%s)%s:%s" month day dayname 24-hours minutes)))
+    (setq display-time-24hr-format t)
+    (setq display-time-day-and-date t))
+#+end_src
 ** fontset
 #+begin_src emacs-lisp
   (with-delayed-execution
@@ -1134,6 +1141,9 @@
        (with-eval-after-load 'typescript-tsx-mode
          (add-hook 'typescript-tsx-mode-hook #'emmet-mode))
 
+       (with-eval-after-load 'vue-html-mode
+         (add-hook 'vue-html-mode-hook #'emmet-mode))
+
        (with-eval-after-load 'emmet-mode
          (define-key emmet-mode-keymap (kbd "C-j") nil)
          (define-key emmet-mode-keymap (kbd "M-j") 'emmet-expand-line)
@@ -1318,6 +1328,8 @@
        (when (autoload-if-found '(js2-mode) "js2-mode" nil t)
          (push '("\\.js$" . js2-mode) auto-mode-alist))
        (with-eval-after-load 'js2-mode
+         (setq js2-strict-missing-semi-warning nil)
+         (setq js2-missing-semi-one-line-override nil)
          (add-hook 'js2-mode-hook #'lsp-deferred)))
    #+END_SRC
 ** json-mode
@@ -2221,7 +2233,9 @@
         (message "Install counsel...")
         (when (autoload-if-found '(counsel-mode counsel-compile) "counsel" nil t)
           (counsel-mode 1))
-        (global-set-key (kbd "C-x m") 'counsel-compile))
+        (global-set-key (kbd "C-x m") 'counsel-compile)
+        (with-eval-after-load 'counsel
+          (setq counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
     #+end_src
 *** ivy
     #+begin_src emacs-lisp
@@ -2540,7 +2554,7 @@
           (define-key company-active-map (kbd "C-n") #'company-select-next)
           (define-key company-active-map (kbd "C-p") #'company-select-previous)
           (setq company-minimum-prefix-length 2)
-          (setq company-idle-delay 0.5))
+          (setq company-idle-delay 0.2))
 
         (with-eval-after-load 'company-css
           (push 'company-css company-backends))
@@ -2797,15 +2811,11 @@
           (setq lsp-intelephense-telemetry-enabled t)))
     #+END_SRC
 *** lsp-php-key
------BEGIN PGP MESSAGE-----
-
-jA0ECQMCrkfrMEfad/300sABAUtPyC55UH5zmHhnm81lbwRhKH01wNFmgxQt3lIh
-QTeR40jICDbTu/CJLngDJnq26GThQdDztg0OJkVHJ17mytWreilBbXPUnKo2axQ4
-5NN5TJjfnPKutro6dARd6aK8Cy1AEk6JEHDu3l/TvRNaJ5u8LgId0poaTd7e5cfu
-jsZecntGEc5ThntAGuqIQmTFDothZR2awQrde2pWUDebMpnlE+smp5MC4Qv6iufc
-R7RToxAHjWYMDUAwLCG/njsPjQ==
-=j0CZ
------END PGP MESSAGE-----
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (with-eval-after-load 'lsp-php
+      (setq lsp-intelephense-licence-key "00OXTX8OROOJH9P")))
+#+end_src
 *** lsp-treemacs
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -4383,13 +4393,21 @@ R7RToxAHjWYMDUAwLCG/njsPjQ==
     (when (autoload-if-found '(exwm-enable) "exwm" nil t)
       (exwm-enable))
 
+    (when (autoload-if-found '(exwm-randr-enable) "exwm-randr" nil t)
+      (exwm-randr-enable))
+
     (when (autoload-if-found '(exwm-systemtray-enable) "exwm-systemtray" nil t)
       (exwm-systemtray-enable))
 
-    (autoload-if-found '(exwm-input-set-key) "exwm-input" nil t)
+    (when (autoload-if-found '(exwm-cm-enable) "exwm-cm" nil t)
+      (exwm-cm-enable))
+
+    (when (autoload-if-found '(exwm-input-set-key) "exwm-input" nil t)
+      (exwm-input-set-key (kbd "s-SPC") #'counsel-linux-app))
 
     (with-eval-after-load 'exwm-core
-      (add-hook 'exwm-mode-hook #'display-battery-mode))
+      (add-hook 'exwm-mode-hook #'display-battery-mode)
+      (add-hook 'exwm-mode-hook #'display-time-mode))
 
     (with-eval-after-load 'exwm-workspace
       (setq exwm-workspace-number 3)))
