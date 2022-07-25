@@ -3354,7 +3354,7 @@
         (autoload-if-found '(avy-zap-up-to-char-dwim) "avy-zap" nil t)
         (global-set-key (kbd "M-z") 'avy-zap-up-to-char-dwim))
     #+end_src
-** DDSKK
+** IME
 *** ddskk
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -3429,6 +3429,24 @@
       (add-hook 'compilation-filter-hook #'(lambda ()
                                              (ansi-color-apply-on-region (point-min) (point-max))))))
 #+end_src
+*** hl-todo
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'hl-todo))
+
+  (with-delayed-execution
+    (message "Install hl-todo...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/hl-todo"))
+    (when (autoload-if-found '(global-hl-todo-mode) "hl-todo" nil t)
+      (global-hl-todo-mode))
+    (with-eval-after-load 'hl-todo
+      (setq hl-todo-keyword-faces
+            '(("TODO" . "#cc9393")
+              ("FIXME" . "#cc9393")
+              ("NOW" . "#dca3a3")
+              ("WAIT" . "#d0bf8f")
+              ("DONE" . "#afd8af")))))
+#+end_src
 *** xterm-color
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -3448,7 +3466,43 @@
       (add-to-list 'eshell-preoutput-filter-functions #'xterm-color-filter)
       (setq eshell-output-filter-functions (remove 'eshell-handle-ansi-color eshell-output-filter-functions))))
 #+end_src
-** Other
+** Mail
+*** TODO wanderlust
+    #+begin_src emacs-lisp
+      ;; (eval-when-compile
+      ;;   (el-get-bundle 'wanderlust
+      ;;                  :url "https://github.com/wanderlust/wanderlust.git"))
+
+      ;; (with-delayed-execution
+      ;;   (message "Install wanderlust...")
+      ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/wanderlust"))
+      ;;   (with-eval-after-load 'wanderlust
+      ;;     (eval-and-compile
+      ;;       (setq ssl-certificate-verification-policy 1))))
+    #+end_src
+** Joke
+*** hacker-typer
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'hacker-typer))
+
+  (with-delayed-execution
+    (message "Install hacker-typer...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/hacker-typer"))
+    (autoload-if-found '(hacker-typer) "hacker-typer" nil t))
+#+end_src
+*** power-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'power-mode
+                   :url "https://github.com/elizagamedev/power-mode.el.git"))
+
+  (with-delayed-execution
+    (message "Install power-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/power-mode"))
+    (autoload-if-found '(power-mode) "power-mode" nil t))
+#+end_src
+** Window
 *** ace-window
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -3465,6 +3519,43 @@
       (setq aw-minibuffer-flag t)
       (setq aw-char-position 'left)))
 #+end_src
+*** writeroom-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'writeroom-mode))
+
+  (with-delayed-execution
+    (message "Install writeroom-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/writeroom-mode"))
+    (autoload-if-found '(writeroom-mode
+                         writeroom-decrease-width
+                         writeroom-increase-width
+                         writeroom-adjust-width
+                         writeroom-width)
+                       "writeroom-mode" nil t)
+
+    (with-eval-after-load 'writeroom-mode
+      (add-hook 'writeroom-mode-hook #'(lambda ()
+                                       (linum-mode -1)
+                                       (display-line-numbers-mode)))
+      (define-key writeroom-mode-map (kbd "C-M-<") #'writeroom-decrease-width)
+      (define-key writeroom-mode-map (kbd "C-M->") #'writeroom-increase-width)
+      (define-key writeroom-mode-map (kbd "C-M-=") #'writeroom-adjust-width)
+      (setq writeroom-width 200)
+      (setq writeroom-maximize-window nil)))
+#+end_src
+*** zoom-window
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'zoom-window))
+
+  (with-delayed-execution
+    (message "Install zoom-window...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/zoom-window"))
+    (autoload-if-found '(zoom-window-zoom) "zoom-window" nil t)
+    (global-set-key (kbd "C-c C-z") #'zoom-window-zoom))
+#+end_src
+** Other
 *** auto-insert
 #+begin_src emacs-lisp
   (with-delayed-execution
@@ -3657,34 +3748,6 @@
         (with-eval-after-load 'text-mode
           (add-hook 'text-mode-hook #'goto-address-mode)))
     #+END_SRC
-*** hacker-typer
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'hacker-typer))
-
-  (with-delayed-execution
-    (message "Install hacker-typer...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/hacker-typer"))
-    (autoload-if-found '(hacker-typer) "hacker-typer" nil t))
-#+end_src
-*** hl-todo
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'hl-todo))
-
-  (with-delayed-execution
-    (message "Install hl-todo...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/hl-todo"))
-    (when (autoload-if-found '(global-hl-todo-mode) "hl-todo" nil t)
-      (global-hl-todo-mode))
-    (with-eval-after-load 'hl-todo
-      (setq hl-todo-keyword-faces
-            '(("TODO" . "#cc9393")
-              ("FIXME" . "#cc9393")
-              ("NOW" . "#dca3a3")
-              ("WAIT" . "#d0bf8f")
-              ("DONE" . "#afd8af")))))
-#+end_src
 *** highlight-indent-guides
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -3793,17 +3856,6 @@
         (when (autoload-if-found '(popwin-mode) "popwin" nil t)
           (popwin-mode 1)))
     #+end_src
-*** power-mode
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'power-mode
-                   :url "https://github.com/elizagamedev/power-mode.el.git"))
-
-  (with-delayed-execution
-    (message "Install power-mode...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/power-mode"))
-    (autoload-if-found '(power-mode) "power-mode" nil t))
-#+end_src
 *** proced
 #+begin_src emacs-lisp
   (with-delayed-execution
@@ -3969,19 +4021,6 @@
     (autoload-if-found '(view-lock-timer-setup) "view-lock-mode" nil t)
     (add-hook 'view-mode-hook #'view-lock-timer-setup))
 #+end_src
-*** TODO wanderlust
-    #+begin_src emacs-lisp
-      ;; (eval-when-compile
-      ;;   (el-get-bundle 'wanderlust
-      ;;                  :url "https://github.com/wanderlust/wanderlust.git"))
-
-      ;; (with-delayed-execution
-      ;;   (message "Install wanderlust...")
-      ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/wanderlust"))
-      ;;   (with-eval-after-load 'wanderlust
-      ;;     (eval-and-compile
-      ;;       (setq ssl-certificate-verification-policy 1))))
-    #+end_src
 *** which-key
     #+begin_src emacs-lisp
       (eval-when-compile
@@ -4013,42 +4052,6 @@
       (autoload 'woman-find-file "woman"
         "Find, decode and browse a specific UN*X man-page file." t)
     #+end_src
-*** writeroom-mode
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'writeroom-mode))
-
-  (with-delayed-execution
-    (message "Install writeroom-mode...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/writeroom-mode"))
-    (autoload-if-found '(writeroom-mode
-                         writeroom-decrease-width
-                         writeroom-increase-width
-                         writeroom-adjust-width
-                         writeroom-width)
-                       "writeroom-mode" nil t)
-
-    (with-eval-after-load 'writeroom-mode
-      (add-hook 'writeroom-mode-hook #'(lambda ()
-                                       (linum-mode -1)
-                                       (display-line-numbers-mode)))
-      (define-key writeroom-mode-map (kbd "C-M-<") #'writeroom-decrease-width)
-      (define-key writeroom-mode-map (kbd "C-M->") #'writeroom-increase-width)
-      (define-key writeroom-mode-map (kbd "C-M-=") #'writeroom-adjust-width)
-      (setq writeroom-width 200)
-      (setq writeroom-maximize-window nil)))
-#+end_src
-*** zoom-window
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'zoom-window))
-
-  (with-delayed-execution
-    (message "Install zoom-window...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/zoom-window"))
-    (autoload-if-found '(zoom-window-zoom) "zoom-window" nil t)
-    (global-set-key (kbd "C-c C-z") #'zoom-window-zoom))
-#+end_src
 * Elfeed
 ** elfeed
    #+begin_src emacs-lisp
