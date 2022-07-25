@@ -3364,13 +3364,37 @@
 
         (global-set-key (kbd "C-x C-j") #'skk-mode)
 
+        (defun my/skk-C-j-key (arg)
+          (interactive "P")
+          (cond
+           ((and (null (skk-in-minibuffer-p))
+                 (null skk-henkan-mode))
+            (skk-emulate-original-map arg))
+           (t
+            (skk-kakutei arg))))
+
         (with-eval-after-load 'skk
           (setq skk-preload t)
           (setq default-input-method "japanese-skk"))
 
         (with-eval-after-load 'skk-vars
+          ;; use skkserv
+          (when (string= system-type "darwin")
+            (setq skk-server-host "localhost")
+            (setq skk-server-portnum 1178))
+
           (setq skk-byte-compile-init-file t)
-          (setq skk-isearch-mode-enable 'always)))
+          (setq skk-isearch-mode-enable 'always)
+          (setq skk-egg-like-newline t)
+          (setq skk-show-annotation nil)
+          (setq skk-auto-insert-paren t)
+
+          ;; azik
+          (setq skk-use-azik t)
+          (setq skk-azik-keyboard-type 'jp106)
+
+          ;; ref: https://github.com/skk-dev/ddskk/blob/master/etc/dot.skk#L752-L768
+          (add-to-list 'skk-rom-kana-rule-list '(skk-kakutei-key nil my/skk-C-j-key))))
     #+END_SRC
 *** ddskk-posframe
 #+begin_src emacs-lisp
