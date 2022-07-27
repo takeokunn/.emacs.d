@@ -1141,8 +1141,8 @@
        (with-eval-after-load 'typescript-tsx-mode
          (add-hook 'typescript-tsx-mode-hook #'emmet-mode))
 
-       (with-eval-after-load 'vue-html-mode
-         (add-hook 'vue-html-mode-hook #'emmet-mode))
+       (with-eval-after-load 'vue-mode
+         (add-hook 'vue-mode-hook #'emmet-mode))
 
        (with-eval-after-load 'emmet-mode
          (define-key emmet-mode-keymap (kbd "C-j") nil)
@@ -1533,6 +1533,17 @@
        (when (autoload-if-found '(plantuml-mode) "plantuml-mode" nil t)
          (push '("\\.pu$" . plantuml-mode) auto-mode-alist)))
    #+END_SRC
+** pug-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'pug-mode))
+
+  (with-delayed-execution
+    (message "Install pug-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/pug-mode"))
+    (when (autoload-if-found '(pug-mode) "pug-mode" nil t)
+      (push '("\\.pug$" . pug-mode) auto-mode-alist)))
+#+end_src
 ** prisma-mode
    #+begin_src emacs-lisp
      (eval-when-compile
@@ -1956,75 +1967,72 @@
 ** CommonLisp
 *** slime
     #+BEGIN_SRC emacs-lisp
-      ;; (eval-when-compile
-      ;;   (el-get-bundle 'slime))
+      (eval-when-compile
+        (el-get-bundle 'slime))
 
-      ;; (with-delayed-execution
-      ;;   (message "Install slime...")
-      ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/slime"))
-      ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/contrib"))
+      (with-delayed-execution
+        (message "Install slime...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/lib"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/contrib"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/swank"))
 
-      ;;   (autoload-if-found '(slime slime-setup) "slime" nil t)
+        (autoload-if-found '(slime) "slime" nil t)
 
-      ;;   (defun my/roswell-configdir ()
-      ;;     (substring (shell-command-to-string "ros roswell-internal-use version confdir") 0 -1))
+        (defun my/roswell-configdir ()
+          (substring (shell-command-to-string "ros roswell-internal-use version confdir") 0 -1))
 
-      ;;   (defun my/roswell-opt (var)
-      ;;     (with-temp-buffer
-      ;;       (insert-file-contents (concat (my/roswell-configdir) "config"))
-      ;;       (goto-char (point-min))
-      ;;       (re-search-forward (concat "^" var "\t[^\t]+\t\\(.*\\)$"))
-      ;;       (match-string 1)))
+        (defun my/roswell-opt (var)
+          (with-temp-buffer
+            (insert-file-contents (concat (my/roswell-configdir) "config"))
+            (goto-char (point-min))
+            (re-search-forward (concat "^" var "\t[^\t]+\t\\(.*\\)$"))
+            (match-string 1)))
 
-      ;;   (defun my/roswell-directory (type)
-      ;;     (concat
-      ;;      (my/roswell-configdir)
-      ;;      "lisp/"
-      ;;      type
-      ;;      "/"
-      ;;      (my/roswell-opt (concat type ".version"))
-      ;;      "/"))
+        (defun my/roswell-directory (type)
+          (concat
+           (my/roswell-configdir)
+           "lisp/"
+           type
+           "/"
+           (my/roswell-opt (concat type ".version"))
+           "/"))
 
-      ;;   (defun my/slime-history ()
-      ;;     (interactive)
-      ;;     (if (and (fboundp '-distinct)
-      ;;              (fboundp 'f-read-text))
-      ;;         (insert
-      ;;          (completing-read
-      ;;           "choice history: "
-      ;;           (-distinct (read (f-read-text "~/.slime-history.eld")))))))
+        (defun my/slime-history ()
+          (interactive)
+          (if (and (fboundp '-distinct)
+                   (fboundp 'f-read-text))
+              (insert
+               (completing-read
+                "choice history: "
+                (-distinct (read (f-read-text "~/.slime-history.eld")))))))
 
-      ;;   ;; setup
-      ;;   ;; (slime-setup '(slime-fancy))
+        ;; require
+        (with-eval-after-load 'slime
+          (setq slime-path `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
+          (setq slime-backend `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
+          (setq inferior-lisp-program "ros -Q run"))
 
-      ;;   ;; require
-      ;;   (with-eval-after-load 'slime
-      ;;     (setq slime-path `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
-      ;;     (setq slime-backend `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
-      ;;     (setq inferior-lisp-program "ros -Q run"))
-
-      ;;   (with-eval-after-load 'slime-repl
-      ;;     (define-key slime-repl-mode-map (kbd "C-c C-r") #'my/slime-history)))
+        (with-eval-after-load 'slime-repl
+          (define-key slime-repl-mode-map (kbd "C-c C-r") #'my/slime-history)))
     #+END_SRC
 *** slime-company
 #+begin_src emacs-lisp
-  ;; (eval-when-compile
-  ;;   (el-get-bundle 'slime-company))
+  (eval-when-compile
+    (el-get-bundle 'slime-company))
 
-  ;; (with-delayed-execution
-  ;;   (message "Install slime-company...")
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
-  ;;   (autoload-if-found '(slime-company-maybe-enable) "slime-company" nil t)
+  (with-delayed-execution
+    (message "Install slime-company...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
+    (autoload-if-found '(slime-company-maybe-enable) "slime-company" nil t)
 
-  ;;   ;; (slime-setup '(slime-company))
+    (with-eval-after-load 'slime
+      (add-hook slime-mode-hook #'slime-company-maybe-enable)
+      (add-hook slime-mode-hook #'slime-company-maybe-enable)
+      (add-hook sldb-mode-hook #'slime-company-maybe-enable))
 
-  ;;   (with-eval-after-load 'slime
-  ;;     (add-hook slime-mode-hook #'slime-company-maybe-enable)
-  ;;     (add-hook slime-mode-hook #'slime-company-maybe-enable)
-  ;;     (add-hook sldb-mode-hook #'slime-company-maybe-enable))
-
-  ;;   (with-eval-after-load 'slime-repl
-  ;;     (add-hook slime-repl-mode-hook #'slime-company-maybe-enable)))
+    (with-eval-after-load 'slime-repl
+      (add-hook slime-repl-mode-hook #'slime-company-maybe-enable)))
 #+end_src
 *** hyperspec
     #+begin_src emacs-lisp
@@ -2124,15 +2132,7 @@
         (autoload-if-found '(cider cider-format-buffer cider-switch-to-last-clojure-buffer) "cider" nil t)
         (add-hook 'before-save-hook #'cider-format-buffer t t)
 
-        (defun my/cider-switch-to-last-clojure-buffer ()
-          (interactive)
-          (let* ((window (split-window-right))
-                 (buffer (current-buffer)))
-            (set-window-buffer window buffer)
-            (cider-switch-to-last-clojure-buffer)))
-
         (with-eval-after-load 'cider-mode
-          (define-key cider-mode-map (kbd "C-c C-z") #'my/cider-switch-to-last-clojure-buffer)
           (setq cider-font-lock-dynamically '(macro core function var)))
 
         (with-eval-after-load 'cider-repl
@@ -2765,7 +2765,7 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-mode/clients"))
 
         (autoload-if-found '(lsp lsp-deferred lsp-org) "lsp-mode" nil t)
-        (autoload-if-found '(lsp-lens) "lsp-lens" nil t)
+        (autoload-if-found '(lsp-lens-mode lsp-lens-refresh) "lsp-lens" nil t)
         (autoload-if-found '(lsp-diagnostics-mode) "lsp-diagnostics" nil t)
         (autoload-if-found '(lsp-completion-mode) "lsp-completion" nil t)
         (autoload-if-found '(lsp-dired-mode) "lsp-dired" nil t)
@@ -2790,9 +2790,7 @@
           ;; enable flycheck
           (add-hook 'lsp-mode-hook #'flycheck-mode)
 
-          ;; keybind
-          (define-key lsp-mode-map (kbd "TAB") #'completion-at-point)
-
+          ;; config
           (setq lsp-idle-delay 0.8)
           (setq lsp-enable-links nil)
           (setq lsp-log-io nil))
@@ -2811,7 +2809,14 @@
         (with-eval-after-load 'lsp-php
           (setq lsp-intelephense-clear-cache t)
           (setq lsp-intelephense-php-version "8.1")
-          (setq lsp-intelephense-telemetry-enabled t)))
+          (setq lsp-intelephense-telemetry-enabled t))
+
+        (with-eval-after-load 'lsp-lens
+          (define-advice narrow-to-region (:after (&rest _))
+            (lsp-lens-refresh t))
+
+          (define-advice widen (:after (&rest _))
+            (lsp-lens-refresh t))))
     #+END_SRC
 *** lsp-php-key
 #+begin_src emacs-lisp
@@ -3514,10 +3519,10 @@
     (autoload-if-found '(ace-window) "ace-window" nil t)
     (global-set-key (kbd "C-x o") #'ace-window)
     (with-eval-after-load 'ace-window
+      (setq aw-dispatch-always t)
       (setq aw-scope 'frame)
       (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-      (setq aw-minibuffer-flag t)
-      (setq aw-char-position 'left)))
+      (setq aw-minibuffer-flag t)))
 #+end_src
 *** writeroom-mode
 #+begin_src emacs-lisp
@@ -3554,6 +3559,56 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/zoom-window"))
     (autoload-if-found '(zoom-window-zoom) "zoom-window" nil t)
     (global-set-key (kbd "C-c C-z") #'zoom-window-zoom))
+#+end_src
+** Embark
+*** embark
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'embark))
+
+  (with-delayed-execution
+    (message "Install embark...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/embark"))
+    (autoload-if-found '(embark-act embark-dwim embark-prefix-help-command) "embark" nil t)
+    (global-set-key (kbd "C-.") #'embark-act)
+    (global-set-key (kbd "C-;") #'embark-dwim)
+
+
+    (defmacro my/embark-ace-action (fn)
+      `(defun ,(intern (concat "my/embark-ace-" (symbol-name fn))) ()
+         (interactive)
+         (with-demoted-errors "%s"
+           (aw-switch-to-window (aw-select nil))
+           (call-interactively (symbol-function ',fn)))))
+
+    (defmacro my/embark-split-action (fn split-type)
+      `(defun ,(intern (concat "my/embark-"
+                               (symbol-name fn)
+                               "-"
+                               (car (last  (split-string
+                                            (symbol-name split-type) "-"))))) ()
+         (interactive)
+         (funcall #',split-type)
+         (call-interactively #',fn)))
+
+
+    (with-eval-after-load 'embark
+      (setq prefix-help-command #'embark-prefix-help-command)
+
+      ;; ace-window
+      (define-key embark-file-map     (kbd "o") (my/embark-ace-action find-file))
+      (define-key embark-buffer-map   (kbd "o") (my/embark-ace-action switch-to-buffer))
+      (define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))
+
+      ;; split window(2)
+      (define-key embark-file-map     (kbd "2") (my/embark-split-action find-file split-window-below))
+      (define-key embark-buffer-map   (kbd "2") (my/embark-split-action switch-to-buffer split-window-below))
+      (define-key embark-bookmark-map (kbd "2") (my/embark-split-action bookmark-jump split-window-below))
+
+      ;; split window(3)
+      (define-key embark-file-map     (kbd "3") (my/embark-split-action find-file split-window-right))
+      (define-key embark-buffer-map   (kbd "3") (my/embark-split-action switch-to-buffer split-window-right))
+      (define-key embark-bookmark-map (kbd "3") (my/embark-split-action bookmark-jump split-window-right))))
 #+end_src
 ** Other
 *** auto-insert
@@ -3633,19 +3688,6 @@
           (when (require 'editorconfig-core)
             (editorconfig-mode 1))))
     #+END_SRC
-*** embark
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'embark))
-
-  (with-delayed-execution
-    (message "Install embark...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/embark"))
-    (autoload-if-found '(embark-act embark-prefix-help-command) "embark" nil t)
-    (global-set-key (kbd "C-.") #'embark-act)
-    (with-eval-after-load 'embark
-      (setq prefix-help-command #'embark-prefix-help-command)))
-#+end_src
 *** esup
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
