@@ -2045,7 +2045,7 @@
           (setq common-lisp-hyperspec--format-characters nil))
 
         (with-eval-after-load 'lisp-mode
-            (define-key lisp-mode-map (kbd "C-c h") #'hyperspec-lookup)))
+          (define-key lisp-mode-map (kbd "C-c h") #'hyperspec-lookup)))
     #+end_src
 ** EmacsLisp
 *** elisp-slime-nav
@@ -2672,7 +2672,6 @@
     (autoload-if-found '(company-org-block) "company-org-block" nil t)
     (with-eval-after-load 'company
       (push 'company-org-block company-backends)))
-
 #+end_src
 *** slime-company
 #+begin_src emacs-lisp
@@ -2682,8 +2681,9 @@
   (with-delayed-execution
     (message "Install slime-company...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
-    (require 'slime-company)
-    (slime-setup '(slime-company)))
+    (autoload-if-found '(company-slime) "slime-company" nil t)
+    (with-eval-after-load 'company
+      (push 'company-slime company-backends)))
 #+end_src
 ** Prescient
 *** prescient
