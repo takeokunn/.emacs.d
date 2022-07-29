@@ -1693,24 +1693,56 @@ abstract class ${1:Class} {
     $0
   }
 #+end_src
+**** use-props
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: use-props
+  # key: use-props
+  # --
+  import { Props } from './Layout'
+
+  export const useProps = (): Props => {
+    return {
+      tmp: 'tmp',
+    }
+  }
+#+end_src
 *** typescript-tsx-mode/
 **** .yas-parents
 #+BEGIN_SRC snippet
   web-mode
 #+END_SRC
-***
-**** template
-     #+begin_src snippet
-       # -*- mode: snippet -*-
-       # name: template
-       # key: template
-       # --
-       export const ${1:Component}: React.FC${2:<${3:Props}>} = (${4:props: Props}) => {
-         return (
-            $0
-         )
-       }
-     #+end_src
+**** index
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: index
+  # key: index
+  # --
+  import React from 'react'
+  import { useProps } from './useProps'
+  import { Layout } from './Layout'
+
+  export const ${1:Index}: React.FC = () => <Layout {...useProps()} />
+#+end_src
+**** layout
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: layout
+  # key: layout
+  # --
+  import React from 'react'
+  import styled from 'styled-components'
+
+  export type Props = {
+    tmp: string
+  }
+
+  export const Layout: React.FC<Props> = (props: Props) => {
+    return <Wrapper>{props.tmp}</Wrapper>
+  }
+
+  const Wrapper = styled.div\`\`
+#+end_src
 *** vue-mode/
 **** .yas-parents
 #+BEGIN_SRC snippet
