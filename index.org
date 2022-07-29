@@ -1977,7 +1977,8 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/contrib"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/swank"))
 
-        (autoload-if-found '(slime) "slime" nil t)
+        (require 'slime)
+        (slime-setup '(slime-repl slime-fancy slime-banner slime-indentation))
 
         (defun my/roswell-configdir ()
           (substring (shell-command-to-string "ros roswell-internal-use version confdir") 0 -1))
@@ -2007,7 +2008,6 @@
                 "choice history: "
                 (-distinct (read (f-read-text "~/.slime-history.eld")))))))
 
-        ;; require
         (with-eval-after-load 'slime
           (setq slime-path `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
           (setq slime-backend `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
@@ -2016,24 +2016,6 @@
         (with-eval-after-load 'slime-repl
           (define-key slime-repl-mode-map (kbd "C-c C-r") #'my/slime-history)))
     #+END_SRC
-*** slime-company
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'slime-company))
-
-  (with-delayed-execution
-    (message "Install slime-company...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
-    (autoload-if-found '(slime-company-maybe-enable) "slime-company" nil t)
-
-    (with-eval-after-load 'slime
-      (add-hook slime-mode-hook #'slime-company-maybe-enable)
-      (add-hook slime-mode-hook #'slime-company-maybe-enable)
-      (add-hook sldb-mode-hook #'slime-company-maybe-enable))
-
-    (with-eval-after-load 'slime-repl
-      (add-hook slime-repl-mode-hook #'slime-company-maybe-enable)))
-#+end_src
 *** hyperspec
     #+begin_src emacs-lisp
       (with-delayed-execution
@@ -2691,6 +2673,17 @@
     (with-eval-after-load 'company
       (push 'company-org-block company-backends)))
 
+#+end_src
+*** slime-company
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'slime-company))
+
+  (with-delayed-execution
+    (message "Install slime-company...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
+    (require 'slime-company)
+    (slime-setup '(slime-company)))
 #+end_src
 ** Prescient
 *** prescient
