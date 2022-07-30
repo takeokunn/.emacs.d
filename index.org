@@ -1138,7 +1138,7 @@
        (with-eval-after-load 'web-php-blade-mode
          (add-hook 'web-php-blade-mode #'emmet-mode))
 
-       (with-eval-after-load 'typescript-tsx-mode
+       (with-eval-after-load 'typescript-mode
          (add-hook 'typescript-tsx-mode-hook #'emmet-mode))
 
        (with-eval-after-load 'vue-mode
@@ -2999,7 +2999,7 @@
           (exec-path-from-shell-initialize))
 
         (with-eval-after-load 'exec-path-from-shell
-          (setq exec-path-from-shell-variables '("PATH" "GEM_HOME" "GOROOT" "GOPATH" "LSP_USE_PLISTS"))))
+          (setq exec-path-from-shell-variables '("PATH" "GEM_HOME" "GOROOT" "GOPATH" "LSP_USE_PLISTS" "TERM"))))
     #+END_SRC
 ** Cpp
 *** clang-format
@@ -3719,7 +3719,9 @@
     (message "Install fancy-narrow...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/fancy-narrow"))
     (when (autoload-if-found '(fancy-narrow-mode) "fancy-narrow" nil t)
-      (fancy-narrow-mode)))
+      (fancy-narrow-mode))
+    (with-eval-after-load 'fancy-narrow
+      (add-hook 'fancy-narrow-mode-hook #'(lambda () (lsp-mode -1)))))
 #+end_src
 *** font-lock-studio
     #+BEGIN_SRC emacs-lisp
