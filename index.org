@@ -1274,6 +1274,34 @@
        (with-eval-after-load 'graphql-mode
          (setq graphql-indent-level 4)))
    #+end_src
+** graphviz-dot-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'graphviz-dot-mode))
+
+  (with-delayed-execution
+    (message "Install graphviz-dot-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/graphviz-dot-mode"))
+    (when (autoload-if-found '(graphviz-dot-mode) "graphviz-dot-mode" nil t)
+      (add-to-list 'auto-mode-alist '("\\.dot\\'" . graphviz-dot-mode))
+      (add-to-list 'auto-mode-alist '("\\.gv\\'" . graphviz-dot-mode)))
+    (with-eval-after-load 'graphviz-dot-mode
+      (setq graphviz-dot-auto-indent-on-semi nil)
+      (setq graphviz-dot-indent-width 2)))
+#+end_src
+** groovy-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'groovy-mode))
+
+  (with-delayed-execution
+    (message "Install groovy-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/groovy-mode"))
+    (when (autoload-if-found '(groovy-mode) "groovy-mode" nil t)
+      (add-to-list 'auto-mode-alist '("\\.g\\(?:ant\\|roovy\\|radle\\)\\'" . groovy-mode))
+      (add-to-list 'auto-mode-alist '("/Jenkinsfile\\'" . groovy-mode))
+      (add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode))))
+#+end_src
 ** hack-mode
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -1403,7 +1431,26 @@
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/markdown-mode")))
        (when (autoload-if-found '(markdown-mode) "markdown-mode" nil t)
          (push '("\\.md$" . markdown-mode) auto-mode-alist)
-         (push '("\\.markdown$" . markdown-mode) auto-mode-alist)))
+         (push '("\\.markdown$" . markdown-mode) auto-mode-alist))
+
+       (with-eval-after-load 'markdown-mode
+         (setq markdown-code-lang-modes (append '(("diff" . diff-mode)
+                                                  ("hs" . haskell-mode)
+                                                  ("html" . web-mode)
+                                                  ("ini" . conf-mode)
+                                                  ("js" . web-mode)
+                                                  ("jsx" . web-mode)
+                                                  ("md" . markdown-mode)
+                                                  ("pl6" . raku-mode)
+                                                  ("py" . python-mode)
+                                                  ("rb" . ruby-mode)
+                                                  ("rs" . rustic-mode)
+                                                  ("sqlite3" . sql-mode)
+                                                  ("ts" . web-mode)
+                                                  ("tsx" . web-mode)
+                                                  ("yaml". yaml-mode)
+                                                  ("zsh" . sh-mode))
+                                                markdown-code-lang-modes))))
    #+END_SRC
 ** makefile-mode
    #+begin_src emacs-lisp
@@ -2198,6 +2245,26 @@
       (with-delayed-execution-priority-high
         (add-to-list 'load-path (locate-user-emacs-file "el-get/swiper")))
     #+end_src
+*** migemo
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'migemo))
+
+  (with-delayed-execution
+    (message "Install migemo...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/migemo"))
+
+    (autoload-if-found '(migemo-init) "migemo" nil t)
+    (migemo-init)
+
+    (with-eval-after-load 'migemo
+      (setq migemo-command "cmigemo")
+      (setq migemo-options '("-q" "--emacs"))
+      (setq migemo-dictionary "/usr/local/share/migemo/utf-8/migemo-dict")
+      (setq migemo-user-dictionary nil)
+      (setq migemo-regex-dictionary nil)
+      (setq migemo-coding-system 'utf-8-unix)))
+#+end_src
 *** swiper
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
@@ -2244,6 +2311,21 @@
         (with-eval-after-load 'ivy-rich
           (setq ivy-rich-path-style 'abbrev)))
     #+END_SRC
+*** ivy-migemo
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ivy-migemo))
+
+  (with-delayed-execution
+    (message "Install ivy-migemo...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-migemo"))
+
+    (autoload-if-found '(ivy-migemo-toggle-fuzzy ivy-migemo-toggle-migemo) "ivy-migemo" nil t)
+
+    (with-eval-after-load 'ivy
+      (define-key ivy-minibuffer-map (kbd "M-f") #'ivy-migemo-toggle-fuzzy)
+      (define-key ivy-minibuffer-map (kbd "M-m") #'ivy-migemo-toggle-migemo)))
+#+end_src
 ** Theme
 *** all-the-icons
     #+BEGIN_SRC emacs-lisp
@@ -2498,6 +2580,9 @@
           (counsel-projectile-mode +1))
 
         (with-eval-after-load 'counsel-projectile
+          (setq counsel-projectile-sort-files t)
+          (setq counsel-projectile-sort-projects t)
+          (setq counsel-projectile-sort-buffers t)
           (setq counsel-projectile-grep-initial-input '(ivy-thing-at-point))
           (setq counsel-projectile-ag-initial-input '(ivy-thing-at-point))
           (setq counsel-projectile-rg-initial-input '(ivy-thing-at-point))))
@@ -3562,10 +3647,12 @@
   (with-delayed-execution
     (message "Install embark...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/embark"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/avy-embark-collect"))
+
     (autoload-if-found '(embark-act embark-dwim embark-prefix-help-command) "embark" nil t)
+
     (global-set-key (kbd "C-.") #'embark-act)
     (global-set-key (kbd "C-;") #'embark-dwim)
-
 
     (defmacro my/embark-ace-action (fn)
       `(defun ,(intern (concat "my/embark-ace-" (symbol-name fn))) ()
@@ -3578,12 +3665,11 @@
       `(defun ,(intern (concat "my/embark-"
                                (symbol-name fn)
                                "-"
-                               (car (last  (split-string
-                                            (symbol-name split-type) "-"))))) ()
+                               (car (last (split-string
+                                           (symbol-name split-type) "-"))))) ()
          (interactive)
          (funcall #',split-type)
          (call-interactively #',fn)))
-
 
     (with-eval-after-load 'embark
       (setq prefix-help-command #'embark-prefix-help-command)
