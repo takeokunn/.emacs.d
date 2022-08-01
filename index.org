@@ -671,6 +671,15 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/emacsql")))
 
 #+end_src
+** epl
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'epl))
+
+  (with-delayed-execution
+    (message "Install epl...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/epl")))
+#+end_src
 ** f
    #+begin_src emacs-lisp
      (eval-when-compile
@@ -789,6 +798,15 @@
   (with-delayed-execution-priority-high
     (message "Install pfuture...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/pfuture")))
+#+end_src
+** pkg-info
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'pkg-info))
+
+  (with-delayed-execution
+    (message "Install pkg-info...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/pkg-info")))
 #+end_src
 ** posframe
 #+begin_src emacs-lisp
@@ -2161,6 +2179,9 @@
         (autoload-if-found '(cider cider-format-buffer cider-switch-to-last-clojure-buffer) "cider" nil t)
         (add-hook 'before-save-hook #'cider-format-buffer t t)
 
+        (with-eval-after-load 'cider-common
+          (setq cider-special-mode-truncate-lines nil))
+
         (with-eval-after-load 'cider-mode
           (setq cider-font-lock-dynamically '(macro core function var)))
 
@@ -2172,7 +2193,8 @@
           (setq cider-repl-display-in-current-window t))
 
         (with-eval-after-load 'nrepl-client
-          (setq nrepl-use-ssh-fallback-for-remote-hosts t))
+          (setq nrepl-use-ssh-fallback-for-remote-hosts t)
+          (setq nrepl-hide-special-buffers t))
 
         (with-eval-after-load 'cider-eval
           (setq cider-show-error-buffer nil)
@@ -2207,11 +2229,15 @@
   (with-delayed-execution
     (message "Install clj-refactor...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/clj-refactor"))
-    ;; (when (autoload-if-found '(clj-refactor-mode cljr-add-keybindings-with-prefix) "clj-refactor" nil t)
-    ;;   (add-hook 'clojure-mode-hook #'(lambda ()
-    ;;                                    (clj-refactor-mode 1)
-    ;;                                    (cljr-add-keybindings-with-prefix "C-c C-m"))))
-    )
+
+    (autoload-if-found '(clj-refactor-mode cljr-add-keybindings-with-prefix) "clj-refactor" nil t)
+
+    (add-hook 'clojure-mode-hook #'clj-refactor-mode)
+    (cljr-add-keybindings-with-prefix "C-c C-m")
+
+    (with-eval-after-load 'clj-refactor
+      (setq cljr-suppress-middleware-warnings t)
+      (setq cljr-hotload-dependencies t)))
 #+end_src
 *** inf-clojure
 #+begin_src emacs-lisp
@@ -2254,8 +2280,8 @@
     (message "Install migemo...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/migemo"))
 
-    (autoload-if-found '(migemo-init) "migemo" nil t)
-    (migemo-init)
+    ;; (autoload-if-found '(migemo-init) "migemo" nil t)
+    ;; (migemo-init)
 
     (with-eval-after-load 'migemo
       (setq migemo-command "cmigemo")
@@ -2322,9 +2348,10 @@
 
     (autoload-if-found '(ivy-migemo-toggle-fuzzy ivy-migemo-toggle-migemo) "ivy-migemo" nil t)
 
-    (with-eval-after-load 'ivy
-      (define-key ivy-minibuffer-map (kbd "M-f") #'ivy-migemo-toggle-fuzzy)
-      (define-key ivy-minibuffer-map (kbd "M-m") #'ivy-migemo-toggle-migemo)))
+    ;; (with-eval-after-load 'ivy
+    ;;   (define-key ivy-minibuffer-map (kbd "M-f") #'ivy-migemo-toggle-fuzzy)
+    ;;   (define-key ivy-minibuffer-map (kbd "M-m") #'ivy-migemo-toggle-migemo))
+    )
 #+end_src
 ** Theme
 *** all-the-icons
