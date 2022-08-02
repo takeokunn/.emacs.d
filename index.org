@@ -1341,6 +1341,9 @@
      (with-delayed-execution
        (message "Install haskell-mode...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/haskell-mode")))
+
+       (autoload-if-found '(haskell-doc-current-info) "haskell-doc" nil t)
+
        (when (autoload-if-found '(haskell-mode) "haskell-mode" nil t)
          (push '("\\.hs$" . haskell-mode) auto-mode-alist)
          (push '("\\.cable$" . haskell-mode) auto-mode-alist)))
@@ -2008,6 +2011,9 @@
         (with-eval-after-load 'lisp-interaction-mode
           (add-hook 'lisp-interacton-mode-hook #'enable-paredit-mode))
 
+        (with-eval-after-load 'scheme
+          (add-hook 'scheme-mode-hook #'enable-paredit-mode))
+
         (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode))
     #+END_SRC
 *** rainbow-delimiter
@@ -2027,7 +2033,10 @@
           (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode-enable))
 
         (with-eval-after-load 'clojure-mode
-          (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode-enable)))
+          (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode-enable))
+
+        (with-eval-after-load 'scheme
+          (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)))
     #+END_SRC
 ** CommonLisp
 *** slime
@@ -3053,6 +3062,32 @@
           (define-key lsp-mode-map (kbd "C-c C-s") #'lsp-ui-sideline-mode)
           (define-key lsp-mode-map (kbd "C-c C-d") #'lsp-ui-doc-mode)))
     #+END_SRC
+*** lsp-scheme
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'lsp-scheme))
+
+  (with-delayed-execution
+    (message "Install lsp-scheme...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-scheme"))
+    (autoload-if-found '(lsp-scheme) "lsp-scheme" nil t)
+    (with-eval-after-load 'scheme
+      (setq lsp-scheme-implementation "guile")
+      (add-hook 'scheme-mode-hook #'lsp-scheme)))
+#+end_src
+*** lsp-haskell
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'lsp-haskell))
+
+  (with-delayed-execution
+    (message "Install lsp-haskell...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-haskell"))
+    (autoload-if-found '(lsp) "lsp-haskell" nil t)
+    (with-eval-after-load 'haskell-mode
+      (add-hook 'haskell-mode-hook #'lsp)
+      (add-hook 'haskell-literate-mode-hook #'lsp)))
+#+end_src
 ** Git
 *** magit
     #+BEGIN_SRC emacs-lisp
@@ -3388,6 +3423,19 @@
           (define-key js2-mode-map (kbd "C-c C-l") #'nodejs-repl-load-file)
           (define-key js2-mode-map (kbd "C-c C-z") #'nodejs-repl-switch-to-repl)))
     #+end_src
+** Haskell
+*** hindent
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'hindent))
+
+  (with-delayed-execution
+    (message "Install hindent...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/hindent"))
+    (autoload-if-found '(hindent-mode) "hindent" nil t)
+    (with-eval-after-load 'haskell-mode
+      (add-hook 'haskell-mode-hook #'hindent-mode)))
+#+end_src
 ** File
 *** recentf
     #+BEGIN_SRC emacs-lisp
