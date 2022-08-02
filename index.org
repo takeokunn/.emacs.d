@@ -1983,282 +1983,6 @@
     (with-eval-after-load 'zig-mode
       (add-hook 'zig-mode-hook #'lsp-deferred)))
 #+end_src
-* Lisp
-** Basic
-*** paredit
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'paredit))
-
-      (with-delayed-execution-priority-high
-        (message "Install paredit...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/paredit"))
-        (autoload-if-found '(enable-paredit-mode paredit-forward-slurp-sexp paredit-splice-sexp) "paredit" nil t)
-
-        (global-set-key (kbd "C-c f") #'paredit-forward-slurp-sexp)
-        (global-set-key (kbd "M-s") #'paredit-splice-sexp)
-
-        (with-eval-after-load 'lisp-mode
-          (add-hook 'lisp-mode-hook #'enable-paredit-mode)
-          (add-hook 'lisp-data-mode-hook #'enable-paredit-mode))
-
-        (with-eval-after-load 'emacs-lisp-mode
-          (add-hook 'emacs-lisp-mode-hook #'enable-paredit-mode))
-
-        (with-eval-after-load 'clojure-mode
-          (add-hook 'clojure-mode-hook #'enable-paredit-mode))
-
-        (with-eval-after-load 'lisp-interaction-mode
-          (add-hook 'lisp-interacton-mode-hook #'enable-paredit-mode))
-
-        (with-eval-after-load 'scheme
-          (add-hook 'scheme-mode-hook #'enable-paredit-mode))
-
-        (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode))
-    #+END_SRC
-*** rainbow-delimiter
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'rainbow-delimiters))
-
-      (with-delayed-execution
-        (message "Install rainbow-delimiters...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/rainbow-delimiters"))
-        (autoload-if-found '(rainbow-delimiters-mode-enable) "rainbow-delimiters" nil t)
-
-        (with-eval-after-load 'lisp-mode
-          (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode-enable))
-
-        (with-eval-after-load 'emacs-lisp-mode
-          (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode-enable))
-
-        (with-eval-after-load 'clojure-mode
-          (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode-enable))
-
-        (with-eval-after-load 'scheme
-          (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)))
-    #+END_SRC
-** CommonLisp
-*** slime
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'slime))
-
-      (with-delayed-execution
-        (message "Install slime...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/lib"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/contrib"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/swank"))
-
-        (require 'slime)
-        (slime-setup '(slime-repl slime-fancy slime-banner slime-indentation))
-
-        (defun my/roswell-configdir ()
-          (substring (shell-command-to-string "ros roswell-internal-use version confdir") 0 -1))
-
-        (defun my/roswell-opt (var)
-          (with-temp-buffer
-            (insert-file-contents (concat (my/roswell-configdir) "config"))
-            (goto-char (point-min))
-            (re-search-forward (concat "^" var "\t[^\t]+\t\\(.*\\)$"))
-            (match-string 1)))
-
-        (defun my/roswell-directory (type)
-          (concat
-           (my/roswell-configdir)
-           "lisp/"
-           type
-           "/"
-           (my/roswell-opt (concat type ".version"))
-           "/"))
-
-        (defun my/slime-history ()
-          (interactive)
-          (if (and (fboundp '-distinct)
-                   (fboundp 'f-read-text))
-              (insert
-               (completing-read
-                "choice history: "
-                (-distinct (read (f-read-text "~/.slime-history.eld")))))))
-
-        (with-eval-after-load 'slime
-          (setq slime-path `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
-          (setq slime-backend `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
-          (setq inferior-lisp-program "ros -Q run"))
-
-        (with-eval-after-load 'slime-repl
-          (define-key slime-repl-mode-map (kbd "C-c C-r") #'my/slime-history)))
-    #+END_SRC
-*** hyperspec
-    #+begin_src emacs-lisp
-      (with-delayed-execution
-        (message "Install hyperspec...")
-        (autoload-if-found '(hyperspec-lookup) "hyperspec" nil t)
-
-        (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
-          (let ((buf (current-buffer)))
-            ad-do-it
-            (switch-to-buffer buf)
-            (pop-to-buffer "*eww*")))
-
-        (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
-          (let ((buf (current-buffer)))
-            ad-do-it
-            (switch-to-buffer buf)
-            (pop-to-buffer "*eww*")))
-
-        (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
-          (let ((buf (current-buffer)))
-            ad-do-it
-            (switch-to-buffer buf)
-            (pop-to-buffer "*eww*")))
-
-        (with-eval-after-load 'hyperspec
-          (setq common-lisp-hyperspec--reader-macros nil)
-          (setq common-lisp-hyperspec--format-characters nil))
-
-        (with-eval-after-load 'lisp-mode
-          (define-key lisp-mode-map (kbd "C-c h") #'hyperspec-lookup)))
-    #+end_src
-** EmacsLisp
-*** elisp-slime-nav
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'elisp-slime-nav))
-
-      (with-delayed-execution
-        (message "Install eslisp-slime-nav...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/elisp-slime-nav"))
-
-        (autoload-if-found '(elisp-slime-nav-mode) "elisp-slime-nav" nil t)
-
-        (with-eval-after-load 'elisp-mode
-          (add-hook 'emacs-lisp-mode-hook #'elisp-slime-nav-mode))
-
-        (with-eval-after-load 'ielm
-          (add-hook 'ielm-mode-hook #'elisp-slime-nav-mode)))
-    #+END_SRC
-*** nameless
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'nameless))
-
-      (with-delayed-execution
-        (message "Install nameless...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/nameless"))
-        (autoload-if-found '(nameless-mode) "nameless" nil t)
-
-        (with-eval-after-load 'elisp-mode
-          (add-hook 'emacs-lisp-mode-hook #'nameless-mode))
-
-        (with-eval-after-load 'ielm
-          (add-hook 'ielm-mode-hook #'nameless-mode)))
-    #+END_SRC
-*** my/ielm-history
-    #+BEGIN_SRC emacs-lisp
-      (with-delayed-execution
-        (when (autoload-if-found '(my/ielm-history) "ielm" nil t))
-        (defun my/ielm-history ()
-          (interactive)
-          (insert
-           (completing-read
-            "choice history: "
-            (progn
-              (let ((history nil)
-                    (comint-input-ring nil))
-                (dotimes (index (ring-length comint-input-ring))
-                  (push (ring-ref comint-input-ring index) history))
-                history))))))
-    #+END_SRC
-** Clojure
-*** cider
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'parseclj)
-        (el-get-bundle 'parseedn)
-        (el-get-bundle 'cider))
-
-      (with-delayed-execution
-        (message "Install cider...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/parseclj"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/parseedn"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/cider"))
-
-        (autoload-if-found '(cider cider-format-buffer cider-switch-to-last-clojure-buffer) "cider" nil t)
-        (add-hook 'before-save-hook #'cider-format-buffer t t)
-
-        (with-eval-after-load 'cider-common
-          (setq cider-special-mode-truncate-lines nil))
-
-        (with-eval-after-load 'cider-mode
-          (setq cider-font-lock-dynamically '(macro core function var)))
-
-        (with-eval-after-load 'cider-repl
-          (setq cider-repl-buffer-size-limit 1000000)
-          (setq cider-repl-wrap-history t)
-          (setq cider-repl-history-size 10000)
-          (setq cider-repl-tab-command #'indent-for-tab-command)
-          (setq cider-repl-display-in-current-window t))
-
-        (with-eval-after-load 'nrepl-client
-          (setq nrepl-use-ssh-fallback-for-remote-hosts t)
-          (setq nrepl-hide-special-buffers t))
-
-        (with-eval-after-load 'cider-eval
-          (setq cider-show-error-buffer nil)
-          (setq cider-auto-select-error-buffer nil)))
-    #+END_SRC
-*** clojure-cheatsheet
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'clojure-cheatsheet
-                   :url "https://github.com/clojure-emacs/clojure-cheatsheet.git"))
-
-  (with-delayed-execution
-    (message "Install clojure-cheatsheet...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/clojure-cheatsheet"))
-    (autoload-if-found '(clojure-cheatsheet) "clojure-cheatsheet" nil t))
-#+end_src
-*** kibit-helper
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'kibit-helper))
-
-  (with-delayed-execution
-    (message "Install kibit-helper...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/kibit-helper"))
-    (autoload-if-found '(kibit kibit-current-file kibit-accept-proposed-change) "kibit-helper" nil t))
-#+end_src
-*** clj-refactor
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'clj-refactor))
-
-  (with-delayed-execution
-    (message "Install clj-refactor...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/clj-refactor"))
-
-    (autoload-if-found '(clj-refactor-mode cljr-add-keybindings-with-prefix) "clj-refactor" nil t)
-
-    (add-hook 'clojure-mode-hook #'clj-refactor-mode)
-    (cljr-add-keybindings-with-prefix "C-c C-m")
-
-    (with-eval-after-load 'clj-refactor
-      (setq cljr-suppress-middleware-warnings t)
-      (setq cljr-hotload-dependencies t)))
-#+end_src
-*** inf-clojure
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'inf-clojure
-                   :url "https://github.com/clojure-emacs/inf-clojure.git"))
-
-  (with-delayed-execution
-    (message "Install inf-clojure...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/inf-clojure"))
-    (autoload-if-found '(inf-clojure) "inf-clojure" nil t))
-#+end_src
 * Awesome Package
 ** Check
 *** flycheck
@@ -2794,18 +2518,6 @@
     (with-eval-after-load 'company
       (push 'company-org-block company-backends)))
 #+end_src
-*** slime-company
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'slime-company))
-
-  (with-delayed-execution
-    (message "Install slime-company...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
-    (autoload-if-found '(company-slime) "slime-company" nil t)
-    (with-eval-after-load 'company
-      (push 'company-slime company-backends)))
-#+end_src
 ** Prescient
 *** prescient
 #+begin_src emacs-lisp
@@ -3088,6 +2800,20 @@
       (add-hook 'haskell-mode-hook #'lsp)
       (add-hook 'haskell-literate-mode-hook #'lsp)))
 #+end_src
+** Cursor
+*** multiple-cursors
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'multiple-cursors))
+
+      (with-delayed-execution
+        (message "Install multiple-cursors...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/multiple-cursors"))
+        (autoload-if-found '(mc/mark-next-like-this mc/mark-previous-like-this mc/mark-all-like-this) "multiple-cursors" nil t)
+        (global-set-key (kbd "C->") #'mc/mark-next-like-this)
+        (global-set-key (kbd "C-<") #'mc/mark-previous-like-this)
+        (global-set-key (kbd "C-c C-<") #'mc/mark-all-like-this))
+    #+END_SRC
 ** Git
 *** magit
     #+BEGIN_SRC emacs-lisp
@@ -3436,6 +3162,299 @@
     (with-eval-after-load 'haskell-mode
       (add-hook 'haskell-mode-hook #'hindent-mode)))
 #+end_src
+** Lisp
+*** Basic
+**** paredit
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'paredit))
+
+      (with-delayed-execution-priority-high
+        (message "Install paredit...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/paredit"))
+        (autoload-if-found '(enable-paredit-mode paredit-forward-slurp-sexp paredit-splice-sexp) "paredit" nil t)
+
+        (global-set-key (kbd "C-c f") #'paredit-forward-slurp-sexp)
+        (global-set-key (kbd "M-s") #'paredit-splice-sexp)
+
+        (with-eval-after-load 'lisp-mode
+          (add-hook 'lisp-mode-hook #'enable-paredit-mode)
+          (add-hook 'lisp-data-mode-hook #'enable-paredit-mode))
+
+        (with-eval-after-load 'emacs-lisp-mode
+          (add-hook 'emacs-lisp-mode-hook #'enable-paredit-mode))
+
+        (with-eval-after-load 'clojure-mode
+          (add-hook 'clojure-mode-hook #'enable-paredit-mode))
+
+        (with-eval-after-load 'lisp-interaction-mode
+          (add-hook 'lisp-interacton-mode-hook #'enable-paredit-mode))
+
+        (with-eval-after-load 'scheme
+          (add-hook 'scheme-mode-hook #'enable-paredit-mode))
+
+        (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode))
+    #+END_SRC
+**** rainbow-delimiter
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'rainbow-delimiters))
+
+      (with-delayed-execution
+        (message "Install rainbow-delimiters...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/rainbow-delimiters"))
+        (autoload-if-found '(rainbow-delimiters-mode-enable) "rainbow-delimiters" nil t)
+
+        (with-eval-after-load 'lisp-mode
+          (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode-enable))
+
+        (with-eval-after-load 'emacs-lisp-mode
+          (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode-enable))
+
+        (with-eval-after-load 'clojure-mode
+          (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode-enable))
+
+        (with-eval-after-load 'scheme
+          (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)))
+    #+END_SRC
+*** CommonLisp
+**** slime
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'slime))
+
+      (with-delayed-execution
+        (message "Install slime...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/lib"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/contrib"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/swank"))
+
+        (require 'slime)
+        (slime-setup '(slime-repl slime-fancy slime-banner slime-indentation))
+
+        (when (string= system-type "darwin")
+          (defun my/roswell-configdir ()
+            (substring (shell-command-to-string "/usr/local/bin/ros roswell-internal-use version confdir") 0 -1))
+
+          (defun my/roswell-opt (var)
+            (with-temp-buffer
+              (insert-file-contents (concat (my/roswell-configdir) "config"))
+              (goto-char (point-min))
+              (re-search-forward (concat "^" var "\t[^\t]+\t\\(.*\\)$"))
+              (match-string 1)))
+
+          (defun my/roswell-directory (type)
+            (concat
+             (my/roswell-configdir)
+             "lisp/"
+             type
+             "/"
+             (my/roswell-opt (concat type ".version"))
+             "/"))
+
+          (with-eval-after-load 'slime
+            (setq slime-path `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
+            (setq slime-backend `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
+            (setq inferior-lisp-program "ros -Q run")))
+
+        (when (string= system-type "gnu/linux")
+          (with-eval-after-load 'slime
+            (setq inferior-lisp-program "sbcl")))
+
+        (defun my/slime-history ()
+          (interactive)
+          (if (and (fboundp '-distinct)
+                   (fboundp 'f-read-text))
+              (insert
+               (completing-read
+                "choice history: "
+                (-distinct (read (f-read-text "~/.slime-history.eld")))))))
+
+        (with-eval-after-load 'slime-repl
+          (define-key slime-repl-mode-map (kbd "C-c C-r") #'my/slime-history)))
+    #+END_SRC
+**** slime-company
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'slime-company))
+
+  (with-delayed-execution
+    (message "Install slime-company...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
+    (autoload-if-found '(company-slime) "slime-company" nil t)
+    (with-eval-after-load 'company
+      (push 'company-slime company-backends)))
+#+end_src
+**** hyperspec
+    #+begin_src emacs-lisp
+      (with-delayed-execution
+        (message "Install hyperspec...")
+        (autoload-if-found '(hyperspec-lookup) "hyperspec" nil t)
+
+        (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
+          (let ((buf (current-buffer)))
+            ad-do-it
+            (switch-to-buffer buf)
+            (pop-to-buffer "*eww*")))
+
+        (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
+          (let ((buf (current-buffer)))
+            ad-do-it
+            (switch-to-buffer buf)
+            (pop-to-buffer "*eww*")))
+
+        (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
+          (let ((buf (current-buffer)))
+            ad-do-it
+            (switch-to-buffer buf)
+            (pop-to-buffer "*eww*")))
+
+        (with-eval-after-load 'hyperspec
+          (setq common-lisp-hyperspec--reader-macros nil)
+          (setq common-lisp-hyperspec--format-characters nil))
+
+        (with-eval-after-load 'lisp-mode
+          (define-key lisp-mode-map (kbd "C-c h") #'hyperspec-lookup)))
+    #+end_src
+*** EmacsLisp
+**** elisp-slime-nav
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'elisp-slime-nav))
+
+      (with-delayed-execution
+        (message "Install eslisp-slime-nav...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/elisp-slime-nav"))
+
+        (autoload-if-found '(elisp-slime-nav-mode) "elisp-slime-nav" nil t)
+
+        (with-eval-after-load 'elisp-mode
+          (add-hook 'emacs-lisp-mode-hook #'elisp-slime-nav-mode))
+
+        (with-eval-after-load 'ielm
+          (add-hook 'ielm-mode-hook #'elisp-slime-nav-mode)))
+    #+END_SRC
+**** nameless
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'nameless))
+
+      (with-delayed-execution
+        (message "Install nameless...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/nameless"))
+        (autoload-if-found '(nameless-mode) "nameless" nil t)
+
+        (with-eval-after-load 'elisp-mode
+          (add-hook 'emacs-lisp-mode-hook #'nameless-mode))
+
+        (with-eval-after-load 'ielm
+          (add-hook 'ielm-mode-hook #'nameless-mode)))
+    #+END_SRC
+**** my/ielm-history
+    #+BEGIN_SRC emacs-lisp
+      (with-delayed-execution
+        (when (autoload-if-found '(my/ielm-history) "ielm" nil t))
+        (defun my/ielm-history ()
+          (interactive)
+          (insert
+           (completing-read
+            "choice history: "
+            (progn
+              (let ((history nil)
+                    (comint-input-ring nil))
+                (dotimes (index (ring-length comint-input-ring))
+                  (push (ring-ref comint-input-ring index) history))
+                history))))))
+    #+END_SRC
+*** Clojure
+**** cider
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'parseclj)
+        (el-get-bundle 'parseedn)
+        (el-get-bundle 'cider))
+
+      (with-delayed-execution
+        (message "Install cider...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/parseclj"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/parseedn"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/cider"))
+
+        (autoload-if-found '(cider cider-format-buffer cider-switch-to-last-clojure-buffer) "cider" nil t)
+        (add-hook 'before-save-hook #'cider-format-buffer t t)
+
+        (with-eval-after-load 'cider-common
+          (setq cider-special-mode-truncate-lines nil))
+
+        (with-eval-after-load 'cider-mode
+          (setq cider-font-lock-dynamically '(macro core function var)))
+
+        (with-eval-after-load 'cider-repl
+          (setq cider-repl-buffer-size-limit 1000000)
+          (setq cider-repl-wrap-history t)
+          (setq cider-repl-history-size 10000)
+          (setq cider-repl-tab-command #'indent-for-tab-command)
+          (setq cider-repl-display-in-current-window t))
+
+        (with-eval-after-load 'nrepl-client
+          (setq nrepl-use-ssh-fallback-for-remote-hosts t)
+          (setq nrepl-hide-special-buffers t))
+
+        (with-eval-after-load 'cider-eval
+          (setq cider-show-error-buffer nil)
+          (setq cider-auto-select-error-buffer nil)))
+    #+END_SRC
+**** clojure-cheatsheet
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'clojure-cheatsheet
+                   :url "https://github.com/clojure-emacs/clojure-cheatsheet.git"))
+
+  (with-delayed-execution
+    (message "Install clojure-cheatsheet...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/clojure-cheatsheet"))
+    (autoload-if-found '(clojure-cheatsheet) "clojure-cheatsheet" nil t))
+#+end_src
+**** kibit-helper
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'kibit-helper))
+
+  (with-delayed-execution
+    (message "Install kibit-helper...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/kibit-helper"))
+    (autoload-if-found '(kibit kibit-current-file kibit-accept-proposed-change) "kibit-helper" nil t))
+#+end_src
+**** clj-refactor
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'clj-refactor))
+
+  (with-delayed-execution
+    (message "Install clj-refactor...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/clj-refactor"))
+
+    (autoload-if-found '(clj-refactor-mode cljr-add-keybindings-with-prefix) "clj-refactor" nil t)
+
+    (add-hook 'clojure-mode-hook #'clj-refactor-mode)
+    (cljr-add-keybindings-with-prefix "C-c C-m")
+
+    (with-eval-after-load 'clj-refactor
+      (setq cljr-suppress-middleware-warnings t)
+      (setq cljr-hotload-dependencies t)))
+#+end_src
+**** inf-clojure
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'inf-clojure
+                   :url "https://github.com/clojure-emacs/inf-clojure.git"))
+
+  (with-delayed-execution
+    (message "Install inf-clojure...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/inf-clojure"))
+    (autoload-if-found '(inf-clojure) "inf-clojure" nil t))
+#+end_src
 ** File
 *** recentf
     #+BEGIN_SRC emacs-lisp
@@ -3471,20 +3490,6 @@
 
         (with-eval-after-load 'open-junk-file
           (setq open-junk-file-format "")))
-    #+END_SRC
-** Cursor
-*** multiple-cursors
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'multiple-cursors))
-
-      (with-delayed-execution
-        (message "Install multiple-cursors...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/multiple-cursors"))
-        (autoload-if-found '(mc/mark-next-like-this mc/mark-previous-like-this mc/mark-all-like-this) "multiple-cursors" nil t)
-        (global-set-key (kbd "C->") #'mc/mark-next-like-this)
-        (global-set-key (kbd "C-<") #'mc/mark-previous-like-this)
-        (global-set-key (kbd "C-c C-<") #'mc/mark-all-like-this))
     #+END_SRC
 ** Avy
 *** avy
@@ -4411,17 +4416,23 @@
 * Org Mode
 ** org
    #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'org-mode))
+
      (with-eval-after-load 'org
        (message "Install org...")
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/org-mode"))
+
        (define-key org-mode-map (kbd "C-c ,") #'org-insert-structure-template)
        (define-key org-mode-map (kbd "C-c C-,") #'org-insert-structure-template)
+
        (setq org-directory "~/org")
        (setq org-agenda-files '("~/org/agenda"))
        (setq org-todo-keywords '((sequence "TODO(t)" "NOW(n)" "WAIT(w)" "|" "DONE(d)")))
        (setq org-startup-folded 'fold)
        (setq org-startup-truncated nil)
        (setq org-archive-location `,(format (expand-file-name "archive/%s.org::" org-directory)
-                                            (format-time-string "%Y-%m-%d" (current-time)))))
+					    (format-time-string "%Y-%m-%d" (current-time)))))
    #+END_SRC
 ** org-babel
    #+begin_src emacs-lisp
@@ -4658,9 +4669,6 @@
 
     (when (autoload-if-found '(exwm-enable) "exwm" nil t)
       (exwm-enable))
-
-    (when (autoload-if-found '(exwm-randr-enable) "exwm-randr" nil t)
-      (exwm-randr-enable))
 
     (when (autoload-if-found '(exwm-systemtray-enable) "exwm-systemtray" nil t)
       (exwm-systemtray-enable))
