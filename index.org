@@ -2801,6 +2801,31 @@
       (add-hook 'haskell-literate-mode-hook #'lsp)))
 #+end_src
 ** Cursor
+*** avy
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'avy))
+
+      (with-delayed-execution
+        (message "Install avy...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/avy"))
+        (autoload-if-found '(avy-goto-word-1) "avy" nil t)
+        (global-set-key (kbd "C-:") 'avy-goto-word-1)
+        (with-eval-after-load 'avy
+          (setq avy-all-windows nil)
+          (setq avy-background t)))
+    #+end_src
+*** avy-zap
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'avy-zap))
+
+      (with-delayed-execution
+        (message "Install avy-zap...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/avy-zap"))
+        (autoload-if-found '(avy-zap-up-to-char-dwim) "avy-zap" nil t)
+        (global-set-key (kbd "M-z") 'avy-zap-up-to-char-dwim))
+    #+end_src
 *** multiple-cursors
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -2874,587 +2899,6 @@
         (with-eval-after-load 'exec-path-from-shell
           (setq exec-path-from-shell-variables '("PATH" "GEM_HOME" "GOROOT" "GOPATH" "LSP_USE_PLISTS" "TERM"))))
     #+END_SRC
-** Cpp
-*** clang-format
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'clang-format))
-
-      (with-delayed-execution
-        (message "Install clang-format...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/clang-format"))
-        (autoload-if-found '(clang-format-buffer) "clang-format" nil t)
-        (with-eval-after-load 'clang-format
-          (add-hook 'before-save-hook #'(lambda ()
-                                          (when (member major-mode '(c-mode c++-mode))
-                                            (clang-format-buffer))))))
-    #+end_src
-*** inferior-cling
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle "brianqq/inferior-cling"))
-
-      (with-delayed-execution
-        (message "Install inferior-cling...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/inferior-cling")))
-    #+end_src
-** JavaScript/TypeScript
-*** js2-refactor
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'js2-refactor))
-
-      (with-delayed-execution
-        (message "Install js2-refactor...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/js2-refactor"))
-        (autoload-if-found '(js2-refactor-mode) "js2-refactor" nil t)
-
-        (with-eval-after-load 'js2-refactor
-          (setq js2r-use-strict t))
-
-        (with-eval-after-load 'js2-mode
-          (add-hook 'js2-mode-hook #'js2-refactor-mode))
-
-        (with-eval-after-load 'typescript-mode
-          (add-hook 'typescript-mode-hook #'js2-refactor-mode)))
-    #+END_SRC
-*** tree-sitter
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'tsc)
-        (el-get-bundle "emacs-tree-sitter/tree-sitter-langs")
-        (el-get-bundle 'tree-sitter))
-
-      (with-delayed-execution
-        (message "Install tree-sitter...")
-
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/tsc"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/tree-sitter-langs"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/tree-sitter"))
-
-        (when (autoload-if-found '(tree-sitter-mode tree-sitter-require tree-sitter-hl-add-patterns) "tree-sitter" nil t)
-          (when (require 'tree-sitter-langs)
-            (tree-sitter-require 'tsx))
-          (tree-sitter-hl-add-patterns 'tsx
-            [(call_expression
-              ;; styled.div``
-              function: (member_expression
-                         object: (identifier) @function.call
-                         (.eq? @function.call "styled"))
-              arguments: ((template_string) @property.definition
-                          (.offset! @property.definition 0 1 0 -1)))
-             (call_expression
-              ;; styled(Component)``
-              function: (call_expression
-                         function: (identifier) @function.call
-                         (.eq? @function.call "styled"))
-              arguments: ((template_string) @property.definition
-                          (.offset! @property.definition 0 1 0 -1)))])
-
-          (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx)))
-
-        (with-eval-after-load 'typescript-mode
-          (add-hook 'typescript-tsx-mode-hook #'tree-sitter-mode))
-
-        (when (autoload-if-found '(tree-sitter-hl-mode) "tree-sitter-hl" nil t)
-          (add-hook 'tree-sitter-after-on-hook 'tree-sitter-hl-mode)))
-    #+end_src
-** Ruby
-*** robe
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'robe))
-
-      (with-delayed-execution
-        (message "Install robe...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/robe"))
-        (autoload-if-found '(robe-mode inf-ruby-console-auto) "robe" nil t)
-        (with-eval-after-load 'company
-          (push 'company-robe company-backends))
-        (with-eval-after-load 'ruby-mode
-          (add-hook 'ruby-mode-hook #'robe-mode)))
-    #+end_src
-*** rubocop
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'rubocop))
-
-      (with-delayed-execution
-        (message "Install rubocop...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/rubocop"))
-        (autoload-if-found '(rubocop-mode) "rubocop" nil t)
-        (with-eval-after-load 'ruby-mode
-          (add-hook 'ruby-mode-hook #'rubocop-mode)))
-    #+end_src
-*** ruby-refactor
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'ruby-refactor))
-
-      (with-delayed-execution
-        (message "Install ruby-refactor...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/ruby-refactor"))
-        (autoload-if-found '(ruby-refactor-mode-launch) "ruby-refactor" nil t)
-        (with-eval-after-load 'ruby-mode
-          (add-hook 'ruby-mode-hook #'ruby-refactor-mode-launch)))
-    #+END_SRC
-*** inf-ruby
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'inf-ruby))
-
-      (with-delayed-execution
-        (message "Install inf-ruby...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/inf-ruby"))
-        (autoload-if-found '(inf-ruby inf-ruby-minor-mode) "inf-ruby" nil t)
-        (defun my/irb-history ()
-          (interactive)
-          (when (and (fboundp '-distinct)
-                     (fboundp 's-lines)
-                     (fboundp 'f-read-text))
-            (insert
-             (completing-read
-              "choose history: "
-              (mapcar #'list (-distinct (s-lines (f-read-text "~/.irb_history"))))))))
-        (with-eval-after-load 'ruby-mode
-          (add-hook 'ruby-mode-hook #'inf-ruby-minor-mode)))
-    #+END_SRC
-** SQL
-*** sql-indent
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'sql-indent))
-
-      (with-delayed-execution
-        (message "Install sql-indent...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/sql-indent"))
-        (autoload-if-found '(sqlind-setup sqlind-minor-mode) "sql-indent" nil t)
-        (with-eval-after-load 'sql-mode
-          (add-hook 'sql-mode-hook (lambda ()
-                                         (sqlind-setup)
-                                         (sqlind-minor-mode)))))
-    #+END_SRC
-** PHP
-*** psysh
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'psysh))
-
-      (with-delayed-execution
-        (message "Install psysh...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/psysh")))
-    #+end_src
-*** laravel-tinker-repl
-    #+begin_src emacs-lisp
-      (eval-when-compile
-	(el-get-bundle "takeokunn/laravel-tinker-repl.el"))
-
-      (with-delayed-execution
-	(message "Install laravel-tinker-repl...")
-	(add-to-list 'load-path (locate-user-emacs-file "el-get/laravel-tinker-repl.el"))
-	(autoload-if-found '(laravel-tinker-repl) "laravel-tinker-repl" nil t)
-
-	(with-eval-after-load 'laravel-tinker-repl
-	  (define-key laravel-tinker-repl-mode-map (kbd "TAB") #'completion-at-point)
-	  (define-key laravel-tinker-repl-mode-map (kbd "C-c C-c") #'laravel-tinker-repl-quit-or-cancel))
-
-	(with-eval-after-load 'php-mode
-	  (define-key php-mode-map (kbd "C-c C-c") #'laravel-tinker-repl-send-line)
-	  (define-key php-mode-map (kbd "C-c C-z") #'laravel-tinker-repl-switch-to-repl)))
-    #+end_src
-*** emacs-php-doc-block
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle "moskalyovd/emacs-php-doc-block"))
-
-  (with-delayed-execution
-    (message "Install emacs-php-doc-block...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/emacs-php-doc-block"))
-    (autoload-if-found '(php-doc-block) "php-doc-block" nil t))
-#+end_src
-*** phpstan
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'phpstan
-                   :url "https://github.com/emacs-php/phpstan.el.git"))
-
-  (with-delayed-execution
-    (message "Install phpstan...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/phpstan"))
-    (autoload-if-found '(phpstan-analyze-file phpstan-analyze-this-file) "phpstan" nil t))
-#+end_src
-** Markdown
-*** poly-markdown
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'polymode)
-        (el-get-bundle 'poly-markdown))
-
-      (with-delayed-execution
-        (message "Install polymode...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/polymode"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/poly-markdown"))
-        (when (autoload-if-found '(poly-markdown-mode) "poly-markdown" nil t)
-          (add-to-list 'auto-mode-alist '("\\.md" . poly-markdown-mode))))
-    #+end_src
-*** markdown-preview-mode
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'markdown-preview-mode))
-
-  (with-delayed-execution
-    (message "Install markdown-preview-mode...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/markdown-preview-mode"))
-
-    (autoload-if-found '(markdown-preview-open-browser markdown-preview-mode) "markdown-preview-mode" nil t)
-
-    (with-eval-after-load 'markdown-preview-mode
-      (setq markdown-preview-stylesheets (list "http://thomasf.github.io/solarized-css/solarized-light.min.css"))))
-#+end_src
-** Fish
-*** fish-repl
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'fish-repl
-                       :url "https://github.com/takeokunn/fish-repl.el.git"))
-
-      (with-delayed-execution
-        (message "Install fish-repl...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/fish-repl"))
-        (autoload-if-found '(fish-repl) "fish-repl" nil t))
-    #+end_src
-** NodeJS
-*** nodejs-repl
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'nodejs-repl
-                       :url "https://github.com/abicky/nodejs-repl.el.git"))
-
-      (with-delayed-execution
-        (message "Install nodejs-repl...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/nodejs-repl"))
-        (autoload-if-found '(nodejs-repl
-                             nodejs-repl-send-last-expression
-                             nodejs-repl-send-line
-                             nodejs-repl-send-region
-                             nodejs-repl-send-buffer
-                             nodejs-repl-load-file
-                             nodejs-repl-switch-to-repl) "nodejs-repl" nil t)
-
-        (with-eval-after-load 'js2-mode
-          (define-key js2-mode-map (kbd "C-x C-e") #'nodejs-repl-send-last-expression)
-          (define-key js2-mode-map (kbd "C-c C-j") #'nodejs-repl-send-line)
-          (define-key js2-mode-map (kbd "C-c C-r") #'nodejs-repl-send-region)
-          (define-key js2-mode-map (kbd "C-c C-c") #'nodejs-repl-send-buffer)
-          (define-key js2-mode-map (kbd "C-c C-l") #'nodejs-repl-load-file)
-          (define-key js2-mode-map (kbd "C-c C-z") #'nodejs-repl-switch-to-repl)))
-    #+end_src
-** Haskell
-*** hindent
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'hindent))
-
-  (with-delayed-execution
-    (message "Install hindent...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/hindent"))
-    (autoload-if-found '(hindent-mode) "hindent" nil t)
-    (with-eval-after-load 'haskell-mode
-      (add-hook 'haskell-mode-hook #'hindent-mode)))
-#+end_src
-** Lisp
-*** Basic
-**** paredit
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'paredit))
-
-      (with-delayed-execution-priority-high
-        (message "Install paredit...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/paredit"))
-        (autoload-if-found '(enable-paredit-mode paredit-forward-slurp-sexp paredit-splice-sexp) "paredit" nil t)
-
-        (global-set-key (kbd "C-c f") #'paredit-forward-slurp-sexp)
-        (global-set-key (kbd "M-s") #'paredit-splice-sexp)
-
-        (with-eval-after-load 'lisp-mode
-          (add-hook 'lisp-mode-hook #'enable-paredit-mode)
-          (add-hook 'lisp-data-mode-hook #'enable-paredit-mode))
-
-        (with-eval-after-load 'emacs-lisp-mode
-          (add-hook 'emacs-lisp-mode-hook #'enable-paredit-mode))
-
-        (with-eval-after-load 'clojure-mode
-          (add-hook 'clojure-mode-hook #'enable-paredit-mode))
-
-        (with-eval-after-load 'lisp-interaction-mode
-          (add-hook 'lisp-interacton-mode-hook #'enable-paredit-mode))
-
-        (with-eval-after-load 'scheme
-          (add-hook 'scheme-mode-hook #'enable-paredit-mode))
-
-        (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode))
-    #+END_SRC
-**** rainbow-delimiter
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'rainbow-delimiters))
-
-      (with-delayed-execution
-        (message "Install rainbow-delimiters...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/rainbow-delimiters"))
-        (autoload-if-found '(rainbow-delimiters-mode-enable) "rainbow-delimiters" nil t)
-
-        (with-eval-after-load 'lisp-mode
-          (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode-enable))
-
-        (with-eval-after-load 'emacs-lisp-mode
-          (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode-enable))
-
-        (with-eval-after-load 'clojure-mode
-          (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode-enable))
-
-        (with-eval-after-load 'scheme
-          (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)))
-    #+END_SRC
-*** CommonLisp
-**** slime
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'slime))
-
-      (with-delayed-execution
-        (message "Install slime...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/lib"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/contrib"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/swank"))
-
-        (require 'slime)
-        (slime-setup '(slime-repl slime-fancy slime-banner slime-indentation))
-
-        (when (string= system-type "darwin")
-          (defun my/roswell-configdir ()
-            (substring (shell-command-to-string "/usr/local/bin/ros roswell-internal-use version confdir") 0 -1))
-
-          (defun my/roswell-opt (var)
-            (with-temp-buffer
-              (insert-file-contents (concat (my/roswell-configdir) "config"))
-              (goto-char (point-min))
-              (re-search-forward (concat "^" var "\t[^\t]+\t\\(.*\\)$"))
-              (match-string 1)))
-
-          (defun my/roswell-directory (type)
-            (concat
-             (my/roswell-configdir)
-             "lisp/"
-             type
-             "/"
-             (my/roswell-opt (concat type ".version"))
-             "/"))
-
-          (with-eval-after-load 'slime
-            (setq slime-path `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
-            (setq slime-backend `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
-            (setq inferior-lisp-program "ros -Q run")))
-
-        (when (string= system-type "gnu/linux")
-          (with-eval-after-load 'slime
-            (setq inferior-lisp-program "sbcl")))
-
-        (defun my/slime-history ()
-          (interactive)
-          (if (and (fboundp '-distinct)
-                   (fboundp 'f-read-text))
-              (insert
-               (completing-read
-                "choice history: "
-                (-distinct (read (f-read-text "~/.slime-history.eld")))))))
-
-        (with-eval-after-load 'slime-repl
-          (define-key slime-repl-mode-map (kbd "C-c C-r") #'my/slime-history)))
-    #+END_SRC
-**** slime-company
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'slime-company))
-
-  (with-delayed-execution
-    (message "Install slime-company...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
-    (autoload-if-found '(company-slime) "slime-company" nil t)
-    (with-eval-after-load 'company
-      (push 'company-slime company-backends)))
-#+end_src
-**** hyperspec
-    #+begin_src emacs-lisp
-      (with-delayed-execution
-        (message "Install hyperspec...")
-        (autoload-if-found '(hyperspec-lookup) "hyperspec" nil t)
-
-        (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
-          (let ((buf (current-buffer)))
-            ad-do-it
-            (switch-to-buffer buf)
-            (pop-to-buffer "*eww*")))
-
-        (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
-          (let ((buf (current-buffer)))
-            ad-do-it
-            (switch-to-buffer buf)
-            (pop-to-buffer "*eww*")))
-
-        (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
-          (let ((buf (current-buffer)))
-            ad-do-it
-            (switch-to-buffer buf)
-            (pop-to-buffer "*eww*")))
-
-        (with-eval-after-load 'hyperspec
-          (setq common-lisp-hyperspec--reader-macros nil)
-          (setq common-lisp-hyperspec--format-characters nil))
-
-        (with-eval-after-load 'lisp-mode
-          (define-key lisp-mode-map (kbd "C-c h") #'hyperspec-lookup)))
-    #+end_src
-*** EmacsLisp
-**** elisp-slime-nav
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'elisp-slime-nav))
-
-      (with-delayed-execution
-        (message "Install eslisp-slime-nav...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/elisp-slime-nav"))
-
-        (autoload-if-found '(elisp-slime-nav-mode) "elisp-slime-nav" nil t)
-
-        (with-eval-after-load 'elisp-mode
-          (add-hook 'emacs-lisp-mode-hook #'elisp-slime-nav-mode))
-
-        (with-eval-after-load 'ielm
-          (add-hook 'ielm-mode-hook #'elisp-slime-nav-mode)))
-    #+END_SRC
-**** nameless
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'nameless))
-
-      (with-delayed-execution
-        (message "Install nameless...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/nameless"))
-        (autoload-if-found '(nameless-mode) "nameless" nil t)
-
-        (with-eval-after-load 'elisp-mode
-          (add-hook 'emacs-lisp-mode-hook #'nameless-mode))
-
-        (with-eval-after-load 'ielm
-          (add-hook 'ielm-mode-hook #'nameless-mode)))
-    #+END_SRC
-**** my/ielm-history
-    #+BEGIN_SRC emacs-lisp
-      (with-delayed-execution
-        (when (autoload-if-found '(my/ielm-history) "ielm" nil t))
-        (defun my/ielm-history ()
-          (interactive)
-          (insert
-           (completing-read
-            "choice history: "
-            (progn
-              (let ((history nil)
-                    (comint-input-ring nil))
-                (dotimes (index (ring-length comint-input-ring))
-                  (push (ring-ref comint-input-ring index) history))
-                history))))))
-    #+END_SRC
-*** Clojure
-**** cider
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'parseclj)
-        (el-get-bundle 'parseedn)
-        (el-get-bundle 'cider))
-
-      (with-delayed-execution
-        (message "Install cider...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/parseclj"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/parseedn"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/cider"))
-
-        (autoload-if-found '(cider cider-format-buffer cider-switch-to-last-clojure-buffer) "cider" nil t)
-        (add-hook 'before-save-hook #'cider-format-buffer t t)
-
-        (with-eval-after-load 'cider-common
-          (setq cider-special-mode-truncate-lines nil))
-
-        (with-eval-after-load 'cider-mode
-          (setq cider-font-lock-dynamically '(macro core function var)))
-
-        (with-eval-after-load 'cider-repl
-          (setq cider-repl-buffer-size-limit 1000000)
-          (setq cider-repl-wrap-history t)
-          (setq cider-repl-history-size 10000)
-          (setq cider-repl-tab-command #'indent-for-tab-command)
-          (setq cider-repl-display-in-current-window t))
-
-        (with-eval-after-load 'nrepl-client
-          (setq nrepl-use-ssh-fallback-for-remote-hosts t)
-          (setq nrepl-hide-special-buffers t))
-
-        (with-eval-after-load 'cider-eval
-          (setq cider-show-error-buffer nil)
-          (setq cider-auto-select-error-buffer nil)))
-    #+END_SRC
-**** clojure-cheatsheet
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'clojure-cheatsheet
-                   :url "https://github.com/clojure-emacs/clojure-cheatsheet.git"))
-
-  (with-delayed-execution
-    (message "Install clojure-cheatsheet...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/clojure-cheatsheet"))
-    (autoload-if-found '(clojure-cheatsheet) "clojure-cheatsheet" nil t))
-#+end_src
-**** kibit-helper
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'kibit-helper))
-
-  (with-delayed-execution
-    (message "Install kibit-helper...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/kibit-helper"))
-    (autoload-if-found '(kibit kibit-current-file kibit-accept-proposed-change) "kibit-helper" nil t))
-#+end_src
-**** clj-refactor
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'clj-refactor))
-
-  (with-delayed-execution
-    (message "Install clj-refactor...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/clj-refactor"))
-
-    (autoload-if-found '(clj-refactor-mode cljr-add-keybindings-with-prefix) "clj-refactor" nil t)
-
-    (add-hook 'clojure-mode-hook #'clj-refactor-mode)
-    (cljr-add-keybindings-with-prefix "C-c C-m")
-
-    (with-eval-after-load 'clj-refactor
-      (setq cljr-suppress-middleware-warnings t)
-      (setq cljr-hotload-dependencies t)))
-#+end_src
-**** inf-clojure
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'inf-clojure
-                   :url "https://github.com/clojure-emacs/inf-clojure.git"))
-
-  (with-delayed-execution
-    (message "Install inf-clojure...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/inf-clojure"))
-    (autoload-if-found '(inf-clojure) "inf-clojure" nil t))
-#+end_src
 ** File
 *** recentf
     #+BEGIN_SRC emacs-lisp
@@ -3491,32 +2935,6 @@
         (with-eval-after-load 'open-junk-file
           (setq open-junk-file-format "")))
     #+END_SRC
-** Avy
-*** avy
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'avy))
-
-      (with-delayed-execution
-        (message "Install avy...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/avy"))
-        (autoload-if-found '(avy-goto-word-1) "avy" nil t)
-        (global-set-key (kbd "C-:") 'avy-goto-word-1)
-        (with-eval-after-load 'avy
-          (setq avy-all-windows nil)
-          (setq avy-background t)))
-    #+end_src
-*** avy-zap
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'avy-zap))
-
-      (with-delayed-execution
-        (message "Install avy-zap...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/avy-zap"))
-        (autoload-if-found '(avy-zap-up-to-char-dwim) "avy-zap" nil t)
-        (global-set-key (kbd "M-z") 'avy-zap-up-to-char-dwim))
-    #+end_src
 ** IME
 *** ddskk
     #+BEGIN_SRC emacs-lisp
@@ -4255,6 +3673,587 @@
       (autoload 'woman-find-file "woman"
         "Find, decode and browse a specific UN*X man-page file." t)
     #+end_src
+* Language Specific
+** Basic Lisp
+*** paredit
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'paredit))
+
+      (with-delayed-execution-priority-high
+        (message "Install paredit...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/paredit"))
+        (autoload-if-found '(enable-paredit-mode paredit-forward-slurp-sexp paredit-splice-sexp) "paredit" nil t)
+
+        (global-set-key (kbd "C-c f") #'paredit-forward-slurp-sexp)
+        (global-set-key (kbd "M-s") #'paredit-splice-sexp)
+
+        (with-eval-after-load 'lisp-mode
+          (add-hook 'lisp-mode-hook #'enable-paredit-mode)
+          (add-hook 'lisp-data-mode-hook #'enable-paredit-mode))
+
+        (with-eval-after-load 'emacs-lisp-mode
+          (add-hook 'emacs-lisp-mode-hook #'enable-paredit-mode))
+
+        (with-eval-after-load 'clojure-mode
+          (add-hook 'clojure-mode-hook #'enable-paredit-mode))
+
+        (with-eval-after-load 'lisp-interaction-mode
+          (add-hook 'lisp-interacton-mode-hook #'enable-paredit-mode))
+
+        (with-eval-after-load 'scheme
+          (add-hook 'scheme-mode-hook #'enable-paredit-mode))
+
+        (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode))
+    #+END_SRC
+*** rainbow-delimiter
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'rainbow-delimiters))
+
+      (with-delayed-execution
+        (message "Install rainbow-delimiters...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/rainbow-delimiters"))
+        (autoload-if-found '(rainbow-delimiters-mode-enable) "rainbow-delimiters" nil t)
+
+        (with-eval-after-load 'lisp-mode
+          (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode-enable))
+
+        (with-eval-after-load 'emacs-lisp-mode
+          (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode-enable))
+
+        (with-eval-after-load 'clojure-mode
+          (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode-enable))
+
+        (with-eval-after-load 'scheme
+          (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)))
+    #+END_SRC
+** CommonLisp
+*** slime
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'slime))
+
+      (with-delayed-execution
+        (message "Install slime...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/lib"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/contrib"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/slime/swank"))
+
+        (require 'slime)
+        (slime-setup '(slime-repl slime-fancy slime-banner slime-indentation))
+
+        (when (string= system-type "darwin")
+          (defun my/roswell-configdir ()
+            (substring (shell-command-to-string "/usr/local/bin/ros roswell-internal-use version confdir") 0 -1))
+
+          (defun my/roswell-opt (var)
+            (with-temp-buffer
+              (insert-file-contents (concat (my/roswell-configdir) "config"))
+              (goto-char (point-min))
+              (re-search-forward (concat "^" var "\t[^\t]+\t\\(.*\\)$"))
+              (match-string 1)))
+
+          (defun my/roswell-directory (type)
+            (concat
+             (my/roswell-configdir)
+             "lisp/"
+             type
+             "/"
+             (my/roswell-opt (concat type ".version"))
+             "/"))
+
+          (with-eval-after-load 'slime
+            (setq slime-path `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
+            (setq slime-backend `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
+            (setq inferior-lisp-program "ros -Q run")))
+
+        (when (string= system-type "gnu/linux")
+          (with-eval-after-load 'slime
+            (setq inferior-lisp-program "sbcl")))
+
+        (defun my/slime-history ()
+          (interactive)
+          (if (and (fboundp '-distinct)
+                   (fboundp 'f-read-text))
+              (insert
+               (completing-read
+                "choice history: "
+                (-distinct (read (f-read-text "~/.slime-history.eld")))))))
+
+        (with-eval-after-load 'slime-repl
+          (define-key slime-repl-mode-map (kbd "C-c C-r") #'my/slime-history)))
+    #+END_SRC
+*** slime-company
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'slime-company))
+
+  (with-delayed-execution
+    (message "Install slime-company...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/slime-company"))
+    (autoload-if-found '(company-slime) "slime-company" nil t)
+    (with-eval-after-load 'company
+      (push 'company-slime company-backends)))
+#+end_src
+*** hyperspec
+    #+begin_src emacs-lisp
+      (with-delayed-execution
+        (message "Install hyperspec...")
+        (autoload-if-found '(hyperspec-lookup) "hyperspec" nil t)
+
+        (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
+          (let ((buf (current-buffer)))
+            ad-do-it
+            (switch-to-buffer buf)
+            (pop-to-buffer "*eww*")))
+
+        (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
+          (let ((buf (current-buffer)))
+            ad-do-it
+            (switch-to-buffer buf)
+            (pop-to-buffer "*eww*")))
+
+        (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
+          (let ((buf (current-buffer)))
+            ad-do-it
+            (switch-to-buffer buf)
+            (pop-to-buffer "*eww*")))
+
+        (with-eval-after-load 'hyperspec
+          (setq common-lisp-hyperspec--reader-macros nil)
+          (setq common-lisp-hyperspec--format-characters nil))
+
+        (with-eval-after-load 'lisp-mode
+          (define-key lisp-mode-map (kbd "C-c h") #'hyperspec-lookup)))
+    #+end_src
+** EmacsLisp
+*** elisp-slime-nav
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'elisp-slime-nav))
+
+      (with-delayed-execution
+        (message "Install eslisp-slime-nav...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/elisp-slime-nav"))
+
+        (autoload-if-found '(elisp-slime-nav-mode) "elisp-slime-nav" nil t)
+
+        (with-eval-after-load 'elisp-mode
+          (add-hook 'emacs-lisp-mode-hook #'elisp-slime-nav-mode))
+
+        (with-eval-after-load 'ielm
+          (add-hook 'ielm-mode-hook #'elisp-slime-nav-mode)))
+    #+END_SRC
+*** nameless
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'nameless))
+
+      (with-delayed-execution
+        (message "Install nameless...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/nameless"))
+        (autoload-if-found '(nameless-mode) "nameless" nil t)
+
+        (with-eval-after-load 'elisp-mode
+          (add-hook 'emacs-lisp-mode-hook #'nameless-mode))
+
+        (with-eval-after-load 'ielm
+          (add-hook 'ielm-mode-hook #'nameless-mode)))
+    #+END_SRC
+*** my/ielm-history
+    #+BEGIN_SRC emacs-lisp
+      (with-delayed-execution
+        (when (autoload-if-found '(my/ielm-history) "ielm" nil t))
+        (defun my/ielm-history ()
+          (interactive)
+          (insert
+           (completing-read
+            "choice history: "
+            (progn
+              (let ((history nil)
+                    (comint-input-ring nil))
+                (dotimes (index (ring-length comint-input-ring))
+                  (push (ring-ref comint-input-ring index) history))
+                history))))))
+    #+END_SRC
+** Clojure
+*** cider
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'parseclj)
+        (el-get-bundle 'parseedn)
+        (el-get-bundle 'cider))
+
+      (with-delayed-execution
+        (message "Install cider...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/parseclj"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/parseedn"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/cider"))
+
+        (autoload-if-found '(cider cider-format-buffer cider-switch-to-last-clojure-buffer) "cider" nil t)
+        (add-hook 'before-save-hook #'cider-format-buffer t t)
+
+        (with-eval-after-load 'cider-common
+          (setq cider-special-mode-truncate-lines nil))
+
+        (with-eval-after-load 'cider-mode
+          (setq cider-font-lock-dynamically '(macro core function var)))
+
+        (with-eval-after-load 'cider-repl
+          (setq cider-repl-buffer-size-limit 1000000)
+          (setq cider-repl-wrap-history t)
+          (setq cider-repl-history-size 10000)
+          (setq cider-repl-tab-command #'indent-for-tab-command)
+          (setq cider-repl-display-in-current-window t))
+
+        (with-eval-after-load 'nrepl-client
+          (setq nrepl-use-ssh-fallback-for-remote-hosts t)
+          (setq nrepl-hide-special-buffers t))
+
+        (with-eval-after-load 'cider-eval
+          (setq cider-show-error-buffer nil)
+          (setq cider-auto-select-error-buffer nil)))
+    #+END_SRC
+*** clojure-cheatsheet
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'clojure-cheatsheet
+                   :url "https://github.com/clojure-emacs/clojure-cheatsheet.git"))
+
+  (with-delayed-execution
+    (message "Install clojure-cheatsheet...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/clojure-cheatsheet"))
+    (autoload-if-found '(clojure-cheatsheet) "clojure-cheatsheet" nil t))
+#+end_src
+*** kibit-helper
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'kibit-helper))
+
+  (with-delayed-execution
+    (message "Install kibit-helper...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/kibit-helper"))
+    (autoload-if-found '(kibit kibit-current-file kibit-accept-proposed-change) "kibit-helper" nil t))
+#+end_src
+*** clj-refactor
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'clj-refactor))
+
+  (with-delayed-execution
+    (message "Install clj-refactor...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/clj-refactor"))
+
+    (autoload-if-found '(clj-refactor-mode cljr-add-keybindings-with-prefix) "clj-refactor" nil t)
+
+    (add-hook 'clojure-mode-hook #'clj-refactor-mode)
+    (cljr-add-keybindings-with-prefix "C-c C-m")
+
+    (with-eval-after-load 'clj-refactor
+      (setq cljr-suppress-middleware-warnings t)
+      (setq cljr-hotload-dependencies t)))
+#+end_src
+*** inf-clojure
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'inf-clojure
+                   :url "https://github.com/clojure-emacs/inf-clojure.git"))
+
+  (with-delayed-execution
+    (message "Install inf-clojure...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/inf-clojure"))
+    (autoload-if-found '(inf-clojure) "inf-clojure" nil t))
+#+end_src
+** Cpp
+*** clang-format
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'clang-format))
+
+      (with-delayed-execution
+        (message "Install clang-format...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/clang-format"))
+        (autoload-if-found '(clang-format-buffer) "clang-format" nil t)
+        (with-eval-after-load 'clang-format
+          (add-hook 'before-save-hook #'(lambda ()
+                                          (when (member major-mode '(c-mode c++-mode))
+                                            (clang-format-buffer))))))
+    #+end_src
+*** inferior-cling
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle "brianqq/inferior-cling"))
+
+      (with-delayed-execution
+        (message "Install inferior-cling...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/inferior-cling")))
+    #+end_src
+** JavaScript/TypeScript
+*** js2-refactor
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'js2-refactor))
+
+      (with-delayed-execution
+        (message "Install js2-refactor...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/js2-refactor"))
+        (autoload-if-found '(js2-refactor-mode) "js2-refactor" nil t)
+
+        (with-eval-after-load 'js2-refactor
+          (setq js2r-use-strict t))
+
+        (with-eval-after-load 'js2-mode
+          (add-hook 'js2-mode-hook #'js2-refactor-mode))
+
+        (with-eval-after-load 'typescript-mode
+          (add-hook 'typescript-mode-hook #'js2-refactor-mode)))
+    #+END_SRC
+*** tree-sitter
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'tsc)
+        (el-get-bundle "emacs-tree-sitter/tree-sitter-langs")
+        (el-get-bundle 'tree-sitter))
+
+      (with-delayed-execution
+        (message "Install tree-sitter...")
+
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/tsc"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/tree-sitter-langs"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/tree-sitter"))
+
+        (when (autoload-if-found '(tree-sitter-mode tree-sitter-require tree-sitter-hl-add-patterns) "tree-sitter" nil t)
+          (when (require 'tree-sitter-langs)
+            (tree-sitter-require 'tsx))
+          (tree-sitter-hl-add-patterns 'tsx
+            [(call_expression
+              ;; styled.div``
+              function: (member_expression
+                         object: (identifier) @function.call
+                         (.eq? @function.call "styled"))
+              arguments: ((template_string) @property.definition
+                          (.offset! @property.definition 0 1 0 -1)))
+             (call_expression
+              ;; styled(Component)``
+              function: (call_expression
+                         function: (identifier) @function.call
+                         (.eq? @function.call "styled"))
+              arguments: ((template_string) @property.definition
+                          (.offset! @property.definition 0 1 0 -1)))])
+
+          (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx)))
+
+        (with-eval-after-load 'typescript-mode
+          (add-hook 'typescript-tsx-mode-hook #'tree-sitter-mode))
+
+        (when (autoload-if-found '(tree-sitter-hl-mode) "tree-sitter-hl" nil t)
+          (add-hook 'tree-sitter-after-on-hook 'tree-sitter-hl-mode)))
+    #+end_src
+** Ruby
+*** robe
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'robe))
+
+      (with-delayed-execution
+        (message "Install robe...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/robe"))
+        (autoload-if-found '(robe-mode inf-ruby-console-auto) "robe" nil t)
+        (with-eval-after-load 'company
+          (push 'company-robe company-backends))
+        (with-eval-after-load 'ruby-mode
+          (add-hook 'ruby-mode-hook #'robe-mode)))
+    #+end_src
+*** rubocop
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'rubocop))
+
+      (with-delayed-execution
+        (message "Install rubocop...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/rubocop"))
+        (autoload-if-found '(rubocop-mode) "rubocop" nil t)
+        (with-eval-after-load 'ruby-mode
+          (add-hook 'ruby-mode-hook #'rubocop-mode)))
+    #+end_src
+*** ruby-refactor
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'ruby-refactor))
+
+      (with-delayed-execution
+        (message "Install ruby-refactor...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/ruby-refactor"))
+        (autoload-if-found '(ruby-refactor-mode-launch) "ruby-refactor" nil t)
+        (with-eval-after-load 'ruby-mode
+          (add-hook 'ruby-mode-hook #'ruby-refactor-mode-launch)))
+    #+END_SRC
+*** inf-ruby
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'inf-ruby))
+
+      (with-delayed-execution
+        (message "Install inf-ruby...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/inf-ruby"))
+        (autoload-if-found '(inf-ruby inf-ruby-minor-mode) "inf-ruby" nil t)
+        (defun my/irb-history ()
+          (interactive)
+          (when (and (fboundp '-distinct)
+                     (fboundp 's-lines)
+                     (fboundp 'f-read-text))
+            (insert
+             (completing-read
+              "choose history: "
+              (mapcar #'list (-distinct (s-lines (f-read-text "~/.irb_history"))))))))
+        (with-eval-after-load 'ruby-mode
+          (add-hook 'ruby-mode-hook #'inf-ruby-minor-mode)))
+    #+END_SRC
+** SQL
+*** sql-indent
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'sql-indent))
+
+      (with-delayed-execution
+        (message "Install sql-indent...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/sql-indent"))
+        (autoload-if-found '(sqlind-setup sqlind-minor-mode) "sql-indent" nil t)
+        (with-eval-after-load 'sql-mode
+          (add-hook 'sql-mode-hook (lambda ()
+                                         (sqlind-setup)
+                                         (sqlind-minor-mode)))))
+    #+END_SRC
+** PHP
+*** psysh
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'psysh))
+
+      (with-delayed-execution
+        (message "Install psysh...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/psysh")))
+    #+end_src
+*** laravel-tinker-repl
+    #+begin_src emacs-lisp
+      (eval-when-compile
+	(el-get-bundle "takeokunn/laravel-tinker-repl.el"))
+
+      (with-delayed-execution
+	(message "Install laravel-tinker-repl...")
+	(add-to-list 'load-path (locate-user-emacs-file "el-get/laravel-tinker-repl.el"))
+	(autoload-if-found '(laravel-tinker-repl) "laravel-tinker-repl" nil t)
+
+	(with-eval-after-load 'laravel-tinker-repl
+	  (define-key laravel-tinker-repl-mode-map (kbd "TAB") #'completion-at-point)
+	  (define-key laravel-tinker-repl-mode-map (kbd "C-c C-c") #'laravel-tinker-repl-quit-or-cancel))
+
+	(with-eval-after-load 'php-mode
+	  (define-key php-mode-map (kbd "C-c C-c") #'laravel-tinker-repl-send-line)
+	  (define-key php-mode-map (kbd "C-c C-z") #'laravel-tinker-repl-switch-to-repl)))
+    #+end_src
+*** emacs-php-doc-block
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle "moskalyovd/emacs-php-doc-block"))
+
+  (with-delayed-execution
+    (message "Install emacs-php-doc-block...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/emacs-php-doc-block"))
+    (autoload-if-found '(php-doc-block) "php-doc-block" nil t))
+#+end_src
+*** phpstan
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'phpstan
+                   :url "https://github.com/emacs-php/phpstan.el.git"))
+
+  (with-delayed-execution
+    (message "Install phpstan...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/phpstan"))
+    (autoload-if-found '(phpstan-analyze-file phpstan-analyze-this-file) "phpstan" nil t))
+#+end_src
+** Markdown
+*** poly-markdown
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'polymode)
+        (el-get-bundle 'poly-markdown))
+
+      (with-delayed-execution
+        (message "Install polymode...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/polymode"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/poly-markdown"))
+        (when (autoload-if-found '(poly-markdown-mode) "poly-markdown" nil t)
+          (add-to-list 'auto-mode-alist '("\\.md" . poly-markdown-mode))))
+    #+end_src
+*** markdown-preview-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'markdown-preview-mode))
+
+  (with-delayed-execution
+    (message "Install markdown-preview-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/markdown-preview-mode"))
+
+    (autoload-if-found '(markdown-preview-open-browser markdown-preview-mode) "markdown-preview-mode" nil t)
+
+    (with-eval-after-load 'markdown-preview-mode
+      (setq markdown-preview-stylesheets (list "http://thomasf.github.io/solarized-css/solarized-light.min.css"))))
+#+end_src
+** Fish
+*** fish-repl
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'fish-repl
+                       :url "https://github.com/takeokunn/fish-repl.el.git"))
+
+      (with-delayed-execution
+        (message "Install fish-repl...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/fish-repl"))
+        (autoload-if-found '(fish-repl) "fish-repl" nil t))
+    #+end_src
+** NodeJS
+*** nodejs-repl
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'nodejs-repl
+                       :url "https://github.com/abicky/nodejs-repl.el.git"))
+
+      (with-delayed-execution
+        (message "Install nodejs-repl...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/nodejs-repl"))
+        (autoload-if-found '(nodejs-repl
+                             nodejs-repl-send-last-expression
+                             nodejs-repl-send-line
+                             nodejs-repl-send-region
+                             nodejs-repl-send-buffer
+                             nodejs-repl-load-file
+                             nodejs-repl-switch-to-repl) "nodejs-repl" nil t)
+
+        (with-eval-after-load 'js2-mode
+          (define-key js2-mode-map (kbd "C-x C-e") #'nodejs-repl-send-last-expression)
+          (define-key js2-mode-map (kbd "C-c C-j") #'nodejs-repl-send-line)
+          (define-key js2-mode-map (kbd "C-c C-r") #'nodejs-repl-send-region)
+          (define-key js2-mode-map (kbd "C-c C-c") #'nodejs-repl-send-buffer)
+          (define-key js2-mode-map (kbd "C-c C-l") #'nodejs-repl-load-file)
+          (define-key js2-mode-map (kbd "C-c C-z") #'nodejs-repl-switch-to-repl)))
+    #+end_src
+** Haskell
+*** hindent
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'hindent))
+
+  (with-delayed-execution
+    (message "Install hindent...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/hindent"))
+    (autoload-if-found '(hindent-mode) "hindent" nil t)
+    (with-eval-after-load 'haskell-mode
+      (add-hook 'haskell-mode-hook #'hindent-mode)))
+#+end_src
 * Elfeed
 ** elfeed
    #+begin_src emacs-lisp
