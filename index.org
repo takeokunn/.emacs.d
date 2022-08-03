@@ -4666,9 +4666,6 @@
     (message "Install exwm...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/exwm"))
 
-    (when (autoload-if-found '(exwm-enable) "exwm" nil t)
-      (exwm-enable))
-
     (when (autoload-if-found '(exwm-systemtray-enable) "exwm-systemtray" nil t)
       (exwm-systemtray-enable))
 
@@ -4677,6 +4674,9 @@
 
     (when (autoload-if-found '(exwm-input-set-key) "exwm-input" nil t)
       (exwm-input-set-key (kbd "s-SPC") #'counsel-linux-app))
+
+    (when (autoload-if-found '(exwm-config-example) "exwm-config" nil t)
+      (exwm-config-example))
 
     (with-eval-after-load 'exwm-core
       (add-hook 'exwm-mode-hook #'display-battery-mode)
@@ -4694,9 +4694,13 @@
     (message "Install exwm-edit...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/exwm-edit"))
     (autoload-if-found '(exwm-edit--compose-minibuffer) "exwm-edit" nil t)
+
     (with-eval-after-load 'exwm-input
       (exwm-input-set-key (kbd "C-c '") #'exwm-edit--compose-minibuffer)
-      (exwm-input-set-key (kbd "C-c C-'") #'exwm-edit--compose-minibuffer)))
+      (exwm-input-set-key (kbd "C-c C-'") #'exwm-edit--compose-minibuffer))
+
+    (with-eval-after-load 'exwm-edit
+      (add-hook 'exwm-edit-mode-hook #'skk-mode)))
 #+end_src
 ** exwm-modeline
 #+begin_src emacs-lisp
