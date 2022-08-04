@@ -4687,18 +4687,12 @@
     (when (autoload-if-found '(exwm-systemtray-enable) "exwm-systemtray" nil t)
       (exwm-systemtray-enable))
 
-    (when (autoload-if-found '(exwm-cm-enable) "exwm-cm" nil t)
-      (exwm-cm-enable))
-
-    (when (autoload-if-found '(exwm-input-set-key) "exwm-input" nil t)
-      (exwm-input-set-key (kbd "s-SPC") #'counsel-linux-app))
-
     (when (autoload-if-found '(exwm-config-example) "exwm-config" nil t)
       (exwm-config-example))
 
-    (with-eval-after-load 'exwm-core
-      (add-hook 'exwm-mode-hook #'display-battery-mode)
-      (add-hook 'exwm-mode-hook #'display-time-mode))
+    (when (string= system-type "gnu/linux")
+      (display-battery-mode)
+      (display-time-mode))
 
     (with-eval-after-load 'exwm-workspace
       (setq exwm-workspace-number 3)))
