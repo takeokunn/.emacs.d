@@ -3681,11 +3681,8 @@
     #+END_SRC
 *** woman
     #+begin_src emacs-lisp
-      (autoload 'woman
-        "woman" "Decode and browse a UN*X man page." t)
-
-      (autoload 'woman-find-file "woman"
-        "Find, decode and browse a specific UN*X man-page file." t)
+      (with-delayed-execution
+        (autoload-if-found '(woman woman-find-file) "woman" nil t))
     #+end_src
 * Language Specific
 ** Basic Lisp
@@ -4325,9 +4322,16 @@
        (defun eshell/new()
          (eshell 'N))
 
+       (defun eshell/vertical()
+         (split-window-right)
+         (eshell 'N))
+
+       (defun eshell/split ()
+         (split-window-below)
+         (eshell 'N))
+
        ;; configurations
        (with-eval-after-load 'esh-mode
-         (define-key eshell-mode-map (kbd "C-c b") #'my/eshell-send-detached-input)
          (define-key eshell-mode-map (kbd "M-p") #'eshell-previous-matching-input-from-input))
 
        (with-eval-after-load 'em-cmpl
