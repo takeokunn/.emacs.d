@@ -261,6 +261,7 @@
      (global-set-key (kbd "C-a") #'back-to-indentation)
      (global-set-key (kbd "C-c i") #'find-function)
      (global-set-key (kbd "C-x C-o") #'other-window)
+     (global-set-key (kbd "C-x :") #'goto-line)
 
      (global-set-key (kbd "C-x l") 'next-buffer)
      (global-set-key (kbd "C-x h") 'previous-buffer)
@@ -312,7 +313,7 @@
 ** pluginをnative compする
 #+begin_src emacs-lisp
   (with-eval-after-load 'comp
-    (setq native-comp-async-jobs-number 4)
+    (setq native-comp-async-jobs-number 8)
     (setq native-comp-speed 3)
     (setq native-comp-always-compile t)
     (defun my/native-comp-packages ()
@@ -1938,6 +1939,24 @@
     (when (autoload-if-found '(web-php-blade-mode) "web-php-blade-mode" nil t)
       (add-to-list 'auto-mode-alist '("\\.blade.php$" . web-php-blade-mode))))
 #+end_src
+** wolfram-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'wolfram-mode))
+
+  (with-delayed-execution
+    (message "Install wolfram-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/wolfram-mode"))
+
+    (autoload-if-found '(wolfram-mode run-wolfram) "wolfram-mode" nil t)
+
+    (push '("\\.m$" . wolfram-mode) auto-mode-alist)
+    (push '("\\.nb$" . wolfram-mode) auto-mode-alist)
+    (push '("\\.cbf$" . wolfram-mode) auto-mode-alist)
+
+    (with-eval-after-load 'wolfram-mode
+      (setq wolfram-path "path-to-dir")))
+#+end_src
 ** yaml-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
@@ -2290,6 +2309,23 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/volatile-highlights"))
     (when (autoload-if-found '(volatile-highlights-mode) "volatile-highlights" nil t)
       (volatile-highlights-mode t)))
+#+end_src
+*** idle-highlight-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'idle-highlight-mode))
+
+  (with-delayed-execution
+    (message "Install idle-highlight-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/idle-highlight-mode"))
+
+    (autoload-if-found '(idle-highlight-mode) "idle-highlight-mode" nil t)
+
+    (with-eval-after-load 'idle-highlight-mode
+      (setq idle-highlight-idle-time 3))
+
+    (with-eval-after-load 'prog-mode
+      (add-hook 'prog-mode-hook #'idle-highlight-mode)))
 #+end_src
 ** Project
 *** projectile
@@ -3075,6 +3111,17 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/power-mode"))
     (autoload-if-found '(power-mode) "power-mode" nil t))
 #+end_src
+*** sudden-death
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'sudden-death
+                   :url "https://github.com/yewton/sudden-death.el.git"))
+
+  (with-delayed-execution
+    (message "Install sudden-death...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/sudden-death"))
+    (autoload-if-found '(sudden-death) "sudden-death" nil t))
+#+end_src
 ** Window
 *** ace-window
 #+begin_src emacs-lisp
@@ -3399,7 +3446,8 @@
       (with-delayed-execution
         (message "Install htmlize...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/htmlize"))
-        (with-eval-after-load 'htmlize))
+        (with-eval-after-load 'htmlize
+          (setq htmlize-html-charset 'utf-8)))
     #+end_src
 *** keyfreq
     #+begin_src emacs-lisp
@@ -4646,6 +4694,20 @@
     (autoload-if-found '(org-store-link) "ol" nil t)
     (global-set-key (kbd "C-c l") #'org-store-link))
 #+end_src
+*** org-link-beautify
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'org-link-beautify))
+
+  (with-delayed-execution
+    (message "Install org-link-beautify...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-link-beautify"))
+
+    (autoload-if-found '(org-link-beautify-mode) "org-link-beautify" nil t)
+
+    (with-eval-after-load 'org
+      (add-hook 'org-mode-hook #'org-link-beautify-mode)))
+#+end_src
 ** Org Agenda
 *** Basic
 #+begin_src emacs-lisp
@@ -4805,7 +4867,130 @@
 
   (with-delayed-execution
     (message "Install ox-zenn...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/ox-zenn")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ox-zenn"))
+    (autoload-if-found '(org-zenn-export-as-markdown
+                         org-zenn-export-to-markdown
+                         org-zenn-publish-to-markdown
+                         org-zenn-convert-region-to-md) "ox-zenn" nil t))
+#+end_src
+*** ox-hatena
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ox-hatena
+                   :url "https://github.com/zonkyy/ox-hatena.git"))
+
+  (with-delayed-execution
+    (message "Install ox-hatena...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ox-hatena"))
+    (autoload-if-found '(org-hatena-export-as-hatena
+                         org-hatena-export-to-hatena
+                         org-hatena-export-to-hatena-and-open) "ox-hatena" nil t))
+#+end_src
+** Org Roam
+*** el-get
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'org-roam))
+#+end_src
+*** basic
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install org-roam...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-roam"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-roam/extensions"))
+
+    (autoload-if-found '(org-roam-buffer-toggle
+                         org-roam-node-find
+                         org-roam-graph
+                         org-roam-node-insert
+                         org-roam-capture) "org-roam" nil t)
+    (autoload-if-found '(org-roam-db-autosync-mode) "org-roam-db" nil t)
+
+    (global-set-key (kbd "C-c n l") #'org-roam-buffer-toggle)
+    (global-set-key (kbd "C-c n f") #'org-roam-node-find)
+    (global-set-key (kbd "C-c n g") #'org-roam-graph)
+    (global-set-key (kbd "C-c n i") #'org-roam-node-insert)
+
+    (with-eval-after-load 'org-mode
+      (add-hook 'org-mode-hook #'org-roam-db-autosync-mode))
+
+    (with-eval-after-load 'org-roam
+      (setq org-roam-v2-ack t)
+      (setq org-roam-directory (file-truename "~/org"))))
+#+end_src
+*** org-roam-dailies
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install org-roam-dailies...")
+
+    (autoload-if-found '(org-roam-dailies-goto-today
+                         org-roam-dailies-goto-yesterday
+                         org-roam-dailies-goto-tomorrow
+                         org-roam-dailies-capture-today
+                         org-roam-dailies-goto-next-note
+                         org-roam-dailies-goto-previous-note
+                         org-roam-dailies-goto-date
+                         org-roam-dailies-capture-date
+                         org-roam-dailies-find-directory) "org-roam-dailies" nil t)
+
+    (with-eval-after-load 'org-roam-dialies
+      (define-key org-roam-dailies-map (kbd "d") #'org-roam-dailies-goto-today)
+      (define-key org-roam-dailies-map (kbd "y") #'org-roam-dailies-goto-yesterday)
+      (define-key org-roam-dailies-map (kbd "t") #'org-roam-dailies-goto-tomorrow)
+      (define-key org-roam-dailies-map (kbd "n") #'org-roam-dailies-capture-today)
+      (define-key org-roam-dailies-map (kbd "f") #'org-roam-dailies-goto-next-note)
+      (define-key org-roam-dailies-map (kbd "b") #'org-roam-dailies-goto-previous-note)
+      (define-key org-roam-dailies-map (kbd "c") #'org-roam-dailies-goto-date)
+      (define-key org-roam-dailies-map (kbd "v") #'org-roam-dailies-capture-date)
+      (define-key org-roam-dailies-map (kbd ".") #'org-roam-dailies-find-directory)))
+#+end_src
+*** org-roam-export
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install org-roam-export...")
+    (autoload-if-found '(org-roam-export--org-html--reference) "org-roam-export" nil t)
+    (advice-add 'org-html--reference :override #'org-roam-export--org-html--reference))
+#+end_src
+*** org-roam-graph
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install org-roam-graph...")
+    (autoload-if-found '(org-roam-graph--open) "org-roam-graph" nil t))
+#+end_src
+*** org-roam-overlay
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install org-roam-overlay...")
+    (autoload-if-found '(org-roam-overlay-mode) "org-roam-overlay" nil t)
+    (with-eval-after-load 'org-mode
+      (add-hook 'org-mode-hook #'org-roam-overlay-mode)))
+#+end_src
+*** org-roam-protocol
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install org-roam-protocol...")
+    (autoload-if-found '(org-roam-protocol-open-ref org-roam-protocol-open-node) "org-roam-protocol" nil t)
+
+    (push '("org-roam-ref" :protocol "roam-ref" :function org-roam-protocol-open-ref) org-protocol-protocol-alist)
+    (push '("org-roam-node" :protocol "roam-node" :function org-roam-protocol-open-node) org-protocol-protocol-alist)
+
+    (with-eval-after-load 'org-roam-protocol
+      (setq org-roam-protocol-store-links t)))
+#+end_src
+*** org-roam-ui
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'org-roam-ui))
+
+  (with-delayed-execution
+    (message "Install org-roam-ui...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-roam-ui"))
+
+    (with-eval-after-load 'org-roam-ui
+      (setq org-roam-ui-sync-theme t)
+      (setq org-roam-ui-follow t)
+      (setq org-roam-ui-update-on-save t)
+      (setq org-roam-ui-open-on-start t)))
 #+end_src
 * EXWM
 ** exwm
