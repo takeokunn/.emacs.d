@@ -164,7 +164,7 @@
        (with-eval-after-load 'comint
          (add-hook 'comint-mode-hook #'my/disable-show-trailing-whitespace))
 
-       (with-eval-after-load 'eshell
+       (with-eval-after-load 'esh-mode
          (add-hook 'eshell-mode-hook #'my/disable-show-trailing-whitespace))
 
        (with-eval-after-load 'eww
@@ -698,15 +698,6 @@
     (message "Install frame-local...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/frame-local")))
 
-#+end_src
-** helm
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'helm))
-
-  (with-delayed-execution-priority-high
-    (message "Install helm...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/helm")))
 #+end_src
 ** hide-lines
 #+begin_src emacs-lisp
@@ -2907,10 +2898,11 @@
         (when (autoload-if-found '(recentf-mode) "recentf" nil t)
           (recentf-mode 1))
         (with-eval-after-load 'recentf
+          (setq recentf-max-menu-items 10000)
           (setq recentf-max-saved-items 10000)
           (setq recentf-auto-cleanup 'never)
           (setq recentf-save-file  "~/.emacs.d/.recentf")
-          (setq recentf-exclude '(".recentf"))))
+          (setq recentf-exclude '(".recentf" "\\.gpg\\"))))
     #+END_SRC
 *** open-junk-file
     #+BEGIN_SRC emacs-lisp
@@ -3136,71 +3128,6 @@
     (autoload-if-found '(zoom-window-zoom) "zoom-window" nil t)
     (global-set-key (kbd "C-c C-z") #'zoom-window-zoom))
 #+end_src
-** Embark
-*** embark
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'embark))
-
-  (with-delayed-execution
-    (message "Install embark...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/embark"))
-
-    (autoload-if-found '(embark-act embark-dwim embark-prefix-help-command) "embark" nil t)
-
-    (global-set-key (kbd "C-.") #'embark-act)
-    (global-set-key (kbd "C-;") #'embark-dwim)
-
-    (defmacro my/embark-ace-action (fn)
-      `(defun ,(intern (concat "my/embark-ace-" (symbol-name fn))) ()
-         (interactive)
-         (with-demoted-errors "%s"
-           (aw-switch-to-window (aw-select nil))
-           (call-interactively (symbol-function ',fn)))))
-
-    (defmacro my/embark-split-action (fn split-type)
-      `(defun ,(intern (concat "my/embark-"
-                               (symbol-name fn)
-                               "-"
-                               (car (last (split-string
-                                           (symbol-name split-type) "-"))))) ()
-         (interactive)
-         (funcall #',split-type)
-         (call-interactively #',fn)))
-
-    (defun my/sudo-find-file (file)
-      "Open FILE as root."
-      (interactive "FOpen file as root: ")
-      (when (file-writable-p file)
-        (user-error "File is user writeable, aborting sudo"))
-      (find-file (if (file-remote-p file)
-                     (concat "/" (file-remote-p file 'method) ":"
-                             (file-remote-p file 'user) "@" (file-remote-p file 'host)
-                             "|sudo:root@"
-                             (file-remote-p file 'host) ":" (file-remote-p file 'localname))
-                   (concat "/sudo:root@localhost:" file))))
-
-    (with-eval-after-load 'embark
-      (setq prefix-help-command #'embark-prefix-help-command)
-
-      ;; ace-window
-      (define-key embark-file-map     (kbd "o") (my/embark-ace-action find-file))
-      (define-key embark-buffer-map   (kbd "o") (my/embark-ace-action switch-to-buffer))
-      (define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))
-
-      ;; split window(2)
-      (define-key embark-file-map     (kbd "2") (my/embark-split-action find-file split-window-below))
-      (define-key embark-buffer-map   (kbd "2") (my/embark-split-action switch-to-buffer split-window-below))
-      (define-key embark-bookmark-map (kbd "2") (my/embark-split-action bookmark-jump split-window-below))
-
-      ;; split window(3)
-      (define-key embark-file-map     (kbd "3") (my/embark-split-action find-file split-window-right))
-      (define-key embark-buffer-map   (kbd "3") (my/embark-split-action switch-to-buffer split-window-right))
-      (define-key embark-bookmark-map (kbd "3") (my/embark-split-action bookmark-jump split-window-right))
-
-      ;; sudo
-      (define-key embark-file-map (kbd "S") #'my/sudo-find-file)))
-#+end_src
 ** Other
 *** auto-insert
 #+begin_src emacs-lisp
@@ -3279,6 +3206,73 @@
           (when (require 'editorconfig-core)
             (editorconfig-mode 1))))
     #+END_SRC
+*** embark
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'embark))
+
+  (with-delayed-execution
+    (message "Install embark...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/embark"))
+
+    (autoload-if-found '(embark-act embark-dwim embark-prefix-help-command) "embark" nil t)
+
+    (global-set-key (kbd "C-.") #'embark-act)
+    (global-set-key (kbd "C-;") #'embark-dwim)
+
+    (defmacro my/embark-ace-action (fn)
+      `(defun ,(intern (concat "my/embark-ace-" (symbol-name fn))) ()
+         (interactive)
+         (with-demoted-errors "%s"
+           (aw-switch-to-window (aw-select nil))
+           (call-interactively (symbol-function ',fn)))))
+
+    (defmacro my/embark-split-action (fn split-type)
+      `(defun ,(intern (concat "my/embark-"
+                               (symbol-name fn)
+                               "-"
+                               (car (last (split-string
+                                           (symbol-name split-type) "-"))))) ()
+         (interactive)
+         (funcall #',split-type)
+         (call-interactively #',fn)))
+
+    (defun my/sudo-find-file (file)
+      "Open FILE as root."
+      (interactive "FOpen file as root: ")
+      (when (file-writable-p file)
+        (user-error "File is user writeable, aborting sudo"))
+      (find-file (if (file-remote-p file)
+                     (concat "/" (file-remote-p file 'method) ":"
+                             (file-remote-p file 'user) "@" (file-remote-p file 'host)
+                             "|sudo:root@"
+                             (file-remote-p file 'host) ":" (file-remote-p file 'localname))
+                   (concat "/sudo:root@localhost:" file))))
+
+    (with-eval-after-load 'embark
+      (setq prefix-help-command #'embark-prefix-help-command)
+
+      ;; ace-window
+      (define-key embark-file-map     (kbd "o") (my/embark-ace-action find-file))
+      (define-key embark-buffer-map   (kbd "o") (my/embark-ace-action switch-to-buffer))
+      (define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))
+
+      ;; split window(2)
+      (define-key embark-file-map     (kbd "2") (my/embark-split-action find-file split-window-below))
+      (define-key embark-buffer-map   (kbd "2") (my/embark-split-action switch-to-buffer split-window-below))
+      (define-key embark-bookmark-map (kbd "2") (my/embark-split-action bookmark-jump split-window-below))
+
+      ;; split window(3)
+      (define-key embark-file-map     (kbd "3") (my/embark-split-action find-file split-window-right))
+      (define-key embark-buffer-map   (kbd "3") (my/embark-split-action switch-to-buffer split-window-right))
+      (define-key embark-bookmark-map (kbd "3") (my/embark-split-action bookmark-jump split-window-right))
+
+      ;; sudo
+      (define-key embark-file-map (kbd "S") #'my/sudo-find-file)))
+
+  ;; embark-file-map
+  ;; (counsel-projectile-find-file)
+#+end_src
 *** esup
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -4150,20 +4144,20 @@
 *** laravel-tinker-repl
     #+begin_src emacs-lisp
       (eval-when-compile
-	(el-get-bundle "takeokunn/laravel-tinker-repl.el"))
+        (el-get-bundle "takeokunn/laravel-tinker-repl.el"))
 
       (with-delayed-execution
-	(message "Install laravel-tinker-repl...")
-	(add-to-list 'load-path (locate-user-emacs-file "el-get/laravel-tinker-repl.el"))
-	(autoload-if-found '(laravel-tinker-repl) "laravel-tinker-repl" nil t)
+        (message "Install laravel-tinker-repl...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/laravel-tinker-repl.el"))
+        (autoload-if-found '(laravel-tinker-repl) "laravel-tinker-repl" nil t)
 
-	(with-eval-after-load 'laravel-tinker-repl
-	  (define-key laravel-tinker-repl-mode-map (kbd "TAB") #'completion-at-point)
-	  (define-key laravel-tinker-repl-mode-map (kbd "C-c C-c") #'laravel-tinker-repl-quit-or-cancel))
+        (with-eval-after-load 'laravel-tinker-repl
+          (define-key laravel-tinker-repl-mode-map (kbd "TAB") #'completion-at-point)
+          (define-key laravel-tinker-repl-mode-map (kbd "C-c C-c") #'laravel-tinker-repl-quit-or-cancel))
 
-	(with-eval-after-load 'php-mode
-	  (define-key php-mode-map (kbd "C-c C-c") #'laravel-tinker-repl-send-line)
-	  (define-key php-mode-map (kbd "C-c C-z") #'laravel-tinker-repl-switch-to-repl)))
+        (with-eval-after-load 'php-mode
+          (define-key php-mode-map (kbd "C-c C-c") #'laravel-tinker-repl-send-line)
+          (define-key php-mode-map (kbd "C-c C-z") #'laravel-tinker-repl-switch-to-repl)))
     #+end_src
 *** emacs-php-doc-block
 #+begin_src emacs-lisp
@@ -4315,21 +4309,6 @@
      (with-delayed-execution
        (message "Install eshell...")
 
-       ;; shell function
-       (defun eshell/ff (&rest args)
-         (find-file (car args)))
-
-       (defun eshell/new()
-         (eshell 'N))
-
-       (defun eshell/vertical()
-         (split-window-right)
-         (eshell 'N))
-
-       (defun eshell/split ()
-         (split-window-below)
-         (eshell 'N))
-
        ;; configurations
        (with-eval-after-load 'esh-mode
          (define-key eshell-mode-map (kbd "M-p") #'eshell-previous-matching-input-from-input))
@@ -4350,6 +4329,98 @@
          (setq eshell-command-aliases-list '(("ll" "ls -la")
                                              ("cdd" "cd ~/Desktop")))))
    #+end_src
+** functions
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install eshell functions...")
+
+    (defun eshell/ff (&rest args)
+      "Open a file in Emacs with ARGS, Some habits die hard."
+      (if (null args)
+          (bury-buffer)
+        (mapc #'find-file (mapcar #'expand-file-name (eshell-flatten-list (reverse args))))))
+
+    (defun eshell/unpack (file &rest args)
+      "Unpack FILE with ARGS."
+      (let ((command (some (lambda (x)
+                             (if (string-match-p (car x) file)
+                                 (cadr x)))
+                           '((".*\.tar.bz2" "tar xjf")
+                             (".*\.tar.gz" "tar xzf")
+                             (".*\.bz2" "bunzip2")
+                             (".*\.rar" "unrar x")
+                             (".*\.gz" "gunzip")
+                             (".*\.tar" "tar xf")
+                             (".*\.tbz2" "tar xjf")
+                             (".*\.tgz" "tar xzf")
+                             (".*\.zip" "unzip")
+                             (".*\.Z" "uncompress")
+                             (".*" "echo 'Could not unpack the file:'")))))
+        (let ((unpack-command(concat command " " file " " (mapconcat 'identity args " "))))
+          (eshell/printnl "Unpack command: " unpack-command)
+          (eshell-command-result unpack-command))))
+
+    (defun my/cat-with-syntax-highlight (filename)
+      "Like cat(1) but with syntax highlighting."
+      (let ((existing-buffer (get-file-buffer filename))
+            (buffer (find-file-noselect filename)))
+        (eshell-print
+         (with-current-buffer buffer
+           (if (fboundp 'font-lock-ensure)
+               (font-lock-ensure)
+             (with-no-warnings
+               (font-lock-fontify-buffer)))
+           (let ((contents (buffer-string)))
+             (remove-text-properties 0 (length contents) '(read-only nil) contents)
+             contents)))
+        (unless existing-buffer
+          (kill-buffer buffer))
+        nil))
+
+    (advice-add 'eshell/cat :override #'my/cat-with-syntax-highlight))
+#+end_src
+** prompt
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install eshell prompt...")
+
+    (defun my/eshell-prompt ()
+      (concat
+       (propertize (eshell/pwd) 'face `(:foreground "blue"))
+       (propertize " (*´ω｀*) < " 'face `(:foreground "green"))))
+
+    (with-eval-after-load 'em-prompt
+      (setq eshell-prompt-function #'my/eshell-prompt)
+      (setq eshell-highlight-prompt nil)))
+#+end_src
+** eshell-multiple
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'eshell-multiple
+                   :url "https://github.com/takeokunn/eshell-multiple.git"))
+
+  (with-delayed-execution
+    (message "Install eshell-multiple...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/eshell-multiple"))
+    (autoload-if-found '(eshell-multiple-new
+                         eshell-multiple-next
+                         eshell-multiple-prev
+                         eshell-multiple-clear-buffer
+                         eshell-multiple-switch-buffer
+                         eshell-multiple-dedicated-toggle
+                         eshell-multiple-dedicated-open
+                         eshell-multiple-dedicated-close)
+                       "eshell-multiple" nil t)
+
+    (defalias 'eshell #'eshell-multiple-new)
+    (defalias 'eshell/new #'eshell-multiple-new)
+    (defalias 'eshell/next #'eshell-multiple-next)
+    (defalias 'eshell/prev #'eshell-multiple-prev)
+    (defalias 'eshell/clear #'eshell-multiple-clear-buffer)
+
+    (with-eval-after-load 'esh-mode
+      (define-key eshell-mode-map (kbd "C-l") #'eshell-multiple-clear-buffer)))
+#+end_src
 ** eshell-z
    #+begin_src emacs-lisp
      (eval-when-compile
@@ -4374,18 +4445,6 @@
     (with-eval-after-load 'esh-mode
       (add-hook 'eshell-mode-hook #'eshell-did-you-mean-setup)))
 #+end_src
-** eshell-prompt-extras
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'eshell-prompt-extras))
-
-  (with-delayed-execution
-    (message "Install eshell-prompt-extras...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/eshell-prompt-extras"))
-    (autoload-if-found '(epe-theme-lambda) "eshell-prompt-extras" nil t)
-    (with-eval-after-load 'em-prompt
-      (setq eshell-prompt-function #'epe-theme-lambda)))
-#+end_src
 ** eshell-syntax-highlight
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -4394,8 +4453,8 @@
   (with-delayed-execution
     (message "Install eshell-syntax-highlighting...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/eshell-syntax-highlighting"))
-    (when (autoload-if-found '(eshell-syntax-highlighting-global-mode) "eshell-syntax-highlighting" nil t)
-      (eshell-syntax-highlighting-global-mode)))
+    (autoload-if-found '(eshell-syntax-highlighting-global-mode) "eshell-syntax-highlighting" nil t)
+    (eshell-syntax-highlighting-global-mode))
 #+end_src
 ** esh-autosuggest
 #+begin_src emacs-lisp
@@ -4431,7 +4490,8 @@
       (global-fish-completion-mode)))
 #+end_src
 * Org Mode
-** org
+** Basic
+*** org
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
        (el-get-bundle 'org-mode))
@@ -4449,96 +4509,21 @@
        (setq org-startup-folded 'fold)
        (setq org-startup-truncated nil)
        (setq org-archive-location `,(format (expand-file-name "archive/%s.org::" org-directory)
-					    (format-time-string "%Y-%m-%d" (current-time)))))
+                                            (format-time-string "%Y-%m-%d" (current-time)))))
    #+END_SRC
-** org-babel
-   #+begin_src emacs-lisp
-     (eval-when-compile
-       (el-get-bundle 'ob-fish :url "https://github.com/takeokunn/ob-fish.git")
-       (el-get-bundle 'ob-go)
-       (el-get-bundle 'ob-rust)
-       (el-get-bundle 'ob-typescript))
-
-     (with-delayed-execution
-       (message "Install ob-*...")
-       (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-fish"))
-       (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-go"))
-       (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-rust"))
-       (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-typescript"))
-
-       (with-eval-after-load 'ob-core
-         (setq org-confirm-babel-evaluate nil))
-
-       (with-eval-after-load 'ob-babel
-         (org-babel-do-load-languages 'org-babel-load-languages
-                                      '((shell . t)
-                                        (emacs-lisp . t)
-                                        (lisp . t)
-                                        (ruby . t)
-                                        (fish . t)
-                                        (go . t)
-                                        (rust . t)
-                                        (typescript . t)))))
-   #+end_src
-** ob-async
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'ob-async))
-
-  (with-delayed-execution
-    (message "Install ob-async...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-async"))
-    (when (autoload-if-found '(ob-async-org-babel-execute-src-block) "ob-async" nil t)
-      (defalias 'org-babel-execute-src-block:async 'ob-async-org-babel-execute-src-block)))
-#+end_src
-** org-link
-#+begin_src emacs-lisp
-  (autoload-if-found '(org-store-link) "ol" nil t)
-  (global-set-key (kbd "C-c l") #'org-store-link)
-#+end_src
-** org-faces
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-faces
-    (setq org-link '(t (:foreground "#ebe087" :underline t))))
-#+end_src
-** org-agenda
-#+begin_src emacs-lisp
-  (global-set-key (kbd "C-c a") 'org-agenda)
-
-  (with-eval-after-load 'org-agenda
-    (setq org-agenda-span 'day)
-    (setq org-agenda-start-on-weekday 0)
-    (setq org-agenda-todo-ignore-with-date t))
-#+end_src
-** org-super-agenda
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'org-super-agenda))
-
-  (with-delayed-execution
-    (message "Install org-super-agenda...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-super-agenda"))
-    (autoload-if-found '(org-super-agenda-mode) "org-super-agenda" nil t)
-    (with-eval-after-load 'org-super-agenda
-      (add-hook 'org-agenda-mode-hook #'org-super-agenda-mode)
-      (setq org-super-agenda-groups '((:name "NOW" :time-grid t)
-                                      (:todo "TODO" :order 8)
-                                      (:todo "WAITING" :order 8)
-                                      (:todo "WAITING" :order 8)))))
-#+end_src
-** org-clock
+*** org-clock
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-clock
     (setq org-clock-out-remove-zero-time-clocks t)
     (setq org-clock-clocked-in-display 'mode-line))
 #+end_src
-** org-keys
+*** org-keys
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-keys
     (setq org-use-extra-keys t)
     (setq org-use-speed-commands t))
 #+end_src
-** org-capture
+*** org-capture
 #+begin_src emacs-lisp
   (with-delayed-execution
     (autoload-if-found '(org-capture) "org-capture" nil t)
@@ -4551,7 +4536,7 @@
                                     ("j" "Journal" entry (file+datetree ,(expand-file-name "journal.org" org-directory))
                                      "* %?\nEntered on %U\n  %i\n  %a")))))
 #+end_src
-** org-id
+*** org-id
    #+begin_src emacs-lisp
      (with-delayed-execution
        (message "Install org-id...")
@@ -4561,7 +4546,7 @@
          (setq org-id-extra-files (append org-agenda-text-search-extra-files))
          (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)))
    #+end_src
-** org-crypt
+*** org-crypt
    #+begin_src emacs-lisp
      (with-delayed-execution
        (when (autoload-if-found '(org-encrypt-entry org-decrypt-entry org-crypt-use-before-save-magic) "org-crypt" nil t)
@@ -4570,7 +4555,7 @@
          (setq org-crypt-key nil)
          (setq org-tags-exclude-from-inheritance '("crypt"))))
    #+end_src
-** org-journal
+*** org-journal
    #+begin_src emacs-lisp
      (eval-when-compile
        (el-get-bundle 'org-journal))
@@ -4583,7 +4568,60 @@
          (setq org-journal-start-on-weekday 7)
          (setq org-journal-prefix-key "C-c j")))
    #+end_src
-** org-superstar
+*** org-generate
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle 'org-generate))
+
+     (with-delayed-execution
+       (message "Install org-generate...")
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/org-generate"))
+       (autoload-if-found '(org-generate) "org-generate" nil t)
+       (defun my/org-generate ()
+         (interactive)
+         (org-generate "snippet/default"))
+       (with-eval-after-load 'org-generate
+         (setq org-generate-file `,(locate-user-emacs-file "yasnippets.org"))
+         (setq org-generate-root "snippets")))
+   #+end_src
+*** org-pomodoro
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle "jwiegley/alert")
+       (el-get-bundle 'org-pomodoro))
+
+     (with-delayed-execution
+       (message "Install org-pomodoro...")
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/org-pomodoro"))
+       (autoload-if-found '(org-pomodoro) "org-pomodoro" nil t))
+   #+end_src
+*** org-view-mode
+   #+begin_src emacs-lisp
+     (eval-when-compile
+       (el-get-bundle org-view-mode))
+
+     (with-delayed-execution
+       (message "Install org-view-mode...")
+       (add-to-list 'load-path (locate-user-emacs-file "el-get/org-view-mode"))
+       (autoload-if-found '(org-view-mode) "org-view-mode" nil t))
+   #+end_src
+*** org-random-todo
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'org-random-todo))
+
+  (with-delayed-execution
+    (message "Install org-random-todo...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-random-todo"))
+    (autoload-if-found '(org-random-todo org-random-todo-goto-current) "org-random-todo" nil t))
+#+end_src
+** Theme
+*** org-faces
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-faces
+    (setq org-link '(t (:foreground "#ebe087" :underline t))))
+#+end_src
+*** org-superstar
    #+begin_src emacs-lisp
      (eval-when-compile
        (el-get-bundle 'org-superstar))
@@ -4600,52 +4638,174 @@
          (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿"))
          (setq org-superstar-leading-bullet " ")))
    #+end_src
-** org-generate
-   #+begin_src emacs-lisp
-     (eval-when-compile
-       (el-get-bundle 'org-generate))
+** Org Link
+*** org-link
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install ol...")
+    (autoload-if-found '(org-store-link) "ol" nil t)
+    (global-set-key (kbd "C-c l") #'org-store-link))
+#+end_src
+** Org Agenda
+*** Basic
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install org-agenda...")
+    (autoload-if-found '(org-agenda) "org-agenda" nil t)
+    (global-set-key (kbd "C-c a") #'org-agenda)
 
-     (with-delayed-execution
-       (message "Install org-generate...")
-       (add-to-list 'load-path (locate-user-emacs-file "el-get/org-generate"))
-       (autoload-if-found '(org-generate) "org-generate" nil t)
-       (defun my/org-generate ()
-         (interactive)
-         (org-generate "snippet/default"))
-       (with-eval-after-load 'org-generate
-         (setq org-generate-file `,(locate-user-emacs-file "yasnippets.org"))
-         (setq org-generate-root "snippets")))
-   #+end_src
-** org-pomodoro
-   #+begin_src emacs-lisp
-     (eval-when-compile
-       (el-get-bundle "jwiegley/alert")
-       (el-get-bundle 'org-pomodoro))
-
-     (with-delayed-execution
-       (message "Install org-pomodoro...")
-       (add-to-list 'load-path (locate-user-emacs-file "el-get/org-pomodoro"))
-       (autoload-if-found '(org-pomodoro) "org-pomodoro" nil t))
-   #+end_src
-** org-view-mode
-   #+begin_src emacs-lisp
-     (eval-when-compile
-       (el-get-bundle org-view-mode))
-
-     (with-delayed-execution
-       (message "Install org-view-mode...")
-       (add-to-list 'load-path (locate-user-emacs-file "el-get/org-view-mode"))
-       (autoload-if-found '(org-view-mode) "org-view-mode" nil t))
-   #+end_src
-** org-random-todo
+    (with-eval-after-load 'org-agenda
+      (setq org-agenda-span 'day)
+      (setq org-agenda-start-on-weekday 0)
+      (setq org-agenda-todo-ignore-with-date t)))
+#+end_src
+*** org-super-agenda
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-get-bundle 'org-random-todo))
+    (el-get-bundle 'org-super-agenda))
 
   (with-delayed-execution
-    (message "Install org-random-todo...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-random-todo"))
-    (autoload-if-found '(org-random-todo org-random-todo-goto-current) "org-random-todo" nil t))
+    (message "Install org-super-agenda...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-super-agenda"))
+    (autoload-if-found '(org-super-agenda-mode) "org-super-agenda" nil t)
+    (with-eval-after-load 'org-super-agenda
+      (add-hook 'org-agenda-mode-hook #'org-super-agenda-mode)
+      (setq org-super-agenda-groups '((:name "NOW" :time-grid t)
+                                      (:todo "TODO" :order 8)
+                                      (:todo "WAITING" :order 8)))))
+#+end_src
+** Org Babel
+*** org-babel
+   #+begin_src emacs-lisp
+     (with-delayed-execution
+       (message "Install ob-babel...")
+       (autoload-if-found '(org-babel-do-load-languages) "org" nil t)
+
+       (with-eval-after-load 'ob-core
+         (setq org-confirm-babel-evaluate nil))
+
+       (with-eval-after-load 'ob-babel
+         (org-babel-do-load-languages 'org-babel-load-languages
+                                      '((awk . t)
+                                        (C . t)
+                                        (R . t)
+                                        (clojure . t)
+                                        (emacs-lisp . t)
+                                        (haskell . t)
+                                        (java . t)
+                                        (js . t)
+                                        (lisp . t)
+                                        (makefile . t)
+                                        (perl . t)
+                                        (plantuml . t)
+                                        (python . t)
+                                        (ruby . t)
+                                        (scala . t)
+                                        (scheme . t)
+                                        (shell . t)))))
+   #+end_src
+*** ob-async
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ob-async))
+
+  (with-delayed-execution
+    (message "Install ob-async...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-async"))
+    (autoload-if-found '(ob-async-org-babel-execute-src-block) "ob-async" nil t)
+    (defalias 'org-babel-execute-src-block:async 'ob-async-org-babel-execute-src-block))
+#+end_src
+*** ob-fish
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ob-fish :url "https://github.com/takeokunn/ob-fish.git"))
+
+  (with-delayed-execution
+    (message "Install ob-fish...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-fish"))
+
+    (with-eval-after-load 'ob-babel
+      (org-babel-do-load-languages 'org-babel-load-languages
+                                   '((fish . t)))))
+#+end_src
+*** ob-rust
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ob-rust))
+
+  (with-delayed-execution
+    (message "Install ob-rust...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-rust"))
+
+    (with-eval-after-load 'ob-babel
+      (org-babel-do-load-languages 'org-babel-load-languages
+                                   '((rust . t)))))
+#+end_src
+*** ob-go
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ob-go))
+
+  (with-delayed-execution
+    (message "Install ob-go...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-go"))
+
+    (with-eval-after-load 'ob-babel
+      (org-babel-do-load-languages 'org-babel-load-languages
+                                   '((go . t)))))
+#+end_src
+*** ob-typescript
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ob-typescript))
+
+  (with-delayed-execution
+    (message "Install ob-typescript...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-typescript"))
+
+    (with-eval-after-load 'ob-babel
+      (org-babel-do-load-languages 'org-babel-load-languages
+                                   '((typescript . t)))))
+#+end_src
+*** ob-php
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ob-php :url "https://github.com/Sasanidas/ob-php.git"))
+
+  (with-delayed-execution
+    (message "Install ob-php...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-php"))
+
+    (with-eval-after-load 'ob-babel
+      (org-babel-do-load-languages 'org-babel-load-languages
+                                   '((php . t)))))
+#+end_src
+** Org Publish
+*** ox-html
+#+begin_src emacs-lisp
+  (with-eval-after-load 'ox-html
+    (setq org-html-head-include-default-style nil)
+    (setq org-html-head-include-scripts nil)
+    (setq org-html-doctype "html5")
+    (setq org-html-coding-system 'utf-8-unix))
+#+end_src
+*** ox-gfm
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ox-gfm))
+
+  (with-delayed-execution
+    (message "Install ox-gmf...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ox-gmf")))
+#+end_src
+*** ox-zenn
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ox-zenn))
+
+  (with-delayed-execution
+    (message "Install ox-zenn...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ox-zenn")))
 #+end_src
 * EXWM
 ** exwm
