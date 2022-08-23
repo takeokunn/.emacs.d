@@ -1800,8 +1800,12 @@
        (message "Install terraform-mode...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/terraform-mode"))
        (add-to-list 'load-path (locate-user-emacs-file "el-get/hcl-mode"))
-       (when (autoload-if-found '(terraform-mode) "terraform-mode" nil t)
-         (push '("\\.tf$" . terraform-mode) auto-mode-alist)))
+
+       (when (autoload-if-found '(terraform-mode terraform-format-on-save-mode) "terraform-mode" nil t)
+         (push '("\\.tf$" . terraform-mode) auto-mode-alist))
+
+       (with-eval-after-load 'terraform-mode
+         (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode)))
    #+END_SRC
 ** text-mode
    #+begin_src emacs-lisp
@@ -2322,7 +2326,7 @@
     (autoload-if-found '(idle-highlight-mode) "idle-highlight-mode" nil t)
 
     (with-eval-after-load 'idle-highlight-mode
-      (setq idle-highlight-idle-time 3))
+      (setq idle-highlight-idle-time 0.1))
 
     (with-eval-after-load 'prog-mode
       (add-hook 'prog-mode-hook #'idle-highlight-mode)))
@@ -2884,10 +2888,10 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/with-editor/lisp"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/magit/lisp"))
 
-        (when (autoload-if-found '(global-git-commit-mode) "git-commit" nil t)
-          (global-git-commit-mode))
-
+        (autoload-if-found '(global-git-commit-mode) "git-commit" nil t)
         (autoload-if-found '(magit-status magit-blame) "magit")
+
+        (global-git-commit-mode)
 
         (defun my/magit-status ()
           (interactive)
@@ -2898,7 +2902,13 @@
         (global-set-key (kbd "C-x G") #'magit-blame)
 
         (with-eval-after-load 'magit
-          (setq magit-refresh-status-buffer nil)))
+          (setq magit-refresh-status-buffer nil))
+
+        (with-eval-after-load 'magit-status
+          (define-key magit-status-mode-map (kbd "C-j") #'magit-visit-thing))
+
+        (with-eval-after-load 'magit-log
+          (define-key magit-log-mode-map (kbd "C-j") #'magit-visit-thing)))
     #+END_SRC
 *** magit-forge
     #+begin_src emacs-lisp
@@ -2907,8 +2917,7 @@
 
       (with-delayed-execution
         (add-to-list 'load-path (locate-user-emacs-file "el-get/forge/lisp"))
-        (add-hook 'magit-mode-hook #'(lambda ()
-                                       (require 'forge))))
+        (add-hook 'magit-mode-hook #'(lambda () (require 'forge))))
     #+end_src
 ** Shell
 *** exec-path-from-shell
@@ -3297,6 +3306,7 @@
                    (concat "/sudo:root@localhost:" file))))
 
     (with-eval-after-load 'embark
+      (setq embark-mixed-indicator-delay 3)
       (setq prefix-help-command #'embark-prefix-help-command)
 
       ;; ace-window
@@ -3882,6 +3892,29 @@
           (define-key lisp-mode-map (kbd "C-c h") #'hyperspec-lookup)))
     #+end_src
 ** EmacsLisp
+*** lispxmp
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'lispxmp))
+
+  (with-delayed-execution
+    (message "Install lispxmp...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/lispxmp"))
+    (autoload-if-found '(lispxmp) "lispxmp" nil t))
+#+end_src
+*** macrostep
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'macrostep))
+
+  (with-delayed-execution
+    (message "Install macrostep...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/macrostep"))
+    (autoload-if-found '(macrostep-mode) "macrostep" nil t)
+
+    (with-eval-after-load 'emacs-lisp-mode
+      (add-hook 'emacs-lisp-mode-hook #'macrostep-mode)))
+#+end_src
 *** elisp-slime-nav
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -4164,6 +4197,19 @@
         (with-eval-after-load 'ruby-mode
           (add-hook 'ruby-mode-hook #'inf-ruby-minor-mode)))
     #+END_SRC
+*** yard-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'yard-mode))
+
+  (with-delayed-execution
+    (message "Install yard-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/yard-mode"))
+    (autoload-if-found '(yard-mode) "yard-mode" nil t)
+
+    (with-eval-after-load 'ruby-mode
+      (add-hook 'ruby-mode-hook #'yard-mode)))
+#+end_src
 ** SQL
 *** sql-indent
     #+BEGIN_SRC emacs-lisp
@@ -4707,6 +4753,18 @@
 
     (with-eval-after-load 'org
       (add-hook 'org-mode-hook #'org-link-beautify-mode)))
+#+end_src
+*** orgit
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'orgit))
+
+  (with-delayed-execution
+    (message "Install orgit...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/orgit"))
+    (autoload-if-found '(orgit-store-link) "orgit" nil t)
+    (with-eval-after-load 'magit
+      (define-key magit-mode-map [remap org-store-link] #'orgit-store-link)))
 #+end_src
 ** Org Agenda
 *** Basic
