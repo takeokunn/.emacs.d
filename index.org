@@ -2172,15 +2172,16 @@
   (with-eval-after-load 'dimmer
     (message "Install dimmer...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/dimmer"))
-    (when (autoload-if-found '(dimmer-configure-which-key
+    (autoload-if-found '(dimmer-configure-which-key
                                dimmer-configure-org
                                dimmer-configure-company-box
                                dimmer-mode)
-                             "dimmer" nil t)
-      (dimmer-configure-which-key)
-      (dimmer-configure-org)
-      (dimmer-configure-company-box)
-      (dimmer-mode t)))
+                       "dimmer" nil t)
+
+    (dimmer-configure-which-key)
+    (dimmer-configure-org)
+    (dimmer-configure-company-box)
+    (dimmer-mode t))
 #+end_src
 *** doom-themes
     #+BEGIN_SRC emacs-lisp
@@ -2297,21 +2298,6 @@
           (setq nyan-cat-face-number 5)
           (setq nyan-animate-nyancat t)))
     #+END_SRC
-*** redacted
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'redacted
-                       :url "https://github.com/bkaestner/redacted.el.git"))
-
-      (with-delayed-execution
-        (message "Install redacted...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/redacted"))
-        (autoload-if-found '(my/redacted-mode redacted-mode) "redacted" nil t)
-        (defun my/redacted-mode ()
-          (interactive)
-          (read-only-mode (if redacted-mode -1 1))
-          (redacted-mode (if redacted-mode -1 1))))
-    #+end_src
 *** volatile-highlights
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -3079,9 +3065,6 @@
     (autoload 'ansi-color-for-comint-mode-on "ansi-color" "Set `ansi-color-for-comint-mode' to t." t)
     (autoload-if-found '(ansi-color-for-comint-mode-on) "ansi-color" nil t)
 
-    (with-eval-after-load 'esh-mode
-      (add-hook 'eshell-mode-hook #'ansi-color-for-comint-mode-on))
-
     (with-eval-after-load 'shell-mode
       (add-hook 'shell-mode-hook #'ansi-color-for-comint-mode-on))
 
@@ -3120,11 +3103,7 @@
 
     (with-eval-after-load 'xterm-color
       (setenv "TERM" "xterm-256color")
-      (setq xterm-color-preserve-properties t))
-
-    (with-eval-after-load 'esh-mode
-      (add-to-list 'eshell-preoutput-filter-functions #'xterm-color-filter)
-      (setq eshell-output-filter-functions (remove 'eshell-handle-ansi-color eshell-output-filter-functions))))
+      (setq xterm-color-preserve-properties t)))
 #+end_src
 ** Mail
 *** TODO wanderlust
@@ -3173,6 +3152,21 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/sudden-death"))
     (autoload-if-found '(sudden-death) "sudden-death" nil t))
 #+end_src
+*** redacted
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'redacted
+                       :url "https://github.com/bkaestner/redacted.el.git"))
+
+      (with-delayed-execution
+        (message "Install redacted...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/redacted"))
+        (autoload-if-found '(my/redacted-mode redacted-mode) "redacted" nil t)
+        (defun my/redacted-mode ()
+          (interactive)
+          (read-only-mode (if redacted-mode -1 1))
+          (redacted-mode (if redacted-mode -1 1))))
+    #+end_src
 ** Window
 *** ace-window
 #+begin_src emacs-lisp
@@ -3683,9 +3677,9 @@
 #+begin_src emacs-lisp
   (with-delayed-execution-priority-high
     (message "Install tab-bar...")
-    (when (autoload-if-found '(tab-bar-mode tab-bar-history-mode) "tab-bar" nil t)
-      (tab-bar-mode 1)
-      (tab-bar-history-mode 1))
+    (autoload-if-found '(tab-bar-mode tab-bar-history-mode) "tab-bar" nil t)
+
+    (tab-bar-history-mode)
 
     (with-eval-after-load 'tab-bar
       (global-set-key (kbd "C-x C-t") tab-prefix-map)
@@ -4532,13 +4526,16 @@
     (message "Install eshell prompt...")
 
     (defun my/eshell-prompt ()
-      (concat
-       (propertize (eshell/pwd) 'face `(:foreground "orange"))
-       (propertize " (*´ω｀*) < " 'face `(:foreground "green"))))
+      (concat (abbreviate-file-name (eshell/pwd))
+              (if (= (user-uid) 0) " # " " $ ")))
+
+    ;; (defun my/eshell-prompt ()
+    ;;   (concat
+    ;;    (propertize (eshell/pwd) 'face `(:foreground "orange"))
+    ;;    (propertize " (*´ω｀*) < " 'face `(:foreground "green"))))
 
     (with-eval-after-load 'em-prompt
-      (setq eshell-prompt-function #'my/eshell-prompt)
-      (setq eshell-highlight-prompt nil)))
+      (setq eshell-prompt-function #'my/eshell-prompt)))
 #+end_src
 ** eshell-multiple
 #+begin_src emacs-lisp
@@ -4602,26 +4599,6 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/eshell-syntax-highlighting"))
     (autoload-if-found '(eshell-syntax-highlighting-global-mode) "eshell-syntax-highlighting" nil t)
     (eshell-syntax-highlighting-global-mode))
-#+end_src
-** esh-autosuggest
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'esh-autosuggest))
-
-  (with-delayed-execution
-    (message "Install esh-autosuggest...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/esh-autosuggest"))
-    (autoload-if-found '(esh-autosuggest-mode) "esh-autosuggest" nil t)
-
-    (defun my/setup-eshell-ivy-completion ()
-      (setq-local ivy-display-functions-alist
-                  (remq (assoc 'ivy-completion-in-region ivy-display-functions-alist)
-                        ivy-display-functions-alist)))
-
-    (with-eval-after-load 'esh-mode
-      (add-hook 'eshell-mode-hook #'esh-autosuggest-mode)
-      (add-hook 'eshell-mode-hook #'my/setup-eshell-ivy-completion)
-      (define-key eshell-mode-map [remap eshell-pcomplete] #'completion-at-point)))
 #+end_src
 ** emacs-fish-completion
 #+begin_src emacs-lisp
