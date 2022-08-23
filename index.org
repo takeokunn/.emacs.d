@@ -700,6 +700,15 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/frame-local")))
 
 #+end_src
+** fringe-helper
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'fringe-helper))
+
+  (with-delayed-execution
+    (message "Install fringe-helper...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/fringe-helper")))
+#+end_src
 ** hide-lines
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -2919,6 +2928,40 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/forge/lisp"))
         (add-hook 'magit-mode-hook #'(lambda () (require 'forge))))
     #+end_src
+*** git-gutter
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'git-gutter))
+
+  (with-delayed-execution
+    (message "Install git-gutter...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/git-gutter"))
+    (autoload-if-found '(global-git-gutter-mode) "git-gutter" nil t)
+
+    (global-git-gutter-mode)
+
+    (with-eval-after-load 'git-gutter
+      (setq git-gutter:update-hooks '(after-save-hook after-revert-hook))
+      (add-hook 'git-gutter-mode-hook #'linum-update-current)))
+#+end_src
+*** git-gutter-fringe
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'git-gutter-fringe))
+
+  (with-delayed-execution
+    (message "Install git-gutter-fringe...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/git-gutter-fringe"))
+    (autoload-if-found '(git-gutter-fr:init
+                         git-gutter-fr:view-diff-infos
+                         git-gutter-fr:clear) "git-gutter-fringe" nil t)
+
+    (with-eval-after-load 'git-gutter
+      (setq git-gutter-fr:side 'right-fringe)
+      (setq git-gutter:init-function #'git-gutter-fr:init)
+      (setq git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos)
+      (setq git-gutter:clear-function #'git-gutter-fr:clear)))
+#+end_src
 ** Shell
 *** exec-path-from-shell
     #+BEGIN_SRC emacs-lisp
@@ -3222,6 +3265,17 @@
 #+begin_src emacs-lisp
   (with-eval-after-load 'browse-url
     (setq browse-url-browser-function 'eww-browse-url))
+#+end_src
+*** command-log-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'command-log-mode))
+
+  (with-delayed-execution
+    (message "Install command-log-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/command-log-mode"))
+    (autoload-if-found '(clm/toggle-command-log-buffer) "command-log-mode" nil t)
+    (defalias 'command-log #'clm/toggle-command-log-buffer))
 #+end_src
 *** define-word
     #+begin_src emacs-lisp
