@@ -4533,7 +4533,7 @@
 
     (defun my/eshell-prompt ()
       (concat
-       (propertize (eshell/pwd) 'face `(:foreground "blue"))
+       (propertize (eshell/pwd) 'face `(:foreground "orange"))
        (propertize " (*´ω｀*) < " 'face `(:foreground "green"))))
 
     (with-eval-after-load 'em-prompt
@@ -4633,7 +4633,7 @@
     (message "Install emacs-fish-completion")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/emacs-fish-completion"))
     (autoload-if-found '(global-fish-completion-mode) "fish-completion" nil t)
-    (when (and (executable-find "fish"))
+    (when (executable-find "fish")
       (global-fish-completion-mode)))
 #+end_src
 * Org Mode
@@ -5122,15 +5122,15 @@
 #+end_src
 *** org-roam-protocol
 #+begin_src emacs-lisp
-  (with-delayed-execution
-    (message "Install org-roam-protocol...")
-    (autoload-if-found '(org-roam-protocol-open-ref org-roam-protocol-open-node) "org-roam-protocol" nil t)
+  ;; (with-delayed-execution
+  ;;   (message "Install org-roam-protocol...")
+  ;;   (autoload-if-found '(org-roam-protocol-open-ref org-roam-protocol-open-node) "org-roam-protocol" nil t)
 
-    (push '("org-roam-ref" :protocol "roam-ref" :function org-roam-protocol-open-ref) org-protocol-protocol-alist)
-    (push '("org-roam-node" :protocol "roam-node" :function org-roam-protocol-open-node) org-protocol-protocol-alist)
+  ;;   (push '("org-roam-ref" :protocol "roam-ref" :function org-roam-protocol-open-ref) org-protocol-protocol-alist)
+  ;;   (push '("org-roam-node" :protocol "roam-node" :function org-roam-protocol-open-node) org-protocol-protocol-alist)
 
-    (with-eval-after-load 'org-roam-protocol
-      (setq org-roam-protocol-store-links t)))
+  ;;   (with-eval-after-load 'org-roam-protocol
+  ;;     (setq org-roam-protocol-store-links t)))
 #+end_src
 *** org-roam-ui
 #+begin_src emacs-lisp
@@ -5159,13 +5159,12 @@
       (add-to-list 'load-path (locate-user-emacs-file "el-get/exwm"))
 
       (display-battery-mode)
-      (display-time-mode)
 
-      (when (autoload-if-found '(exwm-systemtray-enable) "exwm-systemtray" nil t)
-        (exwm-systemtray-enable))
+      (autoload-if-found '(exwm-systemtray-enable) "exwm-systemtray" nil t)
+      (autoload-if-found '(exwm-config-example) "exwm-config" nil t)
 
-      (when (autoload-if-found '(exwm-config-example) "exwm-config" nil t)
-        (exwm-config-example))
+      (exwm-systemtray-enable)
+      (exwm-config-example)
 
       (with-eval-after-load 'exwm-workspace
         (setq exwm-workspace-number 3))))
