@@ -2936,11 +2936,10 @@
   (with-delayed-execution
     (message "Install git-gutter...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/git-gutter"))
-    (autoload-if-found '(global-git-gutter-mode) "git-gutter" nil t)
-
-    (global-git-gutter-mode)
+    (autoload-if-found '(git-gutter-mode) "git-gutter" nil t)
 
     (with-eval-after-load 'git-gutter
+      ;; (add-hook 'prog-mode-hook #'git-gutter-mode)
       (setq git-gutter:update-hooks '(after-save-hook after-revert-hook))))
 #+end_src
 *** git-gutter-fringe
@@ -2957,6 +2956,7 @@
 
     (with-eval-after-load 'git-gutter
       (setq git-gutter-fr:side 'right-fringe)
+      (setq git-gutter:window-width -1)
       (setq git-gutter:init-function #'git-gutter-fr:init)
       (setq git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos)
       (setq git-gutter:clear-function #'git-gutter-fr:clear)))
