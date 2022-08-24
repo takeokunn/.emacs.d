@@ -3032,6 +3032,9 @@
             (setq skk-server-host "localhost")
             (setq skk-server-portnum 1178))
 
+          (when (string= system-type "gnu/linux")
+            (setq skk-jisyo "/home/take/.skk-jisyo.utf8"))
+
           (setq skk-byte-compile-init-file t)
           (setq skk-isearch-mode-enable 'always)
           (setq skk-egg-like-newline t)
@@ -5135,16 +5138,14 @@
       (message "Install exwm...")
       (add-to-list 'load-path (locate-user-emacs-file "el-get/exwm"))
 
+      (display-time-mode)
       (display-battery-mode)
 
       (autoload-if-found '(exwm-systemtray-enable) "exwm-systemtray" nil t)
       (autoload-if-found '(exwm-config-example) "exwm-config" nil t)
 
       (exwm-systemtray-enable)
-      (exwm-config-example)
-
-      (with-eval-after-load 'exwm-workspace
-        (setq exwm-workspace-number 3))))
+      (exwm-config-example)))
 #+end_src
 ** exwm-edit
 #+begin_src emacs-lisp
