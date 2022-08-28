@@ -1165,7 +1165,7 @@
 
        (with-eval-after-load 'emmet-mode
          (define-key emmet-mode-keymap (kbd "C-j") nil)
-         (define-key emmet-mode-keymap (kbd "M-j") 'emmet-expand-line)
+         (define-key emmet-mode-keymap (kbd "M-j") #'emmet-expand-line)
          (setq emmet-self-closing-tag-style "")
          (setq emmet-indent-after-insert nil)))
    #+END_SRC
@@ -3842,7 +3842,7 @@
         (with-eval-after-load 'scheme
           (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)))
     #+END_SRC
-** CommonLisp
+** Common Lisp
 *** slime
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -3942,7 +3942,7 @@
         (with-eval-after-load 'lisp-mode
           (define-key lisp-mode-map (kbd "C-c h") #'hyperspec-lookup)))
     #+end_src
-** EmacsLisp
+** Emacs Lisp
 *** lispxmp
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -4277,6 +4277,15 @@
                                          (sqlind-minor-mode)))))
     #+END_SRC
 ** PHP
+*** php-runtime
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'php-runtime))
+
+  (with-delayed-execution
+    (message "Install php-runtime...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/php-runtime")))
+#+end_src
 *** psysh
     #+begin_src emacs-lisp
       (eval-when-compile
@@ -4284,7 +4293,11 @@
 
       (with-delayed-execution
         (message "Install psysh...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/psysh")))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/psysh"))
+        (autoload-if-found '(psysh psysh-doc) "psysh" nil t)
+
+        (with-eval-after-load 'php-mode
+          (define-key php-mode-map (kbd "C-c h") #'psysh-doc)))
     #+end_src
 *** laravel-tinker-repl
     #+begin_src emacs-lisp
@@ -4324,6 +4337,38 @@
     (message "Install phpstan...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/phpstan"))
     (autoload-if-found '(phpstan-analyze-file phpstan-analyze-this-file) "phpstan" nil t))
+#+end_src
+*** composer
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'composer))
+
+  (with-delayed-execution
+    (message "Install composer...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/composer"))
+    (autoload-if-found '(composer
+                         composer-install
+                         composer-require
+                         composer-update
+                         composer-dump-autoload
+                         composer-run-script
+                         composer-run-vendor-bin-command
+                         composer-find-json-file
+                         composer-view-lock-file) "composer" nil t))
+
+#+end_src
+*** phpunit
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'phpunit))
+
+  (with-delayed-execution
+    (message "Install phpunit...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/phpunit"))
+    (autoload-if-found '(phpunit-current-test
+                         phpunit-current-class
+                         phpunit-current-project
+                         phpunit-group) "phpunit" nil t))
 #+end_src
 ** Markdown
 *** poly-markdown
