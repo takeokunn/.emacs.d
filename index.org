@@ -3171,6 +3171,19 @@
           (read-only-mode (if redacted-mode -1 1))
           (redacted-mode (if redacted-mode -1 1))))
     #+end_src
+*** lorem ipsum
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'lorem-ipsum))
+
+      (with-delayed-execution
+        (message "Install lorem-ipsum...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/lorem-ipsum"))
+        (autoload-if-found '(lorem-ipsum-insert-sentences lorem-ipsum-insert-paragraphs lorem-ipsum-insert-list) "lorem-ipsum" nil t)
+        (global-set-key (kbd "C-c C-l s") #'lorem-ipsum-insert-sentences)
+        (global-set-key (kbd "C-c C-l p") #'lorem-ipsum-insert-paragraphs)
+        (global-set-key (kbd "C-c C-l l") #'lorem-ipsum-insert-list))
+    #+end_src
 ** Window
 *** ace-window
 #+begin_src emacs-lisp
@@ -3224,6 +3237,125 @@
     (autoload-if-found '(zoom-window-zoom) "zoom-window" nil t)
     (global-set-key (kbd "C-c C-z") #'zoom-window-zoom))
 #+end_src
+** Process
+*** proced
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install proced...")
+    (autoload-if-found '(proced) "proced" nil t)
+    (add-hook 'proced-mode-hook #'(lambda ()
+                                    (proced-toggle-auto-update 1)))
+    (with-eval-after-load 'proced
+      (setq proced-format 'long)))
+#+end_src
+*** proced-narrow
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'proced-narrow))
+
+  (with-delayed-execution
+    (message "Install proced-narrow...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/proced-narrow"))
+    (autoload-if-found '(proced-narrow) "proced-narrow" nil t)
+
+    (with-eval-after-load 'proced
+      (define-key proced-mode-map (kbd "/") #'proced-narrow)))
+
+#+end_src
+** GC
+*** gcmh
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'gcmh))
+
+  (with-delayed-execution
+    (message "Install gcmh...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/gcmh"))
+    (when (autoload-if-found '(gcmh-mode) "gcmh" nil t)
+      (gcmh-mode 1))
+
+    (defvar my/gcmh-status nil)
+
+    (advice-add #'garbage-collect
+                :before
+                (defun my/gcmh-log-start (&rest _)
+                  (when gcmh-verbose
+                    (setq my/gcmh-status "Running GC..."))))
+
+    (advice-add #'gcmh-message
+                :override
+                (defun my/gcmh-message (format-string &rest args)
+                  (setq my/gcmh-status
+                        (apply #'format-message format-string args))
+                  (run-with-timer 2 nil
+                                  (lambda ()
+                                    (setq my/gcmh-status nil)))))
+
+    (with-eval-after-load 'gcmh
+      (setq gcmh-verbose t)
+      (setq gcmh-idle-delay 15)))
+#+end_src
+** EWW
+*** basic
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install eww...")
+
+    (defun my/eww-rename-buffer ()
+      "Rename the name of current EWW buffer."
+      (let ((title (plist-get eww-data :title))
+            (url (file-name-base (eww-current-url))))
+        (rename-buffer (format "eww: %s" (or (if (and title (> (length title) 0))
+                                                 title
+                                               nil)
+                                             url "")) t)))
+
+    ;; config
+    (with-eval-after-load 'eww
+      (setq eww-header-line-format nil)
+      (setq eww-search-prefix "http://www.google.co.jp/search?q="))
+
+    (with-eval-after-load 'browse-url
+      (setq browse-url-browser-function 'eww-browse-url))
+
+    ;; keybind
+    (with-eval-after-load 'eww
+      (define-key eww-mode-map (kbd "C") #'eww-set-character-encoding)
+      (define-key eww-mode-map (kbd "C-j") #'eww-follow-link)
+      (define-key eww-mode-map (kbd "T") #'eww-goto-title-heading)
+      (define-key eww-mode-map (kbd "T") #'eww-goto-title-heading))
+
+    (with-eval-after-load 'eww
+      (add-hook eww-after-render #'my/eww-rename-buffer)))
+#+end_src
+*** eww-lnum
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'eww-lnum))
+
+  (with-delayed-execution
+    (message "Install eww-lnum...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/eww-lnum"))
+    (autoload-if-found '(eww-lnum-follow eww-lnum-universal) "eww-lnum" nil t)
+
+    (with-eval-after-load 'eww
+      (define-key eww-mode-map "f" #'eww-lnum-follow)
+      (define-key eww-mode-map "F" #'eww-lnum-universal)))
+#+end_src
+** Narrowing
+*** fancy-narrow
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'fancy-narrow))
+
+  (with-delayed-execution
+    (message "Install fancy-narrow...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/fancy-narrow"))
+    (when (autoload-if-found '(fancy-narrow-mode) "fancy-narrow" nil t)
+      (fancy-narrow-mode))
+    (with-eval-after-load 'fancy-narrow
+      (add-hook 'fancy-narrow-mode-hook #'(lambda () (lsp-mode -1)))))
+#+end_src
 ** Other
 *** auto-insert
 #+begin_src emacs-lisp
@@ -3258,11 +3390,6 @@
         (with-eval-after-load 'amx
           (setq amx-history-length 100)))
     #+END_SRC
-*** browse-url
-#+begin_src emacs-lisp
-  (with-eval-after-load 'browse-url
-    (setq browse-url-browser-function 'eww-browse-url))
-#+end_src
 *** command-log-mode
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -3298,8 +3425,8 @@
 #+begin_src emacs-lisp
   (with-delayed-execution
     (message "Install delsel...")
-    (when (autoload-if-found '(delete-selection-mode) "delsel" nil t)
-      (delete-selection-mode)))
+    (autoload-if-found '(delete-selection-mode) "delsel" nil t)
+    (delete-selection-mode))
 #+end_src
 *** editorconfig
     #+BEGIN_SRC emacs-lisp
@@ -3395,8 +3522,8 @@
 #+begin_src emacs-lisp
   (with-delayed-execution
     (message "Install epa-file...")
-    (when (autoload-if-found '(epa-file-enable) "epa-file" nil t)
-      (epa-file-enable)))
+    (autoload-if-found '(epa-file-enable) "epa-file" nil t)
+    (epa-file-enable))
 #+end_src
 *** expand-region
 #+begin_src emacs-lisp
@@ -3410,19 +3537,6 @@
     (transient-mark-mode)
     (global-set-key (kbd "C-M-@") 'er/expand-region))
 #+end_src
-*** fancy-narrow
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'fancy-narrow))
-
-  (with-delayed-execution
-    (message "Install fancy-narrow...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/fancy-narrow"))
-    (when (autoload-if-found '(fancy-narrow-mode) "fancy-narrow" nil t)
-      (fancy-narrow-mode))
-    (with-eval-after-load 'fancy-narrow
-      (add-hook 'fancy-narrow-mode-hook #'(lambda () (lsp-mode -1)))))
-#+end_src
 *** font-lock-studio
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -3432,38 +3546,6 @@
         (message "Install font-lock-studio...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/font-lock-studio")))
     #+END_SRC
-*** gcmh
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'gcmh))
-
-  (with-delayed-execution
-    (message "Install gcmh...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/gcmh"))
-    (when (autoload-if-found '(gcmh-mode) "gcmh" nil t)
-      (gcmh-mode 1))
-
-    (defvar my/gcmh-status nil)
-
-    (advice-add #'garbage-collect
-                :before
-                (defun my/gcmh-log-start (&rest _)
-                  (when gcmh-verbose
-                    (setq my/gcmh-status "Running GC..."))))
-
-    (advice-add #'gcmh-message
-                :override
-                (defun my/gcmh-message (format-string &rest args)
-                  (setq my/gcmh-status
-                        (apply #'format-message format-string args))
-                  (run-with-timer 2 nil
-                                  (lambda ()
-                                    (setq my/gcmh-status nil)))))
-
-    (with-eval-after-load 'gcmh
-      (setq gcmh-verbose t)
-      (setq gcmh-idle-delay 15)))
-#+end_src
 *** google-this
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -3521,19 +3603,6 @@
         (when (autoload-if-found '(keyfreq-mode keyfreq-autosave-mode) "keyfreq" nil t)
           (keyfreq-mode 1)
           (keyfreq-autosave-mode 1)))
-    #+end_src
-*** lorem ipsum
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'lorem-ipsum))
-
-      (with-delayed-execution
-        (message "Install lorem-ipsum...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/lorem-ipsum"))
-        (autoload-if-found '(lorem-ipsum-insert-sentences lorem-ipsum-insert-paragraphs lorem-ipsum-insert-list) "lorem-ipsum" nil t)
-        (global-set-key (kbd "C-c C-l s") #'lorem-ipsum-insert-sentences)
-        (global-set-key (kbd "C-c C-l p") #'lorem-ipsum-insert-paragraphs)
-        (global-set-key (kbd "C-c C-l l") #'lorem-ipsum-insert-list))
     #+end_src
 *** minimap
     #+begin_src emacs-lisp
@@ -3594,16 +3663,6 @@
         (when (autoload-if-found '(popwin-mode) "popwin" nil t)
           (popwin-mode 1)))
     #+end_src
-*** proced
-#+begin_src emacs-lisp
-  (with-delayed-execution
-    (message "Install proced...")
-    (autoload-if-found '(proced) "proced" nil t)
-    (add-hook 'proced-mode-hook #'(lambda ()
-                                    (proced-toggle-auto-update 1)))
-    (with-eval-after-load 'proced
-      (setq proced-format 'long)))
-#+end_src
 *** smartparens
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
