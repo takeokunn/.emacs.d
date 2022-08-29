@@ -3110,18 +3110,47 @@
       (setq xterm-color-preserve-properties t)))
 #+end_src
 ** Mail
-*** TODO wanderlust
+*** apel
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'apel))
+
+  (with-delayed-execution
+    (message "Install apel...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/apel")))
+
+#+end_src
+*** flim
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'flim))
+
+  (with-delayed-execution
+    (message "Install flim...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/flim")))
+#+end_src
+*** semi
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'semi))
+
+  (with-delayed-execution
+    (message "Install semi...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/semi")))
+
+#+end_src
+*** wanderlust
     #+begin_src emacs-lisp
       ;; (eval-when-compile
-      ;;   (el-get-bundle 'wanderlust
-      ;;                  :url "https://github.com/wanderlust/wanderlust.git"))
+      ;;   (el-get-bundle 'wanderlust))
 
       ;; (with-delayed-execution
       ;;   (message "Install wanderlust...")
       ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/wanderlust"))
+      ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/wanderlust/wl"))
+      ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/wanderlust/elmo"))
       ;;   (with-eval-after-load 'wanderlust
-      ;;     (eval-and-compile
-      ;;       (setq ssl-certificate-verification-policy 1))))
+      ;;     (setq ssl-certificate-verification-policy 1)))
     #+end_src
 ** Joke
 *** hacker-typer
@@ -4576,7 +4605,16 @@
 
        (with-eval-after-load 'em-alias
          (setq eshell-command-aliases-list '(("ll" "ls -la")
-                                             ("cdd" "cd ~/Desktop")))))
+                                             ("sudo" "eshell/sudo"))))
+
+       (with-eval-after-load 'esh-cmd
+         (setq eshell-prefer-lisp-functions t))
+
+       (with-eval-after-load 'password-cache
+         (setq password-cache-expiry 3600))
+
+       (with-eval-after-load 'esh-module
+         (add-to-list 'eshell-modules-list 'eshell-tramp)))
    #+end_src
 ** functions
 #+begin_src emacs-lisp
@@ -4636,11 +4674,6 @@
     (defun my/eshell-prompt ()
       (concat (abbreviate-file-name (eshell/pwd))
               (if (= (user-uid) 0) " # " " $ ")))
-
-    ;; (defun my/eshell-prompt ()
-    ;;   (concat
-    ;;    (propertize (eshell/pwd) 'face `(:foreground "orange"))
-    ;;    (propertize " (*´ω｀*) < " 'face `(:foreground "green"))))
 
     (with-eval-after-load 'em-prompt
       (setq eshell-prompt-function #'my/eshell-prompt)))
