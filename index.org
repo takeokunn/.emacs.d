@@ -3110,48 +3110,14 @@
       (setq xterm-color-preserve-properties t)))
 #+end_src
 ** Mail
-*** apel
+*** mu4e
 #+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'apel))
-
   (with-delayed-execution
-    (message "Install apel...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/apel")))
-
+    (message "Install mu4e...")
+    (when (file-directory-p "/usr/local/share/emacs/site-lisp/mu/mu4e")
+      (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e"))
+    (autoload-if-found '(mu4e) "mu4e" nil t))
 #+end_src
-*** flim
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'flim))
-
-  (with-delayed-execution
-    (message "Install flim...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/flim")))
-#+end_src
-*** semi
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'semi))
-
-  (with-delayed-execution
-    (message "Install semi...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/semi")))
-
-#+end_src
-*** wanderlust
-    #+begin_src emacs-lisp
-      ;; (eval-when-compile
-      ;;   (el-get-bundle 'wanderlust))
-
-      ;; (with-delayed-execution
-      ;;   (message "Install wanderlust...")
-      ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/wanderlust"))
-      ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/wanderlust/wl"))
-      ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/wanderlust/elmo"))
-      ;;   (with-eval-after-load 'wanderlust
-      ;;     (setq ssl-certificate-verification-policy 1)))
-    #+end_src
 ** Joke
 *** hacker-typer
 #+begin_src emacs-lisp
