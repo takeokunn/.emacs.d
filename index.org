@@ -596,6 +596,10 @@
     (when (functionp 'set-fontset-font)
       (my/reset-default-fontset)))
 #+end_src
+** warning
+#+begin_src emacs-lisp
+  (setq display-warning-minimum-level :error)
+#+end_src
 * Utitlity
 ** alert
 #+begin_src emacs-lisp
@@ -3296,14 +3300,15 @@
   (with-delayed-execution
     (message "Install eww...")
 
-    (defun my/eww-rename-buffer ()
+  (defun my/eww-rename-buffer ()
       "Rename the name of current EWW buffer."
-      (let ((title (plist-get eww-data :title))
-            (url (file-name-base (eww-current-url))))
-        (rename-buffer (format "eww: %s" (or (if (and title (> (length title) 0))
-                                                 title
-                                               nil)
-                                             url "")) t)))
+      (let* ((title (plist-get eww-data :title))
+             (url (file-name-base (eww-current-url)))
+             (buffer-name (or (if (and title (> (length title) 0))
+                                  title
+                                nil)
+                              url "")))
+        (rename-buffer (format "eww: %s" buffer-name) t)))
 
     ;; config
     (with-eval-after-load 'eww
@@ -3320,8 +3325,9 @@
       (define-key eww-mode-map (kbd "T") #'eww-goto-title-heading)
       (define-key eww-mode-map (kbd "T") #'eww-goto-title-heading))
 
+    ;; hooks
     (with-eval-after-load 'eww
-      (add-hook eww-after-render #'my/eww-rename-buffer)))
+      (add-hook 'eww-after-render #'my/eww-rename-buffer)))
 #+end_src
 *** eww-lnum
 #+begin_src emacs-lisp
