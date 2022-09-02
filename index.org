@@ -4576,17 +4576,10 @@
          (setq eshell-hist-ignoredups t))
 
        (with-eval-after-load 'em-alias
-         (setq eshell-command-aliases-list '(("ll" "ls -la")
-                                             ("sudo" "eshell/sudo"))))
+         (setq eshell-command-aliases-list '(("ll" "ls -la"))))
 
        (with-eval-after-load 'esh-cmd
-         (setq eshell-prefer-lisp-functions t))
-
-       (with-eval-after-load 'password-cache
-         (setq password-cache-expiry 3600))
-
-       (with-eval-after-load 'esh-module
-         (add-to-list 'eshell-modules-list 'eshell-tramp)))
+         (setq eshell-prefer-lisp-functions t)))
    #+end_src
 ** functions
 #+begin_src emacs-lisp
@@ -4669,7 +4662,6 @@
                          eshell-multiple-dedicated-close)
                        "eshell-multiple" nil t)
 
-    (defalias 'eshell #'eshell-multiple-new)
     (defalias 'eshell/new #'eshell-multiple-new)
     (defalias 'eshell/next #'eshell-multiple-next)
     (defalias 'eshell/prev #'eshell-multiple-prev)
