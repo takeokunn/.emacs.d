@@ -841,6 +841,15 @@
     (message "Install queue...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/queue")))
 #+end_src
+** require
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'request))
+
+  (with-delayed-execution
+    (message "Install request...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/request")))
+#+end_src
 ** s
    #+begin_src emacs-lisp
      (eval-when-compile
@@ -2804,7 +2813,7 @@
           (define-key lsp-mode-map (kbd "C-c C-s") #'lsp-ui-sideline-mode)
           (define-key lsp-mode-map (kbd "C-c C-d") #'lsp-ui-doc-mode)))
     #+END_SRC
-*** lsp-scheme
+*** TODO lsp-scheme
 #+begin_src emacs-lisp
   (eval-when-compile
     (el-get-bundle 'lsp-scheme))
@@ -3357,6 +3366,136 @@
     (with-eval-after-load 'fancy-narrow
       (add-hook 'fancy-narrow-mode-hook #'(lambda () (lsp-mode -1)))))
 #+end_src
+*** origami
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'origami))
+
+      (with-delayed-execution
+        (message "Install origami...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/origami"))
+
+        (when (autoload-if-found '(global-origami-mode origami-recursively-toggle-node origami-recursively-toggle-node) "origami" nil t)
+          (global-origami-mode))
+
+        (global-set-key (kbd "C-c t") #'origami-recursively-toggle-node)
+        (global-set-key (kbd "C-c C-t") #'origami-recursively-toggle-node))
+    #+end_src
+** Client
+*** md4rd
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'md4rd))
+
+  (with-delayed-execution
+    (message "Install md4rd...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/md4rd"))
+    (autoload-if-found '(md4rd
+                         md4rd-login
+                         md4rd-visit
+                         md4rd-widget-expand-all
+                         md4rd-widget-collapse-all
+                         md4rd-reply
+                         md4rd-upvote
+                         md4rd-downvote
+                         md4rd-widget-toggle-line
+                         md4rd-refresh-login
+                         md4rd-indent-all-the-lines) "md4rd" nil t)
+
+    (with-eval-after-load 'md4rd
+      (add-hook 'md4rd-mode-hook #'md4rd-indent-all-the-lines)
+      (run-with-timer 0 3540 #'md4rd-refresh-login)
+
+      ;; config
+      (setq md4rd-subs-active '(emacs lisp+Common_Lisp prolog clojure))
+      ;; (setq md4rd--oauth-access-token "your-access-token-here")
+      ;; (setq md4rd--oauth-refresh-token "your-refresh-token-here")
+
+      ;; keymap
+      (define-key md4rd-mode-map (kbd "u") 'tree-mode-goto-parent)
+      (define-key md4rd-mode-map (kbd "o") 'md4rd-open)
+      (define-key md4rd-mode-map (kbd "v") 'md4rd-visit)
+      (define-key md4rd-mode-map (kbd "e") 'tree-mode-toggle-expand)
+      (define-key md4rd-mode-map (kbd "E") 'md4rd-widget-expand-all)
+      (define-key md4rd-mode-map (kbd "C") 'md4rd-widget-collapse-all)
+      (define-key md4rd-mode-map (kbd "n") 'widget-forward)
+      (define-key md4rd-mode-map (kbd "j") 'widget-forward)
+      (define-key md4rd-mode-map (kbd "h") 'backward-button)
+      (define-key md4rd-mode-map (kbd "p") 'widget-backward)
+      (define-key md4rd-mode-map (kbd "k") 'widget-backward)
+      (define-key md4rd-mode-map (kbd "l") 'forward-button)
+      (define-key md4rd-mode-map (kbd "q") 'kill-current-buffer)
+      (define-key md4rd-mode-map (kbd "r") 'md4rd-reply)
+      (define-key md4rd-mode-map (kbd "u") 'md4rd-upvote)
+      (define-key md4rd-mode-map (kbd "d") 'md4rd-downvote)
+      (define-key md4rd-mode-map (kbd "t") 'md4rd-widget-toggle-line)))
+#+end_src
+** Statistics
+*** esup
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'esup))
+
+      (with-delayed-execution
+        (message "Install esup...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/esup"))
+        (autoload-if-found '(esup) "esup" nil t))
+    #+END_SRC
+*** keyfreq
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'keyfreq))
+
+      (with-delayed-execution
+        (message "Install keyfreq...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/keyfreq"))
+        (when (autoload-if-found '(keyfreq-mode keyfreq-autosave-mode) "keyfreq" nil t)
+          (keyfreq-mode 1)
+          (keyfreq-autosave-mode 1)))
+    #+end_src
+** Tab
+*** tab-bar
+#+begin_src emacs-lisp
+  (with-delayed-execution-priority-high
+    (message "Install tab-bar...")
+    (autoload-if-found '(tab-bar-mode tab-bar-history-mode) "tab-bar" nil t)
+
+    (tab-bar-history-mode)
+
+    (with-eval-after-load 'tab-bar
+      (global-set-key (kbd "C-x C-t") tab-prefix-map)
+      (setq tab-bar-close-button-show nil)
+      (setq tab-bar-close-last-tab-choice nil)
+      (setq tab-bar-close-tab-select 'left)
+      (setq tab-bar-history-mode nil)
+      (setq tab-bar-new-tab-choice "*scratch*")
+      (setq tab-bar-new-button-show nil)
+      (setq tab-bar-tab-name-truncated-max 12)
+      (setq tab-bar-separator " | "))
+
+    (with-eval-after-load 'ivy
+      (defun my/advice-completing-read-to-ivy (orig-func &rest args)
+        (interactive
+         (let* ((recent-tabs (mapcar (lambda (tab)
+                                       (alist-get 'name tab))
+                                     (tab-bar--tabs-recent))))
+           (list (ivy-completing-read "Switch to tab by name (default recent): "
+                                      recent-tabs nil nil nil nil recent-tabs))))
+        (apply orig-func args))
+      (advice-add #'tab-bar-switch-to-tab :around #'my/advice-completing-read-to-ivy))
+
+    (with-eval-after-load 'projectile
+      (defun my/tab-bar-rename-tab ()
+        (interactive)
+        (let ((proj-name (projectile-project-name)))
+          (tab-bar-rename-tab proj-name)))
+      (define-key tab-prefix-map (kbd "r") #'my/tab-bar-rename-tab))
+
+    (with-eval-after-load 'neotree
+      (advice-add 'tab-new :before #'(lambda (&rest _) (neotree-hide)))
+      (advice-add 'tab-next :before #'(lambda (&rest _) (neotree-hide)))
+      (advice-add 'tab-bar-switch-to-tab :before #'(lambda (&rest _) (neotree-hide)))))
+#+end_src
 ** Other
 *** auto-insert
 #+begin_src emacs-lisp
@@ -3509,16 +3648,6 @@
   ;; embark-file-map
   ;; (counsel-projectile-find-file)
 #+end_src
-*** esup
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'esup))
-
-      (with-delayed-execution
-        (message "Install esup...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/esup"))
-        (autoload-if-found '(esup) "esup" nil t))
-    #+END_SRC
 *** epa-file
 #+begin_src emacs-lisp
   (with-delayed-execution
@@ -3593,18 +3722,6 @@
         (with-eval-after-load 'htmlize
           (setq htmlize-html-charset 'utf-8)))
     #+end_src
-*** keyfreq
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'keyfreq))
-
-      (with-delayed-execution
-        (message "Install keyfreq...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/keyfreq"))
-        (when (autoload-if-found '(keyfreq-mode keyfreq-autosave-mode) "keyfreq" nil t)
-          (keyfreq-mode 1)
-          (keyfreq-autosave-mode 1)))
-    #+end_src
 *** minimap
     #+begin_src emacs-lisp
       (eval-when-compile
@@ -3622,21 +3739,6 @@
           (setq minimap-update-delay 0.2)
           (setq minimap-minimum-width 20)
           (setq minimap-major-modes '(prog-mode org-mode))))
-    #+end_src
-*** origami
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'origami))
-
-      (with-delayed-execution
-        (message "Install origami...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/origami"))
-
-        (when (autoload-if-found '(global-origami-mode origami-recursively-toggle-node origami-recursively-toggle-node) "origami" nil t)
-          (global-origami-mode))
-
-        (global-set-key (kbd "C-c t") #'origami-recursively-toggle-node)
-        (global-set-key (kbd "C-c C-t") #'origami-recursively-toggle-node))
     #+end_src
 *** persistent-scratch
     #+begin_src emacs-lisp
@@ -3736,48 +3838,6 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/syntax-subword"))
     (when (autoload-if-found '(global-syntax-subword-mode) "syntax-subword" nil t)
       (global-syntax-subword-mode)))
-#+end_src
-*** tab-bar
-#+begin_src emacs-lisp
-  (with-delayed-execution-priority-high
-    (message "Install tab-bar...")
-    (autoload-if-found '(tab-bar-mode tab-bar-history-mode) "tab-bar" nil t)
-
-    (tab-bar-history-mode)
-
-    (with-eval-after-load 'tab-bar
-      (global-set-key (kbd "C-x C-t") tab-prefix-map)
-      (setq tab-bar-close-button-show nil)
-      (setq tab-bar-close-last-tab-choice nil)
-      (setq tab-bar-close-tab-select 'left)
-      (setq tab-bar-history-mode nil)
-      (setq tab-bar-new-tab-choice "*scratch*")
-      (setq tab-bar-new-button-show nil)
-      (setq tab-bar-tab-name-truncated-max 12)
-      (setq tab-bar-separator " | "))
-
-    (with-eval-after-load 'ivy
-      (defun my/advice-completing-read-to-ivy (orig-func &rest args)
-        (interactive
-         (let* ((recent-tabs (mapcar (lambda (tab)
-                                       (alist-get 'name tab))
-                                     (tab-bar--tabs-recent))))
-           (list (ivy-completing-read "Switch to tab by name (default recent): "
-                                      recent-tabs nil nil nil nil recent-tabs))))
-        (apply orig-func args))
-      (advice-add #'tab-bar-switch-to-tab :around #'my/advice-completing-read-to-ivy))
-
-    (with-eval-after-load 'projectile
-      (defun my/tab-bar-rename-tab ()
-        (interactive)
-        (let ((proj-name (projectile-project-name)))
-          (tab-bar-rename-tab proj-name)))
-      (define-key tab-prefix-map (kbd "r") #'my/tab-bar-rename-tab))
-
-    (with-eval-after-load 'neotree
-      (advice-add 'tab-new :before #'(lambda (&rest _) (neotree-hide)))
-      (advice-add 'tab-next :before #'(lambda (&rest _) (neotree-hide)))
-      (advice-add 'tab-bar-switch-to-tab :before #'(lambda (&rest _) (neotree-hide)))))
 #+end_src
 *** undo-tree
     #+begin_src emacs-lisp
