@@ -2813,7 +2813,7 @@
           (define-key lsp-mode-map (kbd "C-c C-s") #'lsp-ui-sideline-mode)
           (define-key lsp-mode-map (kbd "C-c C-d") #'lsp-ui-doc-mode)))
     #+END_SRC
-*** TODO lsp-scheme
+*** lsp-scheme
 #+begin_src emacs-lisp
   (eval-when-compile
     (el-get-bundle 'lsp-scheme))
@@ -3361,10 +3361,17 @@
   (with-delayed-execution
     (message "Install fancy-narrow...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/fancy-narrow"))
-    (when (autoload-if-found '(fancy-narrow-mode) "fancy-narrow" nil t)
-      (fancy-narrow-mode))
-    (with-eval-after-load 'fancy-narrow
-      (add-hook 'fancy-narrow-mode-hook #'(lambda () (lsp-mode -1)))))
+    (autoload-if-found '(fancy-narrow-mode) "fancy-narrow" nil t)
+
+    ;; (with-eval-after-load 'org
+    ;;   (add-hook 'org-mode-hook #'fancy-narrow-mode))
+
+    ;; (with-eval-after-load 'elisp-mode
+    ;;   (add-hook 'emacs-lisp-mode-hook #'fancy-narrow-mode))
+
+    ;; (with-eval-after-load 'lisp-mode
+    ;;   (add-hook 'lisp-mode-hook #'fancy-narrow-mode))
+    )
 #+end_src
 *** origami
     #+begin_src emacs-lisp
