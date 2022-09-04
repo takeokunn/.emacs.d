@@ -2961,6 +2961,17 @@
       (setq git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos)
       (setq git-gutter:clear-function #'git-gutter-fr:clear)))
 #+end_src
+*** git-timemachine
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'git-timemachine))
+
+  (with-delayed-execution
+    (message "Install git-timemachine...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/git-timemachine"))
+    (autoload-if-found '(git-timemachine) "git-timemachine" nil t))
+
+#+end_src
 ** Shell
 *** exec-path-from-shell
     #+BEGIN_SRC emacs-lisp
@@ -3694,6 +3705,17 @@
         (autoload-if-found '(google-this) "google-this" nil t)
         (global-set-key (kbd "M-g") 'google-this))
     #+END_SRC
+*** google-translate
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'google-translate
+                   :url "https://github.com/zonuexe/google-translate.git"))
+
+  (with-delayed-execution
+    (message "Install google-translate...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/google-translate"))
+    (autoload-if-found '(google-translate-at-point) "google-translate" nil t))
+#+end_src
 *** goto-addr
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
