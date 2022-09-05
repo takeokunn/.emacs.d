@@ -600,7 +600,20 @@
 #+begin_src emacs-lisp
   (setq display-warning-minimum-level :error)
 #+end_src
+** .dir-locals.elの適応時の警告を抑止する
+#+begin_src emacs-lisp
+  (add-to-list 'safe-local-variable-values '(testing . "YES"))
+#+end_src
 * Utitlity
+** aio
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'aio))
+
+  (with-delayed-execution
+    (message "Install aio...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/aio")))
+#+end_src
 ** alert
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -895,6 +908,15 @@
        (message "Install shrink-path...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/shrink-path"))))
    #+end_src
+** tablist
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'tablist))
+
+  (with-delayed-execution
+    (message "Install tablist...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/tablist")))
+#+end_src
 ** ts
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -2964,13 +2986,13 @@
 *** git-timemachine
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-get-bundle 'git-timemachine))
+    (el-get-bundle 'git-timemachine
+                   :url "https://codeberg.org/pidu/git-timemachine.git"))
 
   (with-delayed-execution
     (message "Install git-timemachine...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/git-timemachine"))
     (autoload-if-found '(git-timemachine) "git-timemachine" nil t))
-
 #+end_src
 ** Shell
 *** exec-path-from-shell
@@ -4179,6 +4201,8 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/cider"))
 
         (autoload-if-found '(cider cider-format-buffer cider-switch-to-last-clojure-buffer) "cider" nil t)
+        (autoload-if-found '(cider-doc) "cider-doc" nil t)
+
         (add-hook 'before-save-hook #'cider-format-buffer t t)
 
         (with-eval-after-load 'cider-common
@@ -4200,7 +4224,10 @@
 
         (with-eval-after-load 'cider-eval
           (setq cider-show-error-buffer nil)
-          (setq cider-auto-select-error-buffer nil)))
+          (setq cider-auto-select-error-buffer nil))
+
+        (with-eval-after-load 'clojure-mode
+          (define-key clojure-mode-map (kbd "C-c h") #'cider-doc)))
     #+END_SRC
 *** clojure-cheatsheet
 #+begin_src emacs-lisp
@@ -4598,6 +4625,17 @@
     (with-eval-after-load 'haskell-mode
       (add-hook 'haskell-mode-hook #'hindent-mode)))
 #+end_src
+** Docker
+*** docker
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'docker))
+
+  (with-delayed-execution
+    (message "Install docker...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/docker"))
+    (autoload-if-found '(docker) "docker" nil t))
+#+end_src
 * Elfeed
 ** elfeed
    #+begin_src emacs-lisp
@@ -4668,7 +4706,10 @@
          (setq eshell-command-aliases-list '(("ll" "ls -la"))))
 
        (with-eval-after-load 'esh-cmd
-         (setq eshell-prefer-lisp-functions t)))
+         (setq eshell-prefer-lisp-functions t))
+
+       (with-eval-after-load 'em-term
+         (setq eshell-destroy-buffer-when-process-dies t)))
    #+end_src
 ** functions
 #+begin_src emacs-lisp
