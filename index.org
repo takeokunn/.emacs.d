@@ -2673,6 +2673,8 @@
           (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]vendor")
           (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]storage")
           (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]docs")
+          (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\].calva")
+          (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\].clj-kondo")
 
           ;; enable flycheck
           (add-hook 'lsp-mode-hook #'flycheck-mode)
@@ -4209,6 +4211,7 @@
           (setq cider-special-mode-truncate-lines nil))
 
         (with-eval-after-load 'cider-mode
+          (setq cider-font-lock-reader-conditionals nil)
           (setq cider-font-lock-dynamically '(macro core function var)))
 
         (with-eval-after-load 'cider-repl
@@ -4229,17 +4232,6 @@
         (with-eval-after-load 'clojure-mode
           (define-key clojure-mode-map (kbd "C-c h") #'cider-doc)))
     #+END_SRC
-*** clojure-cheatsheet
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'clojure-cheatsheet
-                   :url "https://github.com/clojure-emacs/clojure-cheatsheet.git"))
-
-  (with-delayed-execution
-    (message "Install clojure-cheatsheet...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/clojure-cheatsheet"))
-    (autoload-if-found '(clojure-cheatsheet) "clojure-cheatsheet" nil t))
-#+end_src
 *** kibit-helper
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -5181,6 +5173,22 @@
     (with-eval-after-load 'ob-babel
       (org-babel-do-load-languages 'org-babel-load-languages
                                    '((php . t)))))
+#+end_src
+*** ob-clojure
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ob-clojure))
+
+  (with-delayed-execution
+    (message "Install ob-clojure...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-clojure"))
+
+    (with-eval-after-load 'ob-clojure
+      (setq org-babel-clojure-backend 'inf-clojure))
+
+    (with-eval-after-load 'ob-babel
+      (org-babel-do-load-languages 'org-babel-load-languages
+                                   '((clojure . t)))))
 #+end_src
 ** Org Publish
 *** ox-html
