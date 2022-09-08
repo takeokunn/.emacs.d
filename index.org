@@ -2579,6 +2579,17 @@
     (with-eval-after-load 'company
       (push 'company-org-block company-backends)))
 #+end_src
+*** company-statistics
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'company-statistics))
+
+  (with-delayed-execution
+    (message "Install company-statistics...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/company-statistics"))
+    (autoload-if-found '(company-statistics-mode) "company-statistics" nil t)
+    (company-statistics-mode))
+#+end_src
 ** Prescient
 *** prescient
 #+begin_src emacs-lisp
@@ -3775,6 +3786,28 @@
         (with-eval-after-load 'htmlize
           (setq htmlize-html-charset 'utf-8)))
     #+end_src
+*** TODO key-chord
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'key-chord))
+
+  (with-delayed-execution
+    (message "Install key-chord...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/key-chord"))
+    (autoload-if-found '() "key-chord" nil t))
+
+#+end_src
+*** TODO key-combo
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'key-combo))
+
+  (with-delayed-execution
+    (message "Install key-combo...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/key-combo"))
+    (autoload-if-found '() "key-combo" nil t))
+
+#+end_src
 *** minimap
     #+begin_src emacs-lisp
       (eval-when-compile
@@ -5173,22 +5206,6 @@
     (with-eval-after-load 'ob-babel
       (org-babel-do-load-languages 'org-babel-load-languages
                                    '((php . t)))))
-#+end_src
-*** ob-clojure
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'ob-clojure))
-
-  (with-delayed-execution
-    (message "Install ob-clojure...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-clojure"))
-
-    (with-eval-after-load 'ob-clojure
-      (setq org-babel-clojure-backend 'inf-clojure))
-
-    (with-eval-after-load 'ob-babel
-      (org-babel-do-load-languages 'org-babel-load-languages
-                                   '((clojure . t)))))
 #+end_src
 ** Org Publish
 *** ox-html
