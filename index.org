@@ -604,6 +604,10 @@
 #+begin_src emacs-lisp
   (add-to-list 'safe-local-variable-values '(testing . "YES"))
 #+end_src
+** キーコマンド入力中に入力過程をミニバッファに反映する
+#+begin_src emacs-lisp
+  (setq echo-keystrokes 0.1)
+#+end_src
 * Utitlity
 ** aio
 #+begin_src emacs-lisp
@@ -726,6 +730,15 @@
     (message "Install fringe-helper...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/fringe-helper")))
 #+end_src
+** gh
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'gh))
+
+  (with-delayed-execution
+    (message "Install gh...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/gh")))
+#+end_src
 ** hide-lines
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -790,6 +803,15 @@
        (message "Install lv...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/lv"))))
    #+end_src
+** marshal
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'marshal))
+
+  (with-delayed-execution
+    (message "Install marshal...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/marshal")))
+#+end_src
 ** mustache
    #+begin_src emacs-lisp
      (eval-when-compile
@@ -2599,8 +2621,8 @@
   (with-delayed-execution-priority-high
     (message "Install prescient...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/prescient"))
-    (when (autoload-if-found '(prescient-persist-mode) "prescient" nil t)
-      (prescient-persist-mode))
+    (autoload-if-found '(prescient-persist-mode) "prescient" nil t)
+    (prescient-persist-mode)
     (with-eval-after-load 'prescient
       (setq prescient-aggressive-file-save t)))
 #+end_src
@@ -2612,8 +2634,33 @@
   (with-delayed-execution-priority-high
     (message "Install ivy-prescient...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-prescient"))
-    (when (autoload-if-found '(ivy-prescient-mode) "ivy-prescient" nil t)
-      (ivy-prescient-mode)))
+    (autoload-if-found '(ivy-prescient-mode ivy-prescient-re-builder) "ivy-prescient" nil t)
+    (ivy-prescient-mode)
+
+    (defun my/ivy-prescient-non-fuzzy (str)
+      (let ((prescient-filter-method '(literal regexp)))
+        (ivy-prescient-re-builder str)))
+
+    (with-eval-after-load 'ivy-prescient
+      (setq ivy-re-builders-alist
+            '((counsel-ag . my/ivy-prescient-non-fuzzy)
+              (counsel-rg . my/ivy-prescient-non-fuzzy)
+              (counsel-pt . my/ivy-prescient-non-fuzzy)
+              (counsel-grep . my/ivy-prescient-non-fuzzy)
+              (counsel-imenu . my/ivy-prescient-non-fuzzy)
+              (counsel-yank-pop . my/ivy-prescient-non-fuzzy)
+              (swiper . my/ivy-prescient-non-fuzzy)
+              (swiper-isearch . my/ivy-prescient-non-fuzzy)
+              (swiper-all . my/ivy-prescient-non-fuzzy)
+              (lsp-ivy-workspace-symbol . my/ivy-prescient-non-fuzzy)
+              (lsp-ivy-global-workspace-symbol . my/ivy-prescient-non-fuzzy)
+              (insert-char . my/ivy-prescient-non-fuzzy)
+              (counsel-unicode-char . my/ivy-prescient-non-fuzzy)
+              (t . ivy-prescient-re-builder)))
+      (setq ivy-prescient-sort-commands
+            '(:not swiper swiper-isearch ivy-switch-buffer
+                   counsel-grep counsel-git-grep counsel-ag counsel-imenu
+                   counsel-yank-pop counsel-recentf counsel-buffer-or-recentf))))
 #+end_src
 *** company-prescient
 #+begin_src emacs-lisp
@@ -2623,8 +2670,8 @@
   (with-delayed-execution
     (message "Install company-prescient...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/company-prescient"))
-    (when (autoload-if-found '(company-prescient-mode) "company-prescient" nil t)
-      (company-prescient-mode)))
+    (autoload-if-found '(company-prescient-mode) "company-prescient" nil t)
+    (company-prescient-mode))
 #+end_src
 ** Snippet
 *** yasnippet
@@ -2948,6 +2995,9 @@
         (with-eval-after-load 'magit
           (setq magit-refresh-status-buffer nil))
 
+        (with-eval-after-load 'magit-base
+          (setq magit-completing-read-function #'ivy-completing-read))
+
         (with-eval-after-load 'magit-status
           (define-key magit-status-mode-map (kbd "C-j") #'magit-visit-thing))
 
@@ -3006,6 +3056,16 @@
     (message "Install git-timemachine...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/git-timemachine"))
     (autoload-if-found '(git-timemachine) "git-timemachine" nil t))
+#+end_src
+*** gist
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'gist))
+
+  (with-delayed-execution
+    (message "Install gist...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/gist"))
+    (autoload-if-found '(gist-mode) "gist" nil t))
 #+end_src
 ** Shell
 *** exec-path-from-shell
@@ -3494,6 +3554,16 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/esup"))
         (autoload-if-found '(esup) "esup" nil t))
     #+END_SRC
+*** disk-usage
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'disk-usage))
+
+  (with-delayed-execution
+    (message "Install disk-usage...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/disk-usage"))
+    (autoload-if-found '(disk-usage disk-usage-here) "disk-usage" nil t))
+#+end_src
 *** keyfreq
     #+begin_src emacs-lisp
       (eval-when-compile
@@ -3506,6 +3576,16 @@
           (keyfreq-mode 1)
           (keyfreq-autosave-mode 1)))
     #+end_src
+*** uptimes
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'uptimes))
+
+  (with-delayed-execution
+    (message "Install uptimes...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/uptimes"))
+    (autoload-if-found '(uptimes) "uptimes" nil t))
+#+end_src
 ** Tab
 *** tab-bar
 #+begin_src emacs-lisp
@@ -3629,9 +3709,9 @@
       (with-delayed-execution
         (message "Install editorconfig...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/editorconfig"))
-        (when (autoload-if-found '(editorconfig-mode) "editorconfig" nil t)
-          (when (require 'editorconfig-core)
-            (editorconfig-mode 1))))
+        (autoload-if-found '(editorconfig-mode) "editorconfig" nil t)
+        (when (require 'editorconfig-core)
+          (editorconfig-mode 1)))
     #+END_SRC
 *** embark
 #+begin_src emacs-lisp
@@ -3786,7 +3866,7 @@
         (with-eval-after-load 'htmlize
           (setq htmlize-html-charset 'utf-8)))
     #+end_src
-*** TODO key-chord
+*** key-chord
 #+begin_src emacs-lisp
   (eval-when-compile
     (el-get-bundle 'key-chord))
@@ -3794,10 +3874,14 @@
   (with-delayed-execution
     (message "Install key-chord...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/key-chord"))
-    (autoload-if-found '() "key-chord" nil t))
+    (autoload-if-found '(key-chord-mode key-chord-define-global) "key-chord" nil t)
+    (key-chord-mode 1)
 
+    ;; for global
+    (key-chord-define-global "fj" #'view-mode)
+    (key-chord-define-global "jf" #'view-mode))
 #+end_src
-*** TODO key-combo
+*** key-combo
 #+begin_src emacs-lisp
   (eval-when-compile
     (el-get-bundle 'key-combo))
@@ -3805,8 +3889,25 @@
   (with-delayed-execution
     (message "Install key-combo...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/key-combo"))
-    (autoload-if-found '() "key-combo" nil t))
+    (autoload-if-found '(global-key-combo-mode key-combo-define-local) "key-combo" nil t)
+    (global-key-combo-mode)
 
+    ;; for php-mode
+    (with-eval-after-load 'php-mode
+      (add-hook 'php-mode-hook
+                #'(lambda ()
+                    (when (window-system)
+                      (key-combo-define-local (kbd ",>") " => "))
+                    (key-combo-define-local (kbd "+") '("+" " + " "++" " ++ "))
+                    (key-combo-define-local (kbd "-") '("-" " - " "--" " -- "))
+                    (key-combo-define-local (kbd "*") '("*" " * "))
+                    (key-combo-define-local (kbd "=") '("=" " = " "==" "===")))))
+
+    ;; for typescript-tsx-mode
+    (with-eval-after-load 'typescript-tsx-mode
+      (add-hook 'typescript-tsx-mode
+                #'(lambda ()
+                    (key-combo-define-local (kbd "</") #'web-mode-element-close)))))
 #+end_src
 *** minimap
     #+begin_src emacs-lisp
@@ -3835,8 +3936,8 @@
         (message "Install persistent-scratch...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/persistent-scratch"))
 
-        (when (autoload-if-found '(persistent-scratch-setup-default) "persistent-scratch" nil t)
-          (persistent-scratch-setup-default))
+        (autoload-if-found '(persistent-scratch-setup-default) "persistent-scratch" nil t)
+        ;; (persistent-scratch-setup-default)
 
         (with-eval-after-load 'persistent-scratch
           (setq persistent-scratch-autosave-interval 100)))
@@ -3953,6 +4054,50 @@
           (insert (uuid-string)))
         (defalias 'uuid #'my/uuid))
     #+end_src
+*** view-mode
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install view-mode...")
+
+    (defun my/org-view-next-heading ()
+      (interactive)
+      (if (and (derived-mode-p 'org-mode)
+               (org-at-heading-p))
+          (org-next-visible-heading 1)
+        (next-line)))
+
+    (defun my/org-view-previous-heading ()
+      (interactive)
+      (if (and (derived-mode-p 'org-mode)
+               (org-at-heading-p))
+          (org-previous-visible-heading 1)
+        (previous-line)))
+
+    (defun my/view-tab ()
+      (interactive)
+      (when (and (derived-mode-p 'org-mode)
+                 (or (org-at-heading-p)
+                     (org-at-property-drawer-p)))
+        (let ((view-mode nil))
+          (org-cycle))))
+
+    (defun my/view-shifttab ()
+      (interactive)
+      (when (derived-mode-p 'org-mode)
+        (let ((view-mode nil))
+          (org-shifttab))))
+
+    (with-eval-after-load 'files
+      (add-hook 'find-file-hooks #'view-mode))
+
+    (with-eval-after-load "view"
+      (define-key view-mode-map (kbd "n") 'my/org-view-next-heading)
+      (define-key view-mode-map (kbd "p") 'my/org-view-previous-heading)
+      (define-key view-mode-map (kbd "C-i") 'my/view-tab)
+      (define-key view-mode-map (kbd "S-C-i") 'my/view-shifttab)
+      (define-key view-mode-map (kbd "f") #'forward-char)
+      (define-key view-mode-map (kbd "b") #'backward-char)))
+#+end_src
 *** view-lock-mode
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -3963,7 +4108,9 @@
     (message "Install view-lock-mode...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/view-lock-mode"))
     (autoload-if-found '(view-lock-timer-setup) "view-lock-mode" nil t)
-    (add-hook 'view-mode-hook #'view-lock-timer-setup))
+    (add-hook 'view-mode-hook #'view-lock-timer-setup)
+    (with-eval-after-load 'view-lock-mode
+      (setq view-lock-start-time (* 3 60))))
 #+end_src
 *** which-key
     #+begin_src emacs-lisp
@@ -3973,8 +4120,8 @@
       (with-delayed-execution
         (message "Install which-key...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/which-key"))
-        (when (autoload-if-found '(which-key-mode) "which-key" nil t)
-          (which-key-mode)))
+        (autoload-if-found '(which-key-mode) "which-key" nil t)
+        (which-key-mode))
     #+end_src
 *** whitespace
     #+BEGIN_SRC emacs-lisp
@@ -4387,7 +4534,7 @@
           (add-hook 'typescript-tsx-mode-hook #'tree-sitter-mode))
 
         (when (autoload-if-found '(tree-sitter-hl-mode) "tree-sitter-hl" nil t)
-          (add-hook 'tree-sitter-after-on-hook 'tree-sitter-hl-mode)))
+          (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)))
     #+end_src
 ** Ruby
 *** robe
@@ -4887,19 +5034,38 @@
        (define-key org-mode-map (kbd "C-c ,") #'org-insert-structure-template)
        (define-key org-mode-map (kbd "C-c C-,") #'org-insert-structure-template)
 
+       ;; directory
        (setq org-directory "~/org")
        (setq org-agenda-files '("~/org/agenda"))
+
+       ;; todo
        (setq org-todo-keywords '((sequence "TODO(t)" "NOW(n)" "WAIT(w)" "|" "DONE(d)")))
+
+       ;; startup
        (setq org-startup-folded 'fold)
        (setq org-startup-truncated nil)
+
+       ;; archive
        (setq org-archive-location `,(format (expand-file-name "archive/%s.org::" org-directory)
-                                            (format-time-string "%Y-%m-%d" (current-time)))))
+                                            (format-time-string "%Y-%m-%d" (current-time))))
+
+       ;; log
+       (setq org-log-into-drawer t)
+       (setq org-log-done 'time))
    #+END_SRC
 *** org-clock
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-clock
+    (add-hook 'org-mode-hook #'org-clock-load)
+    (add-hook 'kill-emacs-hook #'org-clock-save)
+
     (setq org-clock-out-remove-zero-time-clocks t)
     (setq org-clock-clocked-in-display 'mode-line))
+#+end_src
+*** org-list
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-list
+    (setq org-list-allow-alphabetical t))
 #+end_src
 *** org-keys
 #+begin_src emacs-lisp
@@ -4913,6 +5079,7 @@
     (autoload-if-found '(org-capture) "org-capture" nil t)
     (global-set-key (kbd "C-c c") #'org-capture)
     (with-eval-after-load 'org-capture
+      (setq org-capture-use-agenda-date t)
       (setq org-capture-templates `(("t" "Todo" entry (file+datetree ,(expand-file-name "todo.org" org-directory))
                                      "* %?")
                                     ("m" "Memo" entry (file ,(expand-file-name "memo.org" org-directory))
@@ -5015,6 +5182,16 @@
     ;; (setq org-projectile-per-project-filepath "~/org/projectile.org")
     ;; (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))
     )
+#+end_src
+*** org-dashboard
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'org-dashboard))
+
+  (with-delayed-execution
+    (message "Install org-dashboard...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-dashboard"))
+    (autoload-if-found '(org-dashboard-display) "org-dashboard" nil t))
 #+end_src
 ** Theme
 *** org-faces
@@ -5522,14 +5699,6 @@
          (funcall current-mode)
          current-mode))
    #+END_SRC
-** my/toggle-read-only-mode
-   #+begin_src emacs-lisp
-     (defun my/toggle-read-only-mode ()
-       (interactive)
-       (read-only-mode))
-
-     (global-set-key (kbd "C-x C-q") #'my/toggle-read-only-mode)
-   #+end_src
 ** my/toggle-kill-emacs
    #+begin_src emacs-lisp
      (defvar my/kill-emacs-keybind-p t)
