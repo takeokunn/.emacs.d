@@ -2717,6 +2717,16 @@
         (autoload-if-found '(lsp-modeline-code-actions-mode lsp-modeline-diagnostics-mode) "lsp-modeline" nil t)
         (autoload-if-found '(lsp-headerline-breadcrumb-mode) "lsp-headerline" nil t)
 
+        (defun my/disable-lsp-flycheck ()
+          (interactive)
+          (setq lsp-diagnostics-provider :none)
+          (remove-hook 'lsp-mode-hook #'flycheck-mode))
+
+        (defun my/enable-lsp-flycheck ()
+          (interactive)
+          (setq lsp-diagnostics-provider :flycheck)
+          (add-hook 'lsp-mode-hook #'flycheck-mode))
+
         (with-eval-after-load 'lsp-mode
           ;; hook
           (add-hook 'lsp-mode-hook #'lsp-lens-mode)
@@ -4087,16 +4097,25 @@
         (let ((view-mode nil))
           (org-shifttab))))
 
+    (defun my/org-edit-special ()
+      (interactive)
+      (when (derived-mode-p 'org-mode)
+        (view-mode -1)
+        (org-edit-special)))
+
     (with-eval-after-load 'files
       (add-hook 'find-file-hooks #'view-mode))
 
     (with-eval-after-load "view"
-      (define-key view-mode-map (kbd "n") 'my/org-view-next-heading)
-      (define-key view-mode-map (kbd "p") 'my/org-view-previous-heading)
-      (define-key view-mode-map (kbd "C-i") 'my/view-tab)
-      (define-key view-mode-map (kbd "S-C-i") 'my/view-shifttab)
       (define-key view-mode-map (kbd "f") #'forward-char)
-      (define-key view-mode-map (kbd "b") #'backward-char)))
+      (define-key view-mode-map (kbd "b") #'backward-char)
+      (define-key view-mode-map (kbd "n") #'my/org-view-next-heading)
+      (define-key view-mode-map (kbd "p") #'my/org-view-previous-heading)
+      (define-key view-mode-map (kbd "@") #'set-mark-command)
+      (define-key view-mode-map (kbd "C-c '") #'my/org-edit-special)
+      (define-key view-mode-map (kbd "e") nil)
+      (define-key view-mode-map (kbd "C-i") #'my/view-tab)
+      (define-key view-mode-map (kbd "S-C-i") #'my/view-shifttab)))
 #+end_src
 *** view-lock-mode
 #+begin_src emacs-lisp

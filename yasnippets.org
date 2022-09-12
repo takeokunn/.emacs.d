@@ -1514,10 +1514,32 @@ ${1:$(let* ((col (current-column))
 **** insert
 #+BEGIN_SRC snippet
 # name: insert
-# key: ins
+# key: insert
 # --
 INSERT INTO ${table-name} (${col1, col2}) VALUES (${'val1', 'val2'});$0
 #+END_SRC
+**** update
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: update
+  # key: update
+  # --
+  BEGIN;
+  UPDATE $1 SET $2 = $3 WHERE $4;
+  COMMIT;
+  $0
+#+end_src
+**** delete
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: delete
+  # key: delete
+  # --
+  BEGIN;
+  DELETE FROM $1 WHERE $2;
+  COMMIT;
+  $0
+#+end_src
 *** ssh-config-mode/
 **** template
 #+begin_src snippet
@@ -1855,14 +1877,14 @@ abstract class ${1:Class} {
        # name: ogp
        # key: ogp
        # --
-       <meta property="og:title" content="">
-       <meta property="og:type" content="">
-       <meta property="og:url" content="">
-       <meta property="og:image" content="">
-       <meta property="og:site_name" content="">
-       <meta property="og:description" content="">
-       <meta name="twitter:site" content="">
-       <meta name="twitter:card" content="">
+       <meta property="og:title" content="$1">
+       <meta property="og:type" content="$2">
+       <meta property="og:url" content="$3">
+       <meta property="og:image" content="$4">
+       <meta property="og:site_name" content="$5">
+       <meta property="og:description" content="$6">
+       <meta name="twitter:site" content="$7">
+       <meta name="twitter:card" content="$8">
      #+end_src
 **** dns-prefetch
 #+begin_src snippet
@@ -2090,4 +2112,16 @@ abstract class ${1:Class} {
   # key: info
   # --
   (info "##### $1" ${1:object})
+#+end_src
+**** defn
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: defn
+  # key: defn
+  # --
+
+  (defn $1
+    "$2"
+    [$3]
+    $0)
 #+end_src
