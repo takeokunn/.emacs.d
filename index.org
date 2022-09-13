@@ -140,7 +140,7 @@
          (goto-char (point-max))
          (eval-print-last-sexp))
 
-       (with-eval-after-load 'el-get-custom
+       (with-eval-after-load 'el-get-git
          (setq el-get-git-shallow-clone t)))
 
      (with-delayed-execution
@@ -149,7 +149,7 @@
 
        (autoload-if-found '(el-get-bundle) "el-get" nil t)
 
-       (with-eval-after-load 'el-get-custom
+       (with-eval-after-load 'el-get-git
          (setq el-get-git-shallow-clone t)))
    #+end_src
 * Basic
@@ -313,7 +313,7 @@
 ** pluginをnative compする
 #+begin_src emacs-lisp
   (with-eval-after-load 'comp
-    (setq native-comp-async-jobs-number 8)
+    (setq native-comp-async-jobs-number 10)
     (setq native-comp-speed 3)
     (setq native-comp-always-compile t)
     (defun my/native-comp-packages ()
@@ -602,11 +602,20 @@
 #+end_src
 ** .dir-locals.elの適応時の警告を抑止する
 #+begin_src emacs-lisp
-  (add-to-list 'safe-local-variable-values '(testing . "YES"))
+  (with-eval-after-load 'files
+    (setq safe-local-variable-values '(testing . "yes")))
 #+end_src
 ** キーコマンド入力中に入力過程をミニバッファに反映する
 #+begin_src emacs-lisp
   (setq echo-keystrokes 0.1)
+#+end_src
+** recursive minibuffers
+#+begin_src emacs-lisp
+  (setq enable-recursive-minibuffers t)
+#+end_src
+** inhibit-compacting-font-caches
+#+begin_src emacs-lisp
+  (setq inhibit-compacting-font-caches t)
 #+end_src
 * Utitlity
 ** aio
@@ -2119,8 +2128,8 @@
     #+begin_src emacs-lisp
       (with-delayed-execution-priority-high
         (message "Install counsel...")
-        (when (autoload-if-found '(counsel-mode counsel-compile) "counsel" nil t)
-          (counsel-mode 1))
+        (autoload-if-found '(counsel-mode counsel-compile) "counsel" nil t)
+        (counsel-mode 1)
         (global-set-key (kbd "C-x m") 'counsel-compile)
         (with-eval-after-load 'counsel
           (setq counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
@@ -2133,8 +2142,7 @@
         (autoload-if-found '(ivy-avy) "ivy-avy" nil t)
         (add-hook 'minibuffer-setup-hook #'ivy-mode)
         (with-eval-after-load 'ivy
-          (define-key ivy-minibuffer-map (kbd "C-'") 'ivy-avy)
-          (setq enable-recursive-minibuffers t)
+          (define-key ivy-minibuffer-map (kbd "C-'") #'ivy-avy)
           (setq ivy-use-virtual-buffers t)))
     #+end_src
 *** ivy-rich
@@ -2145,8 +2153,8 @@
       (with-delayed-execution-priority-high
         (message "Install ivy-rich...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-rich"))
-        (when (autoload-if-found '(ivy-rich-mode) "ivy-rich" nil t)
-          (ivy-rich-mode 1))
+        (autoload-if-found '(ivy-rich-mode) "ivy-rich" nil t)
+        (ivy-rich-mode 1)
         (with-eval-after-load 'ivy-rich
           (setq ivy-rich-path-style 'abbrev)))
     #+END_SRC
@@ -2196,15 +2204,14 @@
       (with-delayed-execution-priority-high
         (message "Install all-the-icons-ivy-rich...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons-ivy-rich"))
-        (when (autoload-if-found '(all-the-icons-ivy-rich-mode) "all-the-icons-ivy-rich" nil t)
-          (all-the-icons-ivy-rich-mode 1))
+        (autoload-if-found '(all-the-icons-ivy-rich-mode) "all-the-icons-ivy-rich" nil t)
+        (all-the-icons-ivy-rich-mode 1)
         (with-eval-after-load 'all-the-icons-ivy-rich
           (setq all-the-icons-ivy-rich-icon t)
           (setq all-the-icons-ivy-rich-color-icon t)
           (setq all-the-icons-ivy-rich-icon-size 1.0)
           (setq all-the-icons-ivy-rich-project t)
-          (setq all-the-icons-ivy-rich-field-width 80)
-          (setq inhibit-compacting-font-caches t)))
+          (setq all-the-icons-ivy-rich-field-width 80)))
     #+end_src
 *** dashboard
     #+begin_src emacs-lisp
@@ -2230,11 +2237,10 @@
     (message "Install dimmer...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/dimmer"))
     (autoload-if-found '(dimmer-configure-which-key
-                               dimmer-configure-org
-                               dimmer-configure-company-box
-                               dimmer-mode)
+                         dimmer-configure-org
+                         dimmer-configure-company-box
+                         dimmer-mode)
                        "dimmer" nil t)
-
     (dimmer-configure-which-key)
     (dimmer-configure-org)
     (dimmer-configure-company-box)
@@ -2272,16 +2278,15 @@
       (with-delayed-execution-priority-high
         (message "Install doom-modeline...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-modeline"))
-        (when (autoload-if-found '(doom-modeline-mode) "doom-modeline" nil t)
-          (doom-modeline-mode 1)
-          (line-number-mode 0)
-          (column-number-mode 0))
+        (autoload-if-found '(doom-modeline-mode) "doom-modeline" nil t)
+        (doom-modeline-mode 1)
+        (line-number-mode 0)
+        (column-number-mode 0)
         (with-eval-after-load 'doom-modeline
           (setq doom-modeline-buffer-file-name-style 'truncate-with-project)
           (setq doom-modeline-icon t)
           (setq doom-modeline-major-mode-icon t)
-          (setq doom-modeline-minor-modes nil)
-          (setq inhibit-compacting-font-caches t)))
+          (setq doom-modeline-minor-modes nil)))
     #+END_SRC
 *** hl-line
     #+BEGIN_SRC emacs-lisp
@@ -2393,8 +2398,8 @@
         (message "Install projectile...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/projectile"))
 
-        (when (autoload-if-found '(projectile-mode my/update-projectile-known-projects) "projectile" nil t)
-          (projectile-mode +1))
+        (autoload-if-found '(projectile-mode my/update-projectile-known-projects) "projectile" nil t)
+        (projectile-mode +1)
 
         (defun my/update-projectile-known-projects ()
           (interactive)
@@ -2419,8 +2424,8 @@
         (message "Install counsel-projectile...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/counsel-projectile"))
 
-        (when (autoload-if-found '(counsel-projectile-mode) "counsel-projectile" nil t)
-          (counsel-projectile-mode +1))
+        (autoload-if-found '(counsel-projectile-mode) "counsel-projectile" nil t)
+        (counsel-projectile-mode +1)
 
         (with-eval-after-load 'counsel-projectile
           (setq counsel-projectile-sort-files t)
@@ -2682,8 +2687,8 @@
       (with-delayed-execution
         (message "Install yasnippet...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/yasnippet"))
-        (when (autoload-if-found '(yas-global-mode) "yasnippet" nil t)
-          (yas-global-mode 1)))
+        (autoload-if-found '(yas-global-mode) "yasnippet" nil t)
+        (yas-global-mode 1))
     #+end_src
 *** ivy-yasnippet
     #+begin_src emacs-lisp
@@ -2741,6 +2746,7 @@
           (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]vendor")
           (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]storage")
           (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]docs")
+          (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]target")
           (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\].calva")
           (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\].clj-kondo")
 
@@ -2778,6 +2784,7 @@
 *** lsp-php-key
 #+begin_src emacs-lisp
   (with-delayed-execution
+    (message "Install lsp-php-key...")
     (with-eval-after-load 'lsp-php
       (setq lsp-intelephense-licence-key "00OXTX8OROOJH9P")))
 #+end_src
@@ -3213,8 +3220,8 @@
   (with-delayed-execution
     (message "Install hl-todo...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/hl-todo"))
-    (when (autoload-if-found '(global-hl-todo-mode) "hl-todo" nil t)
-      (global-hl-todo-mode))
+    (autoload-if-found '(global-hl-todo-mode) "hl-todo" nil t)
+    (global-hl-todo-mode)
     (with-eval-after-load 'hl-todo
       (setq hl-todo-keyword-faces
             '(("TODO" . "#cc9393")
@@ -3417,7 +3424,8 @@
 
     (with-eval-after-load 'gcmh
       (setq gcmh-verbose t)
-      (setq gcmh-idle-delay 15)))
+      (setq gcmh-idle-delay 'auto)
+      (setq gcmh-auto-idle-delay-factor 10)))
 #+end_src
 ** EWW
 *** basic
@@ -3498,8 +3506,8 @@
         (message "Install origami...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/origami"))
 
-        (when (autoload-if-found '(global-origami-mode origami-recursively-toggle-node origami-recursively-toggle-node) "origami" nil t)
-          (global-origami-mode))
+        (autoload-if-found '(global-origami-mode origami-recursively-toggle-node origami-recursively-toggle-node) "origami" nil t)
+        (global-origami-mode)
 
         (global-set-key (kbd "C-c t") #'origami-recursively-toggle-node)
         (global-set-key (kbd "C-c C-t") #'origami-recursively-toggle-node))
@@ -3582,9 +3590,9 @@
       (with-delayed-execution
         (message "Install keyfreq...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/keyfreq"))
-        (when (autoload-if-found '(keyfreq-mode keyfreq-autosave-mode) "keyfreq" nil t)
-          (keyfreq-mode 1)
-          (keyfreq-autosave-mode 1)))
+        (autoload-if-found '(keyfreq-mode keyfreq-autosave-mode) "keyfreq" nil t)
+        (keyfreq-mode 1)
+        (keyfreq-autosave-mode 1))
     #+end_src
 *** uptimes
 #+begin_src emacs-lisp
@@ -3960,8 +3968,8 @@
       (with-delayed-execution
         (message "Install popwin...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/popwin"))
-        (when (autoload-if-found '(popwin-mode) "popwin" nil t)
-          (popwin-mode 1)))
+        (autoload-if-found '(popwin-mode) "popwin" nil t)
+        (popwin-mode 1))
     #+end_src
 *** smartparens
     #+BEGIN_SRC emacs-lisp
@@ -4033,8 +4041,8 @@
   (with-delayed-execution
     (message "Install syntax-subword...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/syntax-subword"))
-    (when (autoload-if-found '(global-syntax-subword-mode) "syntax-subword" nil t)
-      (global-syntax-subword-mode)))
+    (autoload-if-found '(global-syntax-subword-mode) "syntax-subword" nil t)
+    (global-syntax-subword-mode))
 #+end_src
 *** undo-tree
     #+begin_src emacs-lisp
@@ -4044,8 +4052,8 @@
       (with-delayed-execution
         (message "Install undo-tree...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/undo-tree"))
-        (when (autoload-if-found '(global-undo-tree-mode) "undo-tree" nil t)
-          (global-undo-tree-mode))
+        (autoload-if-found '(global-undo-tree-mode) "undo-tree" nil t)
+        (global-undo-tree-mode)
         (with-eval-after-load 'undo-tree
           (setq undo-tree-auto-save-history nil)))
     #+end_src
@@ -4103,6 +4111,15 @@
         (view-mode -1)
         (org-edit-special)))
 
+    (defvar my/view-mode-timer)
+    (defun my/enable-view-mode-automatically ()
+      (if view-mode
+          (when my/view-mode-timer
+            (cancel-timer my/view-mode-timer))
+        (setq my/view-mode-timer (run-with-idle-timer (* 60 10) nil #'view-mode))))
+
+    (add-hook 'view-mode-hook #'my/enable-view-mode-automatically)
+
     (with-eval-after-load 'files
       (add-hook 'find-file-hooks #'view-mode))
 
@@ -4129,7 +4146,7 @@
     (autoload-if-found '(view-lock-timer-setup) "view-lock-mode" nil t)
     (add-hook 'view-mode-hook #'view-lock-timer-setup)
     (with-eval-after-load 'view-lock-mode
-      (setq view-lock-start-time (* 3 60))))
+      (setq view-lock-start-time (* 10 60))))
 #+end_src
 *** which-key
     #+begin_src emacs-lisp
@@ -4865,8 +4882,8 @@
      (with-delayed-execution
        (message "Install elfeed-org...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/elfeed-org"))
-       (when (autoload-if-found '(elfeed-org) "elfeed-org" nil t)
-         (elfeed-org))
+       (autoload-if-found '(elfeed-org) "elfeed-org" nil t)
+       (elfeed-org)
        (with-eval-after-load 'elfeed-org
          (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org"))
          (setq rmh-elfeed-org-auto-ignore-invalid-feeds t)))
