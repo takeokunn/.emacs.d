@@ -313,7 +313,7 @@
 ** pluginをnative compする
 #+begin_src emacs-lisp
   (with-eval-after-load 'comp
-    (setq native-comp-async-jobs-number 10)
+    (setq native-comp-async-jobs-number 8)
     (setq native-comp-speed 3)
     (setq native-comp-always-compile t)
     (defun my/native-comp-packages ()
@@ -3375,8 +3375,10 @@
     (message "Install proced...")
     (autoload-if-found '(proced) "proced" nil t)
     (add-hook 'proced-mode-hook #'(lambda ()
-                                    (proced-toggle-auto-update 1)))
+				    (proced-toggle-auto-update 1)))
     (with-eval-after-load 'proced
+      (setq proced-auto-update-interval 10)
+      (setq proced-tree-flag t)
       (setq proced-format 'long)))
 #+end_src
 *** proced-narrow
@@ -4111,7 +4113,7 @@
         (view-mode -1)
         (org-edit-special)))
 
-    (defvar my/view-mode-timer)
+    (defvar my/view-mode-timer nil)
     (defun my/enable-view-mode-automatically ()
       (if view-mode
           (when my/view-mode-timer
@@ -5759,6 +5761,12 @@
      (file-name-nondirectory
       (file-name-sans-extension (or (buffer-file-name)
                                     (buffer-name (current-buffer)))))))
+#+end_src
+** my/insert-clipboard
+#+begin_src emacs-lisp
+  (defun my/insert-clipboard (arg)
+    (interactive "sstring: ")
+    (kill-new arg))
 #+end_src
 * Footer
 ** Magic File Name を有効にする
