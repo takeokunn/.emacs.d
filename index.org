@@ -3909,25 +3909,26 @@
   (with-delayed-execution
     (message "Install key-combo...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/key-combo"))
-    (autoload-if-found '(global-key-combo-mode key-combo-define-local) "key-combo" nil t)
-    (global-key-combo-mode)
+    (autoload-if-found '(key-combo-mode key-combo-define-local) "key-combo" nil t)
 
     ;; for php-mode
     (with-eval-after-load 'php-mode
       (add-hook 'php-mode-hook
-                #'(lambda ()
-                    (when (window-system)
-                      (key-combo-define-local (kbd ",>") " => "))
-                    (key-combo-define-local (kbd "+") '("+" " + " "++" " ++ "))
-                    (key-combo-define-local (kbd "-") '("-" " - " "--" " -- "))
-                    (key-combo-define-local (kbd "*") '("*" " * "))
-                    (key-combo-define-local (kbd "=") '("=" " = " "==" "===")))))
+		#'(lambda ()
+		    (key-combo-mode)
+		    (when (window-system)
+		      (key-combo-define-local (kbd ",>") " => "))
+		    (key-combo-define-local (kbd "+") '("+" " + " "++" " ++ "))
+		    (key-combo-define-local (kbd "-") '("-" " - " "--" " -- "))
+		    (key-combo-define-local (kbd "*") '("*" " * "))
+		    (key-combo-define-local (kbd "=") '("=" " = " "==" "===")))))
 
     ;; for typescript-tsx-mode
     (with-eval-after-load 'typescript-tsx-mode
       (add-hook 'typescript-tsx-mode
-                #'(lambda ()
-                    (key-combo-define-local (kbd "</") #'web-mode-element-close)))))
+		#'(lambda ()
+		    (key-combo-mode)
+		    (key-combo-define-local (kbd "</") #'web-mode-element-close)))))
 #+end_src
 *** minimap
     #+begin_src emacs-lisp
@@ -5511,7 +5512,9 @@
                          org-roam-graph
                          org-roam-node-insert
                          org-roam-capture) "org-roam" nil t)
-    (autoload-if-found '(org-roam-db-autosync-mode) "org-roam-db" nil t)
+    (autoload-if-found '(org-roam-setup org-roam-db-autosync-mode) "org-roam-db" nil t)
+
+    (org-roam-setup)
 
     (global-set-key (kbd "C-c n l") #'org-roam-buffer-toggle)
     (global-set-key (kbd "C-c n f") #'org-roam-node-find)
@@ -5523,7 +5526,30 @@
 
     (with-eval-after-load 'org-roam
       (setq org-roam-v2-ack t)
-      (setq org-roam-directory (file-truename "~/org"))))
+      (setq org-roam-directory (file-truename "~/.ghq/github.com/takeokunn/blog")))
+
+    (with-eval-after-load 'org-roam-node
+      (setq org-roam-completion-everywhere t))
+
+    (with-eval-after-load 'org-roam-db
+      (setq org-roam-db-location "~/.ghq/github.com/takeokunn/blog"))
+
+    (with-eval-after-load 'org-roam-capture
+      (setq org-roam-capture-templates '(("f" "fleeting" plain (file "~/.ghq/github.com/takeokunn/blog/template/fleeting.org")
+                                          :if-new (file+head "fleeting/%<%Y%m%d%H%M%S>.org" "#+title: ${title}\n")
+                                          :unnarrowed t)
+                                         ("l" "literature" plain (file "~/.ghq/github.com/takeokunn/blog/template/literature.org")
+                                          :if-new (file+head "literature/%<%Y%m%d%H%M%S>.org" "#+title: ${title}\n")
+                                          :unnarrowed t)
+                                         ("p" "permanent" plain (file "~/.ghq/github.com/takeokunn/blog/template/permanent.org")
+                                          :if-new (file+head "permanent/%<%Y%m%d%H%M%S>.org" "#+title: ${title}\n")
+                                          :unnarrowed t)
+                                         ("i" "index" plain (file "~/.ghq/github.com/takeokunn/blog/template/index.org")
+                                          :if-new (file+head "index/%<%Y%m%d%H%M%S>.org" "#+title: ${title}\n")
+                                          :unnarrowed t)
+                                         ("s" "structure" plain (file "~/.ghq/github.com/takeokunn/blog/template/structure.org")
+                                          :if-new (file+head "index/%<%Y%m%d%H%M%S>.org" "#+title: ${title}\n")
+                                          :unnarrowed t)))))
 #+end_src
 *** org-roam-dailies
 #+begin_src emacs-lisp
@@ -5539,6 +5565,8 @@
                          org-roam-dailies-goto-date
                          org-roam-dailies-capture-date
                          org-roam-dailies-find-directory) "org-roam-dailies" nil t)
+
+    (global-set-key (kbd "C-c n j") #'org-roam-dailies-capture-today)
 
     (with-eval-after-load 'org-roam-dialies
       (define-key org-roam-dailies-map (kbd "d") #'org-roam-dailies-goto-today)
