@@ -313,7 +313,7 @@
 ** pluginをnative compする
 #+begin_src emacs-lisp
   (with-eval-after-load 'comp
-    (setq native-comp-async-jobs-number 8)
+    (setq native-comp-async-jobs-number 10)
     (setq native-comp-speed 3)
     (setq native-comp-always-compile t)
     (defun my/native-comp-packages ()
@@ -1781,7 +1781,8 @@
      (with-delayed-execution
        (message "Install scheme...")
        (when (autoload-if-found '(scheme-mode) "scheme-mode" nil t)
-         (push '("\\.scheme$" . scheme-mode) auto-mode-alist))
+         (push '("\\.scheme$" . scheme-mode) auto-mode-alist)
+         (push '(".guix-channel" . scheme-mode) auto-mode-alist))
        (with-eval-after-load 'scheme
          (setq scheme-program-name "gosh -i")))
    #+end_src
@@ -3094,11 +3095,19 @@
         (message "Install exec-path-from-shell...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/exec-path-from-shell"))
 
-        (when (autoload-if-found '(exec-path-from-shell-initialize) "exec-path-from-shell")
-          (exec-path-from-shell-initialize))
+        (autoload-if-found '(exec-path-from-shell-initialize) "exec-path-from-shell")
+        (exec-path-from-shell-initialize)
 
         (with-eval-after-load 'exec-path-from-shell
-          (setq exec-path-from-shell-variables '("PATH" "GEM_HOME" "GOROOT" "GOPATH" "LSP_USE_PLISTS" "TERM"))))
+          (setq exec-path-from-shell-variables '("PATH"
+                                                 "GEM_HOME"
+                                                 "GOROOT"
+                                                 "GOPATH"
+                                                 "LSP_USE_PLISTS"
+                                                 "TERM"
+                                                 "SSH_AUTH_SOCK"
+                                                 "NATIVE_FULL_AOT"
+                                                 "GPG_TTY"))))
     #+END_SRC
 ** File
 *** recentf
@@ -4725,25 +4734,6 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/phpstan"))
     (autoload-if-found '(phpstan-analyze-file phpstan-analyze-this-file) "phpstan" nil t))
 #+end_src
-*** composer
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'composer))
-
-  (with-delayed-execution
-    (message "Install composer...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/composer"))
-    (autoload-if-found '(composer
-                         composer-install
-                         composer-require
-                         composer-update
-                         composer-dump-autoload
-                         composer-run-script
-                         composer-run-vendor-bin-command
-                         composer-find-json-file
-                         composer-view-lock-file) "composer" nil t))
-
-#+end_src
 *** phpunit
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -4899,6 +4889,7 @@
 
        ;; configurations
        (with-eval-after-load 'esh-mode
+         (add-hook 'eshell-mode-hook #'(lambda () (linum-mode -1)))
          (define-key eshell-mode-map (kbd "M-p") #'eshell-previous-matching-input-from-input))
 
        (with-eval-after-load 'em-cmpl
