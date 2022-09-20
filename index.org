@@ -2284,6 +2284,17 @@
           (setq doom-modeline-major-mode-icon t)
           (setq doom-modeline-minor-modes nil)))
     #+END_SRC
+*** emojify
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'emojify))
+
+  (with-delayed-execution
+    (message "Install emojify...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/emojify"))
+    (autoload-if-found '(global-emojify-mode) "emojify" nil t)
+    (global-emojify-mode))
+#+end_src
 *** hl-line
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
@@ -5629,10 +5640,7 @@
 
       (with-eval-after-load 'exwm-input
         (exwm-input-set-key (kbd "C-c '") #'exwm-edit--compose-minibuffer)
-        (exwm-input-set-key (kbd "C-c C-'") #'exwm-edit--compose-minibuffer))
-
-      (with-eval-after-load 'exwm-edit
-        (add-hook 'exwm-edit-mode-hook #'skk-mode))))
+        (exwm-input-set-key (kbd "C-c C-'") #'exwm-edit--compose-minibuffer))))
 #+end_src
 ** exwm-modeline
 #+begin_src emacs-lisp
