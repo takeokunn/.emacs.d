@@ -5636,11 +5636,8 @@
     (with-delayed-execution
       (message "Install exwm-edit...")
       (add-to-list 'load-path (locate-user-emacs-file "el-get/exwm-edit"))
-      (autoload-if-found '(exwm-edit--compose-minibuffer) "exwm-edit" nil t)
-
-      (with-eval-after-load 'exwm-input
-        (exwm-input-set-key (kbd "C-c '") #'exwm-edit--compose-minibuffer)
-        (exwm-input-set-key (kbd "C-c C-'") #'exwm-edit--compose-minibuffer))))
+      (autoload-if-found '(global-exwm-edit-mode) "exwm-edit" nil t)
+      (global-exwm-edit-mode)))
 #+end_src
 ** exwm-modeline
 #+begin_src emacs-lisp
