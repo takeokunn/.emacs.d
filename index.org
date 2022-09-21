@@ -5249,6 +5249,31 @@
          (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿"))
          (setq org-superstar-leading-bullet " ")))
    #+end_src
+** Presentation
+*** org-tree-slide
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'org-tree-slide))
+
+  (with-delayed-execution
+    (message "Install org-tree-slide...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-tree-slide"))
+    (autoload-if-found '(org-tree-slide-mode org-tree-slide-skip-done-toggle) "org-tree-slide" nil t)
+
+    (with-eval-after-load 'org-tree-slide
+      (setq org-tree-slide-skip-outline-level 4)))
+#+end_src
+*** TODO org-re-reveal
+#+begin_src emacs-lisp
+  ;; (eval-when-compile
+  ;;   (el-get-bundle 'org-re-reveal
+  ;;                  :url "https://gitlab.com/oer/org-re-reveal.git"))
+
+  ;; (with-delayed-execution
+  ;;   (message "Install org-re-reveal...")
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/org-re-reveal"))
+  ;;   (autoload-if-found '() "org-re-reveal" nil t))
+#+end_src
 ** Org Link
 *** org-link
 #+begin_src emacs-lisp
