@@ -756,6 +756,16 @@ $0
        all:
                $0
      #+END_SRC
+**** help
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: help
+  # key: help
+  # --
+  .PHONY: help
+  help:
+      @grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+#+end_src
 **** phony
      #+BEGIN_SRC snippet
        # name: phony
