@@ -4130,6 +4130,12 @@
         (view-mode -1)
         (org-edit-special)))
 
+    (defun my/org-ctrl-c-ctrl-c ()
+      (interactive)
+      (when (derived-mode-p 'org-mode)
+        (view-mode -1)
+        (org-ctrl-c-ctrl-c)))
+
     (defvar my/view-mode-timer nil)
     (defun my/enable-view-mode-automatically ()
       (if view-mode
@@ -4149,6 +4155,7 @@
       (define-key view-mode-map (kbd "p") #'my/org-view-previous-heading)
       (define-key view-mode-map (kbd "@") #'set-mark-command)
       (define-key view-mode-map (kbd "C-c '") #'my/org-edit-special)
+      (define-key view-mode-map (kbd "C-c C-C") #'my/org-ctrl-c-ctrl-c)
       (define-key view-mode-map (kbd "e") nil)
       (define-key view-mode-map (kbd "C-j") nil)
       (define-key view-mode-map (kbd "C-i") #'my/view-tab)
@@ -5452,7 +5459,11 @@
 
   (with-delayed-execution
     (message "Install ox-gmf...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/ox-gmf")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ox-gfm"))
+    (autoload-if-found '(org-gfm-export-as-markdown
+                         org-gfm-convert-region-to-md
+                         org-gfm-export-to-markdown
+                         org-gfm-publish-to-gfm) "ox-gfm" nil t))
 #+end_src
 *** ox-zenn
 #+begin_src emacs-lisp
@@ -5693,7 +5704,7 @@
          (prog1 t
            (prog-mode))))
 
-     (advice-add 'set-auto-mode :before-until #'my/before-set-auto-mode)
+     ;; (advice-add 'set-auto-mode :before-until #'my/before-set-auto-mode)
    #+END_SRC
 ** my/copy-buffer
    #+begin_src emacs-lisp
