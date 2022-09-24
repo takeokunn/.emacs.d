@@ -5351,25 +5351,23 @@
        (with-eval-after-load 'ob-core
          (setq org-confirm-babel-evaluate nil))
 
-       (with-eval-after-load 'ob-babel
-         (org-babel-do-load-languages 'org-babel-load-languages
-                                      '((awk . t)
-                                        (C . t)
-                                        (R . t)
-                                        (clojure . t)
-                                        (emacs-lisp . t)
-                                        (haskell . t)
-                                        (java . t)
-                                        (js . t)
-                                        (lisp . t)
-                                        (makefile . t)
-                                        (perl . t)
-                                        (plantuml . t)
-                                        (python . t)
-                                        (ruby . t)
-                                        (scala . t)
-                                        (scheme . t)
-                                        (shell . t)))))
+       (org-babel-do-load-languages 'org-babel-load-languages
+                                    '((awk . t)
+                                      (C . t)
+                                      (R . t)
+                                      (clojure . t)
+                                      (emacs-lisp . t)
+                                      (haskell . t)
+                                      (java . t)
+                                      (js . t)
+                                      (lisp . t)
+                                      (makefile . t)
+                                      (perl . t)
+                                      (plantuml . t)
+                                      (python . t)
+                                      (ruby . t)
+                                      (scheme . t)
+                                      (shell . t))))
    #+end_src
 *** ob-async
 #+begin_src emacs-lisp
@@ -5391,9 +5389,8 @@
     (message "Install ob-fish...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-fish"))
 
-    (with-eval-after-load 'ob-babel
-      (org-babel-do-load-languages 'org-babel-load-languages
-                                   '((fish . t)))))
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                 '((fish . t))))
 #+end_src
 *** ob-rust
 #+begin_src emacs-lisp
@@ -5403,10 +5400,8 @@
   (with-delayed-execution
     (message "Install ob-rust...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-rust"))
-
-    (with-eval-after-load 'ob-babel
-      (org-babel-do-load-languages 'org-babel-load-languages
-                                   '((rust . t)))))
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                 '((rust . t))))
 #+end_src
 *** ob-go
 #+begin_src emacs-lisp
@@ -5416,10 +5411,8 @@
   (with-delayed-execution
     (message "Install ob-go...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-go"))
-
-    (with-eval-after-load 'ob-babel
-      (org-babel-do-load-languages 'org-babel-load-languages
-                                   '((go . t)))))
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                 '((go . t))))
 #+end_src
 *** ob-typescript
 #+begin_src emacs-lisp
@@ -5429,10 +5422,8 @@
   (with-delayed-execution
     (message "Install ob-typescript...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-typescript"))
-
-    (with-eval-after-load 'ob-babel
-      (org-babel-do-load-languages 'org-babel-load-languages
-                                   '((typescript . t)))))
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                 '((typescript . t))))
 #+end_src
 *** ob-php
 #+begin_src emacs-lisp
@@ -5442,10 +5433,8 @@
   (with-delayed-execution
     (message "Install ob-php...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/ob-php"))
-
-    (with-eval-after-load 'ob-babel
-      (org-babel-do-load-languages 'org-babel-load-languages
-                                   '((php . t)))))
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                 '((php . t))))
 #+end_src
 ** Org Publish
 *** ox-html
@@ -5666,8 +5655,9 @@
     (with-delayed-execution
       (message "Install exwm-edit...")
       (add-to-list 'load-path (locate-user-emacs-file "el-get/exwm-edit"))
-      (autoload-if-found '(global-exwm-edit-mode) "exwm-edit" nil t)
-      (global-exwm-edit-mode)))
+      (autoload-if-found '(exwm-edit--compose-minibuffer) "exwm-edit" nil t)
+      (exwm-input-set-key (kbd "C-c '") #'exwm-edit--compose-minibuffer)
+      (exwm-input-set-key (kbd "C-c C-'") #'exwm-edit--compose-minibuffer)))
 #+end_src
 ** exwm-modeline
 #+begin_src emacs-lisp
