@@ -15,13 +15,13 @@
    - repo: [[http://github.com/takeokunn/.emacs.d][takeokunn/.emacs.d]]
    - twitter: [[https://twitter.com/takeokunn][たけてぃ@takeokunn]]
    - blog: [[https://takeokunn.xyz][https://takeokunn.xyz]]
-* Header
+* Initialize
+** Header
   #+begin_src emacs-lisp
     ;; init.el --- My init.el
     ;; Configurations for Emacs
     ;;                                         Takeo Obara  <bararararatty@gmail.com>
   #+end_src
-* Boot
 ** env
    #+begin_src emacs-lisp
      (defconst my/loading-profile-p nil
@@ -30,6 +30,14 @@
      (defconst my/enable-profile nil
        "If true, enable profile")
    #+end_src
+* Macro Utilities
+** when-darwin
+#+begin_src emacs-lisp
+#+end_src
+** when-gnu-guix
+#+begin_src emacs-lisp
+#+end_src
+* Boot
 ** profile
    #+begin_src emacs-lisp
      (when my/enable-profile
@@ -183,12 +191,16 @@
    #+BEGIN_SRC emacs-lisp
      (with-delayed-execution
        (message "Install linum...")
+
+       (autoload-if-found '(global-linum-mode linum-mode) "linum" nil t)
+
+       (global-linum-mode t)
+
        (with-eval-after-load 'linum
-         (eval-and-compile
-           (setq linum-delay t)))
+         (setq linum-delay t))
+
        (defadvice linum-schedule (around my-linum-schedule () activate)
-         (run-with-idle-timer 1 nil #'linum-update-current))
-       (global-linum-mode t))
+         (run-with-idle-timer 1 nil #'linum-update-current)))
    #+END_SRC
 ** C-kで行削除
    #+BEGIN_SRC emacs-lisp
@@ -2254,19 +2266,19 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes/extensions"))
 
+        (autoload-if-found '(doom-themes-enable-org-fontification) "doom-themes-ext-org" nil t)
+        (autoload-if-found '(doom-themes-neotree-config) "doom-themes-ext-neotree" nil t)
+
+        (doom-themes-enable-org-fontification)
+        (doom-themes-neotree-config)
+
         (when (require 'doom-themes)
           (load-theme 'doom-dracula t))
 
         (with-eval-after-load 'doom-themes
+          (setq doom-themes-padded-modeline t)
           (setq doom-themes-enable-bold t)
-          (setq doom-themes-enable-italic t))
-
-        (when (autoload-if-found '(doom-themes-enable-org-fontification) "doom-themes-ext-org" nil t)
-          (doom-themes-enable-org-fontification))
-
-        (when (autoload-if-found '(doom-themes-neotree-config) "doom-themes-ext-neotree" nil t)
-          (doom-themes-neotree-config)))
-
+          (setq doom-themes-enable-italic t)))
     #+END_SRC
 *** doom-modeline
     #+BEGIN_SRC emacs-lisp
@@ -2301,9 +2313,9 @@
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
         (message "Install hl-line...")
-        (when (autoload-if-found '(global-hl-line-mode) "hl-line-mode" nil t)
-          (when (not window-system)
-            (global-hl-line-mode)))
+        (autoload-if-found '(global-hl-line-mode) "hl-line-mode" nil t)
+        (when (not window-system)
+          (global-hl-line-mode))
         (with-eval-after-load 'hl-line
           (set-face-attribute 'hl-line nil :inherit nil)
           (set-face-background 'hl-line "#444642")))
@@ -2377,8 +2389,8 @@
   (with-delayed-execution
     (message "Install volatile-highlights...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/volatile-highlights"))
-    (when (autoload-if-found '(volatile-highlights-mode) "volatile-highlights" nil t)
-      (volatile-highlights-mode t)))
+    (autoload-if-found '(volatile-highlights-mode) "volatile-highlights" nil t)
+    (volatile-highlights-mode t))
 #+end_src
 *** idle-highlight-mode
 #+begin_src emacs-lisp
@@ -2407,7 +2419,9 @@
         (message "Install projectile...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/projectile"))
 
-        (autoload-if-found '(projectile-mode my/update-projectile-known-projects) "projectile" nil t)
+        (autoload-if-found '(projectile-mode
+                             projectile-project-name
+                             my/update-projectile-known-projects) "projectile" nil t)
         (projectile-mode +1)
 
         (defun my/update-projectile-known-projects ()
@@ -2471,12 +2485,15 @@
         (message "Install company...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/company"))
 
-        (when (autoload-if-found '(global-company-mode) "company" nil t)
-          (global-company-mode))
+        (autoload-if-found '(global-company-mode) "company" nil t)
+        (global-company-mode)
 
         (with-eval-after-load 'company
+          ;; keybind
           (define-key company-active-map (kbd "C-n") #'company-select-next)
           (define-key company-active-map (kbd "C-p") #'company-select-previous)
+
+          ;; config
           (setq company-minimum-prefix-length 2)
           (setq company-idle-delay 0.2))
 
@@ -2498,7 +2515,7 @@
 
     (with-eval-after-load 'company-mode
       (when window-system
-        (add-hook 'company-mode-hook 'company-box-mode)))
+        (add-hook 'company-mode-hook #'company-box-mode)))
 
     (with-eval-after-load 'company-box-doc
       (setq company-box-doc-enable nil)))
@@ -2805,8 +2822,13 @@
   (with-delayed-execution
     (message "Install lsp-treemacs...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-treemacs"))
+    (autoload-if-found '(lsp-treemacs-sync-mode) "lsp-treemacs" nil t)
+
+    (with-eval-after-load 'lsp-mode
+      (add-hook 'lsp-mode-hook #'lsp-treemacs-sync-mode))
 
     (with-eval-after-load 'lsp-treemacs
+      (setq lsp-treemacs-error-list-severity 1)
       (setq lsp-treemacs-error-list-current-project-only t)))
 #+end_src
 *** lsp-docker
@@ -2816,7 +2838,8 @@
 
   (with-delayed-execution
     (message "Install lsp-docker...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-docker")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-docker"))
+    (autoload-if-found '(lsp-docker-start) "lsp-docker" nil t))
 #+end_src
 *** dap-mode
     #+BEGIN_SRC emacs-lisp
@@ -2929,11 +2952,15 @@
   (with-delayed-execution
     (message "Install lsp-scheme...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-scheme"))
+
     (autoload-if-found '(lsp-scheme) "lsp-scheme" nil t)
+
     (with-eval-after-load 'scheme
-      (setq lsp-scheme-implementation "guile")
       ;; (add-hook 'scheme-mode-hook #'lsp-scheme)
-      ))
+      )
+
+    (with-eval-after-load 'lsp-scheme
+      (setq lsp-scheme-implementation "guile")))
 #+end_src
 *** lsp-haskell
 #+begin_src emacs-lisp
@@ -3122,8 +3149,8 @@
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
         (message "Install recentf...")
-        (when (autoload-if-found '(recentf-mode) "recentf" nil t)
-          (recentf-mode 1))
+        (autoload-if-found '(recentf-mode) "recentf" nil t)
+        (recentf-mode 1)
         (with-eval-after-load 'recentf
           (setq recentf-max-menu-items 10000)
           (setq recentf-max-saved-items 10000)
@@ -3392,8 +3419,7 @@
   (with-delayed-execution
     (message "Install proced...")
     (autoload-if-found '(proced) "proced" nil t)
-    (add-hook 'proced-mode-hook #'(lambda ()
-				    (proced-toggle-auto-update 1)))
+    (add-hook 'proced-mode-hook #'(lambda () (proced-toggle-auto-update 1)))
     (with-eval-after-load 'proced
       (setq proced-auto-update-interval 10)
       (setq proced-tree-flag t)
@@ -3422,8 +3448,10 @@
   (with-delayed-execution
     (message "Install gcmh...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/gcmh"))
-    (when (autoload-if-found '(gcmh-mode) "gcmh" nil t)
-      (gcmh-mode 1))
+
+    (autoload-if-found '(gcmh-mode) "gcmh" nil t)
+
+    (gcmh-mode 1)
 
     (defvar my/gcmh-status nil)
 
@@ -3453,7 +3481,7 @@
   (with-delayed-execution
     (message "Install eww...")
 
-  (defun my/eww-rename-buffer ()
+    (defun my/eww-rename-buffer ()
       "Rename the name of current EWW buffer."
       (let* ((title (plist-get eww-data :title))
              (url (file-name-base (eww-current-url)))
@@ -3633,8 +3661,9 @@
 
     (tab-bar-history-mode)
 
+    (global-set-key (kbd "C-x C-t") tab-prefix-map)
+
     (with-eval-after-load 'tab-bar
-      (global-set-key (kbd "C-x C-t") tab-prefix-map)
       (setq tab-bar-close-button-show nil)
       (setq tab-bar-close-last-tab-choice nil)
       (setq tab-bar-close-tab-select 'left)
@@ -3644,25 +3673,28 @@
       (setq tab-bar-tab-name-truncated-max 12)
       (setq tab-bar-separator " | "))
 
-    (with-eval-after-load 'ivy
-      (defun my/advice-completing-read-to-ivy (orig-func &rest args)
-        (interactive
-         (let* ((recent-tabs (mapcar (lambda (tab)
-                                       (alist-get 'name tab))
-                                     (tab-bar--tabs-recent))))
-           (list (ivy-completing-read "Switch to tab by name (default recent): "
-                                      recent-tabs nil nil nil nil recent-tabs))))
-        (apply orig-func args))
-      (advice-add #'tab-bar-switch-to-tab :around #'my/advice-completing-read-to-ivy))
+    (defun my/advice-completing-read-to-ivy (orig-func &rest args)
+      (interactive
+       (let* ((recent-tabs (mapcar (lambda (tab)
+                                     (alist-get 'name tab))
+                                   (tab-bar--tabs-recent))))
+         (list (ivy-completing-read "Switch to tab by name (default recent): "
+                                    recent-tabs nil nil nil nil recent-tabs))))
+      (apply orig-func args))
 
-    (with-eval-after-load 'projectile
-      (defun my/tab-bar-rename-tab ()
-        (interactive)
-        (let ((proj-name (projectile-project-name)))
-          (tab-bar-rename-tab proj-name)))
-      (define-key tab-prefix-map (kbd "r") #'my/tab-bar-rename-tab))
+    (defun my/tab-bar-rename-tab ()
+      (interactive)
+      (let ((proj-name (projectile-project-name)))
+        (tab-bar-rename-tab proj-name)))
 
-    (with-eval-after-load 'neotree
+    (with-eval-after-load 'tab-bar
+      ;; switch tab with ivy
+      (advice-add #'tab-bar-switch-to-tab :around #'my/advice-completing-read-to-ivy)
+
+      ;; rename tab-bar with projectile
+      (define-key tab-prefix-map (kbd "r") #'my/tab-bar-rename-tab)
+
+      ;; close neotree when tab bar action
       (advice-add 'tab-new :before #'(lambda (&rest _) (neotree-hide)))
       (advice-add 'tab-next :before #'(lambda (&rest _) (neotree-hide)))
       (advice-add 'tab-bar-switch-to-tab :before #'(lambda (&rest _) (neotree-hide)))))
@@ -4172,10 +4204,10 @@
   (with-delayed-execution
     (message "Install view-lock-mode...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/view-lock-mode"))
-    (autoload-if-found '(view-lock-timer-setup) "view-lock-mode" nil t)
+    (autoload-if-found '(view-lock-timer-setup view-lock-quit) "view-lock-mode" nil t)
     (add-hook 'view-mode-hook #'view-lock-timer-setup)
     (with-eval-after-load 'view-lock-mode
-      (setq view-lock-start-time (* 10 60))))
+      (setq view-lock-start-time (* 30 60))))
 #+end_src
 *** which-key
     #+begin_src emacs-lisp
@@ -4574,31 +4606,35 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/tree-sitter-langs"))
         (add-to-list 'load-path (locate-user-emacs-file "el-get/tree-sitter"))
 
-        (when (autoload-if-found '(tree-sitter-mode tree-sitter-require tree-sitter-hl-add-patterns) "tree-sitter" nil t)
-          (when (require 'tree-sitter-langs)
-            (tree-sitter-require 'tsx))
-          (tree-sitter-hl-add-patterns 'tsx
-            [(call_expression
-              ;; styled.div``
-              function: (member_expression
-                         object: (identifier) @function.call
-                         (.eq? @function.call "styled"))
-              arguments: ((template_string) @property.definition
-                          (.offset! @property.definition 0 1 0 -1)))
-             (call_expression
-              ;; styled(Component)``
-              function: (call_expression
-                         function: (identifier) @function.call
-                         (.eq? @function.call "styled"))
-              arguments: ((template_string) @property.definition
-                          (.offset! @property.definition 0 1 0 -1)))])
+        (autoload-if-found '(tree-sitter-mode) "tree-sitter" nil t)
+        (autoload-if-found '(tree-sitter-require) "tree-sitter-load" nil t)
+        (autoload-if-found '(tree-sitter-hl-mode tree-sitter-hl-add-patterns) "tree-sitter-hl" nil t)
 
-          (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx)))
+        (when (require 'tree-sitter-langs)
+          (tree-sitter-require 'tsx))
+
+        (tree-sitter-hl-add-patterns 'tsx
+          [(call_expression
+            ;; styled.div``
+            function: (member_expression
+                       object: (identifier) @function.call
+                       (.eq? @function.call "styled"))
+            arguments: ((template_string) @property.definition
+                        (.offset! @property.definition 0 1 0 -1)))
+           (call_expression
+            ;; styled(Component)``
+            function: (call_expression
+                       function: (identifier) @function.call
+                       (.eq? @function.call "styled"))
+            arguments: ((template_string) @property.definition
+                        (.offset! @property.definition 0 1 0 -1)))])
+
+        (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx))
 
         (with-eval-after-load 'typescript-mode
           (add-hook 'typescript-tsx-mode-hook #'tree-sitter-mode))
 
-        (when (autoload-if-found '(tree-sitter-hl-mode) "tree-sitter-hl" nil t)
+        (with-eval-after-load 'tree-sitter
           (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)))
     #+end_src
 ** Ruby
@@ -4697,7 +4733,8 @@
 
   (with-delayed-execution
     (message "Install php-runtime...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/php-runtime")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/php-runtime"))
+    (autoload-if-found '(php-runtime-expr php-runtime-eval) "php-runtime" nil t))
 #+end_src
 *** psysh
     #+begin_src emacs-lisp
@@ -4869,20 +4906,19 @@
        (autoload-if-found '(elfeed) "elfeed" nil t)
        (global-set-key (kbd "C-x w") #'elfeed)
 
+       (defun my/elfeed-ivy-filter ()
+         (interactive)
+         (let ((filtered-tag (ivy-completing-read "Choose Tags: " (elfeed-db-get-all-tags))))
+           (setq elfeed-search-filter (concat my/elfeed-search-filter " +" filtered-tag))
+           (elfeed-search-update--force)))
+
        (with-eval-after-load 'elfeed
          (define-key elfeed-search-mode-map (kbd "+") #'my/elfeed-ivy-filter)
          (setq elfeed-search-filter my/elfeed-search-filter)
          (setq browse-url-browser-function 'eww-browse-url))
 
        (with-eval-after-load 'elfeed-curl
-         (setq elfeed-curl-max-connections 8))
-
-       (with-eval-after-load 'ivy
-         (defun my/elfeed-ivy-filter ()
-           (interactive)
-           (let ((filtered-tag (ivy-completing-read "Choose Tags: " (elfeed-db-get-all-tags))))
-             (setq elfeed-search-filter (concat my/elfeed-search-filter " +" filtered-tag))
-             (elfeed-search-update--force)))))
+         (setq elfeed-curl-max-connections 8)))
    #+end_src
 ** elfeed-org
    #+begin_src emacs-lisp
@@ -5147,8 +5183,8 @@
 *** org-crypt
    #+begin_src emacs-lisp
      (with-delayed-execution
-       (when (autoload-if-found '(org-encrypt-entry org-decrypt-entry org-crypt-use-before-save-magic) "org-crypt" nil t)
-           (org-crypt-use-before-save-magic))
+       (autoload-if-found '(org-encrypt-entry org-decrypt-entry org-crypt-use-before-save-magic) "org-crypt" nil t)
+       (org-crypt-use-before-save-magic)
        (with-eval-after-load 'org-crypt
          (setq org-crypt-key nil)
          (setq org-tags-exclude-from-inheritance '("crypt"))))
