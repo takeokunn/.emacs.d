@@ -1044,7 +1044,7 @@
    #+end_src
 ** c-mode
    #+begin_src emacs-lisp
-     (with-eval-after-load 'c-mode
+     (with-eval-after-load 'cc-mode
        (add-hook 'c-mode-hook #'lsp-deferred))
    #+end_src
 ** clojure-mode
@@ -1062,7 +1062,8 @@
 
        (with-eval-after-load 'clojure-mode
          (setq clojure-toplevel-inside-comment-form t)
-         (add-hook 'clojure-mode-hook #'lsp-deferred)))
+         ;; (add-hook 'clojure-mode-hook #'lsp-deferred)
+         ))
    #+END_SRC
 ** cmake-mode
    #+BEGIN_SRC emacs-lisp
@@ -1996,7 +1997,8 @@
          (push '("\\.html?\\'" . web-mode) auto-mode-alist)
          (push '("\\.erb?\\'" . web-mode) auto-mode-alist)
          (push '("\\.gsp?\\'" . web-mode) auto-mode-alist)
-         (push '("\\.svg\\'" . web-mode) auto-mode-alist))
+         (push '("\\.svg\\'" . web-mode) auto-mode-alist)
+         (push '("\\.tpl\\'" . web-mode) auto-mode-alist))
        (with-eval-after-load 'web-mode
          (setq web-mode-comment-style 2)
          (setq web-mode-enable-auto-pairing nil)
