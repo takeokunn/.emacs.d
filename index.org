@@ -51,6 +51,11 @@
       `(progn ,@body)))
 #+end_src
 * Boot
+** user
+#+begin_src emacs-lisp
+  (setq user-full-name "takeokunn")
+  (setq user-mail-address "bararararatty@gmail.com")
+#+end_src
 ** profile
    #+begin_src emacs-lisp
      (when my/enable-profile
@@ -325,14 +330,16 @@
      (with-delayed-execution-priority-high
        (defun my/copy-from-osx ()
          (shell-command-to-string "pbpaste"))
+
        (defun my/paste-to-osx (text)
          (let ((process-connection-type nil))
            (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
              (process-send-string proc text)
              (process-send-eof proc))))
+
        (when-darwin-not-window-system
-        (setq interprogram-cut-function 'my/paste-to-osx)
-        (setq interprogram-paste-function 'my/copy-from-osx)))
+        (setq interprogram-cut-function #'my/paste-to-osx)
+        (setq interprogram-paste-function #'my/copy-from-osx)))
    #+end_src
 ** pluginをnative compする
 #+begin_src emacs-lisp
@@ -609,6 +616,10 @@
 ** inhibit-compacting-font-caches
 #+begin_src emacs-lisp
   (setq inhibit-compacting-font-caches t)
+#+end_src
+** save-place-mode
+#+begin_src emacs-lisp
+  (save-place-mode 1)
 #+end_src
 * Utitlity
 ** aio
@@ -1035,6 +1046,17 @@
     (autoload-if-found '(apache-mode) "apache-mode" nil t)
     (add-to-list 'auto-mode-alist '("\\.htaccess$" . apache-mode)))
 #+end_src
+** bazel-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'bazel-mode
+                   :url "https://github.com/bazelbuild/emacs-bazel-mode.git"))
+
+  (with-delayed-execution
+    (message "Install bazel-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/bazel-mode"))
+    (autoload-if-found '(bazel-mode) "bazel" nil t))
+#+end_src
 ** bison-mode
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -1259,6 +1281,41 @@
        (with-eval-after-load 'fish-mode
          (setq fish-enable-auto-indent t)))
    #+END_SRC
+** forth-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'forth-mode))
+
+  (with-delayed-execution
+    (message "Install forth-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/forth-mode"))
+    (autoload-if-found '(forth-mode) "forth-mode" nil t)
+    (add-to-list 'auto-mode-alist '("\\.f$" . forth-mode))
+    (add-to-list 'auto-mode-alist '("\\.fs$" . forth-mode))
+    (add-to-list 'auto-mode-alist '("\\.fth$" . forth-mode))
+    (add-to-list 'auto-mode-alist '("\\.forth$" . forth-mode))
+    (add-to-list 'auto-mode-alist '("\\.4th$" . forth-mode)))
+#+end_src
+** fortran
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install fortran...")
+    (autoload-if-found '(f90-mode) "f90" nil t)
+    (add-to-list 'auto-mode-alist '("\\.f\\(y90\\|y?pp\\)\\'" . f90-mode))
+    (with-eval-after-load 'f90
+      (add-hook 'f90-mode-hook #'lsp)))
+#+end_src
+** fsharp-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'fsharp-mode))
+
+  (with-delayed-execution
+    (message "Install fsharp-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/fsharp-mode"))
+    (autoload-if-found '(fsharp-mode) "fsharp-mode" nil t)
+    (add-to-list 'auto-mode-alist '("\\.fs[iylx]?$" . fsharp-mode)))
+#+end_src
 ** git-modes
    #+begin_src emacs-lisp
      (eval-when-compile
@@ -1522,6 +1579,17 @@
        (add-to-list 'auto-mode-alist '("\\.mk$" . makefile-mode))
        (add-to-list 'auto-mode-alist '("Makefile" . makefile-mode)))
    #+end_src
+** nasm-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'nasm-mode))
+
+  (with-delayed-execution
+    (message "Install nasm-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/nasm-mode"))
+    (autoload-if-found '(nasm-mode) "nasm-mode" nil t))
+
+#+end_src
 ** neon-mode
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -1579,7 +1647,7 @@
        (add-to-list 'auto-mode-alist '("nginx\\.conf\\'" . nginx-mode))
        (add-to-list 'auto-mode-alist '("/nginx/.+\\.conf\\'" . nginx-mode))
        (add-to-list 'auto-mode-alist '("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
-  
+
        (with-eval-after-load 'nginx-mode
          (setq nginx-indent-tabs-mode t)))
    #+END_SRC
@@ -1740,7 +1808,9 @@
        (add-to-list 'load-path (locate-user-emacs-file "el-get/rust-mode"))
        (autoload-if-found '(rust-mode) "rust-mode" nil t)
        (add-to-list 'auto-mode-alist '("\\.rs$" . rust-mode))
+
        (with-eval-after-load 'rust-mode
+         (setq rust-format-on-save t)
          (add-hook 'rust-mode-hook #'lsp)))
    #+END_SRC
 ** scala-mode
@@ -3672,6 +3742,22 @@
       (advice-add 'tab-next :before #'(lambda (&rest _) (neotree-hide)))
       (advice-add 'tab-bar-switch-to-tab :before #'(lambda (&rest _) (neotree-hide)))))
 #+end_src
+** GPG
+*** pinentry
+https://github.com/ch11ng/exwm/wiki#gpg-pinentry
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'pinentry))
+
+  (with-delayed-execution
+    (message "Install pinentry...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/pinentry"))
+    (autoload-if-found '(pinentry-start) "pinentry" nil t)
+    (when-guix
+     ;; (pinentry-start)
+     ))
+
+#+end_src
 ** Other
 *** auto-insert
 #+begin_src emacs-lisp
@@ -4073,6 +4159,18 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/sudo-edit"))
     (autoload-if-found '(sudo-edit-current-file) "sudo-edit" nil t))
 #+end_src
+*** symon
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'symon))
+
+  (with-delayed-execution
+    (message "Install symon...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/symon"))
+    (autoload-if-found '(symon-mode) "symon" nil t)
+    (when-guix
+     (symon-mode)))
+#+end_src
 *** syntax-subword
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -4196,6 +4294,17 @@
     (add-hook 'view-mode-hook #'view-lock-timer-setup)
     (with-eval-after-load 'view-lock-mode
       (setq view-lock-start-time (* 30 60))))
+#+end_src
+*** TODO vlf
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'vlf
+                   :url "https://github.com/m00natic/vlfi.git"))
+
+  (with-delayed-execution
+    (message "Install vlf...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/vlf"))
+    (autoload-if-found '() "vlf" nil t))
 #+end_src
 *** which-key
     #+begin_src emacs-lisp
@@ -5302,6 +5411,17 @@
     (message "Install org-dashboard...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/org-dashboard"))
     (autoload-if-found '(org-dashboard-display) "org-dashboard" nil t))
+#+end_src
+*** org-volume
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'org-volume
+                   :url "https://github.com/akirak/org-volume.git"))
+
+  (with-delayed-execution
+    (message "Install org-volume...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-volume"))
+    (autoload-if-found '(org-volume-update-entry-from-dblock) "org-volume" nil t))
 #+end_src
 ** Theme
 *** org-faces
