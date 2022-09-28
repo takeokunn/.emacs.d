@@ -1049,6 +1049,19 @@
     (when (autoload-if-found '(apache-mode) "apache-mode" nil t)
       (push '("\\.htaccess$" . apache-mode) auto-mode-alist)))
 #+end_src
+** bison-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'bison-mode))
+
+  (with-delayed-execution
+    (message "Install bison-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/bison-mode"))
+    (when (autoload-if-found '(bison-mode flex-mode jison-mode) "bison-mode" nil t)
+      (add-to-list 'auto-mode-alist '("\\.y\\'" . bison-mode))
+      (add-to-list 'auto-mode-alist '("\\.l\\'" . flex-mode))
+      (add-to-list 'auto-mode-alist '("\\.jison\\'" . jison-mode))))
+#+end_src
 ** c++-mode
    #+begin_src emacs-lisp
      (with-eval-after-load 'c++-mode
@@ -1137,6 +1150,22 @@
     (when (autoload-if-found '(cuda-mode) "cuda-mode" nil t)
       (push '("\\.cu$" . cuda-mode) auto-mode-alist)
       (push '("\\.cu$" . cuda-mode) auto-mode-alist)))
+#+end_src
+** crystal-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'emacs-crystal-mode
+                   :url "https://github.com/jpellerin/emacs-crystal-mode.git"))
+
+  (with-delayed-execution
+    (message "Install crystal-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/emacs-crystal-mode"))
+    (when (autoload-if-found '(crystal-mode) "crystal-mode" nil t)
+      (add-to-list 'auto-mode-alist '("Projectfile$" . crystal-mode))
+      (add-to-list 'auto-mode-alist
+                   (cons (purecopy (concat "\\(?:\\."
+                                           "cr"
+                                           "\\)\\'")) 'crystal-mode))))
 #+end_src
 ** dart-mode
    #+begin_src emacs-lisp
@@ -3970,7 +3999,7 @@
                       (key-combo-define-local (kbd ",>") " => "))
                     (key-combo-define-local (kbd "+") '("+" " + " "++" " ++ "))
                     (key-combo-define-local (kbd "-") '("-" " - " "--" " -- "))
-                    (key-combo-define-local (kbd "*") '("*" " * "))
+                    (key-combo-define-local (kbd "*") '("*" "**" " * "))
                     (key-combo-define-local (kbd "=") '("=" " = " "==" "===")))))
 
     ;; for typescript-tsx-mode
