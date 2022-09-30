@@ -5308,6 +5308,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (autoload-if-found '(org-capture) "org-capture" nil t)
     (global-set-key (kbd "C-c c") #'org-capture)
+
+    (advice-add 'org-capture :before #'(lambda (&rest _) (remove-hook 'find-file-hooks #'view-mode)))
+    (advice-add 'org-capture :after #'(lambda (&rest _) (add-hook 'find-file-hooks #'view-mode)))
+
     (with-eval-after-load 'org-capture
       (setq org-capture-use-agenda-date t)
       (setq org-capture-templates `(("t" "Todo" entry (file+datetree ,(expand-file-name "todo.org" org-directory))
@@ -5732,43 +5736,28 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          org-roam-graph
                          org-roam-node-insert
                          org-roam-capture) "org-roam" nil t)
-    (autoload-if-found '(org-roam-setup org-roam-db-autosync-mode) "org-roam-db" nil t)
+    (autoload-if-found '(org-roam-db-sync org-roam-db-autosync-enable) "org-roam-db" nil t)
 
-    (org-roam-setup)
+    (org-roam-db-autosync-enable)
 
     (global-set-key (kbd "C-c n l") #'org-roam-buffer-toggle)
     (global-set-key (kbd "C-c n f") #'org-roam-node-find)
     (global-set-key (kbd "C-c n g") #'org-roam-graph)
+    (global-set-key (kbd "C-c n c") #'org-roam-capture)
     (global-set-key (kbd "C-c n i") #'org-roam-node-insert)
 
-    (with-eval-after-load 'org-mode
-      (add-hook 'org-mode-hook #'org-roam-db-autosync-mode))
-
-    (with-eval-after-load 'org-roam
-      (setq org-roam-v2-ack t)
-      (setq org-roam-directory (file-truename "~/.ghq/github.com/takeokunn/blog")))
-
-    (with-eval-after-load 'org-roam-node
-      (setq org-roam-completion-everywhere t))
-
-    (with-eval-after-load 'org-roam-db
-      (setq org-roam-db-location "~/.ghq/github.com/takeokunn/blog"))
-
     (with-eval-after-load 'org-roam-capture
-      (setq org-roam-capture-templates '(("f" "fleeting" plain (file "~/.ghq/github.com/takeokunn/blog/template/fleeting.org")
-                                          :if-new (file+head "fleeting/%<%Y%m%d%H%M%S>.org" "#+title: ${title}\n")
+      (setq org-roam-capture-templates '(("f" "Fleeting(一時メモ)" plain "%?"
+                                          :target (file+head "fleeting/%<%Y%m%d%H%M%S>-${slug}.org"
+                                                             "#+title: ${title}\n")
                                           :unnarrowed t)
-                                         ("l" "literature" plain (file "~/.ghq/github.com/takeokunn/blog/template/literature.org")
-                                          :if-new (file+head "literature/%<%Y%m%d%H%M%S>.org" "#+title: ${title}\n")
+                                         ("l" "Literature(文献)" plain "%?"
+                                          :target (file+head "literature/%<%Y%m%d%H%M%S>-${slug}.org"
+                                                             "#+title: ${title}\n#+url: ")
                                           :unnarrowed t)
-                                         ("p" "permanent" plain (file "~/.ghq/github.com/takeokunn/blog/template/permanent.org")
-                                          :if-new (file+head "permanent/%<%Y%m%d%H%M%S>.org" "#+title: ${title}\n")
-                                          :unnarrowed t)
-                                         ("i" "index" plain (file "~/.ghq/github.com/takeokunn/blog/template/index.org")
-                                          :if-new (file+head "index/%<%Y%m%d%H%M%S>.org" "#+title: ${title}\n")
-                                          :unnarrowed t)
-                                         ("s" "structure" plain (file "~/.ghq/github.com/takeokunn/blog/template/structure.org")
-                                          :if-new (file+head "index/%<%Y%m%d%H%M%S>.org" "#+title: ${title}\n")
+                                         ("p" "Permanent(記事)" plain "%?"
+                                          :target (file+head "permanent/%<%Y%m%d%H%M%S>-${slug}.org"
+                                                             "#+title: ${title}\n")
                                           :unnarrowed t)))))
 #+end_src
 *** org-roam-dailies
@@ -5786,7 +5775,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          org-roam-dailies-capture-date
                          org-roam-dailies-find-directory) "org-roam-dailies" nil t)
 
-    (global-set-key (kbd "C-c n j") #'org-roam-dailies-capture-today)
+    (global-set-key (kbd "C-c n j") #'org-roam-dailies-goto-today)
 
     (with-eval-after-load 'org-roam-dialies
       (define-key org-roam-dailies-map (kbd "d") #'org-roam-dailies-goto-today)
@@ -5817,20 +5806,18 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install org-roam-overlay...")
     (autoload-if-found '(org-roam-overlay-mode) "org-roam-overlay" nil t)
-    (with-eval-after-load 'org-mode
+    (with-eval-after-load 'org
       (add-hook 'org-mode-hook #'org-roam-overlay-mode)))
 #+end_src
 *** org-roam-protocol
 #+begin_src emacs-lisp
-  ;; (with-delayed-execution
-  ;;   (message "Install org-roam-protocol...")
-  ;;   (autoload-if-found '(org-roam-protocol-open-ref org-roam-protocol-open-node) "org-roam-protocol" nil t)
-
-  ;;   (push '("org-roam-ref" :protocol "roam-ref" :function org-roam-protocol-open-ref) org-protocol-protocol-alist)
-  ;;   (push '("org-roam-node" :protocol "roam-node" :function org-roam-protocol-open-node) org-protocol-protocol-alist)
-
-  ;;   (with-eval-after-load 'org-roam-protocol
-  ;;     (setq org-roam-protocol-store-links t)))
+  (with-delayed-execution
+    (message "Install org-roam-protocol...")
+    (autoload-if-found '(org-roam-protocol-open-ref org-roam-protocol-open-node) "org-roam-protocol" nil t)
+    (with-eval-after-load 'org-roam-protocol
+      (add-to-list 'org-protocol-protocol-alist '("org-roam-ref" :protocol "roam-ref" :function org-roam-protocol-open-ref))
+      (add-to-list 'org-protocol-protocol-alist '("org-roam-node" :protocol "roam-node" :function org-roam-protocol-open-node))
+      (setq org-roam-protocol-store-links t)))
 #+end_src
 *** org-roam-ui
 #+begin_src emacs-lisp
@@ -5864,7 +5851,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'load-path (locate-user-emacs-file "el-get/exwm-edit"))
       (autoload-if-found '(exwm-edit--compose-minibuffer) "exwm-edit" nil t)
       (exwm-input-set-key (kbd "C-c '") #'exwm-edit--compose-minibuffer)
-      (exwm-input-set-key (kbd "C-c C-'") #'exwm-edit--compose-minibuffer)))
+      (exwm-input-set-key (kbd "C-c C-'") #'exwm-edit--compose-minibuffer)
+      (with-eval-after-load 'exwm-edit
+        (setq exwm-edit-bind-default-keys nil))))
 #+end_src
 ** exwm-modeline
 #+begin_src emacs-lisp
