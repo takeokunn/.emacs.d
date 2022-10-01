@@ -1587,8 +1587,8 @@
   (with-delayed-execution
     (message "Install nasm-mode...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/nasm-mode"))
-    (autoload-if-found '(nasm-mode) "nasm-mode" nil t))
-
+    (autoload-if-found '(nasm-mode) "nasm-mode" nil t)
+    (add-to-list 'auto-mode-alist '("\\.s$" . nasm-mode)))
 #+end_src
 ** neon-mode
 #+begin_src emacs-lisp
@@ -2024,6 +2024,7 @@
        (message "Install vimrc-mode...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/vimrc-mode"))
        (autoload-if-found '(vimrc-mode) "vimrc-mode" nil t)
+       (add-to-list 'auto-mode-alist '("vimrc" . vimrc-mode))
        (add-to-list 'auto-mode-alist '("\\.vim\\(rc\\)?\\'" . vimrc-mode)))
    #+end_src
 ** wat-mode
@@ -4666,10 +4667,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (message "Install clang-format...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/clang-format"))
         (autoload-if-found '(clang-format-buffer) "clang-format" nil t)
-        (with-eval-after-load 'clang-format
-          (add-hook 'before-save-hook #'(lambda ()
-                                          (when (member major-mode '(c-mode c++-mode))
-                                            (clang-format-buffer))))))
+        (add-hook 'before-save-hook #'(lambda ()
+                                        (when (member major-mode '(c-mode c++-mode))
+                                          (clang-format-buffer)))))
     #+end_src
 *** inferior-cling
     #+begin_src emacs-lisp
