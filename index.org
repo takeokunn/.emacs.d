@@ -1796,7 +1796,8 @@
        (add-to-list 'auto-mode-alist '(".gemrc" . ruby-mode))
 
        (with-eval-after-load 'ruby-mode
-         (setq ruby-insert-encoding-magic-comment nil)))
+         (setq ruby-insert-encoding-magic-comment nil)
+         (add-hook 'ruby-mode-hook #'lsp-deferred)))
    #+END_SRC
 ** rust-mode
    #+BEGIN_SRC emacs-lisp
@@ -2843,6 +2844,10 @@
           (setq lsp-intelephense-clear-cache t)
           (setq lsp-intelephense-php-version "8.1")
           (setq lsp-intelephense-telemetry-enabled t))
+
+        (with-eval-after-load 'lsp-ruby
+          (setq lsp-solargraph-autoformat t)
+          (setq lsp-solargraph-multi-root nil))
 
         (with-eval-after-load 'lsp-lens
           (define-advice narrow-to-region (:after (&rest _))
@@ -4757,8 +4762,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (autoload-if-found '(robe-mode inf-ruby-console-auto) "robe" nil t)
         (with-eval-after-load 'company
           (push 'company-robe company-backends))
-        (with-eval-after-load 'ruby-mode
-          (add-hook 'ruby-mode-hook #'robe-mode)))
+        ;; (with-eval-after-load 'ruby-mode
+        ;;   (add-hook 'ruby-mode-hook #'robe-mode))
+        )
     #+end_src
 *** rubocop
     #+begin_src emacs-lisp
