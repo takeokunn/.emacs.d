@@ -2774,6 +2774,16 @@
         (global-set-key (kbd "C-c C-y") #'ivy-yasnippet))
     #+end_src
 ** LSP
+*** eglot
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'eglot))
+
+  (with-delayed-execution
+    (message "Install eglot...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/eglot"))
+    (autoload-if-found '(eglot-ensure) "eglot" nil t))
+#+end_src
 *** lsp-mode
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -4280,6 +4290,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (setq my/view-mode-timer (run-with-idle-timer (* 60 10) nil #'view-mode))))
 
     (add-hook 'view-mode-hook #'my/enable-view-mode-automatically)
+    (advice-add 'view--disable :before #'(lambda (&rest _) (view-lock-mode -1)))
 
     (with-eval-after-load 'files
       (add-hook 'find-file-hooks #'view-mode))
@@ -5709,19 +5720,19 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          org-qmd-convert-region-to-md
                          org-qmd-export-to-markdown) "ox-qmd" nil t))
 #+end_src
-*** ox-hugo
+*** TODO ox-hugo
 #+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'ox-hugo))
+  ;; (eval-when-compile
+  ;;   (el-get-bundle 'ox-hugo
+  ;;                  :url "https://github.com/kaushalmodi/ox-hugo.git"))
 
-  (with-delayed-execution
-    (message "Install ox-hugo...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/ox-hugo"))
-    (autoload-if-found '(org-hugo-export-as-md
-                         org-hugo-export-to-md
-                         org-hugo-export-wim-to-md
-                         org-hugo-debug-info) "ox-hugo" nil t))
-
+  ;; (with-delayed-execution
+  ;;   (message "Install ox-hugo...")
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/ox-hugo"))
+  ;;   (autoload-if-found '(org-hugo-export-as-md
+  ;;                        org-hugo-export-to-md
+  ;;                        org-hugo-export-wim-to-md
+  ;;                        org-hugo-debug-info) "ox-hugo" nil t))
 #+end_src
 ** Org Roam
 *** el-get
