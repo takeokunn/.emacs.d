@@ -280,18 +280,19 @@
    #+end_src
 ** keybind
    #+BEGIN_SRC emacs-lisp
-     (keyboard-translate ?\C-h ?\C-?)
+     (when nil
+       (keyboard-translate ?\C-h ?\C-?)
+       (global-set-key (kbd "C-h") #'c-hungry-delete-backwards))
+
+     (global-set-key (kbd "C-?") #'help-command)
 
      (global-set-key (kbd "M-¥") #'(lambda () (interactive) (insert "\\")))
-     (global-set-key (kbd "C-h") #'c-hungry-delete-backwards)
-     (global-set-key (kbd "C-d") #'c-hungry-delete-forward)
-     (global-set-key (kbd "M-h") #'backward-kill-words)
      (global-set-key (kbd "C-z") #'undo)
-     (global-set-key (kbd "C-?") #'help-command)
      (global-set-key (kbd "C-a") #'back-to-indentation)
      (global-set-key (kbd "C-c i") #'find-function)
      (global-set-key (kbd "C-x C-o") #'other-window)
      (global-set-key (kbd "C-x :") #'goto-line)
+     (global-set-key (kbd "M-h") #'backward-kill-word)
 
      (global-set-key (kbd "C-x l") 'next-buffer)
      (global-set-key (kbd "C-x h") 'previous-buffer)
@@ -816,6 +817,15 @@
        (message "Install lv...")
        (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/lv"))))
    #+end_src
+** map
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'map))
+
+  (with-delayed-execution
+    (message "Install map...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/map")))
+#+end_src
 ** marshal
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -952,14 +962,14 @@
     (message "Install tablist...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/tablist")))
 #+end_src
-** ts
+** tomelr
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-get-bundle 'ts))
+    (el-get-bundle 'tomelr))
 
-  (with-delayed-execution-priority-high
-    (message "Install ts...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/ts")))
+  (with-delayed-execution
+    (message "Install tomelr...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/tomelr")))
 #+end_src
 ** treemacs
 #+begin_src emacs-lisp
@@ -987,6 +997,15 @@
   (with-delayed-execution-priority-high
     (message "Install tree-mode...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/tree-mode")))
+#+end_src
+** ts
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ts))
+
+  (with-delayed-execution-priority-high
+    (message "Install ts...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ts")))
 #+end_src
 ** yaml
 #+begin_src emacs-lisp
@@ -1095,8 +1114,8 @@
        (add-to-list 'auto-mode-alist '("\\.cljs$" . clojurescript-mode))
 
        (with-eval-after-load 'clojure-mode
-         ;; (add-hook 'clojure-mode-hook #'lsp-deferred)
-         (setq clojure-toplevel-inside-comment-form t)))
+         (setq clojure-toplevel-inside-comment-form t)
+         (add-hook 'clojure-mode-hook #'eglot-ensure)))
    #+END_SRC
 ** cmake-mode
    #+BEGIN_SRC emacs-lisp
@@ -1686,7 +1705,8 @@
        (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 
        (with-eval-after-load 'php-mode
-         (add-hook 'php-mode-hook #'lsp-deferred)
+         ;; (add-hook 'php-mode-hook #'lsp-deferred)
+         (add-hook 'php-mode-hook #'eglot-ensure)
          (define-key php-mode-map (kbd "C-c C--") #'php-current-class)
          (define-key php-mode-map (kbd "C-c C-=") #'php-current-namespace)
          (setq php-mode-coding-style 'psr2)))
@@ -2782,7 +2802,17 @@
   (with-delayed-execution
     (message "Install eglot...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/eglot"))
-    (autoload-if-found '(eglot-ensure) "eglot" nil t))
+    (autoload-if-found '(eglot-ensure) "eglot" nil t)
+    (with-eval-after-load 'eglot
+      ;; config
+      (setq eglot-autoshutdown t)
+      (setq eglot-extend-to-xref t)
+
+      ;; language server
+      (add-to-list 'eglot-server-programs '(php-mode . ("intelephense" "--stdio")))
+      (add-to-list 'eglot-server-programs '(clojure-mode clojurescript-mode clojurec-mode
+                                                         . ("/Users/take/.emacs.d/.cache/lsp/clojure/clojure-lsp"
+                                                            "listen" "--verbose")))))
 #+end_src
 *** lsp-mode
     #+BEGIN_SRC emacs-lisp
@@ -3996,6 +4026,33 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (with-eval-after-load 'text-mode
           (add-hook 'text-mode-hook #'goto-address-mode)))
     #+END_SRC
+*** helpful
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'helpful))
+
+  (with-delayed-execution
+    (message "Install helpful...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/helpful"))
+    (autoload-if-found '(helpful-callable
+                         helpful-function
+                         helpful-macro
+                         helpful-command
+                         helpful-key
+                         helpful-variable
+                         helpful-at-point) "helpful" nil t)
+    ;; keybinds
+    (global-set-key (kbd "C-h f") #'helpful-callable)
+    (global-set-key (kbd "C-h v") #'helpful-variable)
+    (global-set-key (kbd "C-h k") #'helpful-key)
+    (global-set-key (kbd "C-c C-d") #'helpful-at-point)
+    (global-set-key (kbd "C-h F") #'helpful-function)
+    (global-set-key (kbd "C-h C") #'helpful-command)
+
+    (with-eval-after-load 'counsel
+      (setq counsel-describe-function-function #'helpful-callable)
+      (setq counsel-describe-variable-function #'helpful-variable)))
+#+end_src
 *** highlight-indent-guides
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -5491,17 +5548,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'org-tree-slide
       (setq org-tree-slide-skip-outline-level 4)))
 #+end_src
-*** TODO org-re-reveal
-#+begin_src emacs-lisp
-  ;; (eval-when-compile
-  ;;   (el-get-bundle 'org-re-reveal
-  ;;                  :url "https://gitlab.com/oer/org-re-reveal.git"))
-
-  ;; (with-delayed-execution
-  ;;   (message "Install org-re-reveal...")
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/org-re-reveal"))
-  ;;   (autoload-if-found '() "org-re-reveal" nil t))
-#+end_src
 ** Org Link
 *** org-link
 #+begin_src emacs-lisp
@@ -5720,19 +5766,18 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          org-qmd-convert-region-to-md
                          org-qmd-export-to-markdown) "ox-qmd" nil t))
 #+end_src
-*** TODO ox-hugo
+*** ox-hugo
 #+begin_src emacs-lisp
-  ;; (eval-when-compile
-  ;;   (el-get-bundle 'ox-hugo
-  ;;                  :url "https://github.com/kaushalmodi/ox-hugo.git"))
+  (eval-when-compile
+    (el-get-bundle 'ox-hugo))
 
-  ;; (with-delayed-execution
-  ;;   (message "Install ox-hugo...")
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/ox-hugo"))
-  ;;   (autoload-if-found '(org-hugo-export-as-md
-  ;;                        org-hugo-export-to-md
-  ;;                        org-hugo-export-wim-to-md
-  ;;                        org-hugo-debug-info) "ox-hugo" nil t))
+  (with-delayed-execution
+    (message "Install ox-hugo...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ox-hugo"))
+    (autoload-if-found '(org-hugo-export-as-md
+                         org-hugo-export-to-md
+                         org-hugo-export-wim-to-md
+                         org-hugo-debug-info) "ox-hugo" nil t))
 #+end_src
 ** Org Roam
 *** el-get
