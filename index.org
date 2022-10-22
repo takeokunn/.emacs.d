@@ -29,6 +29,9 @@
 
      (defconst my/enable-profile nil
        "If true, enable profile")
+
+     (defconst my/enable-c-h-backspace t
+       "If true, enable C-h backspace")
    #+end_src
 * Macro Utilities
 ** when-darwin
@@ -280,7 +283,7 @@
    #+end_src
 ** keybind
    #+BEGIN_SRC emacs-lisp
-     (when nil
+     (when my/enable-c-h-backspace
        (keyboard-translate ?\C-h ?\C-?)
        (global-set-key (kbd "C-h") #'c-hungry-delete-backwards))
 
@@ -1099,6 +1102,17 @@
      (with-eval-after-load 'cc-mode
        (add-hook 'c-mode-hook #'lsp-deferred))
    #+end_src
+** cfn-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'cfn-mode))
+
+  (with-delayed-execution
+    (message "Install cfn-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/cfn-mode"))
+    (autoload-if-found '(cfn-mode) "cfn-mode" nil t)
+    (add-to-list 'magic-mode-alist '("\\(---\n\\)?AWSTemplateFormatVersion:" . cfn-mode)))
+#+end_src
 ** clojure-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
@@ -1115,7 +1129,8 @@
 
        (with-eval-after-load 'clojure-mode
          (setq clojure-toplevel-inside-comment-form t)
-         (add-hook 'clojure-mode-hook #'eglot-ensure)))
+         ;; (add-hook 'clojure-mode-hook #'lsp-deferred)
+         ))
    #+END_SRC
 ** cmake-mode
    #+BEGIN_SRC emacs-lisp
@@ -1705,8 +1720,7 @@
        (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 
        (with-eval-after-load 'php-mode
-         ;; (add-hook 'php-mode-hook #'lsp-deferred)
-         (add-hook 'php-mode-hook #'eglot-ensure)
+         (add-hook 'php-mode-hook #'lsp-deferred)
          (define-key php-mode-map (kbd "C-c C--") #'php-current-class)
          (define-key php-mode-map (kbd "C-c C-=") #'php-current-namespace)
          (setq php-mode-coding-style 'psr2)))
@@ -4042,12 +4056,13 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          helpful-variable
                          helpful-at-point) "helpful" nil t)
     ;; keybinds
-    (global-set-key (kbd "C-h f") #'helpful-callable)
-    (global-set-key (kbd "C-h v") #'helpful-variable)
-    (global-set-key (kbd "C-h k") #'helpful-key)
-    (global-set-key (kbd "C-c C-d") #'helpful-at-point)
-    (global-set-key (kbd "C-h F") #'helpful-function)
-    (global-set-key (kbd "C-h C") #'helpful-command)
+    (when (not my/enable-c-h-backspace)
+      (global-set-key (kbd "C-h f") #'helpful-callable)
+      (global-set-key (kbd "C-h v") #'helpful-variable)
+      (global-set-key (kbd "C-h k") #'helpful-key)
+      (global-set-key (kbd "C-c C-d") #'helpful-at-point)
+      (global-set-key (kbd "C-h F") #'helpful-function)
+      (global-set-key (kbd "C-h C") #'helpful-command))
 
     (with-eval-after-load 'counsel
       (setq counsel-describe-function-function #'helpful-callable)
@@ -4125,10 +4140,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                     (key-combo-mode)
                     (when (window-system)
                       (key-combo-define-local (kbd ",>") " => "))
-                    (key-combo-define-local (kbd "+") '("+" " + " "++" " ++ "))
-                    (key-combo-define-local (kbd "-") '("-" " - " "--" " -- "))
-                    (key-combo-define-local (kbd "*") '("*" "**" " * "))
-                    (key-combo-define-local (kbd "=") '("=" " = " "==" "===")))))
+                    ;; (key-combo-define-local (kbd "+") '("+" " + " "++" " ++ "))
+                    ;; (key-combo-define-local (kbd "-") '("-" " - " "--" " -- "))
+                    ;; (key-combo-define-local (kbd "*") '("*" "**" " * "))
+                    ;; (key-combo-define-local (kbd "=") '("=" " = " "==" "==="))
+                    )))
 
     ;; for typescript-tsx-mode
     (with-eval-after-load 'typescript-tsx-mode
@@ -5073,6 +5089,18 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-get/docker"))
     (autoload-if-found '(docker) "docker" nil t))
 #+end_src
+*** docker-tramp
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'docker-tramp))
+
+  (with-delayed-execution
+    (message "Install docker-tramp...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/docker-tramp"))
+    (autoload-if-found '() "docker-tramp" nil t))
+
+#+end_src
+docker-tramp
 ** Web
 *** emmet-mode
    #+BEGIN_SRC emacs-lisp
@@ -5777,7 +5805,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(org-hugo-export-as-md
                          org-hugo-export-to-md
                          org-hugo-export-wim-to-md
-                         org-hugo-debug-info) "ox-hugo" nil t))
+                         org-hugo-debug-info) "ox-hugo" nil t)
+    (with-eval-after-load 'ox-hugo
+      (setq org-hugo-auto-set-lastmod t)))
 #+end_src
 ** Org Roam
 *** el-get
