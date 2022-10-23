@@ -57,6 +57,27 @@
          $0
        }
      #+end_src
+*** clojure-mode/
+**** info
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: info
+  # key: info
+  # --
+  (info "##### $1" ${1:object})
+#+end_src
+**** defn
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: defn
+  # key: defn
+  # --
+
+  (defn $1
+    "$2"
+    [$3]
+    $0)
+#+end_src
 *** emacs-lisp-mode/
 **** cond
 #+BEGIN_SRC snippet
@@ -268,19 +289,6 @@ end
   # --
   # -*- mode:${1:conf}; -*-
 #+END_SRC
-*** snippet-mode/
-**** template
-     #+begin_src snippet
-       # -*- mode: snippet -*-
-       # name: template
-       # key: template
-       # --
-       # -*- mode: snippet -*-
-       # name: ${1:name}
-       # key: ${2:key}
-       # --
-       $0
-     #+end_src
 *** git-commit-mode/
 **** .yas-parents
 #+BEGIN_SRC snippet
@@ -1514,6 +1522,146 @@ ${1:$(let* ((col (current-column))
 
   Sitemap: $2
 #+end_src
+*** scheme-mode/
+**** guix-bzr-reference
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: guix-bzr-reference
+  # key: bzr-reference...
+  # --
+  (bzr-reference
+    (url "$1")
+    (revision ${2:ref}))
+#+end_src
+**** guix-cvs-reference
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: guix-cvs-reference
+  # key: cvs-reference...
+  # --
+  (cvs-reference
+    (root-directory "${1:root-directory}")
+    (module "${2:module}")
+    (revision "${3:revision}"))
+#+end_src
+**** guix-hg-reference
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: guix-hg-reference
+  # key: hg-reference...
+  # --
+  (hg-reference
+    (url "$1")
+    (changeset ${2:changeset}))
+#+end_src
+**** guix-origin
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: guix-origin
+  # key: origin...
+  # --
+  (origin
+   (method ${1:$$(yas-choose-value "url-fetch"
+                                   "url-fetch/tarbomb"
+                                   "url-fetch/zipbomb"
+                                   "cvs-fetch"
+                                   "git-fetch"
+                                   "hg-fetch"
+                                   "svn-fetch"
+                                   "bzr-fetch")})
+   (uri ${1:$(cond ((equal yas-text "git-fetch") "git-reference...")
+                   ((equal yas-text "svn-fetch") "svn-reference...")
+                   ((equal yas-text "hg-fetch")  "hg-reference...")
+                   ((equal yas-text "cvs-fetch") "cvs-reference...")
+                   ((equal yas-text "bzr-fetch") "bzr-reference...")
+                   (t "(string-append \\"https://\\" version \\".tar.gz\\")"))}$0)
+   ${1:$(cond ((equal yas-text "git-fetch")
+               "(file-name (git-file-name name version))")
+              ((equal yas-text "hg-fetch")
+               "(file-name (hg-file-name name version))")
+              ((member yas-text '("svn-fetch" "cvs-fetch" "bzr-fetch"))
+               "(file-name (string-append name \\"-\\" version \\"-checkout\\"))")
+              (t ""))}
+   (sha256
+    (base32
+      "$2")))
+#+end_src
+**** guix-package
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: guix-package
+  # key: package...
+  # --
+  (define-public $1
+    (package
+      (name "$1")
+      (version "$2")
+      (source origin...$0)
+      (build-system ${3:$$(yas-choose-value "android-ndk-build-system"
+                                            "ant-build-system"
+                                            "asdf-build-system"
+                                            "cargo-build-system"
+                                            "chicken-build-system"
+                                            "clojure-build-system"
+                                            "cmake-build-system"
+                                            "copy-build-system"
+                                            "dub-build-system"
+                                            "dune-build-system"
+                                            "emacs-build-system"
+                                            "font-build-system"
+                                            "glib-or-gtk-build-system"
+                                            "gnu-build-system"
+                                            "go-build-system"
+                                            "guile-build-system"
+                                            "haskell-build-system"
+                                            "julia-build-system"
+                                            "linux-module-build-system"
+                                            "maven-build-system"
+                                            "meson-build-system"
+                                            "minetest-build-system"
+                                            "minify-build-system"
+                                            "node-build-system"
+                                            "ocaml-build-system"
+                                            "perl-build-system"
+                                            "python-build-system"
+                                            "qt-build-system"
+                                            "r-build-system"
+                                            "rakudo-build-system"
+                                            "rebar-build-system"
+                                            "renpy-build-system"
+                                            "ruby-build-system"
+                                            "scons-build-system"
+                                            "texlive-build-system"
+                                            "trivial-build-system"
+                                            "waf-build-system")})
+      (home-page "$4")
+      (synopsis "$5")
+      (description "$6")
+      (license $7)))
+#+end_src
+**** guix-svn-reference
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: guix-svn-reference
+  # key: svn-reference...
+  # --
+  (svn-reference
+    (url "$1")
+    (revision ${2:svn-revision}))
+#+end_src
+*** snippet-mode/
+**** template
+     #+begin_src snippet
+       # -*- mode: snippet -*-
+       # name: template
+       # key: template
+       # --
+       # -*- mode: snippet -*-
+       # name: ${1:name}
+       # key: ${2:key}
+       # --
+       $0
+     #+end_src
 *** snippet-mode/
 **** header
 #+BEGIN_SRC snippet
@@ -1686,6 +1834,121 @@ INSERT INTO ${table-name} (${col1, col2}) VALUES (${'val1', 'val2'});$0
   }
 #+end_src
 
+*** text-mode/
+**** guix-commit-message-add-cl-package
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: guix-commit-message-add-cl-package
+  # key: addcl
+  # condition: git-commit-mode
+  # --
+  gnu: Add ${1:`(with-temp-buffer
+                  (magit-git-wash #'magit-diff-wash-diffs
+                    "diff" "--staged")
+                  (beginning-of-buffer)
+                  (when (search-forward "+(define-public " nil 'noerror)
+                    (replace-regexp-in-string
+                     "^sbcl-" ""
+                     (thing-at-point 'sexp 'no-properties))))`}.
+
+  ,* `(car (magit-staged-files))` (cl-${1:$(replace-regexp-in-string "^cl-" "" yas-text)}, ecl-$1, sbcl-$1): New variables.
+#+end_src
+**** guix-commit-message-add-package
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: guix-commit-message-add-package
+  # key: add
+  # condition: git-commit-mode
+  # --
+  gnu: Add ${1:`(with-temp-buffer
+                  (magit-git-wash #'magit-diff-wash-diffs
+                    "diff" "--staged")
+                  (goto-char (point-min))
+                  (when (re-search-forward "\\+(define-public \\(\\S-+\\)" nil 'noerror)
+                    (match-string-no-properties 1)))`}.
+
+  ,* `(car (magit-staged-files))` ($1): New variable.
+#+end_src
+**** guix-commit-message-remove-package
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: guix-commit-message-remove-package
+  # key: remove
+  # condition: git-commit-mode
+  # --
+  gnu: Remove ${1:`(with-temp-buffer
+                     (magit-git-wash #'magit-diff-wash-diffs
+                       "diff" "--staged")
+                     (goto-char (point-min))
+                     (when (re-search-forward "\\-(define-public \\(\\S-+\\)" nil 'noerror)
+                       (match-string-no-properties 1)))`}.
+
+  ,* `(car (magit-staged-files))` ($1): Delete variable.
+#+end_src
+**** guix-commit-message-rename-package
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: guix-commit-message-rename-package
+  # key: rename
+  # condition: git-commit-mode
+  # --
+  gnu: ${1:`(with-temp-buffer
+             (magit-git-wash #'magit-diff-wash-diffs
+               "diff" "--staged")
+             (beginning-of-buffer)
+             (when (search-forward "-(define-public " nil 'noerror)
+               (thing-at-point 'sexp 'no-properties)))`}: Rename package to ${2:`(with-temp-buffer
+             (magit-git-wash #'magit-diff-wash-diffs
+               "diff" "--staged")
+             (beginning-of-buffer)
+             (when (search-forward "+(define-public " nil 'noerror)
+               (thing-at-point 'sexp 'no-properties)))`}.
+
+  ,* `(car (magit-staged-files))` ($1): Define in terms of
+  'deprecated-package'.
+  ($2): New variable, formerly known as "$1".
+#+end_src
+**** guix-commit-message-update-package
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: guix-commit-message-update-package
+  # key: update
+  # condition: git-commit-mode
+  # --
+
+  gnu: ${1:`(with-temp-buffer
+             (magit-git-wash #'magit-diff-wash-diffs
+               "diff" "--staged")
+             (goto-char (point-min))
+             (when (re-search-forward "^[ ]*(define-public \\(\\S-+\\)" nil 'noerror)
+               (match-string-no-properties 1)))`}: Update to ${2:`(with-temp-buffer
+      (magit-git-wash #'magit-diff-wash-diffs
+        "diff" "--staged")
+      (goto-char (point-min))
+      (search-forward "name" nil 'noerror)
+      (search-forward "+" nil 'noerror)   ; first change
+      (when (and (search-forward "version " nil 'noerror)
+                 (looking-at-p "\""))
+        (let ((end (save-excursion (search-forward "\")" nil 'noerror))))
+          (when end
+            (forward-char)
+            (buffer-substring-no-properties (point) (- end 2))))))`}.
+
+  ,* `(car (magit-staged-files))` ($1): Update to $2.$0
+  `(mapconcat (lambda (file) (concat "* " file)) (cdr (magit-staged-files)) "\n")`
+#+end_src
+**** guix-commit-message-use-https-home-page
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: guix-commit-message-use-https-home-page
+  # key: https
+  # condition: git-commit-mode
+  # --
+  gnu: $1: Use HTTPS home page URI.
+
+  ,* `(car (magit-staged-files))` ($1)[home-page]: Use HTTPS URI.
+  `(mapconcat (lambda (file) (concat "* " file)) (cdr (magit-staged-files)) "\n")`
+#+end_src
 *** toml-mode/
 **** plugins
 #+begin_src snippet
@@ -2141,25 +2404,4 @@ abstract class ${1:Class} {
   @while ($1)
       $0
   @endwhile
-#+end_src
-*** clojure-mode/
-**** info
-#+begin_src snippet
-  # -*- mode: snippet -*-
-  # name: info
-  # key: info
-  # --
-  (info "##### $1" ${1:object})
-#+end_src
-**** defn
-#+begin_src snippet
-  # -*- mode: snippet -*-
-  # name: defn
-  # key: defn
-  # --
-
-  (defn $1
-    "$2"
-    [$3]
-    $0)
 #+end_src

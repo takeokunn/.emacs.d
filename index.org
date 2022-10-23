@@ -30,7 +30,7 @@
      (defconst my/enable-profile nil
        "If true, enable profile")
 
-     (defconst my/enable-c-h-backspace t
+     (defconst my/enable-c-h-backspace nil
        "If true, enable C-h backspace")
    #+end_src
 * Macro Utilities
@@ -625,6 +625,10 @@
   (with-delayed-execution
     (save-place-mode 1))
 #+end_src
+** enable-local-variables
+#+begin_src emacs-lisp
+  (setq enable-local-variables :all)
+#+end_src
 * Utitlity
 ** aio
 #+begin_src emacs-lisp
@@ -663,6 +667,15 @@
     (message "Install bui...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/bui")))
 
+#+end_src
+** cfrs
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'cfrs))
+
+  (with-delayed-execution
+    (message "Install cfrs...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/cfrs")))
 #+end_src
 ** closql
 #+begin_src emacs-lisp
@@ -2162,6 +2175,69 @@
       (add-hook 'zig-mode-hook #'lsp-deferred)))
 #+end_src
 * Awesome Package
+** Buffer
+*** auto-save-buffers-enhanced
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'auto-save-buffers-enhanced))
+
+      (with-delayed-execution
+        (message "Install auto-save-buffers-enhanced...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/auto-save-buffers-enhanced"))
+        (autoload-if-found '(auto-save-buffers-enhanced) "auto-save-buffers-enhanced" nil t)
+        (with-eval-after-load 'auto-save-buffers-enhanced
+          (setq auto-save-buffers-enhanced-interval 10)))
+    #+end_src
+*** editorconfig
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'editorconfig))
+
+      (with-delayed-execution
+        (message "Install editorconfig...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/editorconfig"))
+        (autoload-if-found '(editorconfig-mode) "editorconfig" nil t)
+        (when (require 'editorconfig-core)
+          (editorconfig-mode 1)))
+    #+END_SRC
+*** persistent-scratch
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'persistent-scratch))
+
+      (with-delayed-execution
+        (message "Install persistent-scratch...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/persistent-scratch"))
+
+        (autoload-if-found '(persistent-scratch-setup-default) "persistent-scratch" nil t)
+        ;; (persistent-scratch-setup-default)
+
+        (with-eval-after-load 'persistent-scratch
+          (setq persistent-scratch-autosave-interval 100)))
+    #+end_src
+*** popwin
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'popwin))
+
+      (with-delayed-execution
+        (message "Install popwin...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/popwin"))
+        (autoload-if-found '(popwin-mode) "popwin" nil t)
+        (popwin-mode 1))
+    #+end_src
+*** whitespace
+    #+BEGIN_SRC emacs-lisp
+      (with-delayed-execution
+        (message "Install whitespace...")
+        (when (autoload-if-found '(global-whitespace-mode) "whitespace" nil t)
+          (if window-system
+              (global-whitespace-mode 1)))
+        (with-eval-after-load 'whitespace
+          (setq whitespace-style '(face tabs tab-mark spaces space-mark))
+          (setq whitespace-display-mappings '((space-mark ?\u3000 [?\u25a1])
+                                              (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t])))))
+    #+END_SRC
 ** Check
 *** flycheck
     #+begin_src emacs-lisp
@@ -2173,386 +2249,128 @@
         (add-to-list 'load-path (locate-user-emacs-file "el-get/flycheck"))
         (autoload-if-found '(flycheck-mode) "flycheck" nil t))
     #+end_src
-** Search
-*** el-get
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle abo-abo/swiper))
-
-      (with-delayed-execution-priority-high
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/swiper")))
-    #+end_src
-*** migemo
+** Client
+*** md4rd
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-get-bundle 'migemo))
+    (el-get-bundle 'md4rd))
 
   (with-delayed-execution
-    (message "Install migemo...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/migemo"))
+    (message "Install md4rd...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/md4rd"))
+    (autoload-if-found '(md4rd
+                         md4rd-login
+                         md4rd-visit
+                         md4rd-widget-expand-all
+                         md4rd-widget-collapse-all
+                         md4rd-reply
+                         md4rd-upvote
+                         md4rd-downvote
+                         md4rd-widget-toggle-line
+                         md4rd-refresh-login
+                         md4rd-indent-all-the-lines) "md4rd" nil t)
 
-    ;; (autoload-if-found '(migemo-init) "migemo" nil t)
-    ;; (migemo-init)
+    (with-eval-after-load 'md4rd
+      (add-hook 'md4rd-mode-hook #'md4rd-indent-all-the-lines)
+      (run-with-timer 0 3540 #'md4rd-refresh-login)
 
-    (with-eval-after-load 'migemo
-      (setq migemo-command "cmigemo")
-      (setq migemo-options '("-q" "--emacs"))
-      (setq migemo-dictionary "/usr/local/share/migemo/utf-8/migemo-dict")
-      (setq migemo-user-dictionary nil)
-      (setq migemo-regex-dictionary nil)
-      (setq migemo-coding-system 'utf-8-unix)))
+      ;; config
+      (setq md4rd-subs-active '(emacs lisp+Common_Lisp prolog clojure))
+      ;; (setq md4rd--oauth-access-token "your-access-token-here")
+      ;; (setq md4rd--oauth-refresh-token "your-refresh-token-here")
+
+      ;; keymap
+      (define-key md4rd-mode-map (kbd "u") 'tree-mode-goto-parent)
+      (define-key md4rd-mode-map (kbd "o") 'md4rd-open)
+      (define-key md4rd-mode-map (kbd "v") 'md4rd-visit)
+      (define-key md4rd-mode-map (kbd "e") 'tree-mode-toggle-expand)
+      (define-key md4rd-mode-map (kbd "E") 'md4rd-widget-expand-all)
+      (define-key md4rd-mode-map (kbd "C") 'md4rd-widget-collapse-all)
+      (define-key md4rd-mode-map (kbd "n") 'widget-forward)
+      (define-key md4rd-mode-map (kbd "j") 'widget-forward)
+      (define-key md4rd-mode-map (kbd "h") 'backward-button)
+      (define-key md4rd-mode-map (kbd "p") 'widget-backward)
+      (define-key md4rd-mode-map (kbd "k") 'widget-backward)
+      (define-key md4rd-mode-map (kbd "l") 'forward-button)
+      (define-key md4rd-mode-map (kbd "q") 'kill-current-buffer)
+      (define-key md4rd-mode-map (kbd "r") 'md4rd-reply)
+      (define-key md4rd-mode-map (kbd "u") 'md4rd-upvote)
+      (define-key md4rd-mode-map (kbd "d") 'md4rd-downvote)
+      (define-key md4rd-mode-map (kbd "t") 'md4rd-widget-toggle-line)))
 #+end_src
-*** swiper
-    #+BEGIN_SRC emacs-lisp
-      (with-delayed-execution
-        (message "Install swiper...")
-        (autoload-if-found '(my/swiper) "swiper" nil t)
-        (defun my/swiper ()
-          (interactive)
-          (let ((word (thing-at-point 'symbol 'no-properties)))
-            (swiper word)))
-        (global-set-key (kbd "C-o") #'my/swiper))
-    #+END_SRC
-*** counsel
-    #+begin_src emacs-lisp
-      (with-delayed-execution-priority-high
-        (message "Install counsel...")
-        (autoload-if-found '(counsel-mode counsel-compile) "counsel" nil t)
-        (counsel-mode 1)
-        (global-set-key (kbd "C-x m") 'counsel-compile)
-        (with-eval-after-load 'counsel
-          (setq counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
-    #+end_src
-*** ivy
-    #+begin_src emacs-lisp
-      (with-delayed-execution-priority-high
-        (message "Install ivy...")
-        (autoload-if-found '(ivy-mode ivy-read ivy-completing-read) "ivy" nil t)
-        (autoload-if-found '(ivy-avy) "ivy-avy" nil t)
-        (add-hook 'minibuffer-setup-hook #'ivy-mode)
-        (with-eval-after-load 'ivy
-          (define-key ivy-minibuffer-map (kbd "C-'") #'ivy-avy)
-          (setq ivy-use-virtual-buffers t)))
-    #+end_src
-*** ivy-rich
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'ivy-rich))
+** Color
+*** ansi-color
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install ansi-color...")
+    (autoload 'ansi-color-for-comint-mode-on "ansi-color" "Set `ansi-color-for-comint-mode' to t." t)
+    (autoload-if-found '(ansi-color-for-comint-mode-on) "ansi-color" nil t)
 
-      (with-delayed-execution-priority-high
-        (message "Install ivy-rich...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-rich"))
-        (autoload-if-found '(ivy-rich-mode) "ivy-rich" nil t)
-        (ivy-rich-mode 1)
-        (with-eval-after-load 'ivy-rich
-          (setq ivy-rich-path-style 'abbrev)))
-    #+END_SRC
-*** ivy-migemo
+    (with-eval-after-load 'shell-mode
+      (add-hook 'shell-mode-hook #'ansi-color-for-comint-mode-on))
+
+    (with-eval-after-load 'compile
+      (add-hook 'compilation-filter-hook #'(lambda ()
+                                             (ansi-color-apply-on-region (point-min) (point-max))))))
+#+end_src
+*** highlight-indent-guides
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-get-bundle 'ivy-migemo))
+    (el-get-bundle 'highlight-indent-guides))
 
   (with-delayed-execution
-    (message "Install ivy-migemo...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-migemo"))
-
-    (autoload-if-found '(ivy-migemo-toggle-fuzzy ivy-migemo-toggle-migemo) "ivy-migemo" nil t)
-
-    ;; (with-eval-after-load 'ivy
-    ;;   (define-key ivy-minibuffer-map (kbd "M-f") #'ivy-migemo-toggle-fuzzy)
-    ;;   (define-key ivy-minibuffer-map (kbd "M-m") #'ivy-migemo-toggle-migemo))
-    )
+    (message "Install highlight-indent-guides...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/highlight-indent-guides"))
+    (autoload-if-found '(highlight-indent-guides-mode) "highlight-indent-guides" nil t)
+    (with-eval-after-load 'yaml-mode
+      (add-hook 'yaml-mode-hook #'highlight-indent-guides-mode))
+    (with-eval-after-load 'highlight-indent-guides
+      (setq highlight-indent-guides-method 'bitmap)))
 #+end_src
-** Theme
-*** all-the-icons
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'all-the-icons))
-
-      (with-delayed-execution-priority-high
-        (message "Install all-the-icons...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons")))
-    #+END_SRC
-*** all-the-icons-dired
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'all-the-icons-dired))
-
-      (with-delayed-execution-priority-high
-        (message "Install all-the-icons-dired...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons-dired"))
-        (autoload-if-found '(all-the-icons-dired-mode) "all-the-icons-dired")
-        (with-eval-after-load 'dired
-          (add-hook 'dired-mode-hook #'all-the-icons-dired-mode)))
-    #+end_src
-*** all-the-icons-ivy-rich
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'all-the-icons-ivy-rich))
-
-      (with-delayed-execution-priority-high
-        (message "Install all-the-icons-ivy-rich...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons-ivy-rich"))
-        (autoload-if-found '(all-the-icons-ivy-rich-mode) "all-the-icons-ivy-rich" nil t)
-        (all-the-icons-ivy-rich-mode 1)
-        (with-eval-after-load 'all-the-icons-ivy-rich
-          (setq all-the-icons-ivy-rich-icon t)
-          (setq all-the-icons-ivy-rich-color-icon t)
-          (setq all-the-icons-ivy-rich-icon-size 1.0)
-          (setq all-the-icons-ivy-rich-project t)
-          (setq all-the-icons-ivy-rich-field-width 80)))
-    #+end_src
-*** dashboard
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'dashboard))
-
-      (with-delayed-execution-priority-high
-        (message "Install dashboard...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/dashboard"))
-        (autoload-if-found '(dashboard-refresh-buffer) "dashboard" nil t)
-        (with-eval-after-load 'dashboard
-          (setq dashboard-startup-banner 'logo)
-          (setq dashboard-set-file-icons t)
-          (setq dashboard-startup-banner 4)
-          (setq dashboard-items '((recents . 10)))))
-    #+end_src
-*** dimmer
+*** hl-todo
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-get-bundle 'dimmer))
-
-  (with-eval-after-load 'dimmer
-    (message "Install dimmer...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/dimmer"))
-    (autoload-if-found '(dimmer-configure-which-key
-                         dimmer-configure-org
-                         dimmer-configure-company-box
-                         dimmer-mode)
-                       "dimmer" nil t)
-    (dimmer-configure-which-key)
-    (dimmer-configure-org)
-    (dimmer-configure-company-box)
-    (dimmer-mode t))
-#+end_src
-*** doom-themes
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'doom-themes))
-
-      (with-delayed-execution-priority-high
-        (message "Install doom-themes...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes/extensions"))
-
-        (autoload-if-found '(doom-themes-enable-org-fontification) "doom-themes-ext-org" nil t)
-        (autoload-if-found '(doom-themes-neotree-config) "doom-themes-ext-neotree" nil t)
-
-        (doom-themes-enable-org-fontification)
-        (doom-themes-neotree-config)
-
-        (when (require 'doom-themes)
-          (load-theme 'doom-dracula t))
-
-        (with-eval-after-load 'doom-themes
-          (setq doom-themes-padded-modeline t)
-          (setq doom-themes-enable-bold t)
-          (setq doom-themes-enable-italic t)))
-    #+END_SRC
-*** doom-modeline
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'doom-modeline))
-
-      (with-delayed-execution-priority-high
-        (message "Install doom-modeline...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-modeline"))
-        (autoload-if-found '(doom-modeline-mode) "doom-modeline" nil t)
-        (doom-modeline-mode 1)
-        (line-number-mode 0)
-        (column-number-mode 0)
-        (with-eval-after-load 'doom-modeline
-          (setq doom-modeline-buffer-file-name-style 'truncate-with-project)
-          (setq doom-modeline-icon t)
-          (setq doom-modeline-major-mode-icon t)
-          (setq doom-modeline-minor-modes nil)))
-    #+END_SRC
-*** emojify
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'emojify))
+    (el-get-bundle 'hl-todo))
 
   (with-delayed-execution
-    (message "Install emojify...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/emojify"))
-    (autoload-if-found '(global-emojify-mode) "emojify" nil t)
-    (global-emojify-mode))
+    (message "Install hl-todo...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/hl-todo"))
+    (autoload-if-found '(global-hl-todo-mode) "hl-todo" nil t)
+    (global-hl-todo-mode)
+    (with-eval-after-load 'hl-todo
+      (setq hl-todo-keyword-faces
+            '(("TODO" . "#cc9393")
+              ("FIXME" . "#cc9393")
+              ("NOW" . "#dca3a3")
+              ("WAIT" . "#d0bf8f")
+              ("DONE" . "#afd8af")))))
 #+end_src
-*** hl-line
-    #+BEGIN_SRC emacs-lisp
-      (with-delayed-execution
-        (message "Install hl-line...")
-        (autoload-if-found '(global-hl-line-mode) "hl-line-mode" nil t)
-        (when (not window-system)
-          (global-hl-line-mode))
-        (with-eval-after-load 'hl-line
-          (set-face-attribute 'hl-line nil :inherit nil)
-          (set-face-background 'hl-line "#444642")))
-    #+END_SRC
-*** neotree
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'neotree))
-
-      (with-delayed-execution-priority-high
-        (message "Install neotree...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/neotree"))
-
-        (autoload-if-found '(neotree-hide neotree-dir) "neotree" nil t)
-
-        (defun my/neotree-toggle ()
-          (interactive)
-          (let ((default-directory (locate-dominating-file default-directory ".git")))
-            (if (and (fboundp 'neo-global--window-exists-p)
-                     (neo-global--window-exists-p))
-                (neotree-hide)
-              (neotree-dir default-directory))))
-
-        (if window-system
-            (defun neo-buffer--insert-fold-symbol (name &optional file-name)
-              (or
-               (and
-                (equal name 'open)
-                (insert
-                 (format " %s "
-                         (all-the-icons-icon-for-dir file-name "down"))))
-               (and
-                (equal name 'close)
-                (insert
-                 (format " %s "
-                         (all-the-icons-icon-for-dir file-name "right"))))
-               (and
-                (equal name 'leaf)
-                (insert
-                 (format " %s "
-                         (all-the-icons-icon-for-file file-name)))))))
-
-        (global-set-key (kbd "C-q") #'my/neotree-toggle)
-
-        (with-eval-after-load 'neotree
-          (setq neo-autorefresh nil)
-          (setq neo-theme 'nerd2)
-          (setq neo-show-hidden-files t)
-          (setq neo-window-fixed-size nil)))
-
-    #+END_SRC
-*** nyan-mode
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'nyan-mode))
-
-      (with-delayed-execution-priority-high
-        (message "Install nyan-mode...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/nyan-mode"))
-        (when (autoload-if-found '(nyan-mode) "nyan-mode" nil t)
-          (nyan-mode))
-        (with-eval-after-load 'nyan-mode
-          (setq nyan-cat-face-number 5)
-          (setq nyan-animate-nyancat t)))
-    #+END_SRC
-*** volatile-highlights
+*** xterm-color
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-get-bundle 'volatile-highlights))
+    (el-get-bundle 'xterm-color))
 
   (with-delayed-execution
-    (message "Install volatile-highlights...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/volatile-highlights"))
-    (autoload-if-found '(volatile-highlights-mode) "volatile-highlights" nil t)
-    (volatile-highlights-mode t))
+    (message "Install xterm-color...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/xterm-color"))
+
+    (autoload-if-found '(xterm-color-filter) "xterm-color" nil t)
+
+    (with-eval-after-load 'xterm-color
+      (setenv "TERM" "xterm-256color")
+      (setq xterm-color-preserve-properties t)))
 #+end_src
-*** idle-highlight-mode
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'idle-highlight-mode))
-
-  (with-delayed-execution
-    (message "Install idle-highlight-mode...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/idle-highlight-mode"))
-
-    (autoload-if-found '(idle-highlight-mode) "idle-highlight-mode" nil t)
-
-    (with-eval-after-load 'idle-highlight-mode
-      (setq idle-highlight-idle-time 0.1))
-
-    (with-eval-after-load 'prog-mode
-      (add-hook 'prog-mode-hook #'idle-highlight-mode)))
-#+end_src
-** Project
-*** projectile
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'projectile))
-
-      (with-delayed-execution-priority-high
-        (message "Install projectile...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/projectile"))
-
-        (autoload-if-found '(projectile-mode
-                             projectile-project-name
-                             my/update-projectile-known-projects) "projectile" nil t)
-        (projectile-mode +1)
-
-        (defun my/update-projectile-known-projects ()
-          (interactive)
-          (setq projectile-known-projects (mapcar
-                                           (lambda (x)
-                                             (abbreviate-file-name (concat x "/")))
-                                           (split-string (shell-command-to-string "ghq list --full-path")))))
-
-        (with-eval-after-load 'projectile
-          (global-set-key (kbd "M-p") #'projectile-command-map)
-          (global-set-key (kbd "C-c p") #'projectile-command-map)
-          (add-hook 'projectile-mode-hook #'my/update-projectile-known-projects)
-          (setq projectile-switch-project-action 'projectile-dired)
-          (setq projectile-enable-caching t)))
-    #+end_src
-*** counsel-projectile
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'counsel-projectile))
-
-      (with-delayed-execution-priority-high
-        (message "Install counsel-projectile...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/counsel-projectile"))
-
-        (autoload-if-found '(counsel-projectile-mode) "counsel-projectile" nil t)
-        (counsel-projectile-mode +1)
-
-        (with-eval-after-load 'counsel-projectile
-          (setq counsel-projectile-sort-files t)
-          (setq counsel-projectile-sort-projects t)
-          (setq counsel-projectile-sort-buffers t)
-          (setq counsel-projectile-grep-initial-input '(ivy-thing-at-point))
-          (setq counsel-projectile-ag-initial-input '(ivy-thing-at-point))
-          (setq counsel-projectile-rg-initial-input '(ivy-thing-at-point))))
-    #+end_src
-** Refactor
-*** emr
+** Command
+*** amx
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
-        (el-get-bundle 'iedit)
-        (el-get-bundle 'emr))
+        (el-get-bundle 'amx))
 
-      (with-delayed-execution
-        (message "Install emr...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/iedit"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/emr"))
-
-        (autoload-if-found '(emr-show-refactor-menu) "emr" nil t)
-
-        (with-eval-after-load 'prog-mode
-          (define-key prog-mode-map (kbd "M-RET") #'emr-show-refactor-menu)))
+      (with-delayed-execution-priority-high
+        (message "Install amx...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/amx"))
+        (with-eval-after-load 'amx
+          (setq amx-history-length 100)))
     #+END_SRC
 ** Completion
 *** company
@@ -2722,90 +2540,610 @@
     (autoload-if-found '(company-statistics-mode) "company-statistics" nil t)
     (company-statistics-mode))
 #+end_src
-** Prescient
-*** prescient
+** Cursor
+*** avy
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'avy))
+
+      (with-delayed-execution
+        (message "Install avy...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/avy"))
+        (autoload-if-found '(avy-goto-word-1) "avy" nil t)
+        (global-set-key (kbd "C-:") 'avy-goto-word-1)
+        (with-eval-after-load 'avy
+          (setq avy-all-windows nil)
+          (setq avy-background t)))
+    #+end_src
+*** avy-zap
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'avy-zap))
+
+      (with-delayed-execution
+        (message "Install avy-zap...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/avy-zap"))
+        (autoload-if-found '(avy-zap-up-to-char-dwim) "avy-zap" nil t)
+        (global-set-key (kbd "M-z") 'avy-zap-up-to-char-dwim))
+    #+end_src
+*** expand-region
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-get-bundle 'prescient))
-
-  (with-delayed-execution-priority-high
-    (message "Install prescient...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/prescient"))
-    (autoload-if-found '(prescient-persist-mode) "prescient" nil t)
-    (prescient-persist-mode)
-    (with-eval-after-load 'prescient
-      (setq prescient-aggressive-file-save t)))
-#+end_src
-*** ivy-prescient
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'ivy-prescient))
-
-  (with-delayed-execution-priority-high
-    (message "Install ivy-prescient...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-prescient"))
-    (autoload-if-found '(ivy-prescient-mode ivy-prescient-re-builder) "ivy-prescient" nil t)
-    (ivy-prescient-mode)
-
-    (defun my/ivy-prescient-non-fuzzy (str)
-      (let ((prescient-filter-method '(literal regexp)))
-        (ivy-prescient-re-builder str)))
-
-    (with-eval-after-load 'ivy-prescient
-      (setq ivy-re-builders-alist
-            '((counsel-ag . my/ivy-prescient-non-fuzzy)
-              (counsel-rg . my/ivy-prescient-non-fuzzy)
-              (counsel-pt . my/ivy-prescient-non-fuzzy)
-              (counsel-grep . my/ivy-prescient-non-fuzzy)
-              (counsel-imenu . my/ivy-prescient-non-fuzzy)
-              (counsel-yank-pop . my/ivy-prescient-non-fuzzy)
-              (swiper . my/ivy-prescient-non-fuzzy)
-              (swiper-isearch . my/ivy-prescient-non-fuzzy)
-              (swiper-all . my/ivy-prescient-non-fuzzy)
-              (lsp-ivy-workspace-symbol . my/ivy-prescient-non-fuzzy)
-              (lsp-ivy-global-workspace-symbol . my/ivy-prescient-non-fuzzy)
-              (insert-char . my/ivy-prescient-non-fuzzy)
-              (counsel-unicode-char . my/ivy-prescient-non-fuzzy)
-              (t . ivy-prescient-re-builder)))
-      (setq ivy-prescient-sort-commands
-            '(:not swiper swiper-isearch ivy-switch-buffer
-                   counsel-grep counsel-git-grep counsel-ag counsel-imenu
-                   counsel-yank-pop counsel-recentf counsel-buffer-or-recentf))))
-#+end_src
-*** company-prescient
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'company-prescient))
+    (el-get-bundle 'expand-region))
 
   (with-delayed-execution
-    (message "Install company-prescient...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/company-prescient"))
-    (autoload-if-found '(company-prescient-mode) "company-prescient" nil t)
-    (company-prescient-mode))
+    (message "Install expand-region...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/expand-region"))
+    (autoload-if-found '(er/expand-region) "expand-region" nil t)
+    (transient-mark-mode)
+    (global-set-key (kbd "C-M-@") 'er/expand-region))
 #+end_src
-** Snippet
-*** yasnippet
-    #+begin_src emacs-lisp
+*** multiple-cursors
+    #+BEGIN_SRC emacs-lisp
       (eval-when-compile
-        (el-get-bundle "yasnippet"))
+        (el-get-bundle 'multiple-cursors))
 
       (with-delayed-execution
-        (message "Install yasnippet...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/yasnippet"))
-        (autoload-if-found '(yas-global-mode) "yasnippet" nil t)
-        (yas-global-mode 1))
+        (message "Install multiple-cursors...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/multiple-cursors"))
+        (autoload-if-found '(mc/mark-next-like-this mc/mark-previous-like-this mc/mark-all-like-this) "multiple-cursors" nil t)
+        (global-set-key (kbd "C->") #'mc/mark-next-like-this)
+        (global-set-key (kbd "C-<") #'mc/mark-previous-like-this)
+        (global-set-key (kbd "C-c C-<") #'mc/mark-all-like-this))
+    #+END_SRC
+*** subword
+    #+begin_src emacs-lisp
+      (with-delayed-execution
+        (message "Install subword...")
+        (autoload-if-found '(my/delete-forward-block) "subword" nil t)
+        (global-set-key (kbd "M-d") #'my/delete-forward-block)
+        (defun my/delete-forward-block ()
+          (interactive)
+          (if (eobp)
+              (message "End of buffer")
+            (let* ((syntax-move-point
+                    (save-excursion
+                      (skip-syntax-forward (string (char-syntax (char-after))))
+                      (point)))
+                   (subword-move-point
+                    (save-excursion
+                      (subword-forward)
+                      (point))))
+              (kill-region (point) (min syntax-move-point subword-move-point))))))
     #+end_src
-*** ivy-yasnippet
+** Dictionary
+*** define-word
     #+begin_src emacs-lisp
       (eval-when-compile
-        (el-get-bundle "mkcms/ivy-yasnippet"))
+        (el-get-bundle 'define-word))
 
       (with-delayed-execution
-        (message "Install ivy-yasnippet...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-yasnippet"))
-        (autoload-if-found '(ivy-yasnippet) "ivy-yasnippet" nil t)
-        (global-set-key (kbd "C-c y") #'ivy-yasnippet)
-        (global-set-key (kbd "C-c C-y") #'ivy-yasnippet))
+        (message "Install define-word...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/define-word"))
+        (defun my/define-word ()
+          (interactive)
+          (if (use-region-p)
+              (call-interactively #'define-word-at-point)
+            (call-interactively #'define-word)))
+        (with-eval-after-load 'define-word
+          (setq define-word-displayfn-alist
+                '((wordnik . takeokunn/define-word--display-in-buffer)
+                  (openthesaurus . takeokunn/define-word--display-in-buffer)
+                  (webster . takeokunn/define-word--display-in-buffer)
+                  (weblio . takeokunn/define-word--display-in-buffer)))))
+    #+end_src
+** EWW
+*** basic
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install eww...")
+
+    (defun my/eww-rename-buffer ()
+      "Rename the name of current EWW buffer."
+      (let* ((title (plist-get eww-data :title))
+             (url (file-name-base (eww-current-url)))
+             (buffer-name (or (if (and title (> (length title) 0))
+                                  title
+                                nil)
+                              url "")))
+        (rename-buffer (format "eww: %s" buffer-name) t)))
+
+    ;; config
+    (with-eval-after-load 'eww
+      (setq eww-header-line-format nil)
+      (setq eww-search-prefix "http://www.google.co.jp/search?q="))
+
+    (with-eval-after-load 'browse-url
+      (setq browse-url-browser-function 'eww-browse-url))
+
+    ;; keybind
+    (with-eval-after-load 'eww
+      (define-key eww-mode-map (kbd "C") #'eww-set-character-encoding)
+      (define-key eww-mode-map (kbd "C-j") #'eww-follow-link)
+      (define-key eww-mode-map (kbd "T") #'eww-goto-title-heading)
+      (define-key eww-mode-map (kbd "T") #'eww-goto-title-heading))
+
+    ;; hooks
+    (with-eval-after-load 'eww
+      (add-hook 'eww-after-render #'my/eww-rename-buffer)))
+#+end_src
+*** eww-lnum
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'eww-lnum))
+
+  (with-delayed-execution
+    (message "Install eww-lnum...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/eww-lnum"))
+    (autoload-if-found '(eww-lnum-follow eww-lnum-universal) "eww-lnum" nil t)
+
+    (with-eval-after-load 'eww
+      (define-key eww-mode-map "f" #'eww-lnum-follow)
+      (define-key eww-mode-map "F" #'eww-lnum-universal)))
+#+end_src
+** File
+*** epa-file
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install epa-file...")
+    (autoload-if-found '(epa-file-enable) "epa-file" nil t)
+    (epa-file-enable))
+#+end_src
+*** recentf
+    #+BEGIN_SRC emacs-lisp
+      (with-delayed-execution
+        (message "Install recentf...")
+        (autoload-if-found '(recentf-mode) "recentf" nil t)
+        (recentf-mode 1)
+        (with-eval-after-load 'recentf
+          (setq recentf-max-menu-items 10000)
+          (setq recentf-max-saved-items 10000)
+          (setq recentf-auto-cleanup 'never)
+          (setq recentf-save-file  "~/.emacs.d/.recentf")
+          (setq recentf-exclude '(".recentf" "\\.gpg\\"))))
+    #+END_SRC
+*** open-junk-file
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'open-junk-file))
+
+      (with-delayed-execution
+        (message "Install open-junk-file...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/open-junk-file"))
+
+        (autoload-if-found '(open-junk-file) "open-junk-file" nil t)
+
+        (defun my/open-junk-file ()
+          (interactive)
+          (ivy-mode 0)
+          (let ((default-directory (format-time-string "~/.emacs.d/.junk/%Y-%m%d-%H%M%S." (current-time))))
+            (open-junk-file))
+          (ivy-mode 1))
+
+        (global-set-key (kbd "C-x j") #'my/open-junk-file)
+
+        (with-eval-after-load 'open-junk-file
+          (setq open-junk-file-format "")))
+    #+END_SRC
+*** TODO vlf
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'vlf
+                   :url "https://github.com/m00natic/vlfi.git"))
+
+  (with-delayed-execution
+    (message "Install vlf...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/vlf"))
+    (autoload-if-found '() "vlf" nil t))
+#+end_src
+** Font
+*** font-lock-studio
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'font-lock-studio))
+
+      (with-delayed-execution
+        (message "Install font-lock-studio...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/font-lock-studio")))
+    #+END_SRC
+** GC
+*** gcmh
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'gcmh))
+
+  (with-delayed-execution
+    (message "Install gcmh...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/gcmh"))
+
+    (autoload-if-found '(gcmh-mode) "gcmh" nil t)
+
+    (gcmh-mode 1)
+
+    (defvar my/gcmh-status nil)
+
+    (advice-add #'garbage-collect
+                :before
+                (defun my/gcmh-log-start (&rest _)
+                  (when gcmh-verbose
+                    (setq my/gcmh-status "Running GC..."))))
+
+    (advice-add #'gcmh-message
+                :override
+                (defun my/gcmh-message (format-string &rest args)
+                  (setq my/gcmh-status
+                        (apply #'format-message format-string args))
+                  (run-with-timer 2 nil
+                                  (lambda ()
+                                    (setq my/gcmh-status nil)))))
+
+    (with-eval-after-load 'gcmh
+      (setq gcmh-verbose t)
+      (setq gcmh-idle-delay 'auto)
+      (setq gcmh-auto-idle-delay-factor 10)))
+#+end_src
+** Git
+*** magit
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle magit/transient)
+        (el-get-bundle magit/ghub)
+        (el-get-bundle magit/magit-popup)
+        (el-get-bundle magit/with-editor)
+        (el-get-bundle magit/magit))
+
+      (with-delayed-execution-priority-high
+        (message "Install magit...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/transient/lisp"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/ghub/lisp"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/magit-pop"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/with-editor/lisp"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/magit/lisp"))
+
+        (autoload-if-found '(global-git-commit-mode) "git-commit" nil t)
+        (autoload-if-found '(magit-status magit-blame) "magit")
+
+        (global-git-commit-mode)
+
+        (defun my/magit-status ()
+          (interactive)
+          (let ((default-directory (locate-dominating-file default-directory ".git")))
+            (magit-status)))
+
+        (global-set-key (kbd "C-x g") #'my/magit-status)
+        (global-set-key (kbd "C-x G") #'magit-blame)
+
+        (with-eval-after-load 'magit
+          (setq magit-refresh-status-buffer nil))
+
+        (with-eval-after-load 'magit-base
+          (setq magit-completing-read-function #'ivy-completing-read))
+
+        (with-eval-after-load 'magit-status
+          (define-key magit-status-mode-map (kbd "C-j") #'magit-visit-thing))
+
+        (with-eval-after-load 'magit-log
+          (define-key magit-log-mode-map (kbd "C-j") #'magit-visit-thing)))
+    #+END_SRC
+*** magit-forge
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle "magit/forge"))
+
+      (with-delayed-execution
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/forge/lisp"))
+        (add-hook 'magit-mode-hook #'(lambda () (require 'forge))))
+    #+end_src
+*** git-gutter
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'git-gutter))
+
+  (with-delayed-execution
+    (message "Install git-gutter...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/git-gutter"))
+    (autoload-if-found '(git-gutter-mode) "git-gutter" nil t)
+
+    (with-eval-after-load 'git-gutter
+      ;; (add-hook 'prog-mode-hook #'git-gutter-mode)
+      (setq git-gutter:update-hooks '(after-save-hook after-revert-hook))))
+#+end_src
+*** git-gutter-fringe
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'git-gutter-fringe))
+
+  (with-delayed-execution
+    (message "Install git-gutter-fringe...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/git-gutter-fringe"))
+    (autoload-if-found '(git-gutter-fr:init
+                         git-gutter-fr:view-diff-infos
+                         git-gutter-fr:clear) "git-gutter-fringe" nil t)
+
+    (with-eval-after-load 'git-gutter
+      (setq git-gutter-fr:side 'right-fringe)
+      (setq git-gutter:window-width -1)
+      (setq git-gutter:init-function #'git-gutter-fr:init)
+      (setq git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos)
+      (setq git-gutter:clear-function #'git-gutter-fr:clear)))
+#+end_src
+*** git-timemachine
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'git-timemachine
+                   :url "https://codeberg.org/pidu/git-timemachine.git"))
+
+  (with-delayed-execution
+    (message "Install git-timemachine...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/git-timemachine"))
+    (autoload-if-found '(git-timemachine) "git-timemachine" nil t))
+#+end_src
+*** gist
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'gist))
+
+  (with-delayed-execution
+    (message "Install gist...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/gist"))
+    (autoload-if-found '(gist-mode) "gist" nil t))
+#+end_src
+*** blamer
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'blamer))
+
+  (with-delayed-execution
+    (message "Install blamer...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/blamer"))
+    (autoload-if-found '(blamer-mode) "blamer" nil t))
+#+end_src
+** Googling
+*** google-this
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'google-this))
+
+      (with-delayed-execution
+        (message "Install google-this...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/google-this"))
+        (autoload-if-found '(google-this) "google-this" nil t)
+        (global-set-key (kbd "M-g") 'google-this))
+    #+END_SRC
+*** google-translate
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'google-translate
+                   :url "https://github.com/zonuexe/google-translate.git"))
+
+  (with-delayed-execution
+    (message "Install google-translate...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/google-translate"))
+    (autoload-if-found '(google-translate-at-point) "google-translate" nil t))
+#+end_src
+** GPG
+*** pinentry
+https://github.com/ch11ng/exwm/wiki#gpg-pinentry
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'pinentry))
+
+  (with-delayed-execution
+    (message "Install pinentry...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/pinentry"))
+    (autoload-if-found '(pinentry-start) "pinentry" nil t)
+    (when-guix
+     ;; (pinentry-start)
+     ))
+
+#+end_src
+** Help
+*** helpful
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'helpful))
+
+  (with-delayed-execution
+    (message "Install helpful...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/helpful"))
+    (autoload-if-found '(helpful-callable
+                         helpful-function
+                         helpful-macro
+                         helpful-command
+                         helpful-key
+                         helpful-variable
+                         helpful-at-point) "helpful" nil t)
+    ;; keybinds
+    (when (not my/enable-c-h-backspace)
+      (global-set-key (kbd "C-h f") #'helpful-callable)
+      (global-set-key (kbd "C-h v") #'helpful-variable)
+      (global-set-key (kbd "C-h k") #'helpful-key)
+      (global-set-key (kbd "C-c C-d") #'helpful-at-point)
+      (global-set-key (kbd "C-h F") #'helpful-function)
+      (global-set-key (kbd "C-h C") #'helpful-command))
+
+    (with-eval-after-load 'counsel
+      (setq counsel-describe-function-function #'helpful-callable)
+      (setq counsel-describe-variable-function #'helpful-variable)))
+#+end_src
+** IME
+*** ddskk
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'ddskk))
+
+      (with-delayed-execution-priority-high
+        (message "Install ddskk...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/ddskk"))
+        (autoload-if-found '(skk-mode) "skk" nil t)
+
+        (global-set-key (kbd "C-x C-j") #'skk-mode)
+
+        (defun my/skk-C-j-key (arg)
+          (interactive "P")
+          (cond
+           ((and (null (skk-in-minibuffer-p))
+                 (null skk-henkan-mode))
+            (skk-emulate-original-map arg))
+           (t
+            (skk-kakutei arg))))
+
+        (with-eval-after-load 'skk
+          (setq skk-preload t)
+          (setq default-input-method "japanese-skk"))
+
+        (with-eval-after-load 'skk-vars
+          ;; use skkserv
+          (when-darwin
+           (setq skk-server-host "localhost")
+           (setq skk-server-portnum 1178))
+
+          ;; guix
+          (when-guix
+           (setq skk-user-directory "~/.my-skk-jisyo"))
+
+          (setq skk-byte-compile-init-file t)
+          (setq skk-isearch-mode-enable 'always)
+          (setq skk-egg-like-newline t)
+          (setq skk-show-annotation nil)
+          (setq skk-auto-insert-paren t)
+
+          ;; azik
+          (setq skk-use-azik t)
+          (setq skk-azik-keyboard-type 'jp106)
+
+          ;; ref: https://github.com/skk-dev/ddskk/blob/master/etc/dot.skk#L752-L768
+          (add-to-list 'skk-rom-kana-rule-list '(skk-kakutei-key nil my/skk-C-j-key))))
+    #+END_SRC
+*** ddskk-posframe
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ddskk-posframe))
+
+  (with-delayed-execution
+    (message "Install ddskk-posframe...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ddskk-posframe"))
+    (autoload-if-found '(ddskk-posframe-mode) "ddskk-posframe" nil t)
+    (with-eval-after-load 'skk
+      (add-hook 'skk-mode-hook #'ddskk-posframe-mode)))
+#+end_src
+** Joke
+*** hacker-typer
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'hacker-typer))
+
+  (with-delayed-execution
+    (message "Install hacker-typer...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/hacker-typer"))
+    (autoload-if-found '(hacker-typer) "hacker-typer" nil t))
+#+end_src
+*** power-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'power-mode
+                   :url "https://github.com/elizagamedev/power-mode.el.git"))
+
+  (with-delayed-execution
+    (message "Install power-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/power-mode"))
+    (autoload-if-found '(power-mode) "power-mode" nil t))
+#+end_src
+*** sudden-death
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'sudden-death
+                   :url "https://github.com/yewton/sudden-death.el.git"))
+
+  (with-delayed-execution
+    (message "Install sudden-death...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/sudden-death"))
+    (autoload-if-found '(sudden-death) "sudden-death" nil t))
+#+end_src
+*** redacted
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'redacted
+                       :url "https://github.com/bkaestner/redacted.el.git"))
+
+      (with-delayed-execution
+        (message "Install redacted...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/redacted"))
+        (autoload-if-found '(my/redacted-mode redacted-mode) "redacted" nil t)
+        (defun my/redacted-mode ()
+          (interactive)
+          (read-only-mode (if redacted-mode -1 1))
+          (redacted-mode (if redacted-mode -1 1))))
+    #+end_src
+*** lorem ipsum
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'lorem-ipsum))
+
+      (with-delayed-execution
+        (message "Install lorem-ipsum...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/lorem-ipsum"))
+        (autoload-if-found '(lorem-ipsum-insert-sentences lorem-ipsum-insert-paragraphs lorem-ipsum-insert-list) "lorem-ipsum" nil t)
+        (global-set-key (kbd "C-c C-l s") #'lorem-ipsum-insert-sentences)
+        (global-set-key (kbd "C-c C-l p") #'lorem-ipsum-insert-paragraphs)
+        (global-set-key (kbd "C-c C-l l") #'lorem-ipsum-insert-list))
+    #+end_src
+** Keyboard
+*** key-chord
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'key-chord))
+
+  (with-delayed-execution
+    (message "Install key-chord...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/key-chord"))
+    (autoload-if-found '(key-chord-mode key-chord-define-global) "key-chord" nil t)
+    (key-chord-mode 1)
+
+    ;; for global
+    (key-chord-define-global "fj" #'view-mode)
+    (key-chord-define-global "jf" #'view-mode))
+#+end_src
+*** key-combo
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'key-combo))
+
+  (with-delayed-execution
+    (message "Install key-combo...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/key-combo"))
+    (autoload-if-found '(key-combo-mode key-combo-define-local) "key-combo" nil t)
+
+    ;; for php-mode
+    (with-eval-after-load 'php-mode
+      (add-hook 'php-mode-hook
+                #'(lambda ()
+                    (key-combo-mode)
+                    (when (window-system)
+                      (key-combo-define-local (kbd ",>") " => "))
+                    ;; (key-combo-define-local (kbd "+") '("+" " + " "++" " ++ "))
+                    ;; (key-combo-define-local (kbd "-") '("-" " - " "--" " -- "))
+                    ;; (key-combo-define-local (kbd "*") '("*" "**" " * "))
+                    ;; (key-combo-define-local (kbd "=") '("=" " = " "==" "==="))
+                    )))
+
+    ;; for typescript-tsx-mode
+    (with-eval-after-load 'typescript-tsx-mode
+      (add-hook 'typescript-tsx-mode
+                #'(lambda ()
+                    (key-combo-mode)
+                    (key-combo-define-local (kbd "</") #'web-mode-element-close)))))
+#+end_src
+*** which-key
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'which-key))
+
+      (with-delayed-execution
+        (message "Install which-key...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/which-key"))
+        (autoload-if-found '(which-key-mode) "which-key" nil t)
+        (which-key-mode))
     #+end_src
 ** LSP
 *** eglot
@@ -3078,331 +3416,6 @@
       (add-hook 'haskell-mode-hook #'lsp)
       (add-hook 'haskell-literate-mode-hook #'lsp)))
 #+end_src
-** Cursor
-*** avy
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'avy))
-
-      (with-delayed-execution
-        (message "Install avy...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/avy"))
-        (autoload-if-found '(avy-goto-word-1) "avy" nil t)
-        (global-set-key (kbd "C-:") 'avy-goto-word-1)
-        (with-eval-after-load 'avy
-          (setq avy-all-windows nil)
-          (setq avy-background t)))
-    #+end_src
-*** avy-zap
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'avy-zap))
-
-      (with-delayed-execution
-        (message "Install avy-zap...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/avy-zap"))
-        (autoload-if-found '(avy-zap-up-to-char-dwim) "avy-zap" nil t)
-        (global-set-key (kbd "M-z") 'avy-zap-up-to-char-dwim))
-    #+end_src
-*** multiple-cursors
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'multiple-cursors))
-
-      (with-delayed-execution
-        (message "Install multiple-cursors...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/multiple-cursors"))
-        (autoload-if-found '(mc/mark-next-like-this mc/mark-previous-like-this mc/mark-all-like-this) "multiple-cursors" nil t)
-        (global-set-key (kbd "C->") #'mc/mark-next-like-this)
-        (global-set-key (kbd "C-<") #'mc/mark-previous-like-this)
-        (global-set-key (kbd "C-c C-<") #'mc/mark-all-like-this))
-    #+END_SRC
-** Git
-*** magit
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle magit/transient)
-        (el-get-bundle magit/ghub)
-        (el-get-bundle magit/magit-popup)
-        (el-get-bundle magit/with-editor)
-        (el-get-bundle magit/magit))
-
-      (with-delayed-execution-priority-high
-        (message "Install magit...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/transient/lisp"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/ghub/lisp"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/magit-pop"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/with-editor/lisp"))
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/magit/lisp"))
-
-        (autoload-if-found '(global-git-commit-mode) "git-commit" nil t)
-        (autoload-if-found '(magit-status magit-blame) "magit")
-
-        (global-git-commit-mode)
-
-        (defun my/magit-status ()
-          (interactive)
-          (let ((default-directory (locate-dominating-file default-directory ".git")))
-            (magit-status)))
-
-        (global-set-key (kbd "C-x g") #'my/magit-status)
-        (global-set-key (kbd "C-x G") #'magit-blame)
-
-        (with-eval-after-load 'magit
-          (setq magit-refresh-status-buffer nil))
-
-        (with-eval-after-load 'magit-base
-          (setq magit-completing-read-function #'ivy-completing-read))
-
-        (with-eval-after-load 'magit-status
-          (define-key magit-status-mode-map (kbd "C-j") #'magit-visit-thing))
-
-        (with-eval-after-load 'magit-log
-          (define-key magit-log-mode-map (kbd "C-j") #'magit-visit-thing)))
-    #+END_SRC
-*** magit-forge
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle "magit/forge"))
-
-      (with-delayed-execution
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/forge/lisp"))
-        (add-hook 'magit-mode-hook #'(lambda () (require 'forge))))
-    #+end_src
-*** git-gutter
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'git-gutter))
-
-  (with-delayed-execution
-    (message "Install git-gutter...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/git-gutter"))
-    (autoload-if-found '(git-gutter-mode) "git-gutter" nil t)
-
-    (with-eval-after-load 'git-gutter
-      ;; (add-hook 'prog-mode-hook #'git-gutter-mode)
-      (setq git-gutter:update-hooks '(after-save-hook after-revert-hook))))
-#+end_src
-*** git-gutter-fringe
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'git-gutter-fringe))
-
-  (with-delayed-execution
-    (message "Install git-gutter-fringe...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/git-gutter-fringe"))
-    (autoload-if-found '(git-gutter-fr:init
-                         git-gutter-fr:view-diff-infos
-                         git-gutter-fr:clear) "git-gutter-fringe" nil t)
-
-    (with-eval-after-load 'git-gutter
-      (setq git-gutter-fr:side 'right-fringe)
-      (setq git-gutter:window-width -1)
-      (setq git-gutter:init-function #'git-gutter-fr:init)
-      (setq git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos)
-      (setq git-gutter:clear-function #'git-gutter-fr:clear)))
-#+end_src
-*** git-timemachine
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'git-timemachine
-                   :url "https://codeberg.org/pidu/git-timemachine.git"))
-
-  (with-delayed-execution
-    (message "Install git-timemachine...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/git-timemachine"))
-    (autoload-if-found '(git-timemachine) "git-timemachine" nil t))
-#+end_src
-*** gist
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'gist))
-
-  (with-delayed-execution
-    (message "Install gist...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/gist"))
-    (autoload-if-found '(gist-mode) "gist" nil t))
-#+end_src
-*** blamer
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'blamer))
-
-  (with-delayed-execution
-    (message "Install blamer...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/blamer"))
-    (autoload-if-found '(blamer-mode) "blamer" nil t))
-#+end_src
-** Shell
-*** exec-path-from-shell
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle exec-path-from-shell))
-
-      (with-delayed-execution-priority-high
-        (message "Install exec-path-from-shell...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/exec-path-from-shell"))
-
-        (autoload-if-found '(exec-path-from-shell-initialize) "exec-path-from-shell")
-        (exec-path-from-shell-initialize)
-
-        (with-eval-after-load 'exec-path-from-shell
-          (setq exec-path-from-shell-variables '("PATH"
-                                                 "GEM_HOME"
-                                                 "GOROOT"
-                                                 "GOPATH"
-                                                 "LSP_USE_PLISTS"
-                                                 "TERM"
-                                                 "SSH_AUTH_SOCK"
-                                                 "NATIVE_FULL_AOT"
-                                                 "GPG_TTY"))))
-    #+END_SRC
-** File
-*** recentf
-    #+BEGIN_SRC emacs-lisp
-      (with-delayed-execution
-        (message "Install recentf...")
-        (autoload-if-found '(recentf-mode) "recentf" nil t)
-        (recentf-mode 1)
-        (with-eval-after-load 'recentf
-          (setq recentf-max-menu-items 10000)
-          (setq recentf-max-saved-items 10000)
-          (setq recentf-auto-cleanup 'never)
-          (setq recentf-save-file  "~/.emacs.d/.recentf")
-          (setq recentf-exclude '(".recentf" "\\.gpg\\"))))
-    #+END_SRC
-*** open-junk-file
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'open-junk-file))
-
-      (with-delayed-execution
-        (message "Install open-junk-file...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/open-junk-file"))
-
-        (autoload-if-found '(open-junk-file) "open-junk-file" nil t)
-
-        (defun my/open-junk-file ()
-          (interactive)
-          (ivy-mode 0)
-          (let ((default-directory (format-time-string "~/.emacs.d/.junk/%Y-%m%d-%H%M%S." (current-time))))
-            (open-junk-file))
-          (ivy-mode 1))
-
-        (global-set-key (kbd "C-x j") #'my/open-junk-file)
-
-        (with-eval-after-load 'open-junk-file
-          (setq open-junk-file-format "")))
-    #+END_SRC
-** IME
-*** ddskk
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'ddskk))
-
-      (with-delayed-execution-priority-high
-        (message "Install ddskk...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/ddskk"))
-        (autoload-if-found '(skk-mode) "skk" nil t)
-
-        (global-set-key (kbd "C-x C-j") #'skk-mode)
-
-        (defun my/skk-C-j-key (arg)
-          (interactive "P")
-          (cond
-           ((and (null (skk-in-minibuffer-p))
-                 (null skk-henkan-mode))
-            (skk-emulate-original-map arg))
-           (t
-            (skk-kakutei arg))))
-
-        (with-eval-after-load 'skk
-          (setq skk-preload t)
-          (setq default-input-method "japanese-skk"))
-
-        (with-eval-after-load 'skk-vars
-          ;; use skkserv
-          (when-darwin
-           (setq skk-server-host "localhost")
-           (setq skk-server-portnum 1178))
-
-          ;; guix
-          (when-guix
-           (setq skk-user-directory "~/.my-skk-jisyo"))
-
-          (setq skk-byte-compile-init-file t)
-          (setq skk-isearch-mode-enable 'always)
-          (setq skk-egg-like-newline t)
-          (setq skk-show-annotation nil)
-          (setq skk-auto-insert-paren t)
-
-          ;; azik
-          (setq skk-use-azik t)
-          (setq skk-azik-keyboard-type 'jp106)
-
-          ;; ref: https://github.com/skk-dev/ddskk/blob/master/etc/dot.skk#L752-L768
-          (add-to-list 'skk-rom-kana-rule-list '(skk-kakutei-key nil my/skk-C-j-key))))
-    #+END_SRC
-*** ddskk-posframe
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'ddskk-posframe))
-
-  (with-delayed-execution
-    (message "Install ddskk-posframe...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/ddskk-posframe"))
-    (autoload-if-found '(ddskk-posframe-mode) "ddskk-posframe" nil t)
-    (with-eval-after-load 'skk
-      (add-hook 'skk-mode-hook #'ddskk-posframe-mode)))
-#+end_src
-** Color
-*** ansi-color
-#+begin_src emacs-lisp
-  (with-delayed-execution
-    (message "Install ansi-color...")
-    (autoload 'ansi-color-for-comint-mode-on "ansi-color" "Set `ansi-color-for-comint-mode' to t." t)
-    (autoload-if-found '(ansi-color-for-comint-mode-on) "ansi-color" nil t)
-
-    (with-eval-after-load 'shell-mode
-      (add-hook 'shell-mode-hook #'ansi-color-for-comint-mode-on))
-
-    (with-eval-after-load 'compile
-      (add-hook 'compilation-filter-hook #'(lambda ()
-                                             (ansi-color-apply-on-region (point-min) (point-max))))))
-#+end_src
-*** hl-todo
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'hl-todo))
-
-  (with-delayed-execution
-    (message "Install hl-todo...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/hl-todo"))
-    (autoload-if-found '(global-hl-todo-mode) "hl-todo" nil t)
-    (global-hl-todo-mode)
-    (with-eval-after-load 'hl-todo
-      (setq hl-todo-keyword-faces
-            '(("TODO" . "#cc9393")
-              ("FIXME" . "#cc9393")
-              ("NOW" . "#dca3a3")
-              ("WAIT" . "#d0bf8f")
-              ("DONE" . "#afd8af")))))
-#+end_src
-*** xterm-color
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'xterm-color))
-
-  (with-delayed-execution
-    (message "Install xterm-color...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/xterm-color"))
-
-    (autoload-if-found '(xterm-color-filter) "xterm-color" nil t)
-
-    (with-eval-after-load 'xterm-color
-      (setenv "TERM" "xterm-256color")
-      (setq xterm-color-preserve-properties t)))
-#+end_src
 ** Mail
 *** mu4e
 #+begin_src emacs-lisp
@@ -3412,230 +3425,32 @@
       (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e"))
     (autoload-if-found '(mu4e) "mu4e" nil t))
 #+end_src
-** Joke
-*** hacker-typer
+** Minor Modes
+*** command-log-mode
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-get-bundle 'hacker-typer))
+    (el-get-bundle 'command-log-mode))
 
   (with-delayed-execution
-    (message "Install hacker-typer...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/hacker-typer"))
-    (autoload-if-found '(hacker-typer) "hacker-typer" nil t))
+    (message "Install command-log-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/command-log-mode"))
+    (autoload-if-found '(clm/toggle-command-log-buffer) "command-log-mode" nil t)
+    (defalias 'command-log #'clm/toggle-command-log-buffer))
 #+end_src
-*** power-mode
+*** jq-mode
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-get-bundle 'power-mode
-                   :url "https://github.com/elizagamedev/power-mode.el.git"))
+    (el-get-bundle 'jq-mode))
 
   (with-delayed-execution
-    (message "Install power-mode...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/power-mode"))
-    (autoload-if-found '(power-mode) "power-mode" nil t))
-#+end_src
-*** sudden-death
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'sudden-death
-                   :url "https://github.com/yewton/sudden-death.el.git"))
-
-  (with-delayed-execution
-    (message "Install sudden-death...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/sudden-death"))
-    (autoload-if-found '(sudden-death) "sudden-death" nil t))
-#+end_src
-*** redacted
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'redacted
-                       :url "https://github.com/bkaestner/redacted.el.git"))
-
-      (with-delayed-execution
-        (message "Install redacted...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/redacted"))
-        (autoload-if-found '(my/redacted-mode redacted-mode) "redacted" nil t)
-        (defun my/redacted-mode ()
-          (interactive)
-          (read-only-mode (if redacted-mode -1 1))
-          (redacted-mode (if redacted-mode -1 1))))
-    #+end_src
-*** lorem ipsum
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'lorem-ipsum))
-
-      (with-delayed-execution
-        (message "Install lorem-ipsum...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/lorem-ipsum"))
-        (autoload-if-found '(lorem-ipsum-insert-sentences lorem-ipsum-insert-paragraphs lorem-ipsum-insert-list) "lorem-ipsum" nil t)
-        (global-set-key (kbd "C-c C-l s") #'lorem-ipsum-insert-sentences)
-        (global-set-key (kbd "C-c C-l p") #'lorem-ipsum-insert-paragraphs)
-        (global-set-key (kbd "C-c C-l l") #'lorem-ipsum-insert-list))
-    #+end_src
-** Window
-*** ace-window
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'ace-window))
-
-  (with-delayed-execution
-    (message "Install ace-window...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/ace-window"))
-    (autoload-if-found '(ace-window) "ace-window" nil t)
-    (global-set-key (kbd "C-x o") #'ace-window)
-    (with-eval-after-load 'ace-window
-      (setq aw-dispatch-always t)
-      (setq aw-scope 'frame)
-      (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-      (setq aw-minibuffer-flag t)))
-#+end_src
-*** writeroom-mode
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'writeroom-mode))
-
-  (with-delayed-execution
-    (message "Install writeroom-mode...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/writeroom-mode"))
-    (autoload-if-found '(writeroom-mode
-                         writeroom-decrease-width
-                         writeroom-increase-width
-                         writeroom-adjust-width
-                         writeroom-width)
-                       "writeroom-mode" nil t)
-
-    (with-eval-after-load 'writeroom-mode
-      (add-hook 'writeroom-mode-hook #'(lambda ()
-                                       (linum-mode -1)
-                                       (display-line-numbers-mode)))
-      (define-key writeroom-mode-map (kbd "C-M-<") #'writeroom-decrease-width)
-      (define-key writeroom-mode-map (kbd "C-M->") #'writeroom-increase-width)
-      (define-key writeroom-mode-map (kbd "C-M-=") #'writeroom-adjust-width)
-      (setq writeroom-width 200)
-      (setq writeroom-maximize-window nil)))
-#+end_src
-*** zoom-window
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'zoom-window))
-
-  (with-delayed-execution
-    (message "Install zoom-window...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/zoom-window"))
-    (autoload-if-found '(zoom-window-zoom) "zoom-window" nil t)
-    (global-set-key (kbd "C-c C-z") #'zoom-window-zoom))
-#+end_src
-** Process
-*** proced
-#+begin_src emacs-lisp
-  (with-delayed-execution
-    (message "Install proced...")
-    (autoload-if-found '(proced) "proced" nil t)
-    (add-hook 'proced-mode-hook #'(lambda () (proced-toggle-auto-update 1)))
-    (with-eval-after-load 'proced
-      (setq proced-auto-update-interval 10)
-      (setq proced-tree-flag t)
-      (setq proced-format 'long)))
-#+end_src
-*** proced-narrow
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'proced-narrow))
-
-  (with-delayed-execution
-    (message "Install proced-narrow...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/proced-narrow"))
-    (autoload-if-found '(proced-narrow) "proced-narrow" nil t)
-
-    (with-eval-after-load 'proced
-      (define-key proced-mode-map (kbd "/") #'proced-narrow)))
-
-#+end_src
-** GC
-*** gcmh
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'gcmh))
-
-  (with-delayed-execution
-    (message "Install gcmh...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/gcmh"))
-
-    (autoload-if-found '(gcmh-mode) "gcmh" nil t)
-
-    (gcmh-mode 1)
-
-    (defvar my/gcmh-status nil)
-
-    (advice-add #'garbage-collect
-                :before
-                (defun my/gcmh-log-start (&rest _)
-                  (when gcmh-verbose
-                    (setq my/gcmh-status "Running GC..."))))
-
-    (advice-add #'gcmh-message
-                :override
-                (defun my/gcmh-message (format-string &rest args)
-                  (setq my/gcmh-status
-                        (apply #'format-message format-string args))
-                  (run-with-timer 2 nil
-                                  (lambda ()
-                                    (setq my/gcmh-status nil)))))
-
-    (with-eval-after-load 'gcmh
-      (setq gcmh-verbose t)
-      (setq gcmh-idle-delay 'auto)
-      (setq gcmh-auto-idle-delay-factor 10)))
-#+end_src
-** EWW
-*** basic
-#+begin_src emacs-lisp
-  (with-delayed-execution
-    (message "Install eww...")
-
-    (defun my/eww-rename-buffer ()
-      "Rename the name of current EWW buffer."
-      (let* ((title (plist-get eww-data :title))
-             (url (file-name-base (eww-current-url)))
-             (buffer-name (or (if (and title (> (length title) 0))
-                                  title
-                                nil)
-                              url "")))
-        (rename-buffer (format "eww: %s" buffer-name) t)))
-
-    ;; config
-    (with-eval-after-load 'eww
-      (setq eww-header-line-format nil)
-      (setq eww-search-prefix "http://www.google.co.jp/search?q="))
-
-    (with-eval-after-load 'browse-url
-      (setq browse-url-browser-function 'eww-browse-url))
-
-    ;; keybind
-    (with-eval-after-load 'eww
-      (define-key eww-mode-map (kbd "C") #'eww-set-character-encoding)
-      (define-key eww-mode-map (kbd "C-j") #'eww-follow-link)
-      (define-key eww-mode-map (kbd "T") #'eww-goto-title-heading)
-      (define-key eww-mode-map (kbd "T") #'eww-goto-title-heading))
-
-    ;; hooks
-    (with-eval-after-load 'eww
-      (add-hook 'eww-after-render #'my/eww-rename-buffer)))
-#+end_src
-*** eww-lnum
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'eww-lnum))
-
-  (with-delayed-execution
-    (message "Install eww-lnum...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/eww-lnum"))
-    (autoload-if-found '(eww-lnum-follow eww-lnum-universal) "eww-lnum" nil t)
-
-    (with-eval-after-load 'eww
-      (define-key eww-mode-map "f" #'eww-lnum-follow)
-      (define-key eww-mode-map "F" #'eww-lnum-universal)))
+    (message "Install jq-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/jq-mode")))
+    (when (autoload-if-found '(jq-interactively) "jq-mode" nil t)
+      (with-eval-after-load 'json-mode
+        (define-key json-mode-map (kbd "C-c C-j") #'jq-interactively)))
+    (with-eval-after-load 'ob-babel
+      (org-babel-do-load-languages 'org-babel-load-languages
+                                   '((jq . t)))))
 #+end_src
 ** Narrowing
 *** fancy-narrow
@@ -3673,55 +3488,297 @@
         (global-set-key (kbd "C-c t") #'origami-recursively-toggle-node)
         (global-set-key (kbd "C-c C-t") #'origami-recursively-toggle-node))
     #+end_src
-** Client
-*** md4rd
+** Prescient
+*** prescient
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-get-bundle 'md4rd))
+    (el-get-bundle 'prescient))
+
+  (with-delayed-execution-priority-high
+    (message "Install prescient...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/prescient"))
+    (autoload-if-found '(prescient-persist-mode) "prescient" nil t)
+    (prescient-persist-mode)
+    (with-eval-after-load 'prescient
+      (setq prescient-aggressive-file-save t)))
+#+end_src
+*** ivy-prescient
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ivy-prescient))
+
+  (with-delayed-execution-priority-high
+    (message "Install ivy-prescient...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-prescient"))
+    (autoload-if-found '(ivy-prescient-mode ivy-prescient-re-builder) "ivy-prescient" nil t)
+    (ivy-prescient-mode)
+
+    (defun my/ivy-prescient-non-fuzzy (str)
+      (let ((prescient-filter-method '(literal regexp)))
+        (ivy-prescient-re-builder str)))
+
+    (with-eval-after-load 'ivy-prescient
+      (setq ivy-re-builders-alist
+            '((counsel-ag . my/ivy-prescient-non-fuzzy)
+              (counsel-rg . my/ivy-prescient-non-fuzzy)
+              (counsel-pt . my/ivy-prescient-non-fuzzy)
+              (counsel-grep . my/ivy-prescient-non-fuzzy)
+              (counsel-imenu . my/ivy-prescient-non-fuzzy)
+              (counsel-yank-pop . my/ivy-prescient-non-fuzzy)
+              (swiper . my/ivy-prescient-non-fuzzy)
+              (swiper-isearch . my/ivy-prescient-non-fuzzy)
+              (swiper-all . my/ivy-prescient-non-fuzzy)
+              (lsp-ivy-workspace-symbol . my/ivy-prescient-non-fuzzy)
+              (lsp-ivy-global-workspace-symbol . my/ivy-prescient-non-fuzzy)
+              (insert-char . my/ivy-prescient-non-fuzzy)
+              (counsel-unicode-char . my/ivy-prescient-non-fuzzy)
+              (t . ivy-prescient-re-builder)))
+      (setq ivy-prescient-sort-commands
+            '(:not swiper swiper-isearch ivy-switch-buffer
+                   counsel-grep counsel-git-grep counsel-ag counsel-imenu
+                   counsel-yank-pop counsel-recentf counsel-buffer-or-recentf))))
+#+end_src
+*** company-prescient
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'company-prescient))
 
   (with-delayed-execution
-    (message "Install md4rd...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/md4rd"))
-    (autoload-if-found '(md4rd
-                         md4rd-login
-                         md4rd-visit
-                         md4rd-widget-expand-all
-                         md4rd-widget-collapse-all
-                         md4rd-reply
-                         md4rd-upvote
-                         md4rd-downvote
-                         md4rd-widget-toggle-line
-                         md4rd-refresh-login
-                         md4rd-indent-all-the-lines) "md4rd" nil t)
-
-    (with-eval-after-load 'md4rd
-      (add-hook 'md4rd-mode-hook #'md4rd-indent-all-the-lines)
-      (run-with-timer 0 3540 #'md4rd-refresh-login)
-
-      ;; config
-      (setq md4rd-subs-active '(emacs lisp+Common_Lisp prolog clojure))
-      ;; (setq md4rd--oauth-access-token "your-access-token-here")
-      ;; (setq md4rd--oauth-refresh-token "your-refresh-token-here")
-
-      ;; keymap
-      (define-key md4rd-mode-map (kbd "u") 'tree-mode-goto-parent)
-      (define-key md4rd-mode-map (kbd "o") 'md4rd-open)
-      (define-key md4rd-mode-map (kbd "v") 'md4rd-visit)
-      (define-key md4rd-mode-map (kbd "e") 'tree-mode-toggle-expand)
-      (define-key md4rd-mode-map (kbd "E") 'md4rd-widget-expand-all)
-      (define-key md4rd-mode-map (kbd "C") 'md4rd-widget-collapse-all)
-      (define-key md4rd-mode-map (kbd "n") 'widget-forward)
-      (define-key md4rd-mode-map (kbd "j") 'widget-forward)
-      (define-key md4rd-mode-map (kbd "h") 'backward-button)
-      (define-key md4rd-mode-map (kbd "p") 'widget-backward)
-      (define-key md4rd-mode-map (kbd "k") 'widget-backward)
-      (define-key md4rd-mode-map (kbd "l") 'forward-button)
-      (define-key md4rd-mode-map (kbd "q") 'kill-current-buffer)
-      (define-key md4rd-mode-map (kbd "r") 'md4rd-reply)
-      (define-key md4rd-mode-map (kbd "u") 'md4rd-upvote)
-      (define-key md4rd-mode-map (kbd "d") 'md4rd-downvote)
-      (define-key md4rd-mode-map (kbd "t") 'md4rd-widget-toggle-line)))
+    (message "Install company-prescient...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/company-prescient"))
+    (autoload-if-found '(company-prescient-mode) "company-prescient" nil t)
+    (company-prescient-mode))
 #+end_src
+** Process
+*** proced
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install proced...")
+    (autoload-if-found '(proced) "proced" nil t)
+    (add-hook 'proced-mode-hook #'(lambda () (proced-toggle-auto-update 1)))
+    (with-eval-after-load 'proced
+      (setq proced-auto-update-interval 10)
+      (setq proced-tree-flag t)
+      (setq proced-format 'long)))
+#+end_src
+*** proced-narrow
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'proced-narrow))
+
+  (with-delayed-execution
+    (message "Install proced-narrow...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/proced-narrow"))
+    (autoload-if-found '(proced-narrow) "proced-narrow" nil t)
+
+    (with-eval-after-load 'proced
+      (define-key proced-mode-map (kbd "/") #'proced-narrow)))
+
+#+end_src
+** Project
+*** projectile
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'projectile))
+
+      (with-delayed-execution-priority-high
+        (message "Install projectile...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/projectile"))
+
+        (autoload-if-found '(projectile-mode
+                             projectile-project-name
+                             my/update-projectile-known-projects) "projectile" nil t)
+        (projectile-mode +1)
+
+        (defun my/update-projectile-known-projects ()
+          (interactive)
+          (setq projectile-known-projects (mapcar
+                                           (lambda (x)
+                                             (abbreviate-file-name (concat x "/")))
+                                           (split-string (shell-command-to-string "ghq list --full-path")))))
+
+        (with-eval-after-load 'projectile
+          (global-set-key (kbd "M-p") #'projectile-command-map)
+          (global-set-key (kbd "C-c p") #'projectile-command-map)
+          (add-hook 'projectile-mode-hook #'my/update-projectile-known-projects)
+          (setq projectile-switch-project-action 'projectile-dired)
+          (setq projectile-enable-caching t)))
+    #+end_src
+*** counsel-projectile
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'counsel-projectile))
+
+      (with-delayed-execution-priority-high
+        (message "Install counsel-projectile...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/counsel-projectile"))
+
+        (autoload-if-found '(counsel-projectile-mode) "counsel-projectile" nil t)
+        (counsel-projectile-mode +1)
+
+        (with-eval-after-load 'counsel-projectile
+          (setq counsel-projectile-sort-files t)
+          (setq counsel-projectile-sort-projects t)
+          (setq counsel-projectile-sort-buffers t)
+          (setq counsel-projectile-grep-initial-input '(ivy-thing-at-point))
+          (setq counsel-projectile-ag-initial-input '(ivy-thing-at-point))
+          (setq counsel-projectile-rg-initial-input '(ivy-thing-at-point))))
+    #+end_src
+** Refactor
+*** emr
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'iedit)
+        (el-get-bundle 'emr))
+
+      (with-delayed-execution
+        (message "Install emr...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/iedit"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/emr"))
+
+        (autoload-if-found '(emr-show-refactor-menu) "emr" nil t)
+
+        (with-eval-after-load 'prog-mode
+          (define-key prog-mode-map (kbd "M-RET") #'emr-show-refactor-menu)))
+    #+END_SRC
+** Search
+*** el-get
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle abo-abo/swiper))
+
+      (with-delayed-execution-priority-high
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/swiper")))
+    #+end_src
+*** migemo
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'migemo))
+
+  (with-delayed-execution
+    (message "Install migemo...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/migemo"))
+
+    ;; (autoload-if-found '(migemo-init) "migemo" nil t)
+    ;; (migemo-init)
+
+    (with-eval-after-load 'migemo
+      (setq migemo-command "cmigemo")
+      (setq migemo-options '("-q" "--emacs"))
+      (setq migemo-dictionary "/usr/local/share/migemo/utf-8/migemo-dict")
+      (setq migemo-user-dictionary nil)
+      (setq migemo-regex-dictionary nil)
+      (setq migemo-coding-system 'utf-8-unix)))
+#+end_src
+*** swiper
+    #+BEGIN_SRC emacs-lisp
+      (with-delayed-execution
+        (message "Install swiper...")
+        (autoload-if-found '(my/swiper) "swiper" nil t)
+        (defun my/swiper ()
+          (interactive)
+          (let ((word (thing-at-point 'symbol 'no-properties)))
+            (swiper word)))
+        (global-set-key (kbd "C-o") #'my/swiper))
+    #+END_SRC
+*** counsel
+    #+begin_src emacs-lisp
+      (with-delayed-execution-priority-high
+        (message "Install counsel...")
+        (autoload-if-found '(counsel-mode counsel-compile) "counsel" nil t)
+        (counsel-mode 1)
+        (global-set-key (kbd "C-x m") 'counsel-compile)
+        (with-eval-after-load 'counsel
+          (setq counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
+    #+end_src
+*** ivy
+    #+begin_src emacs-lisp
+      (with-delayed-execution-priority-high
+        (message "Install ivy...")
+        (autoload-if-found '(ivy-mode ivy-read ivy-completing-read) "ivy" nil t)
+        (autoload-if-found '(ivy-avy) "ivy-avy" nil t)
+        (add-hook 'minibuffer-setup-hook #'ivy-mode)
+        (with-eval-after-load 'ivy
+          (define-key ivy-minibuffer-map (kbd "C-'") #'ivy-avy)
+          (setq ivy-use-virtual-buffers t)))
+    #+end_src
+*** ivy-rich
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'ivy-rich))
+
+      (with-delayed-execution-priority-high
+        (message "Install ivy-rich...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-rich"))
+        (autoload-if-found '(ivy-rich-mode) "ivy-rich" nil t)
+        (ivy-rich-mode 1)
+        (with-eval-after-load 'ivy-rich
+          (setq ivy-rich-path-style 'abbrev)))
+    #+END_SRC
+*** ivy-migemo
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ivy-migemo))
+
+  (with-delayed-execution
+    (message "Install ivy-migemo...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-migemo"))
+
+    (autoload-if-found '(ivy-migemo-toggle-fuzzy ivy-migemo-toggle-migemo) "ivy-migemo" nil t)
+
+    ;; (with-eval-after-load 'ivy
+    ;;   (define-key ivy-minibuffer-map (kbd "M-f") #'ivy-migemo-toggle-fuzzy)
+    ;;   (define-key ivy-minibuffer-map (kbd "M-m") #'ivy-migemo-toggle-migemo))
+    )
+#+end_src
+** Shell
+*** exec-path-from-shell
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle exec-path-from-shell))
+
+      (with-delayed-execution-priority-high
+        (message "Install exec-path-from-shell...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/exec-path-from-shell"))
+
+        (autoload-if-found '(exec-path-from-shell-initialize) "exec-path-from-shell")
+        (exec-path-from-shell-initialize)
+
+        (with-eval-after-load 'exec-path-from-shell
+          (setq exec-path-from-shell-variables '("PATH"
+                                                 "GEM_HOME"
+                                                 "GOROOT"
+                                                 "GOPATH"
+                                                 "LSP_USE_PLISTS"
+                                                 "TERM"
+                                                 "SSH_AUTH_SOCK"
+                                                 "NATIVE_FULL_AOT"
+                                                 "GPG_TTY"))))
+    #+END_SRC
+** Snippet
+*** yasnippet
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle "yasnippet"))
+
+      (with-delayed-execution
+        (message "Install yasnippet...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/yasnippet"))
+        (autoload-if-found '(yas-global-mode) "yasnippet" nil t)
+        (yas-global-mode 1))
+    #+end_src
+*** ivy-yasnippet
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle "mkcms/ivy-yasnippet"))
+
+      (with-delayed-execution
+        (message "Install ivy-yasnippet...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-yasnippet"))
+        (autoload-if-found '(ivy-yasnippet) "ivy-yasnippet" nil t)
+        (global-set-key (kbd "C-c y") #'ivy-yasnippet)
+        (global-set-key (kbd "C-c C-y") #'ivy-yasnippet))
+    #+end_src
 ** Statistics
 *** esup
     #+BEGIN_SRC emacs-lisp
@@ -3764,6 +3821,32 @@
     (message "Install uptimes...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/uptimes"))
     (autoload-if-found '(uptimes) "uptimes" nil t))
+#+end_src
+** Syntax
+*** syntax-subword
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'syntax-subword
+                   :url "https://github.com/jpkotta/syntax-subword.git"))
+
+  (with-delayed-execution
+    (message "Install syntax-subword...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/syntax-subword"))
+    (autoload-if-found '(global-syntax-subword-mode) "syntax-subword" nil t)
+    (global-syntax-subword-mode))
+#+end_src
+** System
+*** symon
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'symon))
+
+  (with-delayed-execution
+    (message "Install symon...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/symon"))
+    (autoload-if-found '(symon-mode) "symon" nil t)
+    (when-guix
+     (symon-mode)))
 #+end_src
 ** Tab
 *** tab-bar
@@ -3812,23 +3895,7 @@
       (advice-add 'tab-next :before #'(lambda (&rest _) (neotree-hide)))
       (advice-add 'tab-bar-switch-to-tab :before #'(lambda (&rest _) (neotree-hide)))))
 #+end_src
-** GPG
-*** pinentry
-https://github.com/ch11ng/exwm/wiki#gpg-pinentry
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'pinentry))
-
-  (with-delayed-execution
-    (message "Install pinentry...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/pinentry"))
-    (autoload-if-found '(pinentry-start) "pinentry" nil t)
-    (when-guix
-     ;; (pinentry-start)
-     ))
-
-#+end_src
-** Other
+** Template
 *** auto-insert
 #+begin_src emacs-lisp
   (with-delayed-execution
@@ -3839,449 +3906,232 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'autoinsert
       (setq auto-insert-directory "~/.emacs.d/auto-insert")))
 #+end_src
-*** auto-save-buffers-enhanced
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'auto-save-buffers-enhanced))
-
-      (with-delayed-execution
-        (message "Install auto-save-buffers-enhanced...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/auto-save-buffers-enhanced"))
-        (autoload-if-found '(auto-save-buffers-enhanced) "auto-save-buffers-enhanced" nil t)
-        (with-eval-after-load 'auto-save-buffers-enhanced
-          (setq auto-save-buffers-enhanced-interval 10)))
-    #+end_src
-*** amx
+** Theme
+*** all-the-icons
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
-        (el-get-bundle 'amx))
+        (el-get-bundle 'all-the-icons))
 
       (with-delayed-execution-priority-high
-        (message "Install amx...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/amx"))
-        (with-eval-after-load 'amx
-          (setq amx-history-length 100)))
+        (message "Install all-the-icons...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons")))
     #+END_SRC
-*** command-log-mode
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'command-log-mode))
-
-  (with-delayed-execution
-    (message "Install command-log-mode...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/command-log-mode"))
-    (autoload-if-found '(clm/toggle-command-log-buffer) "command-log-mode" nil t)
-    (defalias 'command-log #'clm/toggle-command-log-buffer))
-#+end_src
-*** define-word
+*** all-the-icons-dired
     #+begin_src emacs-lisp
       (eval-when-compile
-        (el-get-bundle 'define-word))
+        (el-get-bundle 'all-the-icons-dired))
 
+      (with-delayed-execution-priority-high
+        (message "Install all-the-icons-dired...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons-dired"))
+        (autoload-if-found '(all-the-icons-dired-mode) "all-the-icons-dired")
+        (with-eval-after-load 'dired
+          (add-hook 'dired-mode-hook #'all-the-icons-dired-mode)))
+    #+end_src
+*** all-the-icons-ivy-rich
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'all-the-icons-ivy-rich))
+
+      (with-delayed-execution-priority-high
+        (message "Install all-the-icons-ivy-rich...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons-ivy-rich"))
+        (autoload-if-found '(all-the-icons-ivy-rich-mode) "all-the-icons-ivy-rich" nil t)
+        (all-the-icons-ivy-rich-mode 1)
+        (with-eval-after-load 'all-the-icons-ivy-rich
+          (setq all-the-icons-ivy-rich-icon t)
+          (setq all-the-icons-ivy-rich-color-icon t)
+          (setq all-the-icons-ivy-rich-icon-size 1.0)
+          (setq all-the-icons-ivy-rich-project t)
+          (setq all-the-icons-ivy-rich-field-width 80)))
+    #+end_src
+*** dashboard
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'dashboard))
+
+      (with-delayed-execution-priority-high
+        (message "Install dashboard...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/dashboard"))
+        (autoload-if-found '(dashboard-refresh-buffer) "dashboard" nil t)
+        (with-eval-after-load 'dashboard
+          (setq dashboard-startup-banner 'logo)
+          (setq dashboard-set-file-icons t)
+          (setq dashboard-startup-banner 4)
+          (setq dashboard-items '((recents . 10)))))
+    #+end_src
+*** dimmer
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'dimmer))
+
+  (with-eval-after-load 'dimmer
+    (message "Install dimmer...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/dimmer"))
+    (autoload-if-found '(dimmer-configure-which-key
+                         dimmer-configure-org
+                         dimmer-configure-company-box
+                         dimmer-mode)
+                       "dimmer" nil t)
+    (dimmer-configure-which-key)
+    (dimmer-configure-org)
+    (dimmer-configure-company-box)
+    (dimmer-mode t))
+#+end_src
+*** doom-themes
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'doom-themes))
+
+      (with-delayed-execution-priority-high
+        (message "Install doom-themes...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes"))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-themes/extensions"))
+
+        (autoload-if-found '(doom-themes-enable-org-fontification) "doom-themes-ext-org" nil t)
+        (autoload-if-found '(doom-themes-neotree-config) "doom-themes-ext-neotree" nil t)
+
+        (doom-themes-enable-org-fontification)
+        (doom-themes-neotree-config)
+
+        (when (require 'doom-themes)
+          (load-theme 'doom-dracula t))
+
+        (with-eval-after-load 'doom-themes
+          (setq doom-themes-padded-modeline t)
+          (setq doom-themes-enable-bold t)
+          (setq doom-themes-enable-italic t)))
+    #+END_SRC
+*** doom-modeline
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'doom-modeline))
+
+      (with-delayed-execution-priority-high
+        (message "Install doom-modeline...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/doom-modeline"))
+        (autoload-if-found '(doom-modeline-mode) "doom-modeline" nil t)
+        (doom-modeline-mode 1)
+        (line-number-mode 0)
+        (column-number-mode 0)
+        (with-eval-after-load 'doom-modeline
+          (setq doom-modeline-buffer-file-name-style 'truncate-with-project)
+          (setq doom-modeline-icon t)
+          (setq doom-modeline-major-mode-icon t)
+          (setq doom-modeline-minor-modes nil)))
+    #+END_SRC
+*** emojify
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'emojify))
+
+  (with-delayed-execution
+    (message "Install emojify...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/emojify"))
+    (autoload-if-found '(global-emojify-mode) "emojify" nil t)
+    (global-emojify-mode))
+#+end_src
+*** hl-line
+    #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
-        (message "Install define-word...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/define-word"))
-        (defun my/define-word ()
+        (message "Install hl-line...")
+        (autoload-if-found '(global-hl-line-mode) "hl-line-mode" nil t)
+        (when (not window-system)
+          (global-hl-line-mode))
+        (with-eval-after-load 'hl-line
+          (set-face-attribute 'hl-line nil :inherit nil)
+          (set-face-background 'hl-line "#444642")))
+    #+END_SRC
+*** neotree
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'neotree))
+
+      (with-delayed-execution-priority-high
+        (message "Install neotree...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/neotree"))
+
+        (autoload-if-found '(neotree-hide neotree-dir) "neotree" nil t)
+
+        (defun my/neotree-toggle ()
           (interactive)
-          (if (use-region-p)
-              (call-interactively #'define-word-at-point)
-            (call-interactively #'define-word)))
-        (with-eval-after-load 'define-word
-          (setq define-word-displayfn-alist
-                '((wordnik . takeokunn/define-word--display-in-buffer)
-                  (openthesaurus . takeokunn/define-word--display-in-buffer)
-                  (webster . takeokunn/define-word--display-in-buffer)
-                  (weblio . takeokunn/define-word--display-in-buffer)))))
-    #+end_src
-*** delsel
-#+begin_src emacs-lisp
-  (with-delayed-execution
-    (message "Install delsel...")
-    (autoload-if-found '(delete-selection-mode) "delsel" nil t)
-    (delete-selection-mode))
-#+end_src
-*** editorconfig
+          (let ((default-directory (locate-dominating-file default-directory ".git")))
+            (if (and (fboundp 'neo-global--window-exists-p)
+                     (neo-global--window-exists-p))
+                (neotree-hide)
+              (neotree-dir default-directory))))
+
+        (if window-system
+            (defun neo-buffer--insert-fold-symbol (name &optional file-name)
+              (or
+               (and
+                (equal name 'open)
+                (insert
+                 (format " %s "
+                         (all-the-icons-icon-for-dir file-name "down"))))
+               (and
+                (equal name 'close)
+                (insert
+                 (format " %s "
+                         (all-the-icons-icon-for-dir file-name "right"))))
+               (and
+                (equal name 'leaf)
+                (insert
+                 (format " %s "
+                         (all-the-icons-icon-for-file file-name)))))))
+
+        (global-set-key (kbd "C-q") #'my/neotree-toggle)
+
+        (with-eval-after-load 'neotree
+          (setq neo-autorefresh nil)
+          (setq neo-theme 'nerd2)
+          (setq neo-show-hidden-files t)
+          (setq neo-window-fixed-size nil)))
+
+    #+END_SRC
+*** nyan-mode
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
-        (el-get-bundle 'editorconfig))
+        (el-get-bundle 'nyan-mode))
 
-      (with-delayed-execution
-        (message "Install editorconfig...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/editorconfig"))
-        (autoload-if-found '(editorconfig-mode) "editorconfig" nil t)
-        (when (require 'editorconfig-core)
-          (editorconfig-mode 1)))
+      (with-delayed-execution-priority-high
+        (message "Install nyan-mode...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/nyan-mode"))
+        (when (autoload-if-found '(nyan-mode) "nyan-mode" nil t)
+          (nyan-mode))
+        (with-eval-after-load 'nyan-mode
+          (setq nyan-cat-face-number 5)
+          (setq nyan-animate-nyancat t)))
     #+END_SRC
-*** embark
+*** volatile-highlights
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-get-bundle 'embark))
+    (el-get-bundle 'volatile-highlights))
 
   (with-delayed-execution
-    (message "Install embark...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/embark"))
-
-    (autoload-if-found '(embark-act embark-dwim embark-prefix-help-command) "embark" nil t)
-
-    (global-set-key (kbd "C-.") #'embark-act)
-    (global-set-key (kbd "C-;") #'embark-dwim)
-
-    (defmacro my/embark-ace-action (fn)
-      `(defun ,(intern (concat "my/embark-ace-" (symbol-name fn))) ()
-         (interactive)
-         (with-demoted-errors "%s"
-           (aw-switch-to-window (aw-select nil))
-           (call-interactively (symbol-function ',fn)))))
-
-    (defmacro my/embark-split-action (fn split-type)
-      `(defun ,(intern (concat "my/embark-"
-                               (symbol-name fn)
-                               "-"
-                               (car (last (split-string
-                                           (symbol-name split-type) "-"))))) ()
-         (interactive)
-         (funcall #',split-type)
-         (call-interactively #',fn)))
-
-    (defun my/sudo-find-file (file)
-      "Open FILE as root."
-      (interactive "FOpen file as root: ")
-      (when (file-writable-p file)
-        (user-error "File is user writeable, aborting sudo"))
-      (find-file (if (file-remote-p file)
-                     (concat "/" (file-remote-p file 'method) ":"
-                             (file-remote-p file 'user) "@" (file-remote-p file 'host)
-                             "|sudo:root@"
-                             (file-remote-p file 'host) ":" (file-remote-p file 'localname))
-                   (concat "/sudo:root@localhost:" file))))
-
-    (with-eval-after-load 'embark
-      (setq embark-mixed-indicator-delay 3)
-      (setq prefix-help-command #'embark-prefix-help-command)
-
-      ;; ace-window
-      (define-key embark-file-map     (kbd "o") (my/embark-ace-action find-file))
-      (define-key embark-buffer-map   (kbd "o") (my/embark-ace-action switch-to-buffer))
-      (define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))
-
-      ;; split window(2)
-      (define-key embark-file-map     (kbd "2") (my/embark-split-action find-file split-window-below))
-      (define-key embark-buffer-map   (kbd "2") (my/embark-split-action switch-to-buffer split-window-below))
-      (define-key embark-bookmark-map (kbd "2") (my/embark-split-action bookmark-jump split-window-below))
-
-      ;; split window(3)
-      (define-key embark-file-map     (kbd "3") (my/embark-split-action find-file split-window-right))
-      (define-key embark-buffer-map   (kbd "3") (my/embark-split-action switch-to-buffer split-window-right))
-      (define-key embark-bookmark-map (kbd "3") (my/embark-split-action bookmark-jump split-window-right))
-
-      ;; sudo
-      (define-key embark-file-map (kbd "S") #'my/sudo-find-file)))
-
-  ;; embark-file-map
-  ;; (counsel-projectile-find-file)
+    (message "Install volatile-highlights...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/volatile-highlights"))
+    (autoload-if-found '(volatile-highlights-mode) "volatile-highlights" nil t)
+    (volatile-highlights-mode t))
 #+end_src
-*** epa-file
-#+begin_src emacs-lisp
-  (with-delayed-execution
-    (message "Install epa-file...")
-    (autoload-if-found '(epa-file-enable) "epa-file" nil t)
-    (epa-file-enable))
-#+end_src
-*** expand-region
+*** idle-highlight-mode
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-get-bundle 'expand-region))
+    (el-get-bundle 'idle-highlight-mode))
 
   (with-delayed-execution
-    (message "Install expand-region...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/expand-region"))
-    (autoload-if-found '(er/expand-region) "expand-region" nil t)
-    (transient-mark-mode)
-    (global-set-key (kbd "C-M-@") 'er/expand-region))
+    (message "Install idle-highlight-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/idle-highlight-mode"))
+
+    (autoload-if-found '(idle-highlight-mode) "idle-highlight-mode" nil t)
+
+    (with-eval-after-load 'idle-highlight-mode
+      (setq idle-highlight-idle-time 0.1))
+
+    (with-eval-after-load 'prog-mode
+      (add-hook 'prog-mode-hook #'idle-highlight-mode)))
 #+end_src
-*** font-lock-studio
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'font-lock-studio))
-
-      (with-delayed-execution
-        (message "Install font-lock-studio...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/font-lock-studio")))
-    #+END_SRC
-*** google-this
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'google-this))
-
-      (with-delayed-execution
-        (message "Install google-this...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/google-this"))
-        (autoload-if-found '(google-this) "google-this" nil t)
-        (global-set-key (kbd "M-g") 'google-this))
-    #+END_SRC
-*** google-translate
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'google-translate
-                   :url "https://github.com/zonuexe/google-translate.git"))
-
-  (with-delayed-execution
-    (message "Install google-translate...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/google-translate"))
-    (autoload-if-found '(google-translate-at-point) "google-translate" nil t))
-#+end_src
-*** goto-addr
-    #+BEGIN_SRC emacs-lisp
-      (with-delayed-execution
-        (message "Install goto-addr...")
-        (autoload-if-found '(goto-address-prog-mode goto-address-mode) "goto-address" nil t)
-        (with-eval-after-load 'prog-mode
-          (add-hook 'prog-mode-hook #'goto-address-prog-mode))
-        (with-eval-after-load 'text-mode
-          (add-hook 'text-mode-hook #'goto-address-mode)))
-    #+END_SRC
-*** helpful
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'helpful))
-
-  (with-delayed-execution
-    (message "Install helpful...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/helpful"))
-    (autoload-if-found '(helpful-callable
-                         helpful-function
-                         helpful-macro
-                         helpful-command
-                         helpful-key
-                         helpful-variable
-                         helpful-at-point) "helpful" nil t)
-    ;; keybinds
-    (when (not my/enable-c-h-backspace)
-      (global-set-key (kbd "C-h f") #'helpful-callable)
-      (global-set-key (kbd "C-h v") #'helpful-variable)
-      (global-set-key (kbd "C-h k") #'helpful-key)
-      (global-set-key (kbd "C-c C-d") #'helpful-at-point)
-      (global-set-key (kbd "C-h F") #'helpful-function)
-      (global-set-key (kbd "C-h C") #'helpful-command))
-
-    (with-eval-after-load 'counsel
-      (setq counsel-describe-function-function #'helpful-callable)
-      (setq counsel-describe-variable-function #'helpful-variable)))
-#+end_src
-*** highlight-indent-guides
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'highlight-indent-guides))
-
-  (with-delayed-execution
-    (message "Install highlight-indent-guides...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/highlight-indent-guides"))
-    (autoload-if-found '(highlight-indent-guides-mode) "highlight-indent-guides" nil t)
-    (with-eval-after-load 'yaml-mode
-      (add-hook 'yaml-mode-hook #'highlight-indent-guides-mode))
-    (with-eval-after-load 'highlight-indent-guides
-      (setq highlight-indent-guides-method 'bitmap)))
-#+end_src
-*** htmlize
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'htmlize))
-
-      (with-delayed-execution
-        (message "Install htmlize...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/htmlize"))
-        (with-eval-after-load 'htmlize
-          (setq htmlize-html-charset 'utf-8)))
-    #+end_src
-*** jq-mode
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'jq-mode))
-
-  (with-delayed-execution
-    (message "Install jq-mode...")
-    (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/jq-mode")))
-    (when (autoload-if-found '(jq-interactively) "jq-mode" nil t)
-      (with-eval-after-load 'json-mode
-        (define-key json-mode-map (kbd "C-c C-j") #'jq-interactively)))
-    (with-eval-after-load 'ob-babel
-      (org-babel-do-load-languages 'org-babel-load-languages
-                                   '((jq . t)))))
-#+end_src
-*** key-chord
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'key-chord))
-
-  (with-delayed-execution
-    (message "Install key-chord...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/key-chord"))
-    (autoload-if-found '(key-chord-mode key-chord-define-global) "key-chord" nil t)
-    (key-chord-mode 1)
-
-    ;; for global
-    (key-chord-define-global "fj" #'view-mode)
-    (key-chord-define-global "jf" #'view-mode))
-#+end_src
-*** key-combo
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'key-combo))
-
-  (with-delayed-execution
-    (message "Install key-combo...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/key-combo"))
-    (autoload-if-found '(key-combo-mode key-combo-define-local) "key-combo" nil t)
-
-    ;; for php-mode
-    (with-eval-after-load 'php-mode
-      (add-hook 'php-mode-hook
-                #'(lambda ()
-                    (key-combo-mode)
-                    (when (window-system)
-                      (key-combo-define-local (kbd ",>") " => "))
-                    ;; (key-combo-define-local (kbd "+") '("+" " + " "++" " ++ "))
-                    ;; (key-combo-define-local (kbd "-") '("-" " - " "--" " -- "))
-                    ;; (key-combo-define-local (kbd "*") '("*" "**" " * "))
-                    ;; (key-combo-define-local (kbd "=") '("=" " = " "==" "==="))
-                    )))
-
-    ;; for typescript-tsx-mode
-    (with-eval-after-load 'typescript-tsx-mode
-      (add-hook 'typescript-tsx-mode
-                #'(lambda ()
-                    (key-combo-mode)
-                    (key-combo-define-local (kbd "</") #'web-mode-element-close)))))
-#+end_src
-*** minimap
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'minimap))
-
-      (with-delayed-execution
-        (message "Install minimap...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/minimap"))
-        (autoload-if-found '(minimap-mode) "minimap" nil t)
-
-        (global-set-key (kbd "C-c m") #'minimap-mode)
-
-        (with-eval-after-load 'minimap
-          (setq minimap-window-location 'right)
-          (setq minimap-update-delay 0.2)
-          (setq minimap-minimum-width 20)
-          (setq minimap-major-modes '(prog-mode org-mode))))
-    #+end_src
-*** persistent-scratch
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'persistent-scratch))
-
-      (with-delayed-execution
-        (message "Install persistent-scratch...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/persistent-scratch"))
-
-        (autoload-if-found '(persistent-scratch-setup-default) "persistent-scratch" nil t)
-        ;; (persistent-scratch-setup-default)
-
-        (with-eval-after-load 'persistent-scratch
-          (setq persistent-scratch-autosave-interval 100)))
-    #+end_src
-*** popwin
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'popwin))
-
-      (with-delayed-execution
-        (message "Install popwin...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/popwin"))
-        (autoload-if-found '(popwin-mode) "popwin" nil t)
-        (popwin-mode 1))
-    #+end_src
-*** smartparens
-    #+BEGIN_SRC emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'smartparens))
-
-      (with-delayed-execution
-        (message "Install smartparens...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/smartparens"))
-        (with-eval-after-load 'smartparens))
-    #+END_SRC
-*** smart-jump
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'smart-jump))
-
-      (with-delayed-execution
-        (message "Install smart-jump...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/smart-jump"))
-        (with-eval-after-load 'smart-jump))
-    #+end_src
-*** string-inflection
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'string-inflection
-                   :url "https://github.com/akicho8/string-inflection.git"))
-
-  (with-delayed-execution
-    (message "Install string-inflection...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/string-inflection"))
-    (autoload-if-found '(string-inflection-all-cycle) "string-inflection" nil t))
-#+end_src
-*** subword
-    #+begin_src emacs-lisp
-      (with-delayed-execution
-        (message "Install subword...")
-        (autoload-if-found '(my/delete-forward-block) "subword" nil t)
-        (global-set-key (kbd "M-d") #'my/delete-forward-block)
-        (defun my/delete-forward-block ()
-          (interactive)
-          (if (eobp)
-              (message "End of buffer")
-            (let* ((syntax-move-point
-                    (save-excursion
-                      (skip-syntax-forward (string (char-syntax (char-after))))
-                      (point)))
-                   (subword-move-point
-                    (save-excursion
-                      (subword-forward)
-                      (point))))
-              (kill-region (point) (min syntax-move-point subword-move-point))))))
-    #+end_src
-*** sudo-edit
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'sudo-edit))
-
-  (with-delayed-execution
-    (message "Install sudo-edit...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/sudo-edit"))
-    (autoload-if-found '(sudo-edit-current-file) "sudo-edit" nil t))
-#+end_src
-*** symon
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'symon))
-
-  (with-delayed-execution
-    (message "Install symon...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/symon"))
-    (autoload-if-found '(symon-mode) "symon" nil t)
-    (when-guix
-     (symon-mode)))
-#+end_src
-*** syntax-subword
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'syntax-subword
-                   :url "https://github.com/jpkotta/syntax-subword.git"))
-
-  (with-delayed-execution
-    (message "Install syntax-subword...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/syntax-subword"))
-    (autoload-if-found '(global-syntax-subword-mode) "syntax-subword" nil t)
-    (global-syntax-subword-mode))
-#+end_src
+** Undo
 *** undo-tree
     #+begin_src emacs-lisp
       (eval-when-compile
@@ -4295,21 +4145,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (with-eval-after-load 'undo-tree
           (setq undo-tree-auto-save-history nil)))
     #+end_src
-*** uuid
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'uuid
-                       :url "https://github.com/nicferrier/emacs-uuid.git"))
-
-      (with-delayed-execution
-        (message "Install uuid...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/uuid"))
-        (autoload-if-found '(uuid-string) "uuid" nil t)
-        (defun my/uuid ()
-          (interactive)
-          (insert (uuid-string)))
-        (defalias 'uuid #'my/uuid))
-    #+end_src
+** View Mode
 *** view-mode
 #+begin_src emacs-lisp
   (with-delayed-execution
@@ -4395,45 +4231,235 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'view-lock-mode
       (setq view-lock-start-time (* 30 60))))
 #+end_src
-*** TODO vlf
+** Utility
+*** delsel
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install delsel...")
+    (autoload-if-found '(delete-selection-mode) "delsel" nil t)
+    (delete-selection-mode))
+#+end_src
+*** embark
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-get-bundle 'vlf
-                   :url "https://github.com/m00natic/vlfi.git"))
+    (el-get-bundle 'embark))
 
   (with-delayed-execution
-    (message "Install vlf...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/vlf"))
-    (autoload-if-found '() "vlf" nil t))
-#+end_src
-*** which-key
-    #+begin_src emacs-lisp
-      (eval-when-compile
-        (el-get-bundle 'which-key))
+    (message "Install embark...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/embark"))
 
-      (with-delayed-execution
-        (message "Install which-key...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/which-key"))
-        (autoload-if-found '(which-key-mode) "which-key" nil t)
-        (which-key-mode))
-    #+end_src
-*** whitespace
+    (autoload-if-found '(embark-act embark-dwim embark-prefix-help-command) "embark" nil t)
+
+    (global-set-key (kbd "C-.") #'embark-act)
+    (global-set-key (kbd "C-;") #'embark-dwim)
+
+    (defmacro my/embark-ace-action (fn)
+      `(defun ,(intern (concat "my/embark-ace-" (symbol-name fn))) ()
+         (interactive)
+         (with-demoted-errors "%s"
+           (aw-switch-to-window (aw-select nil))
+           (call-interactively (symbol-function ',fn)))))
+
+    (defmacro my/embark-split-action (fn split-type)
+      `(defun ,(intern (concat "my/embark-"
+                               (symbol-name fn)
+                               "-"
+                               (car (last (split-string
+                                           (symbol-name split-type) "-"))))) ()
+         (interactive)
+         (funcall #',split-type)
+         (call-interactively #',fn)))
+
+    (defun my/sudo-find-file (file)
+      "Open FILE as root."
+      (interactive "FOpen file as root: ")
+      (when (file-writable-p file)
+        (user-error "File is user writeable, aborting sudo"))
+      (find-file (if (file-remote-p file)
+                     (concat "/" (file-remote-p file 'method) ":"
+                             (file-remote-p file 'user) "@" (file-remote-p file 'host)
+                             "|sudo:root@"
+                             (file-remote-p file 'host) ":" (file-remote-p file 'localname))
+                   (concat "/sudo:root@localhost:" file))))
+
+    (with-eval-after-load 'embark
+      (setq embark-mixed-indicator-delay 3)
+      (setq prefix-help-command #'embark-prefix-help-command)
+
+      ;; ace-window
+      (define-key embark-file-map     (kbd "o") (my/embark-ace-action find-file))
+      (define-key embark-buffer-map   (kbd "o") (my/embark-ace-action switch-to-buffer))
+      (define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))
+
+      ;; split window(2)
+      (define-key embark-file-map     (kbd "2") (my/embark-split-action find-file split-window-below))
+      (define-key embark-buffer-map   (kbd "2") (my/embark-split-action switch-to-buffer split-window-below))
+      (define-key embark-bookmark-map (kbd "2") (my/embark-split-action bookmark-jump split-window-below))
+
+      ;; split window(3)
+      (define-key embark-file-map     (kbd "3") (my/embark-split-action find-file split-window-right))
+      (define-key embark-buffer-map   (kbd "3") (my/embark-split-action switch-to-buffer split-window-right))
+      (define-key embark-bookmark-map (kbd "3") (my/embark-split-action bookmark-jump split-window-right))
+
+      ;; sudo
+      (define-key embark-file-map (kbd "S") #'my/sudo-find-file)))
+
+  ;; embark-file-map
+  ;; (counsel-projectile-find-file)
+#+end_src
+*** goto-addr
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
-        (message "Install whitespace...")
-        (when (autoload-if-found '(global-whitespace-mode) "whitespace" nil t)
-          (if window-system
-              (global-whitespace-mode 1)))
-        (with-eval-after-load 'whitespace
-          (setq whitespace-style '(face tabs tab-mark spaces space-mark))
-          (setq whitespace-display-mappings '((space-mark ?\u3000 [?\u25a1])
-                                              (tab-mark ?\t [?\xBB ?\t] [?\\ ?\t])))))
+        (message "Install goto-addr...")
+        (autoload-if-found '(goto-address-prog-mode goto-address-mode) "goto-address" nil t)
+        (with-eval-after-load 'prog-mode
+          (add-hook 'prog-mode-hook #'goto-address-prog-mode))
+        (with-eval-after-load 'text-mode
+          (add-hook 'text-mode-hook #'goto-address-mode)))
     #+END_SRC
+*** htmlize
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'htmlize))
+
+      (with-delayed-execution
+        (message "Install htmlize...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/htmlize"))
+        (with-eval-after-load 'htmlize
+          (setq htmlize-html-charset 'utf-8)))
+    #+end_src
+*** minimap
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'minimap))
+
+      (with-delayed-execution
+        (message "Install minimap...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/minimap"))
+        (autoload-if-found '(minimap-mode) "minimap" nil t)
+
+        (global-set-key (kbd "C-c m") #'minimap-mode)
+
+        (with-eval-after-load 'minimap
+          (setq minimap-window-location 'right)
+          (setq minimap-update-delay 0.2)
+          (setq minimap-minimum-width 20)
+          (setq minimap-major-modes '(prog-mode org-mode))))
+    #+end_src
+*** smartparens
+    #+BEGIN_SRC emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'smartparens))
+
+      (with-delayed-execution
+        (message "Install smartparens...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/smartparens"))
+        (with-eval-after-load 'smartparens))
+    #+END_SRC
+*** smart-jump
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'smart-jump))
+
+      (with-delayed-execution
+        (message "Install smart-jump...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/smart-jump"))
+        (with-eval-after-load 'smart-jump))
+    #+end_src
+*** string-inflection
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'string-inflection
+                   :url "https://github.com/akicho8/string-inflection.git"))
+
+  (with-delayed-execution
+    (message "Install string-inflection...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/string-inflection"))
+    (autoload-if-found '(string-inflection-all-cycle) "string-inflection" nil t))
+#+end_src
+*** sudo-edit
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'sudo-edit))
+
+  (with-delayed-execution
+    (message "Install sudo-edit...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/sudo-edit"))
+    (autoload-if-found '(sudo-edit-current-file) "sudo-edit" nil t))
+#+end_src
+*** uuid
+    #+begin_src emacs-lisp
+      (eval-when-compile
+        (el-get-bundle 'uuid
+                       :url "https://github.com/nicferrier/emacs-uuid.git"))
+
+      (with-delayed-execution
+        (message "Install uuid...")
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/uuid"))
+        (autoload-if-found '(uuid-string) "uuid" nil t)
+        (defun my/uuid ()
+          (interactive)
+          (insert (uuid-string)))
+        (defalias 'uuid #'my/uuid))
+    #+end_src
 *** woman
     #+begin_src emacs-lisp
       (with-delayed-execution
         (autoload-if-found '(woman woman-find-file) "woman" nil t))
     #+end_src
+** Window
+*** ace-window
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ace-window))
+
+  (with-delayed-execution
+    (message "Install ace-window...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ace-window"))
+    (autoload-if-found '(ace-window) "ace-window" nil t)
+    (global-set-key (kbd "C-x o") #'ace-window)
+    (with-eval-after-load 'ace-window
+      (setq aw-dispatch-always t)
+      (setq aw-scope 'frame)
+      (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+      (setq aw-minibuffer-flag t)))
+#+end_src
+*** writeroom-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'writeroom-mode))
+
+  (with-delayed-execution
+    (message "Install writeroom-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/writeroom-mode"))
+    (autoload-if-found '(writeroom-mode
+                         writeroom-decrease-width
+                         writeroom-increase-width
+                         writeroom-adjust-width
+                         writeroom-width)
+                       "writeroom-mode" nil t)
+
+    (with-eval-after-load 'writeroom-mode
+      (add-hook 'writeroom-mode-hook #'(lambda ()
+                                       (linum-mode -1)
+                                       (display-line-numbers-mode)))
+      (define-key writeroom-mode-map (kbd "C-M-<") #'writeroom-decrease-width)
+      (define-key writeroom-mode-map (kbd "C-M->") #'writeroom-increase-width)
+      (define-key writeroom-mode-map (kbd "C-M-=") #'writeroom-adjust-width)
+      (setq writeroom-width 200)
+      (setq writeroom-maximize-window nil)))
+#+end_src
+*** zoom-window
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'zoom-window))
+
+  (with-delayed-execution
+    (message "Install zoom-window...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/zoom-window"))
+    (autoload-if-found '(zoom-window-zoom) "zoom-window" nil t)
+    (global-set-key (kbd "C-c C-z") #'zoom-window-zoom))
+#+end_src
 * Language Specific
 ** Basic Lisp
 *** paredit
@@ -4647,6 +4673,16 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (with-eval-after-load 'ielm
           (add-hook 'ielm-mode-hook #'nameless-mode)))
     #+END_SRC
+*** elisp-refs
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'elisp-refs))
+
+  (with-delayed-execution
+    (message "Install elisp-refs...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/elisp-refs"))
+    (autoload-if-found '() "elisp-refs" nil t))
+#+end_src
 *** my/ielm-history
     #+BEGIN_SRC emacs-lisp
       (with-delayed-execution
@@ -5275,6 +5311,16 @@ docker-tramp
 
     (with-eval-after-load 'em-prompt
       (setq eshell-prompt-function #'my/eshell-prompt)))
+#+end_src
+** esh-help
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'esh-help))
+
+  (with-delayed-execution
+    (message "Install esh-help...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/esh-help"))
+    (autoload-if-found '() "esh-help" nil t))
 #+end_src
 ** eshell-multiple
 #+begin_src emacs-lisp
