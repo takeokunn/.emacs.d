@@ -904,7 +904,6 @@
   (with-delayed-execution
     (message "Install popup...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/popup")))
-
 #+end_src
 ** queue
 #+begin_src emacs-lisp
@@ -3511,12 +3510,14 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install ivy-prescient...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-prescient"))
     (autoload-if-found '(ivy-prescient-mode ivy-prescient-re-builder) "ivy-prescient" nil t)
-    (ivy-prescient-mode)
 
     (defun my/ivy-prescient-non-fuzzy (str)
       (let ((prescient-filter-method '(literal regexp)))
         (ivy-prescient-re-builder str)))
 
+    (with-eval-after-load 'ivy
+      (add-hook 'ivy-mode-hook #'ivy-prescient-mode))
+  
     (with-eval-after-load 'ivy-prescient
       (setq ivy-re-builders-alist
             '((counsel-ag . my/ivy-prescient-non-fuzzy)
@@ -3547,7 +3548,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install company-prescient...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/company-prescient"))
     (autoload-if-found '(company-prescient-mode) "company-prescient" nil t)
-    (company-prescient-mode))
+    (with-eval-after-load 'company
+      (add-hook 'company-mode-hook #'company-prescient-mode)))
 #+end_src
 ** Process
 *** proced
@@ -3573,7 +3575,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'proced
       (define-key proced-mode-map (kbd "/") #'proced-narrow)))
-
 #+end_src
 ** Project
 *** projectile
@@ -3614,7 +3615,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (add-to-list 'load-path (locate-user-emacs-file "el-get/counsel-projectile"))
 
         (autoload-if-found '(counsel-projectile-mode) "counsel-projectile" nil t)
-        (counsel-projectile-mode +1)
+
+        (with-eval-after-load 'counsel
+          (add-hook 'counsel-mode-hook #'counsel-projectile-mode))
 
         (with-eval-after-load 'counsel-projectile
           (setq counsel-projectile-sort-files t)
@@ -3659,8 +3662,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install migemo...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/migemo"))
 
-    ;; (autoload-if-found '(migemo-init) "migemo" nil t)
-    ;; (migemo-init)
+    (autoload-if-found '(migemo-init) "migemo" nil t)
+    (migemo-init)
 
     (with-eval-after-load 'migemo
       (setq migemo-command "cmigemo")
@@ -4042,6 +4045,23 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
           (set-face-attribute 'hl-line nil :inherit nil)
           (set-face-background 'hl-line "#444642")))
     #+END_SRC
+*** idle-highlight-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'idle-highlight-mode))
+
+  (with-delayed-execution
+    (message "Install idle-highlight-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/idle-highlight-mode"))
+
+    (autoload-if-found '(idle-highlight-mode) "idle-highlight-mode" nil t)
+
+    (with-eval-after-load 'idle-highlight-mode
+      (setq idle-highlight-idle-time 0.1))
+
+    (with-eval-after-load 'prog-mode
+      (add-hook 'prog-mode-hook #'idle-highlight-mode)))
+#+end_src
 *** neotree
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -4097,8 +4117,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (with-delayed-execution-priority-high
         (message "Install nyan-mode...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/nyan-mode"))
-        (when (autoload-if-found '(nyan-mode) "nyan-mode" nil t)
-          (nyan-mode))
+        (autoload-if-found '(nyan-mode) "nyan-mode" nil t)
+
+        (nyan-mode)
+
         (with-eval-after-load 'nyan-mode
           (setq nyan-cat-face-number 5)
           (setq nyan-animate-nyancat t)))
@@ -5134,9 +5156,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install docker-tramp...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/docker-tramp"))
     (autoload-if-found '() "docker-tramp" nil t))
-
 #+end_src
-docker-tramp
 ** Web
 *** emmet-mode
    #+BEGIN_SRC emacs-lisp
@@ -5320,7 +5340,8 @@ docker-tramp
   (with-delayed-execution
     (message "Install esh-help...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/esh-help"))
-    (autoload-if-found '() "esh-help" nil t))
+    (autoload-if-found '(setup-esh-help-eldoc) "esh-help" nil t)
+    (setup-esh-help-eldoc))
 #+end_src
 ** eshell-multiple
 #+begin_src emacs-lisp
