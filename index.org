@@ -4049,8 +4049,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install emojify...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/emojify"))
-    (autoload-if-found '(global-emojify-mode) "emojify" nil t)
-    (global-emojify-mode))
+    (autoload-if-found '(emojify-mode) "emojify" nil t))
 #+end_src
 *** hl-line
     #+BEGIN_SRC emacs-lisp
@@ -6168,6 +6167,14 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (defun my/insert-clipboard (arg)
     (interactive "sstring: ")
     (kill-new arg))
+#+end_src
+** my/actionlint
+#+begin_src emacs-lisp
+  (defun my/actionlint ()
+    (interactive)
+    (shell-command-to-string "actionlint"))
+
+  (defalias 'actionlint 'my/actionlint)
 #+end_src
 * Footer
 ** Magic File Name を有効にする
