@@ -3534,7 +3534,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (ivy-prescient-re-builder str)))
 
     (with-eval-after-load 'ivy
-      (add-hook 'ivy-mode-hook #'ivy-prescient-mode))
+      (add-hook 'ivy-mode-hook #'ivy-prescient-mode)
+
+      ;; keybind
+      (define-key ivy-mode-map (kbd "C-h") #'delete-backward-char)
+      (define-key ivy-mode-map (kbd "M-h") #'backward-kill-word))
 
     (with-eval-after-load 'ivy-prescient
       (setq ivy-re-builders-alist
@@ -3708,7 +3712,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (message "Install counsel...")
         (autoload-if-found '(counsel-mode counsel-compile) "counsel" nil t)
         (counsel-mode 1)
-        (global-set-key (kbd "C-x m") 'counsel-compile)
+        (global-set-key (kbd "C-x m") #'counsel-compile)
         (with-eval-after-load 'counsel
           (setq counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
     #+end_src
