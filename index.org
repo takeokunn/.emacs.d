@@ -3540,11 +3540,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (ivy-prescient-re-builder str)))
 
     (with-eval-after-load 'ivy
-      (add-hook 'ivy-mode-hook #'ivy-prescient-mode)
-
-      ;; keybind
-      (define-key ivy-mode-map (kbd "C-h") #'delete-backward-char)
-      (define-key ivy-mode-map (kbd "M-h") #'backward-kill-word))
+      (add-hook 'ivy-mode-hook #'ivy-prescient-mode))
 
     (with-eval-after-load 'ivy-prescient
       (setq ivy-re-builders-alist
@@ -3730,8 +3726,13 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (autoload-if-found '(ivy-avy) "ivy-avy" nil t)
         (add-hook 'minibuffer-setup-hook #'ivy-mode)
         (with-eval-after-load 'ivy
+          ;; config
+          (setq ivy-use-virtual-buffers t)
+
+          ;; keybind
           (define-key ivy-minibuffer-map (kbd "C-'") #'ivy-avy)
-          (setq ivy-use-virtual-buffers t)))
+          (define-key ivy-minibuffer-map (kbd "C-h") #'delete-backward-char)
+          (define-key ivy-minibuffer-map (kbd "M-h") #'backward-kill-word)))
     #+end_src
 *** ivy-rich
     #+BEGIN_SRC emacs-lisp
