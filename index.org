@@ -1518,6 +1518,17 @@
     (autoload-if-found '(hy-mode) "hy-mode" nil t)
     (add-to-list 'auto-mode-alist '("\\.hy$" . hy-mode)))
 #+end_src
+** ini-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'ini-mode))
+
+  (with-delayed-execution
+    (message "Install ini-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/ini-mode"))
+    (autoload-if-found '(ini-mode) "ini-mode" nil t)
+    (add-to-list 'auto-mode-alist '("\\.ini$" . ini-mode)))
+#+end_src
 ** java-mode
 #+begin_src emacs-lisp
   (with-delayed-execution
@@ -1964,6 +1975,31 @@
     (autoload-if-found '(syslog-mode) "syslog-mode" nil t)
     (add-to-list 'auto-mode-alist '("\\.log$" . syslog-mode)))
 #+end_src
+** systemd-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'systemd-mode))
+
+  (with-delayed-execution
+    (message "Install systemd-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/systemd-mode"))
+    (autoload-if-found '(systemd-mode) "systemd" nil t)
+    (add-to-list 'auto-mode-alist '("\\.nspawn\\'" . systemd-mode))
+    (add-to-list 'auto-mode-alist `(,(rx (+? (any "a-zA-Z0-9-_.@\\")) "."
+                                         (or "automount" "busname" "mount" "service" "slice"
+                                             "socket" "swap" "target" "timer" "link" "netdev" "network")
+                                         string-end)
+                                    . systemd-mode))
+    (add-to-list 'auto-mode-alist `(,(rx ".#"
+                                         (or (and (+? (any "a-zA-Z0-9-_.@\\")) "."
+                                                  (or "automount" "busname" "mount" "service" "slice"
+                                                      "socket" "swap" "target" "timer" "link" "netdev" "network"))
+                                             "override.conf")
+                                         (= 16 (char hex-digit)) string-end)
+                                    . systemd-mode))
+    (add-to-list 'auto-mode-alist `(,(rx "/systemd/" (+? anything) ".d/" (+? (not (any ?/))) ".conf" string-end)
+                                    . systemd-mode)))
+#+end_src
 ** terraform-mode
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile
@@ -2074,7 +2110,9 @@
        (add-to-list 'load-path (locate-user-emacs-file "el-get/vimrc-mode"))
        (autoload-if-found '(vimrc-mode) "vimrc-mode" nil t)
        (add-to-list 'auto-mode-alist '("vimrc" . vimrc-mode))
-       (add-to-list 'auto-mode-alist '("\\.vim\\(rc\\)?\\'" . vimrc-mode)))
+       (add-to-list 'auto-mode-alist '("\\.vim\\(rc\\)?\\'" . vimrc-mode))
+       (with-eval-after-load 'vimrc-mode
+         (add-hook 'vimrc-mode-hook #'lsp-deferred)))
    #+end_src
 ** wat-mode
    #+begin_src emacs-lisp
@@ -2648,6 +2686,111 @@
                   (webster . takeokunn/define-word--display-in-buffer)
                   (weblio . takeokunn/define-word--display-in-buffer)))))
     #+end_src
+** Dired
+*** basic
+#+begin_src emacs-lisp
+  ;; (with-eval-after-load 'dired
+  ;;   ;; config
+  ;;   (setq dired-auto-revert-buffer t)
+  ;;   (setq dired-dwim-target t)
+  ;;   (setq dired-hide-details-hide-symlink-targets nil)
+  ;;   (setq dired-listing-switches "-alh --group-directories-first")
+  ;;   (setq dired-ls-F-marks-symlinks nil)
+  ;;   (setq dired-recursive-copies 'always)
+  ;;
+  ;;   ;; keymap
+  ;;   (define-key 'dired-mode-map (kbd "h") #'dired-up-directory)
+  ;;   (define-key 'dired-mode-map (kbd "j") #'dired-next-line)
+  ;;   (define-key 'dired-mode-map (kbd "k") #'dired-previous-line))
+#+end_src
+*** dired-collapse
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'dired-collapse))
+
+  (with-delayed-execution
+    (message "Install dired-collapse...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/dired-collapse"))
+    (autoload-if-found '() "dired-collapse" nil t))
+#+end_src
+*** dired-filter
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'dired-filter))
+
+  (with-delayed-execution
+    (message "Install dired-filter...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/dired-filter"))
+    (autoload-if-found '(dired-filter-mode) "dired-filter" nil t)
+    (with-eval-after-load 'dired
+      (add-hook 'dired-mode #'dired-filter-mode)))
+#+end_src
+*** dired-git-info
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'dired-git-info))
+
+  (with-delayed-execution
+    (message "Install dired-git-info...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/dired-git-info"))
+    (autoload-if-found '(dired-git-info-mode) "dired-git-info" nil t)
+    (with-eval-after-load 'dired
+      (add-hook 'dired-mode-hook #'dired-git-info-mode)))
+#+end_src
+*** dired-narrow
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'dired-narrow))
+
+  (with-delayed-execution
+    (message "Install dired-narrow...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/dired-narrow"))
+    (autoload-if-found '(dired-narrow-mode) "dired-narrow" nil t)
+    (with-eval-after-load 'dired
+      (add-hook 'dired-mode-hook #'dired-narrow-mode)))
+#+end_src
+*** dired-open
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'dired-open))
+
+  (with-delayed-execution
+    (message "Install dired-open...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/dired-open"))
+    (autoload-if-found '() "dired-open" nil t))
+#+end_src
+*** dired-ranger
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'dired-ranger))
+
+  (with-delayed-execution
+    (message "Install dired-ranger...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/dired-ranger"))
+    (autoload-if-found '() "dired-ranger" nil t))
+#+end_src
+*** dired-quick-sort
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'dired-quick-sort))
+
+  (with-delayed-execution
+    (message "Install dired-quick-sort...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/dired-quick-sort"))
+    (autoload-if-found '(dired-quick-sort-setup) "dired-quick-sort" nil t)
+    (with-eval-after-load 'dired
+      (add-hook 'dired-mode-hook #'dired-quick-sort-setup)))
+#+end_src
+*** dired-subtree
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'dired-subtree))
+
+  (with-delayed-execution
+    (message "Install dired-subtree...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/dired-subtree"))
+    (autoload-if-found '(dired-subtree-apply-filter) "dired-subtree" nil t))
+#+end_src
 ** EWW
 *** basic
 #+begin_src emacs-lisp
@@ -4282,6 +4425,13 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq view-lock-start-time (* 30 60))))
 #+end_src
 ** Utility
+*** comint
+#+begin_src emacs-lisp
+  (with-eval-after-load 'comint
+    (setq comint-buffer-maximum-size 100000)
+    (setq comint-prompt-read-only t)
+    (setq comint-terminfo-terminal "eterm-256color"))
+#+end_src
 *** delsel
 #+begin_src emacs-lisp
   (with-delayed-execution
@@ -4750,6 +4900,20 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                 history))))))
     #+END_SRC
 ** Clojure
+*** anakondo
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'anakondo))
+
+  (with-delayed-execution
+    (message "Install anakondo...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/anakondo"))
+    (autoload-if-found '(anakondo-minor-mode) "anakondo" nil t)
+    (with-eval-after-load 'clojure-mode
+      (add-hook 'clojure-mode-hook #'anakondo-minor-mode)
+      (add-hook 'clojurescript-mode-hook #'anakondo-minor-mode)
+      (add-hook 'clojurec-mode-hook #'anakondo-minor-mode)))
+#+end_src
 *** cider
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
