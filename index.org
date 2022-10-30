@@ -4546,6 +4546,30 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
           (setq minimap-minimum-width 20)
           (setq minimap-major-modes '(prog-mode org-mode))))
     #+end_src
+*** puni
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'puni))
+
+  (with-delayed-execution
+    (message "Install puni...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/puni"))
+    (autoload-if-found '(puni-mode) "puni" nil t)
+
+    ;; (with-eval-after-load 'php-mode
+    ;;   (add-hook 'php-mode-hook #'puni-mode))
+    )
+#+end_src
+*** quickrun
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'quickrun))
+
+  (with-delayed-execution
+    (message "Install quickrun...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/quickrun"))
+    (autoload-if-found '(quickrun) "quickrun" nil t))
+#+end_src
 *** smartparens
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -4996,7 +5020,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-get/inf-clojure"))
     (autoload-if-found '(inf-clojure) "inf-clojure" nil t))
 #+end_src
-** Cpp
+** C/C++
 *** clang-format
     #+begin_src emacs-lisp
       (eval-when-compile
