@@ -275,12 +275,6 @@
      (with-delayed-execution-priority-high
        (fset 'yes-or-no-p 'y-or-n-p))
    #+end_src
-** dired-use-ls-dired
-   #+begin_src emacs-lisp
-     (with-eval-after-load 'dired-load-hook
-       (when-darwin
-        (setq dired-use-ls-dired nil)))
-   #+end_src
 ** global keybind
    #+BEGIN_SRC emacs-lisp
      (when my/enable-c-h-backspace
@@ -2058,6 +2052,7 @@
          (add-hook 'typescript-mode-local-vars-hook #'lsp)
 
          ;; for tsx
+         (add-to-list 'auto-mode-alist '("\\.jsx$" . typescript-tsx-mode))
          (add-to-list 'auto-mode-alist '("\\.tsx$" . typescript-tsx-mode))
          (add-hook 'typescript-tsx-mode-hook #'lsp-deferred)))
    #+END_SRC
@@ -2141,6 +2136,7 @@
        (add-to-list 'auto-mode-alist '("\\.gsp?\\'" . web-mode))
        (add-to-list 'auto-mode-alist '("\\.svg\\'" . web-mode))
        (add-to-list 'auto-mode-alist '("\\.tpl\\'" . web-mode))
+       (add-to-list 'auto-mode-alist '("\\.liquid\\'" . web-mode))
 
        (with-eval-after-load 'web-mode
          (setq web-mode-comment-style 2)
@@ -2689,19 +2685,13 @@
 ** Dired
 *** basic
 #+begin_src emacs-lisp
-  ;; (with-eval-after-load 'dired
-  ;;   ;; config
-  ;;   (setq dired-auto-revert-buffer t)
-  ;;   (setq dired-dwim-target t)
-  ;;   (setq dired-hide-details-hide-symlink-targets nil)
-  ;;   (setq dired-listing-switches "-alh --group-directories-first")
-  ;;   (setq dired-ls-F-marks-symlinks nil)
-  ;;   (setq dired-recursive-copies 'always)
-  ;;
-  ;;   ;; keymap
-  ;;   (define-key 'dired-mode-map (kbd "h") #'dired-up-directory)
-  ;;   (define-key 'dired-mode-map (kbd "j") #'dired-next-line)
-  ;;   (define-key 'dired-mode-map (kbd "k") #'dired-previous-line))
+  (with-eval-after-load 'dired
+    ;; config
+    (setq dired-auto-revert-buffer nil)
+    (setq dired-dwim-target t)
+    (setq dired-hide-details-hide-symlink-targets nil)
+    (setq dired-listing-switches "-alh")
+    (setq dired-recursive-copies 'always))
 #+end_src
 *** dired-collapse
 #+begin_src emacs-lisp
@@ -2711,7 +2701,9 @@
   (with-delayed-execution
     (message "Install dired-collapse...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/dired-collapse"))
-    (autoload-if-found '() "dired-collapse" nil t))
+    (autoload-if-found '(dired-collapse-mode) "dired-collapse" nil t)
+    (with-eval-after-load 'dired
+      (add-hook 'dired-mode #'dired-collapse-mode)))
 #+end_src
 *** dired-filter
 #+begin_src emacs-lisp
@@ -2724,6 +2716,15 @@
     (autoload-if-found '(dired-filter-mode) "dired-filter" nil t)
     (with-eval-after-load 'dired
       (add-hook 'dired-mode #'dired-filter-mode)))
+#+end_src
+*** dired-hacks-utils
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'dired-hacks-utils))
+
+  (with-delayed-execution
+    (message "Install dired-hacks-utils...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/dired-hacks-utils")))
 #+end_src
 *** dired-git-info
 #+begin_src emacs-lisp
@@ -2757,7 +2758,9 @@
   (with-delayed-execution
     (message "Install dired-open...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/dired-open"))
-    (autoload-if-found '() "dired-open" nil t))
+    (autoload-if-found '(dired-open-file) "dired-open" nil t)
+    (with-eval-after-load 'dired
+      (define-key dired-mode-map [remap dired-find-file] #'dired-open-file)))
 #+end_src
 *** dired-ranger
 #+begin_src emacs-lisp
