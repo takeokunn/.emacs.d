@@ -211,17 +211,12 @@
 ** 行番号を表示する
    #+BEGIN_SRC emacs-lisp
      (with-delayed-execution
-       (message "Install linum...")
+       (message "Install display-line-numbers...")
+       (autoload-if-found '(global-display-line-numbers-mode) "display-line-numbers" nil t)
+       (global-display-line-numbers-mode)
 
-       (autoload-if-found '(global-linum-mode linum-mode) "linum" nil t)
-
-       (global-linum-mode t)
-
-       (with-eval-after-load 'linum
-         (setq linum-delay t))
-
-       (defadvice linum-schedule (around my-linum-schedule () activate)
-         (run-with-idle-timer 1 nil #'linum-update-current)))
+       (with-eval-after-load 'display-line-numbers
+         (setq display-line-numbers-grow-only t)))
    #+END_SRC
 ** C-kで行削除
    #+BEGIN_SRC emacs-lisp
@@ -2282,7 +2277,16 @@
       (with-delayed-execution
         (message "Install flycheck...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/flycheck"))
-        (autoload-if-found '(flycheck-mode flycheck-define-checker) "flycheck" nil t))
+        (autoload-if-found '(flycheck-mode
+                             flycheck-define-checker
+                             flycheck-next-error
+                             flycheck-previous-error
+                             flycheck-list-errors) "flycheck" nil t)
+
+        ;; keybind
+        (global-set-key (kbd "C-c n") #'flycheck-next-error)
+        (global-set-key (kbd "C-c n") #'flycheck-previous-error)
+        (global-set-key (kbd "C-c n") #'flycheck-list-errors))
     #+end_src
 *** flycheck-textlint
 #+begin_src emacs-lisp
@@ -2526,9 +2530,13 @@
       (with-delayed-execution
         (message "Install company-terraform...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/company-terraform"))
-        (autoload-if-found '(company-terraform) "company-terraform" nil t)
-        (with-eval-after-load 'company
-          (push 'company-terraform company-backends)))
+        (autoload-if-found '(my/push-company-terraform) "company-terraform" nil t)
+
+        (defun my/push-company-terraform ()
+          (push 'company-terraform company-backends))
+
+        (with-eval-after-load 'terraform-mode
+          (add-hook 'terraform-mode-hook #'my/push-company-terraform)))
     #+end_src
 *** company-nginx
     #+begin_src emacs-lisp
@@ -2691,7 +2699,11 @@
     (setq dired-dwim-target t)
     (setq dired-hide-details-hide-symlink-targets nil)
     (setq dired-listing-switches "-alh")
-    (setq dired-recursive-copies 'always))
+    (setq dired-recursive-copies 'always)
+    (setq dired-use-ls-dired nil)
+
+    ;; hook
+    (add-hook 'dired-mode-hook #'(lambda () (display-line-numbers-mode -1))))
 #+end_src
 *** dired-collapse
 #+begin_src emacs-lisp
@@ -2725,18 +2737,6 @@
   (with-delayed-execution
     (message "Install dired-hacks-utils...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/dired-hacks-utils")))
-#+end_src
-*** dired-git-info
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'dired-git-info))
-
-  (with-delayed-execution
-    (message "Install dired-git-info...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/dired-git-info"))
-    (autoload-if-found '(dired-git-info-mode) "dired-git-info" nil t)
-    (with-eval-after-load 'dired
-      (add-hook 'dired-mode-hook #'dired-git-info-mode)))
 #+end_src
 *** dired-narrow
 #+begin_src emacs-lisp
@@ -4277,11 +4277,14 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (global-set-key (kbd "C-q") #'my/neotree-toggle)
 
         (with-eval-after-load 'neotree
+          ;; config
           (setq neo-autorefresh nil)
           (setq neo-theme 'nerd2)
           (setq neo-show-hidden-files t)
-          (setq neo-window-fixed-size nil)))
+          (setq neo-window-fixed-size nil)
 
+          ;; hook
+          (add-hook 'neotree-mode-hook #'(lambda () (display-line-numbers-mode -1)))))
     #+END_SRC
 *** nyan-mode
     #+BEGIN_SRC emacs-lisp
@@ -4667,9 +4670,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                        "writeroom-mode" nil t)
 
     (with-eval-after-load 'writeroom-mode
-      (add-hook 'writeroom-mode-hook #'(lambda ()
-                                       (linum-mode -1)
-                                       (display-line-numbers-mode)))
       (define-key writeroom-mode-map (kbd "C-M-<") #'writeroom-decrease-width)
       (define-key writeroom-mode-map (kbd "C-M->") #'writeroom-increase-width)
       (define-key writeroom-mode-map (kbd "C-M-=") #'writeroom-adjust-width)
@@ -5465,7 +5465,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
        ;; configurations
        (with-eval-after-load 'esh-mode
-         (add-hook 'eshell-mode-hook #'(lambda () (linum-mode -1)))
+         (add-hook 'eshell-mode-hook #'(lambda () (display-line-numbers-mode -1)))
          (define-key eshell-mode-map (kbd "M-p") #'eshell-previous-matching-input-from-input))
 
        (with-eval-after-load 'em-cmpl
