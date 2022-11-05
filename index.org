@@ -1734,9 +1734,14 @@
        (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 
        (with-eval-after-load 'php-mode
+         ;; hook
          (add-hook 'php-mode-hook #'lsp-deferred)
+
+         ;; keybind
          (define-key php-mode-map (kbd "C-c C--") #'php-current-class)
          (define-key php-mode-map (kbd "C-c C-=") #'php-current-namespace)
+
+         ;; config
          (setq php-mode-coding-style 'psr2)))
    #+END_SRC
 ** phpt-mode
@@ -1940,6 +1945,12 @@
    #+begin_src emacs-lisp
      (with-eval-after-load 'sql
        (load-library "sql-indent")
+
+       ;; config
+       (setq sql-user "root")
+       (setq sql-password "P@ssw0rd")
+       (setq sql-server "127.0.0.1")
+       (setq sql-port 13306)
        (setq sql-mysql-login-params '(server port user password database)))
    #+end_src
 ** swift-mode
@@ -2277,16 +2288,7 @@
       (with-delayed-execution
         (message "Install flycheck...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/flycheck"))
-        (autoload-if-found '(flycheck-mode
-                             flycheck-define-checker
-                             flycheck-next-error
-                             flycheck-previous-error
-                             flycheck-list-errors) "flycheck" nil t)
-
-        ;; keybind
-        (global-set-key (kbd "C-c n") #'flycheck-next-error)
-        (global-set-key (kbd "C-c n") #'flycheck-previous-error)
-        (global-set-key (kbd "C-c n") #'flycheck-list-errors))
+        (autoload-if-found '(flycheck-mode flycheck-define-checker) "flycheck" nil t))
     #+end_src
 *** flycheck-textlint
 #+begin_src emacs-lisp
@@ -2301,7 +2303,8 @@
                                                 (zero-or-more "\n" (any " ") (one-or-more not-newline)))
                                        line-end))
                              :modes (org-mode))
-    (add-to-list 'flycheck-checkers 'textlint))
+    (with-eval-after-load 'flycheck
+      (add-to-list 'flycheck-checkers 'textlint)))
 #+end_src
 ** Client
 *** md4rd
@@ -2913,7 +2916,8 @@
 
       (with-delayed-execution
         (message "Install font-lock-studio...")
-        (add-to-list 'load-path (locate-user-emacs-file "el-get/font-lock-studio")))
+        (add-to-list 'load-path (locate-user-emacs-file "el-get/font-lock-studio"))
+        (autoload-if-found '(font-lock-studio) "font-lock-studio" nil t))
     #+END_SRC
 ** GC
 *** gcmh
@@ -3585,6 +3589,24 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'haskell-mode-hook #'lsp)
       (add-hook 'haskell-literate-mode-hook #'lsp)))
 #+end_src
+*** lsp-bridge
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle manateelazycat/lsp-bridge))
+
+  (with-delayed-execution
+    (message "Install lsp-bridge...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/lsp-bridge"))
+    (autoload-if-found '(lsp-bridge-mode) "lsp-bridge" nil t)
+
+    (with-eval-after-load 'lsp-bridge
+      ;; config
+      (setq lsp-bridge-php-lsp-server "phpactor")
+
+      ;; keybind
+      (define-key lsp-bridge-mode-map (kbd "M-.") #'lsp-bridge-find-impl)
+      (define-key lsp-bridge-mode-map (kbd "C-c C-r") #'lsp-bridge-find-references)))
+#+end_src
 ** Mail
 *** mu4e
 #+begin_src emacs-lisp
@@ -3625,7 +3647,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 *** fancy-narrow
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-get-bundle 'fancy-narrow))
+    (el-get-bundle takeokunn/fancy-narrow))
 
   (with-delayed-execution
     (message "Install fancy-narrow...")
@@ -3635,12 +3657,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'org
       (add-hook 'org-mode-hook #'fancy-narrow-mode))
 
-    ;; (with-eval-after-load 'elisp-mode
-    ;;   (add-hook 'emacs-lisp-mode-hook #'fancy-narrow-mode))
+    (with-eval-after-load 'elisp-mode
+      (add-hook 'emacs-lisp-mode-hook #'fancy-narrow-mode))
 
-    ;; (with-eval-after-load 'lisp-mode
-    ;;   (add-hook 'lisp-mode-hook #'fancy-narrow-mode))
-    )
+    (with-eval-after-load 'lisp-mode
+      (add-hook 'lisp-mode-hook #'fancy-narrow-mode)))
 #+end_src
 *** origami
     #+begin_src emacs-lisp
@@ -3910,6 +3931,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     )
 #+end_src
 ** Shell
+*** comint-mode
+#+begin_src emacs-lisp
+  (with-eval-after-load 'comint-mode
+    (define-key comint-mode-map (kbd "C-h") #'delete-backward-char))
+#+end_src
 *** exec-path-from-shell
     #+BEGIN_SRC emacs-lisp
       (eval-when-compile
@@ -4071,7 +4097,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       ;; close neotree when tab bar action
       (advice-add 'tab-new :before #'(lambda (&rest _) (neotree-hide)))
       (advice-add 'tab-next :before #'(lambda (&rest _) (neotree-hide)))
-      (advice-add 'tab-bar-switch-to-tab :before #'(lambda (&rest _) (neotree-hide)))))
+      (advice-add 'tab-bar-switch-to-tab :before #'(lambda (&rest _) (neotree-hide)))
+
+      ;; hook
+      (add-hook 'tab-bar-mode-hook #'(lambda () (display-line-numbers-mode -1)))))
 #+end_src
 ** Template
 *** auto-insert
@@ -4562,9 +4591,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-get/puni"))
     (autoload-if-found '(puni-mode) "puni" nil t)
 
-    ;; (with-eval-after-load 'php-mode
-    ;;   (add-hook 'php-mode-hook #'puni-mode))
-    )
+    (with-eval-after-load 'fish-mode
+      (add-hook 'fish-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'php-mode
+      (add-hook 'php-mode-hook #'puni-mode)))
 #+end_src
 *** quickrun
 #+begin_src emacs-lisp
@@ -5196,11 +5227,19 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (add-to-list 'load-path (locate-user-emacs-file "el-get/sql-indent"))
         (autoload-if-found '(sqlind-setup sqlind-minor-mode) "sql-indent" nil t)
         (with-eval-after-load 'sql-mode
-          (add-hook 'sql-mode-hook (lambda ()
-                                         (sqlind-setup)
-                                         (sqlind-minor-mode)))))
+          (add-hook 'sql-mode-hook #'sqlind-setup)
+          (add-hook 'sql-mode-hook #'sqlind-minor-mode)))
     #+END_SRC
 ** PHP
+*** composer
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'composer))
+
+  (with-delayed-execution
+    (message "Install composer...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/composer")))
+#+end_src
 *** php-runtime
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -5275,6 +5314,16 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          phpunit-current-class
                          phpunit-current-project
                          phpunit-group) "phpunit" nil t))
+#+end_src
+*** phpactor
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'phpactor))
+
+  (with-delayed-execution
+    (message "Install phpactor...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/phpactor"))
+    (autoload-if-found '(phpactor-install-or-update) "phpactor" nil t))
 #+end_src
 ** Markdown
 *** poly-markdown
@@ -5465,7 +5514,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
        ;; configurations
        (with-eval-after-load 'esh-mode
+         ;; hook
          (add-hook 'eshell-mode-hook #'(lambda () (display-line-numbers-mode -1)))
+
+         ;; keymap
+         (define-key eshell-mode-map (kbd "C-h") #'delete-backward-char)
          (define-key eshell-mode-map (kbd "M-p") #'eshell-previous-matching-input-from-input))
 
        (with-eval-after-load 'em-cmpl
@@ -5950,7 +6003,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                                       (python . t)
                                       (ruby . t)
                                       (scheme . t)
-                                      (shell . t))))
+                                      (shell . t)
+                                      (sql . t))))
    #+end_src
 *** ob-async
 #+begin_src emacs-lisp
