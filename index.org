@@ -131,7 +131,7 @@
                               (cancel-timer my/delayed-priority-high-configuration-timer))))))
                  (setq my/delayed-priority-low-configuration-timer
                        (run-with-timer
-                        0.3 0.01
+                        0.3 0.001
                         (lambda ()
                           (if my/delayed-priority-low-configurations
                               (let ((inhibit-message t))
@@ -4600,20 +4600,41 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-get/puni"))
     (autoload-if-found '(puni-mode) "puni" nil t)
 
+    (with-eval-after-load 'c-mode
+      (add-hook 'c-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'c++-mode
+      (add-hook 'c++-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'dart-mode
+      (add-hook 'dart-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'docker-compose-mode
+      (add-hook 'docker-compose-mode-hook #'puni-mode))
+
     (with-eval-after-load 'fish-mode
       (add-hook 'fish-mode-hook #'puni-mode))
 
-    (with-eval-after-load 'php-mode
-      (add-hook 'php-mode-hook #'puni-mode))
+    (with-eval-after-load 'go-mode
+      (add-hook 'go-mode-hook #'puni-mode))
 
-    (with-eval-after-load 'yaml-mode
-      (add-hook 'yaml-mode-hook #'puni-mode))
+    (with-eval-after-load 'java-mode
+      (add-hook 'java-mode-hook #'puni-mode))
 
     (with-eval-after-load 'json-mode
       (add-hook 'json-mode-hook #'puni-mode))
 
     (with-eval-after-load 'js2-mode
       (add-hook 'js2-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'kotlin-mode
+      (add-hook 'kotlin-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'php-mode
+      (add-hook 'php-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'python-mode
+      (add-hook 'python-mode-hook #'puni-mode))
 
     (with-eval-after-load 'typescript-mode
       (add-hook 'typescript-mode-hook #'puni-mode))
@@ -4624,23 +4645,20 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'ruby-mode
       (add-hook 'ruby-mode-hook #'puni-mode))
 
-    (with-eval-after-load 'docker-compose-mode
-      (add-hook 'docker-compose-mode-hook #'puni-mode))
+    (with-eval-after-load 'rust-mode
+      (add-hook 'rust-mode-hook #'puni-mode))
 
-    (with-eval-after-load 'go-mode
-      (add-hook 'go-mode-hook #'puni-mode))
+    (with-eval-after-load 'web-mode
+      (add-hook 'web-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'web-php-blade-mode
+      (add-hook 'web-php-blade-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'yaml-mode
+      (add-hook 'yaml-mode-hook #'puni-mode))
 
     (with-eval-after-load 'zig-mode
-      (add-hook 'zig-mode-hook #'puni-mode))
-
-    (with-eval-after-load 'c-mode
-      (add-hook 'c-mode-hook #'puni-mode))
-
-    (with-eval-after-load 'c++-mode
-      (add-hook 'c++-mode-hook #'puni-mode))
-
-    (with-eval-after-load 'dart-mode
-      (add-hook 'dart-mode-hook #'puni-mode)))
+      (add-hook 'zig-mode-hook #'puni-mode)))
 #+end_src
 *** quickrun
 #+begin_src emacs-lisp
@@ -4775,8 +4793,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (add-to-list 'load-path (locate-user-emacs-file "el-get/paredit"))
         (autoload-if-found '(enable-paredit-mode paredit-forward-slurp-sexp paredit-splice-sexp) "paredit" nil t)
 
-        (global-set-key (kbd "C-c f") #'paredit-forward-slurp-sexp)
-        (global-set-key (kbd "M-s") #'paredit-splice-sexp)
+        ;; (global-set-key (kbd "C-c f") #'paredit-forward-slurp-sexp)
+        ;; (global-set-key (kbd "M-s") #'paredit-splice-sexp)
 
         (with-eval-after-load 'lisp-mode
           (add-hook 'lisp-mode-hook #'enable-paredit-mode)
@@ -5934,7 +5952,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
      (eval-when-compile
        (el-get-bundle 'org-superstar))
 
-     (with-delayed-execution
+     (with-delayed-execution-priority-high
        (message "Install org-superstar...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/org-superstar"))
        (autoload-if-found '(org-superstar-mode) "org-superstar")
