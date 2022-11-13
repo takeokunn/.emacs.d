@@ -122,7 +122,7 @@
                (lambda ()
                  (setq my/delayed-priority-high-configuration-timer
                        (run-with-timer
-                        0.1 0.0001
+                        0.1 0.001
                         (lambda ()
                           (if my/delayed-priority-high-configurations
                               (let ((inhibit-message t))
@@ -131,7 +131,7 @@
                               (cancel-timer my/delayed-priority-high-configuration-timer))))))
                  (setq my/delayed-priority-low-configuration-timer
                        (run-with-timer
-                        0.2 0.001
+                        0.3 0.01
                         (lambda ()
                           (if my/delayed-priority-low-configurations
                               (let ((inhibit-message t))
@@ -267,7 +267,7 @@
    #+end_src
 ** yes/no to y/n
    #+begin_src emacs-lisp
-     (with-delayed-execution-priority-high
+     (with-delayed-execution
        (fset 'yes-or-no-p 'y-or-n-p))
    #+end_src
 ** global keybind
@@ -326,7 +326,7 @@
 #+end_src
 ** [mac] clipboardに入るようにする
    #+begin_src emacs-lisp
-     (with-delayed-execution-priority-high
+     (with-delayed-execution
        (defun my/copy-from-osx ()
          (shell-command-to-string "pbpaste"))
 
@@ -343,7 +343,7 @@
 ** pluginをnative compする
 #+begin_src emacs-lisp
   (with-eval-after-load 'comp
-    (setq native-comp-async-jobs-number 4)
+    (setq native-comp-async-jobs-number 8)
     (setq native-comp-speed 3)
     (setq native-comp-always-compile t)
     (defun my/native-comp-packages ()
@@ -369,11 +369,11 @@
 #+end_src
 ** killできないようにする
    #+begin_src emacs-lisp
-     (eval-and-compile
-       (with-current-buffer "*scratch*"
-         (emacs-lock-mode 'kill))
-       (with-current-buffer "*Messages*"
-         (emacs-lock-mode 'kill)))
+     (with-current-buffer "*scratch*"
+       (emacs-lock-mode 'kill))
+
+     (with-current-buffer "*Messages*"
+       (emacs-lock-mode 'kill))
    #+end_src
 ** 日時表示
 #+begin_src emacs-lisp
@@ -2951,9 +2951,14 @@
                                     (setq my/gcmh-status nil)))))
 
     (with-eval-after-load 'gcmh
+      ;; config
       (setq gcmh-verbose t)
       (setq gcmh-idle-delay 'auto)
-      (setq gcmh-auto-idle-delay-factor 10)))
+      (setq gcmh-auto-idle-delay-factor 10))
+
+    (with-eval-after-load 'dap-mode
+      ;; hook
+      (add-hook 'dap-mode-hook #'(lambda () (gcmh-mode -1)))))
 #+end_src
 ** Git
 *** magit
@@ -3465,7 +3470,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
         (add-to-list 'load-path (locate-user-emacs-file "el-get/dap-mode"))
 
-        (autoload-if-found '(dap-mode dap-breakpoint-toggle) "dap-mode" nil t)
+        (autoload-if-found '(dap-debug) "dap-mode" nil t)
+        (autoload-if-found '(dap-hydra) "dap-hydra" nil t)
         (autoload-if-found '(dap-ui-mode dap-ui-controls-mode) "dap-ui" nil t)
         (autoload-if-found '(dap-tooltip-mode) "dap-mouse" nil t)
         (autoload-if-found '(dap-php-setup) "dap-php" nil t)
@@ -3473,28 +3479,31 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (autoload-if-found '(dap-go-setup) "dap-go" nil t)
         (autoload-if-found '(dap-ruby-setup) "dap-ruby" nil t)
 
-        (with-eval-after-load 'lsp-mode
-          (add-hook 'lsp-mode-hook #'dap-mode))
-
         (with-eval-after-load 'dap-mode
+          ;; keybind
           (define-key dap-mode-map (kbd "C-c d") #'dap-breakpoint-toggle)
+
+          ;; hook
           (add-hook 'dap-mode-hook #'dap-ui-mode)
           (add-hook 'dap-mode-hook #'dap-ui-controls-mode)
           (add-hook 'dap-mode-hook #'tooltip-mode)
-          (add-hook 'dap-mode-hook #'dap-tooltip-mode))
+          (add-hook 'dap-mode-hook #'dap-tooltip-mode)
+          (add-hook 'dap-stopped-hook #'(lambda (arg) (call-interactively #'dap-hydra))))
 
         (with-eval-after-load 'php-mode
           (add-hook 'php-mode-hook #'dap-php-setup))
 
         (with-eval-after-load 'dap-php
+          ;; config
+          (setq dap-php-debug-path `,(expand-file-name "xdebug/vscode-php-debug" dap-utils-extension-path))
+
+          ;; register
           (dap-register-debug-template "Laravel Run Configuration"
                                        (list :type "php"
                                              :request "launch"
                                              :mode "remote"
                                              :host "localhost"
-                                             :port "9003"))
-          (setq dap-php-debug-path "~/.ghq/github.com/xdebug/vscode-php-debug")
-          (setq dap-php-debug-program `("node" ,(f-join dap-php-debug-path "out/phpDebug.js"))))
+                                             :port 9003)))
 
         (with-eval-after-load 'js2-mode
           (add-hook 'js2-mode-hook #'dap-node-setup))
@@ -3684,7 +3693,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (eval-when-compile
     (el-get-bundle 'prescient))
 
-  (with-delayed-execution-priority-high
+  (with-delayed-execution
     (message "Install prescient...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/prescient"))
     (autoload-if-found '(prescient-persist-mode) "prescient" nil t)
@@ -3697,7 +3706,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (eval-when-compile
     (el-get-bundle 'ivy-prescient))
 
-  (with-delayed-execution-priority-high
+  (with-delayed-execution
     (message "Install ivy-prescient...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-prescient"))
     (autoload-if-found '(ivy-prescient-mode ivy-prescient-re-builder) "ivy-prescient" nil t)
@@ -3887,7 +3896,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     #+end_src
 *** ivy
     #+begin_src emacs-lisp
-      (with-delayed-execution-priority-high
+      (with-delayed-execution
         (message "Install ivy...")
         (autoload-if-found '(ivy-mode ivy-read ivy-completing-read) "ivy" nil t)
         (autoload-if-found '(ivy-avy) "ivy-avy" nil t)
@@ -3906,7 +3915,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (eval-when-compile
         (el-get-bundle 'ivy-rich))
 
-      (with-delayed-execution-priority-high
+      (with-delayed-execution
         (message "Install ivy-rich...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/ivy-rich"))
         (autoload-if-found '(ivy-rich-mode) "ivy-rich" nil t)
@@ -4055,7 +4064,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 ** Tab
 *** tab-bar
 #+begin_src emacs-lisp
-  (with-delayed-execution-priority-high
+  (with-delayed-execution
     (message "Install tab-bar...")
     (autoload-if-found '(tab-bar-mode tab-bar-history-mode) "tab-bar" nil t)
 
@@ -4128,7 +4137,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (eval-when-compile
         (el-get-bundle 'all-the-icons-dired))
 
-      (with-delayed-execution-priority-high
+      (with-delayed-execution
         (message "Install all-the-icons-dired...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons-dired"))
         (autoload-if-found '(all-the-icons-dired-mode) "all-the-icons-dired")
@@ -4140,7 +4149,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (eval-when-compile
         (el-get-bundle 'all-the-icons-ivy-rich))
 
-      (with-delayed-execution-priority-high
+      (with-delayed-execution
         (message "Install all-the-icons-ivy-rich...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/all-the-icons-ivy-rich"))
         (autoload-if-found '(all-the-icons-ivy-rich-mode) "all-the-icons-ivy-rich" nil t)
@@ -4157,7 +4166,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (eval-when-compile
         (el-get-bundle 'dashboard))
 
-      (with-delayed-execution-priority-high
+      (with-delayed-execution
         (message "Install dashboard...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/dashboard"))
         (autoload-if-found '(dashboard-refresh-buffer) "dashboard" nil t)
@@ -4270,7 +4279,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (eval-when-compile
         (el-get-bundle 'neotree))
 
-      (with-delayed-execution-priority-high
+      (with-delayed-execution
         (message "Install neotree...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/neotree"))
 
@@ -4601,7 +4610,37 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'yaml-mode-hook #'puni-mode))
 
     (with-eval-after-load 'json-mode
-      (add-hook 'json-mode-hook #'puni-mode)))
+      (add-hook 'json-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'js2-mode
+      (add-hook 'js2-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'typescript-mode
+      (add-hook 'typescript-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'vue-mode
+      (add-hook 'typescript-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'ruby-mode
+      (add-hook 'ruby-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'docker-compose-mode
+      (add-hook 'docker-compose-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'go-mode
+      (add-hook 'go-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'zig-mode
+      (add-hook 'zig-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'c-mode
+      (add-hook 'c-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'c++-mode
+      (add-hook 'c++-mode-hook #'puni-mode))
+
+    (with-eval-after-load 'dart-mode
+      (add-hook 'dart-mode-hook #'puni-mode)))
 #+end_src
 *** quickrun
 #+begin_src emacs-lisp
@@ -4731,7 +4770,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (eval-when-compile
         (el-get-bundle 'paredit))
 
-      (with-delayed-execution-priority-high
+      (with-delayed-execution
         (message "Install paredit...")
         (add-to-list 'load-path (locate-user-emacs-file "el-get/paredit"))
         (autoload-if-found '(enable-paredit-mode paredit-forward-slurp-sexp paredit-splice-sexp) "paredit" nil t)
@@ -5895,7 +5934,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
      (eval-when-compile
        (el-get-bundle 'org-superstar))
 
-     (with-delayed-execution-priority-high
+     (with-delayed-execution
        (message "Install org-superstar...")
        (add-to-list 'load-path (locate-user-emacs-file "el-get/org-superstar"))
        (autoload-if-found '(org-superstar-mode) "org-superstar")
