@@ -3644,21 +3644,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(clm/toggle-command-log-buffer) "command-log-mode" nil t)
     (defalias 'command-log #'clm/toggle-command-log-buffer))
 #+end_src
-*** jq-mode
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'jq-mode))
-
-  (with-delayed-execution
-    (message "Install jq-mode...")
-    (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/jq-mode")))
-    (when (autoload-if-found '(jq-interactively) "jq-mode" nil t)
-      (with-eval-after-load 'json-mode
-        (define-key json-mode-map (kbd "C-c C-j") #'jq-interactively)))
-    (with-eval-after-load 'ob-babel
-      (org-babel-do-load-languages 'org-babel-load-languages
-                                   '((jq . t)))))
-#+end_src
 ** Narrowing
 *** fancy-narrow
 #+begin_src emacs-lisp
@@ -5509,6 +5494,34 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
          (setq emmet-self-closing-tag-style "")
          (setq emmet-indent-after-insert nil)))
    #+END_SRC
+** JSON
+*** jq-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'jq-mode))
+
+  (with-delayed-execution
+    (message "Install jq-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/jq-mode")))
+    (autoload-if-found '(jq-interactively) "jq-mode" nil t)
+
+    (with-eval-after-load 'json-mode
+      (define-key json-mode-map (kbd "C-c C-j") #'jq-interactively))
+
+    (with-eval-after-load 'ob-babel
+      (org-babel-do-load-languages 'org-babel-load-languages
+                                   '((jq . t)))))
+#+end_src
+*** json-reformat
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'json-reformat))
+
+  (with-delayed-execution
+    (message "Install json-reformat...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/json-reformat"))
+    (autoload-if-found '(json-reformat-region) "json-reformat" nil t))
+#+end_src
 * Elfeed
 ** elfeed
    #+begin_src emacs-lisp
