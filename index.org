@@ -3972,6 +3972,18 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (autoload-if-found '(yas-global-mode) "yasnippet" nil t)
         (yas-global-mode 1))
     #+end_src
+*** yasnippet-org
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle takeokunn/yasnippet-org))
+
+  (with-delayed-execution
+    (message "Install yasnippet-org...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/yasnippet-org"))
+    (autoload-if-found '(yasnippet-org) "yasnippet-org" nil t)
+    (with-eval-after-load 'yasnippet-org
+      (setq yasnippet-org-verbose t)))
+#+end_src
 *** ivy-yasnippet
     #+begin_src emacs-lisp
       (eval-when-compile
