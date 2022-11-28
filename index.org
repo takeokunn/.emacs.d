@@ -3653,6 +3653,16 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e"))
     (autoload-if-found '(mu4e) "mu4e" nil t))
 #+end_src
+*** mu4e-dashboard
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle rougier/mu4e-dashboard))
+
+  (with-delayed-execution
+    (message "Install mu4e-dashboard...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/mu4e-dashboard"))
+    (autoload-if-found '() "mu4e-dashboard" nil t))
+#+end_src
 ** Minor Modes
 *** command-log-mode
 #+begin_src emacs-lisp
@@ -4536,7 +4546,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     ;; keybind
     (global-set-key (kbd "C-c o") #'crux-open-with)
     (global-set-key (kbd "C-S-o") #'crux-smart-open-line-above)
-    (global-set-key (kbd "C-c n") #'crux-cleanup-buffer-or-region)
+    ;; (global-set-key (kbd "C-c n") #'crux-cleanup-buffer-or-region)
     (global-set-key (kbd "C-c u") #'crux-view-url)
     (global-set-key (kbd "C-x 4 t") #'crux-transpose-windows)
     (global-set-key (kbd "C-c d") #'crux-duplicate-current-line-or-region)
@@ -4554,6 +4564,27 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install delsel...")
     (autoload-if-found '(delete-selection-mode) "delsel" nil t)
     (delete-selection-mode))
+#+end_src
+*** dogears
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'dogears))
+
+  (with-delayed-execution
+    (message "Install dogears...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/dogears"))
+    (autoload-if-found '(dogears-go
+                         dogears-back
+                         dogears-forward
+                         dogears-list
+                         dogears-sidebar) "dogears" nil t)
+
+    ;; keybind
+    (global-set-key (kbd "M-g d") #'dogears-go)
+    (global-set-key (kbd "M-g M-b") #'dogears-back)
+    (global-set-key (kbd "M-g M-f") #'dogears-forward)
+    (global-set-key (kbd "M-g M-d") #'dogears-list)
+    (global-set-key (kbd "M-g M-D") #'dogears-sidebar))
 #+end_src
 *** embark
 #+begin_src emacs-lisp
@@ -4707,6 +4738,16 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install quickrun...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/quickrun"))
     (autoload-if-found '(quickrun) "quickrun" nil t))
+#+end_src
+*** restclient
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'restclient))
+
+  (with-delayed-execution
+    (message "Install restclient...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/restclient"))
+    (autoload-if-found '(restclient-mode) "restclient" nil t))
 #+end_src
 *** smartparens
 #+BEGIN_SRC emacs-lisp
@@ -4983,6 +5024,30 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key lisp-mode-map (kbd "C-c h") #'hyperspec-lookup)))
 #+end_src
 ** Emacs Lisp
+*** eros
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'eros))
+
+  (with-delayed-execution
+    (message "Install eros...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/eros"))
+    (autoload-if-found '(eros-mode) "eros" nil t)
+    (eros-mode))
+#+end_src
+*** eldoc
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install eldoc...")
+    (autoload-if-found '(turn-on-eldoc-mode) "eldoc" nil t)
+
+    (with-eval-after-load 'elisp-mode
+      (add-hook 'emacs-lisp-mode-hook #'turn-on-eldoc-mode)
+      (add-hook 'lisp-interaction-mode-hook #'turn-on-eldoc-mode))
+
+    (with-eval-after-load 'ielm
+      (add-hook 'ielm-mode-hook #'turn-on-eldoc-mode)))
+#+end_src
 *** lispxmp
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -5088,10 +5153,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install anakondo...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/anakondo"))
     (autoload-if-found '(anakondo-minor-mode) "anakondo" nil t)
-    (with-eval-after-load 'clojure-mode
-      (add-hook 'clojure-mode-hook #'anakondo-minor-mode)
-      (add-hook 'clojurescript-mode-hook #'anakondo-minor-mode)
-      (add-hook 'clojurec-mode-hook #'anakondo-minor-mode)))
+    ;; (with-eval-after-load 'clojure-mode
+    ;;   (add-hook 'clojure-mode-hook #'anakondo-minor-mode)
+    ;;   (add-hook 'clojurescript-mode-hook #'anakondo-minor-mode)
+    ;;   (add-hook 'clojurec-mode-hook #'anakondo-minor-mode))
+    )
 #+end_src
 *** cider
 #+BEGIN_SRC emacs-lisp
@@ -5109,7 +5175,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(cider cider-format-buffer cider-switch-to-last-clojure-buffer) "cider" nil t)
     (autoload-if-found '(cider-doc) "cider-doc" nil t)
 
-    (add-hook 'before-save-hook #'cider-format-buffer t t)
+    ;; (add-hook 'before-save-hook #'cider-format-buffer t t)
 
     (with-eval-after-load 'cider-common
       (setq cider-special-mode-truncate-lines nil))
@@ -5753,6 +5819,18 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'em-prompt
       (setq eshell-prompt-function #'my/eshell-prompt)))
 #+end_src
+** eshell-fringe-status
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'eshell-fringe-status))
+
+  (with-delayed-execution
+    (message "Install eshell-fringe-status...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/eshell-fringe-status"))
+    (autoload-if-found '(eshell-fringe-status-mode) "eshell-fringe-status" nil t)
+    (with-eval-after-load 'esh-mode
+      (add-hook 'eshell-mode-hook #'eshell-fringe-status-mode)))
+#+end_src
 ** esh-help
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -6044,6 +6122,17 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿"))
       (setq org-superstar-leading-bullet " ")))
 #+end_src
+** Content
+*** toc-org
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'toc-org))
+
+  (with-delayed-execution
+    (message "Install toc-org...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/toc-org"))
+    (autoload-if-found '() "toc-org" nil t))
+#+end_src
 ** Presentation
 *** org-tree-slide
 #+begin_src emacs-lisp
@@ -6119,6 +6208,16 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq org-super-agenda-groups '((:name "NOW" :time-grid t)
                                       (:todo "TODO" :order 8)
                                       (:todo "WAITING" :order 8)))))
+#+end_src
+*** org-hyperscheduler
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle dmitrym0/org-hyperscheduler))
+
+  (with-delayed-execution
+    (message "Install org-hyperscheduler...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-hyperscheduler"))
+    (autoload-if-found '() "org-hyperscheduler" nil t))
 #+end_src
 ** Org Babel
 *** org-babel
@@ -6422,6 +6521,26 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq org-roam-ui-follow t)
       (setq org-roam-ui-update-on-save t)
       (setq org-roam-ui-open-on-start t)))
+#+end_src
+*** org-roam-timestamps
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'org-roam-timestamps))
+
+  (with-delayed-execution
+    (message "Install org-roam-timestamps...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-roam-timestamps"))
+    (autoload-if-found '() "org-roam-timestamps" nil t))
+#+end_src
+*** org-roam-search-node-insert
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle natask/org-roam-search))
+
+  (with-delayed-execution
+    (message "Install org-roam-search...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-roam-search"))
+    (autoload-if-found '() "org-roam-search" nil t))
 #+end_src
 *** TODO org-roam-server
 #+begin_src emacs-lisp
