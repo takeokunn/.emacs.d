@@ -1,0 +1,53 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # for org file to markdown
+      - uses: purcell/setup-emacs@master
+        with:
+          version: 28.1
+      - name: wget htmlize
+        run: wget https://raw.githubusercontent.com/hniksic/emacs-htmlize/master/htmlize.el
+      - name: build org files
+        run: |
+          emacs index.org -Q --batch --eval "(progn (load \""$(PWD)"/htmlize.el\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
+          emacs yasnippets.org -Q --batch --eval "(progn (load \""$(PWD)"/htmlize.el\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
+      - name: move public
+        run: |
+          mkdir -p ./public
+          mv index.html ./public/index.html
+          mv yasnippets.html ./public/yasnippets.html
+
+      # for github pages
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v2
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./public
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

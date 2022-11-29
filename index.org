@@ -2877,13 +2877,6 @@
       (define-key eww-mode-map "F" #'eww-lnum-universal)))
 #+end_src
 ** File
-*** epa-file
-#+begin_src emacs-lisp
-  (with-delayed-execution
-    (message "Install epa-file...")
-    (autoload-if-found '(epa-file-enable) "epa-file" nil t)
-    (epa-file-enable))
-#+end_src
 *** recentf
 #+BEGIN_SRC emacs-lisp
   (with-delayed-execution
@@ -3127,6 +3120,20 @@
     (autoload-if-found '(google-translate-at-point) "google-translate" nil t))
 #+end_src
 ** GPG
+*** epa-file
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install epa-file...")
+    (autoload-if-found '(epa-file-enable) "epa-file" nil t)
+    (epa-file-enable)
+    (with-eval-after-load 'epa-file
+      (setq epa-file-cache-passphrase-for-symmetric-encryption t)))
+#+end_src
+*** epg-config
+#+begin_src emacs-lisp
+  (with-eval-after-load 'epg-config
+    (setq epg-pinentry-mode 'loopback))
+#+end_src
 *** pinentry
 https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+begin_src emacs-lisp
@@ -5067,7 +5074,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-get/macrostep"))
     (autoload-if-found '(macrostep-expand macrostep-mode) "macrostep" nil t)
 
-    (with-eval-after-load 'emacs-lisp-mode
+    (with-eval-after-load 'elisp-mode
       (define-key emacs-lisp-mode-map (kbd "C-c e") #'macrostep-expand)
       (add-hook 'emacs-lisp-mode-hook #'macrostep-mode)))
 #+end_src
@@ -5123,7 +5130,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install highlight-quoted...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/highlight-quoted"))
     (autoload-if-found '(highlight-quoted-mode) "highlight-quoted" nil t)
-    (with-eval-after-load 'emacs-lisp-mode
+    (with-eval-after-load 'elisp-mode
       (add-hook 'emacs-lisp-mode-hook #'highlight-quoted-mode)))
 #+end_src
 *** my/ielm-history
