@@ -3129,11 +3129,6 @@
     (with-eval-after-load 'epa-file
       (setq epa-file-cache-passphrase-for-symmetric-encryption t)))
 #+end_src
-*** epg-config
-#+begin_src emacs-lisp
-  (with-eval-after-load 'epg-config
-    (setq epg-pinentry-mode 'loopback))
-#+end_src
 *** pinentry
 https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+begin_src emacs-lisp
@@ -3145,9 +3140,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-get/pinentry"))
     (autoload-if-found '(pinentry-start) "pinentry" nil t)
     (when-guix
-     ;; (pinentry-start)
-     ))
-
+     (pinentry-start)))
 #+end_src
 ** Help
 *** helpful
@@ -4796,6 +4789,18 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-get/sudo-edit"))
     (autoload-if-found '(sudo-edit-current-file) "sudo-edit" nil t))
 #+end_src
+*** topsy
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'topsy))
+
+  (with-delayed-execution
+    (message "Install topsy...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/topsy"))
+    (autoload-if-found '(topsy-mode) "topsy" nil t)
+    (with-eval-after-load 'prog-mode
+      (add-hook 'prog-mode-hook #'topsy-mode)))
+#+end_src
 *** uuid
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -5075,8 +5080,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(macrostep-expand macrostep-mode) "macrostep" nil t)
 
     (with-eval-after-load 'elisp-mode
-      (define-key emacs-lisp-mode-map (kbd "C-c e") #'macrostep-expand)
-      (add-hook 'emacs-lisp-mode-hook #'macrostep-mode)))
+      (define-key emacs-lisp-mode-map (kbd "C-c e") #'macrostep-expand)))
 #+end_src
 *** elisp-slime-nav
 #+BEGIN_SRC emacs-lisp
@@ -6452,7 +6456,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                                           :target (file+head "org/permanent/%<%Y%m%d%H%M%S>-${slug}.org"
                                                              "#+title: ${title}\n")
                                           :unnarrowed t)))))
-
 #+end_src
 *** org-roam-dailies
 #+begin_src emacs-lisp
@@ -6733,6 +6736,27 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (shell-command-to-string "actionlint"))
 
   (defalias 'actionlint 'my/actionlint)
+#+end_src
+** my/build-info
+#+begin_src emacs-lisp
+  (defun my/build-info ()
+    "Display build information in a buffer."
+    (interactive)
+    (switch-to-buffer (get-buffer-create "*Build info*"))
+    (setq tab-width 4)
+    (let ((buffer-read-only nil))
+      (erase-buffer)
+      (insert (format "GNU Emacs %s\nCommit:\t\t%s\nBranch:\t\t%s\n"
+                      emacs-version
+                      emacs-repository-version
+                      emacs-repository-branch))
+      (insert (format "System:\t\t%s\nDate:\t\t%s\n"
+                      system-configuration
+                      (format-time-string "%Y-%m-%d %T (%Z)" emacs-build-time)))
+      (insert (format "Patch:\t\t%s ns-inline.patch\n"
+                      (if (boundp 'mac-ime--cursor-type) "with" "without")))
+      (insert (format "Features:\t%s\n" system-configuration-features))
+      (view-mode)))
 #+end_src
 * Footer
 ** Magic File Name を有効にする
