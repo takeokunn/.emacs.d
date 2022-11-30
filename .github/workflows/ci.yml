@@ -22,15 +22,24 @@ jobs:
       # build html
       - name: wget htmlize
         run: wget https://raw.githubusercontent.com/hniksic/emacs-htmlize/master/htmlize.el
-      - name: build org files
+      - name: mkdir public
+        run: mkdir -p ./public
+      - name: build index
         run: |
           emacs index.org -Q --batch --eval "(progn (load \""$PWD"/htmlize.el\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
-          emacs yasnippets.org -Q --batch --eval "(progn (load \""$PWD"/htmlize.el\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
-      - name: move public
-        run: |
-          mkdir -p ./public
           mv index.html ./public/index.html
+      - name: build yasnippets
+        run: |
+          emacs yasnippets.org -Q --batch --eval "(progn (load \""$PWD"/htmlize.el\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
           mv yasnippets.html ./public/yasnippets.html
+      - name: build early-init
+        run: |
+          emacs early-init.org -Q --batch --eval "(progn (load \""$PWD"/htmlize.el\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
+          mv early-init.html ./public/early-init.html
+      - name: build elfeed
+        run: |
+          emacs elfeed.org -Q --batch --eval "(progn (load \""$PWD"/htmlize.el\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
+          mv elfeed.html ./public/elfeed.html
 
       # for github pages
       - name: Setup Pages
