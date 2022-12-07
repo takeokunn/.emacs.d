@@ -1,20 +1,24 @@
-#+title: Configurations for GNU Emacs
-#+author: takeokunn
-#+email: bararararatty@gmail.com
-#+startup: content
-#+startup: nohideblocks
-#+html_head: <link rel="stylesheet" type="text/css" href="https://www.pirilampo.org/styles/readtheorg/css/htmlize.css"/>
-#+html_head: <link rel="stylesheet" type="text/css" href="https://www.pirilampo.org/styles/readtheorg/css/readtheorg.css"/>
-#+html_head: <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-#+html_head: <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-#+html_head: <script type="text/javascript" src="https://www.pirilampo.org/styles/lib/js/jquery.stickytableheaders.min.js"></script>
-#+html_head: <script type="text/javascript" src="https://www.pirilampo.org/styles/readtheorg/js/readtheorg.js"></script>
+#+TITLE: Configurations for GNU Emacs
+#+AUTHOR: takeokunn
+#+EMAIL: bararararatty@gmail.com
+#+STARTUP: content
+#+STARTUP: nohideblocks
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://www.pirilampo.org/styles/readtheorg/css/htmlize.css"/>
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://www.pirilampo.org/styles/readtheorg/css/readtheorg.css"/>
+#+HTML_HEAD: <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+#+HTML_HEAD: <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="https://www.pirilampo.org/styles/lib/js/jquery.stickytableheaders.min.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="https://www.pirilampo.org/styles/readtheorg/js/readtheorg.js"></script>
 
 * はじめに
 ** 基本情報
 - repo: [[http://github.com/takeokunn/.emacs.d][takeokunn/.emacs.d]]
 - twitter: [[https://twitter.com/takeokunn][たけてぃ@takeokunn]]
 - blog: [[https://takeokunn.xyz][https://takeokunn.xyz]]
+** See also
+- [[./early-init][early-init.org]]
+- [[./yasnippets][yasnippets.org]]
+- [[./elfeed][elfeed.org]]
 * Initialize
 ** Header
 #+begin_src emacs-lisp
@@ -3893,7 +3897,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'migemo
       (setq migemo-command "cmigemo")
       (setq migemo-options '("-q" "--emacs"))
-      (setq migemo-dictionary "/usr/local/share/migemo/utf-8/migemo-dict")
+      (setq migemo-directory "/usr/local/share/migemo/utf-8")
       (setq migemo-user-dictionary nil)
       (setq migemo-regex-dictionary nil)
       (setq migemo-coding-system 'utf-8-unix)))
@@ -4802,7 +4806,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-get/topsy"))
     (autoload-if-found '(topsy-mode) "topsy" nil t)
     (with-eval-after-load 'prog-mode
-      (add-hook 'prog-mode-hook #'topsy-mode)))
+      (add-hook 'prog-mode-hook #'topsy-mode))
+
+    (with-eval-after-load 'lsp-ui-mode
+      (add-hook 'lsp-ui-mode-hook #'(lambda () (topsy-mode -1)))))
 #+end_src
 *** uuid
 #+begin_src emacs-lisp
