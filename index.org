@@ -2322,7 +2322,10 @@
   (with-delayed-execution
     (message "Install flycheck...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/flycheck"))
-    (autoload-if-found '(flycheck-mode flycheck-define-checker) "flycheck" nil t))
+    (autoload-if-found '(flycheck-mode flycheck-define-checker) "flycheck" nil t)
+
+    (with-eval-after-load 'org
+      (add-hook 'org-mode-hook #'flycheck-mode)))
 #+end_src
 *** flycheck-textlint
 #+begin_src emacs-lisp
