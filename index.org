@@ -6177,7 +6177,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install ol...")
     (autoload-if-found '(org-store-link) "ol" nil t)
-    (global-set-key (kbd "C-c l") #'org-store-link))
+    (global-set-key (kbd "C-c l") #'org-store-link)
+    (with-eval-after-load 'ol
+      (setq org-link-file-path-type 'relative)))
 #+end_src
 *** org-link-beautify
 #+begin_src emacs-lisp
