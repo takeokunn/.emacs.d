@@ -3201,8 +3201,15 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (skk-kakutei arg))))
 
     (with-eval-after-load 'skk
+      ;; config
       (setq skk-preload t)
-      (setq default-input-method "japanese-skk"))
+      (setq default-input-method "japanese-skk")
+
+      ;; keybind
+      (define-key skk-latin-mode-map (kbd "C-h") #'delete-char)
+      (define-key skk-j-mode-map (kbd "C-h") #'delete-char)
+      (define-key skk-jisx0208-latin-mode-map (kbd "C-h") #'delete-char)
+      (define-key skk-abbrev-mode-map (kbd "C-h") #'delete-char))
 
     (with-eval-after-load 'skk-vars
       ;; use skkserv
