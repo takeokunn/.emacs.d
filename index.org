@@ -1606,7 +1606,8 @@
 #+BEGIN_SRC emacs-lisp
   (with-delayed-execution
     (autoload-if-found '(lisp-mode) "lisp-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.lemrc$" . lisp-mode)))
+    (add-to-list 'auto-mode-alist '("\\.lemrc$" . lisp-mode))
+    (add-to-list 'auto-mode-alist '("\\.sbclrc$" . lisp-mode)))
 #+END_SRC
 ** lua-mode
 #+begin_src emacs-lisp
@@ -2324,8 +2325,9 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/flycheck"))
     (autoload-if-found '(flycheck-mode flycheck-define-checker) "flycheck" nil t)
 
-    (with-eval-after-load 'org
-      (add-hook 'org-mode-hook #'flycheck-mode)))
+    ;; (with-eval-after-load 'org
+    ;;   (add-hook 'org-mode-hook #'flycheck-mode))
+    )
 #+end_src
 *** flycheck-textlint
 #+begin_src emacs-lisp
@@ -4809,11 +4811,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install topsy...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/topsy"))
     (autoload-if-found '(topsy-mode) "topsy" nil t)
-    (with-eval-after-load 'prog-mode
-      (add-hook 'prog-mode-hook #'topsy-mode))
+    ;; (with-eval-after-load 'prog-mode
+    ;;   (add-hook 'prog-mode-hook #'topsy-mode))
 
-    (with-eval-after-load 'lsp-ui-mode
-      (add-hook 'lsp-ui-mode-hook #'(lambda () (topsy-mode -1)))))
+    ;; (with-eval-after-load 'lsp-ui-mode
+    ;;   (add-hook 'lsp-ui-mode-hook #'(lambda () (topsy-mode -1))))
+    )
 #+end_src
 *** uuid
 #+begin_src emacs-lisp
@@ -6433,36 +6436,54 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+begin_src emacs-lisp
   (eval-when-compile
     (el-get-bundle 'org-roam))
+
+  (with-delayed-execution
+    (message "Install org-roam basic...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-roam"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-roam/extensions")))
 #+end_src
 *** basic
 #+begin_src emacs-lisp
   (with-delayed-execution
     (message "Install org-roam...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-roam"))
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-roam/extensions"))
-
-    (autoload-if-found '(org-roam-buffer-toggle
-                         org-roam-node-find
-                         org-roam-graph
-                         org-roam-node-insert
-                         org-roam-capture) "org-roam" nil t)
-    (autoload-if-found '(org-roam-db-sync org-roam-db-autosync-enable) "org-roam-db" nil t)
-
-    (org-roam-db-autosync-enable)
-
-    (global-set-key (kbd "C-c n l") #'org-roam-buffer-toggle)
-    (global-set-key (kbd "C-c n f") #'org-roam-node-find)
+    (autoload-if-found '(org-roam-graph) "org-roam" nil t)
     (global-set-key (kbd "C-c n g") #'org-roam-graph)
-    (global-set-key (kbd "C-c n c") #'org-roam-capture)
-    (global-set-key (kbd "C-c n i") #'org-roam-node-insert)
-
     (with-eval-after-load 'org-roam
       (setq org-roam-directory `,(concat (s-trim-right (shell-command-to-string "ghq root"))
-                                         "/github.com/takeokunn/blog")))
-
+                                         "/github.com/takeokunn/blog"))))
+#+end_src
+*** org-roam-mode
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install org-roam-mode...")
+    (autoload-if-found '(org-roam-buffer-toggle) "org-roam-mode" nil t)
+    (global-set-key (kbd "C-c n l") #'org-roam-buffer-toggle))
+#+end_src
+*** org-roam-node
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install org-roam-node...")
+    (autoload-if-found '(org-roam-node-find org-roam-node-insert) "org-roam-node" nil t)
+    (global-set-key (kbd "C-c n f") #'org-roam-node-find)
+    (global-set-key (kbd "C-c n i") #'org-roam-node-insert)
     (with-eval-after-load 'org-roam-node
-      (setq org-roam-completion-everywhere t))
-
+      (setq org-roam-completion-everywhere t)))
+#+end_src
+*** org-roam-db
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install org-roam-db...")
+    (autoload-if-found '(org-roam-db-autosync-enable) "org-roam-db" nil t)
+    (org-roam-db-autosync-enable)
+    (with-eval-after-load 'org-roam-db
+      (setq org-roam-db-gc-threshold (* 4 gc-cons-threshold))))
+#+end_src
+*** org-roam-capture
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install org-roam-capture...")
+    (autoload-if-found '(org-roam-capture) "org-roam-capture" nil t)
+    (global-set-key (kbd "C-c n c") #'org-roam-capture)
     (with-eval-after-load 'org-roam-capture
       (setq org-roam-capture-templates '(("f" "Fleeting(一時メモ)" plain "%?"
                                           :target (file+head "org/fleeting/%<%Y%m%d%H%M%S>-${slug}.org" "#+TITLE: ${title}\n")
@@ -6478,8 +6499,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+begin_src emacs-lisp
   (with-delayed-execution
     (message "Install org-roam-dailies...")
-
-    (autoload-if-found '(org-roam-dailies-goto-today
+    (autoload-if-found '(org-roam-dailies-map
+                         org-roam-dailies-goto-today
                          org-roam-dailies-goto-yesterday
                          org-roam-dailies-goto-tomorrow
                          org-roam-dailies-capture-today
@@ -6489,9 +6510,14 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          org-roam-dailies-capture-date
                          org-roam-dailies-find-directory) "org-roam-dailies" nil t)
 
+    (global-set-key (kbd "C-c n d") #'org-roam-dailies-map)
     (global-set-key (kbd "C-c n j") #'org-roam-dailies-goto-today)
 
     (with-eval-after-load 'org-roam-dialies
+      ;; config
+      (setq org-roam-dailies-directory "org/daily/")
+
+      ;; keybind
       (define-key org-roam-dailies-map (kbd "d") #'org-roam-dailies-goto-today)
       (define-key org-roam-dailies-map (kbd "y") #'org-roam-dailies-goto-yesterday)
       (define-key org-roam-dailies-map (kbd "t") #'org-roam-dailies-goto-tomorrow)
@@ -6520,8 +6546,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install org-roam-overlay...")
     (autoload-if-found '(org-roam-overlay-mode) "org-roam-overlay" nil t)
-    (with-eval-after-load 'org
-      (add-hook 'org-mode-hook #'org-roam-overlay-mode)))
+    (with-eval-after-load 'org-roam-mode
+      (add-hook 'org-roam-mode-hook #'org-roam-overlay-mode)))
 #+end_src
 *** org-roam-protocol
 #+begin_src emacs-lisp
@@ -6529,8 +6555,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install org-roam-protocol...")
     (autoload-if-found '(org-roam-protocol-open-ref org-roam-protocol-open-node) "org-roam-protocol" nil t)
     (with-eval-after-load 'org-roam-protocol
+      ;; alist
       (add-to-list 'org-protocol-protocol-alist '("org-roam-ref" :protocol "roam-ref" :function org-roam-protocol-open-ref))
       (add-to-list 'org-protocol-protocol-alist '("org-roam-node" :protocol "roam-node" :function org-roam-protocol-open-node))
+
+      ;; config
       (setq org-roam-protocol-store-links t)))
 #+end_src
 *** org-roam-ui
@@ -6541,6 +6570,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install org-roam-ui...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/org-roam-ui"))
+    (autoload-if-found '(org-roam-ui-mode) "org-roam-ui" nil t)
+
+    (with-eval-after-load 'org-roam-mode
+      (add-hook 'org-roam-mode-hook #'org-roam-ui-mode))
 
     (with-eval-after-load 'org-roam-ui
       (setq org-roam-ui-sync-theme t)
@@ -6556,7 +6589,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install org-roam-timestamps...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/org-roam-timestamps"))
-    (autoload-if-found '() "org-roam-timestamps" nil t))
+    (autoload-if-found '(org-roam-timestamps-mode) "org-roam-timestamps" nil t)
+    (with-eval-after-load 'org-roam-mode
+      (add-hook 'org-roam-mode-hook #'org-roam-timestamps-mode)))
 #+end_src
 *** org-roam-search-node-insert
 #+begin_src emacs-lisp
@@ -6567,29 +6602,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install org-roam-search...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/org-roam-search"))
     (autoload-if-found '() "org-roam-search" nil t))
-#+end_src
-*** TODO org-roam-server
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle org-roam/org-roam-server))
-
-  (with-delayed-execution
-    (message "Install org-roam-server...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-roam-server"))
-    (autoload-if-found '() "org-roam-server" nil t)
-
-    (with-eval-after-load 'org-roam-server
-      (setq org-roam-server-host "127.0.0.1")
-      (setq org-roam-server-port 8080)
-      (setq org-roam-server-authenticate nil)
-      (setq org-roam-server-export-inline-images t)
-      (setq org-roam-server-serve-files nil)
-      (setq org-roam-server-served-file-extensions '("pdf" "mp4" "ogv"))
-      (setq org-roam-server-network-poll t)
-      (setq org-roam-server-network-arrows nil)
-      (setq org-roam-server-network-label-truncate t)
-      (setq org-roam-server-network-label-truncate-length 60)
-      (setq org-roam-server-network-label-wrap-length 20)))
 #+end_src
 * EXWM
 ** exwm
