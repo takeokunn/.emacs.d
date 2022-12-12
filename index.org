@@ -2452,8 +2452,9 @@
 
     (autoload-if-found '(xterm-color-filter) "xterm-color" nil t)
 
+    (setenv "TERM" "xterm-256color")
+
     (with-eval-after-load 'xterm-color
-      (setenv "TERM" "xterm-256color")
       (setq xterm-color-preserve-properties t)))
 #+end_src
 ** Command
@@ -3705,7 +3706,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'emacs-lisp-mode-hook #'fancy-narrow-mode))
 
     (with-eval-after-load 'lisp-mode
-      (add-hook 'lisp-mode-hook #'fancy-narrow-mode)))
+      (add-hook 'lisp-mode-hook #'fancy-narrow-mode))
+
+    (with-eval-after-load 'clojure-mode
+      (add-hook 'clojure-mode-hook #'fancy-narrow-mode)))
 #+end_src
 *** origami
 #+begin_src emacs-lisp
