@@ -1847,7 +1847,9 @@
     (message "Install python-mode...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/python-mode"))
     (autoload-if-found '(python-mode) "python-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\.py$" . python-mode)))
+    (add-to-list 'auto-mode-alist '("\\.py$" . python-mode))
+    (with-eval-after-load 'python
+      (add-hook 'python-mode #'lsp)))
 #+END_SRC
 ** robots-txt-mode
 #+begin_src emacs-lisp
@@ -2692,6 +2694,17 @@
     (global-set-key (kbd "C-<") #'mc/mark-previous-like-this)
     (global-set-key (kbd "C-c C-<") #'mc/mark-all-like-this))
 #+END_SRC
+*** selected.el
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'selected))
+
+  (with-delayed-execution
+    (message "Install selected...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/selected"))
+    (autoload-if-found '(selected-global-mode) "selected" nil t)
+    (selected-global-mode))
+#+end_src
 *** subword
 #+begin_src emacs-lisp
   (with-delayed-execution
@@ -3902,7 +3915,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-get/migemo"))
 
     (autoload-if-found '(migemo-init) "migemo" nil t)
-    (migemo-init)
+    ;; (migemo-init)
 
     (with-eval-after-load 'migemo
       (setq migemo-command "cmigemo")
