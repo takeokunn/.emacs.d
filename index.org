@@ -1589,7 +1589,9 @@
     (add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
     (add-to-list 'auto-mode-alist '("\\.textlintrc$" . json-mode))
     (add-to-list 'auto-mode-alist '("\\.prettierrc$" . json-mode))
-    (add-to-list 'auto-mode-alist '("\\composer.lock$" . json-mode)))
+    (add-to-list 'auto-mode-alist '("\\composer.lock$" . json-mode))
+    (with-eval-after-load 'json-mode
+      (add-hook 'json-mode-hook #'flycheck-mo)))
 #+END_SRC
 ** kotlin-mode
 #+begin_src emacs-lisp
@@ -1660,7 +1662,9 @@
   (with-delayed-execution
     (autoload-if-found '(makefile-mode) "makefile-mode" nil t)
     (add-to-list 'auto-mode-alist '("\\.mk$" . makefile-mode))
-    (add-to-list 'auto-mode-alist '("Makefile" . makefile-mode)))
+    (add-to-list 'auto-mode-alist '("Makefile" . makefile-mode))
+    (with-eval-after-load 'makefile-mode
+      (add-hook 'makefile-mode #'flycheck-mode)))
 #+end_src
 ** nasm-mode
 #+begin_src emacs-lisp
@@ -2051,7 +2055,8 @@
     (add-to-list 'auto-mode-alist '("\\.tf$" . terraform-mode))
 
     (with-eval-after-load 'terraform-mode
-      (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode)))
+      (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode)
+      (add-hook 'terraform-mode-hook #'flycheck-mode)))
 #+END_SRC
 ** text-mode
 #+begin_src emacs-lisp
@@ -2060,7 +2065,8 @@
     (add-to-list 'auto-mode-alist '("\\.tigrc$" . conf-space-mode))
     (add-to-list 'auto-mode-alist '("\\.editrc$" . conf-space-mode))
     (add-to-list 'auto-mode-alist '("\\.inputrc$" . conf-space-mode))
-    (add-to-list 'auto-mode-alist '("\\.colorrc$" . conf-space-mode)))
+    (add-to-list 'auto-mode-alist '("\\.colorrc$" . conf-space-mode))
+    (add-to-list 'auto-mode-alist '("credentials$" . conf-space-mode)))
 #+end_src
 ** toml-mode
 #+BEGIN_SRC emacs-lisp
@@ -2227,7 +2233,9 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/yaml-mode"))
     (autoload-if-found '(yaml-mode) "yaml-mode" nil t)
     (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
-    (add-to-list 'auto-mode-alist '("phpstan.neon" . yaml-mode)))
+    (add-to-list 'auto-mode-alist '("phpstan.neon" . yaml-mode))
+    (with-eval-after-load 'yaml-mode
+      (add-hook 'yaml-mode-hook #'flycheck-mode)))
 #+END_SRC
 ** yarn-mode
 #+begin_src emacs-lisp
@@ -2325,11 +2333,7 @@
   (with-delayed-execution
     (message "Install flycheck...")
     (add-to-list 'load-path (locate-user-emacs-file "el-get/flycheck"))
-    (autoload-if-found '(flycheck-mode flycheck-define-checker) "flycheck" nil t)
-
-    ;; (with-eval-after-load 'org
-    ;;   (add-hook 'org-mode-hook #'flycheck-mode))
-    )
+    (autoload-if-found '(flycheck-mode flycheck-define-checker) "flycheck" nil t))
 #+end_src
 *** flycheck-textlint
 #+begin_src emacs-lisp
@@ -5965,8 +5969,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (define-key org-mode-map (kbd "C-c C-,") #'org-insert-structure-template)
 
     ;; directory
-    (setq org-directory "~/org")
-    (setq org-agenda-files '("~/org/agenda"))
+    (setq org-directory `,(concat (s-trim-right (shell-command-to-string "ghq root"))
+                                  "/github.com/takeokunn/private"))
+    (setq org-agenda-files '(`,(concat org-directory "/agenda")))
 
     ;; todo
     (setq org-todo-keywords '((sequence "TODO(t)" "NOW(n)" "WAIT(w)" "|" "DONE(d)")))
@@ -6096,20 +6101,21 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 *** org-projectile
 #+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'org-projectile))
+  ;; (eval-when-compile
+  ;;   (el-get-bundle 'org-projectile))
 
-  (with-delayed-execution
-    (message "Install org-projectile...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/org-projectile"))
-    (autoload-if-found '() "org-projectile" nil t)
+  ;; (with-delayed-execution
+  ;;   (message "Install org-projectile...")
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/org-projectile"))
+  ;;   (autoload-if-found '(org-projectile-project-todo-completing-read) "org-projectile" nil t)
 
-    ;; (org-projectile-per-project)
-    ;; (global-set-key (kbd "C-c n p") #'org-projectile-project-todo-completing-read)
+  ;;   (global-set-key (kbd "C-c n p") #'org-projectile-project-todo-completing-read)
 
-    ;; (setq org-projectile-per-project-filepath "~/org/projectile.org")
-    ;; (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))
-    )
+  ;;   (setq org-projectile-projects-file
+  ;;       "")
+
+  ;;   (with-eval-after-load 'org
+  ;;     (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))))
 #+end_src
 *** org-dashboard
 #+begin_src emacs-lisp
@@ -6519,7 +6525,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (global-set-key (kbd "C-c n d") #'org-roam-dailies-map)
     (global-set-key (kbd "C-c n j") #'org-roam-dailies-goto-today)
 
-    (with-eval-after-load 'org-roam-dialies
+    (with-eval-after-load 'org-roam-dailies
       ;; config
       (setq org-roam-dailies-directory "org/daily/")
 
