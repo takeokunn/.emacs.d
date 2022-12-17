@@ -1591,7 +1591,7 @@
     (add-to-list 'auto-mode-alist '("\\.prettierrc$" . json-mode))
     (add-to-list 'auto-mode-alist '("\\composer.lock$" . json-mode))
     (with-eval-after-load 'json-mode
-      (add-hook 'json-mode-hook #'flycheck-mo)))
+      (add-hook 'json-mode-hook #'flycheck-mode)))
 #+END_SRC
 ** kotlin-mode
 #+begin_src emacs-lisp
@@ -6460,9 +6460,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install org-roam...")
     (autoload-if-found '(org-roam-graph) "org-roam" nil t)
     (global-set-key (kbd "C-c n g") #'org-roam-graph)
-    (with-eval-after-load 'org-roam
-      (setq org-roam-directory `,(concat (s-trim-right (shell-command-to-string "ghq root"))
-                                         "/github.com/takeokunn/blog"))))
+    ;; (with-eval-after-load 'org-roam
+    ;;   (setq org-roam-directory `,(concat (s-trim-right (shell-command-to-string "ghq root"))
+    ;;                                      "/github.com/takeokunn/blog")))
+    )
 #+end_src
 *** org-roam-mode
 #+begin_src emacs-lisp
