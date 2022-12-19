@@ -31,7 +31,7 @@
   (defconst my/loading-profile-p nil
     "If non-nil, use built-in profiler.el.")
 
-  (defconst my/enable-profile t
+  (defconst my/enable-profile nil
     "If true, enable profile")
 
   (defconst my/enable-c-h-backspace nil
@@ -1552,6 +1552,21 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/ini-mode"))
     (autoload-if-found '(ini-mode) "ini-mode" nil t)
     (add-to-list 'auto-mode-alist '("\\.ini$" . ini-mode)))
+#+end_src
+** jade-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-get-bundle 'jade-mode))
+
+  (with-delayed-execution
+    (message "Install jade-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-get/jade-mode"))
+
+    (autoload-if-found '(jade-mode) "jade-mode" nil t)
+    (autoload-if-found '(stylus-mode) "stylus-mode" nil t)
+
+    (add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode))
+    (add-to-list 'auto-mode-alist '("\\.styl\\'" . stylus-mode)))
 #+end_src
 ** java-mode
 #+begin_src emacs-lisp
