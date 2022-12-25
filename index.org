@@ -126,7 +126,7 @@
             (lambda ()
               (setq my/delayed-priority-high-configuration-timer
                     (run-with-timer
-                     0.1 0.001
+                     0.1 0.01
                      (lambda ()
                        (if my/delayed-priority-high-configurations
                            (let ((inhibit-message t))
@@ -135,7 +135,7 @@
                            (cancel-timer my/delayed-priority-high-configuration-timer))))))
               (setq my/delayed-priority-low-configuration-timer
                     (run-with-timer
-                     0.3 0.001
+                     0.3 0.01
                      (lambda ()
                        (if my/delayed-priority-low-configurations
                            (let ((inhibit-message t))
@@ -169,7 +169,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-get/el-get"))
     (with-current-buffer
         (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
+         "https://raw.githubusercontent.com/takeokunn/el-get/master/el-get-install.el")
       (goto-char (point-max))
       (eval-print-last-sexp))
 
@@ -624,15 +624,6 @@
   (setq enable-local-variables :all)
 #+end_src
 * Utitlity
-** aio
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'aio))
-
-  (with-delayed-execution-priority-high
-    (message "Install aio...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/aio")))
-#+end_src
 ** alert
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -3935,7 +3926,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 *** swiper
 #+BEGIN_SRC emacs-lisp
-  (with-delayed-execution
+  (with-delayed-execution-priority-high
     (message "Install swiper...")
     (autoload-if-found '(my/swiper) "swiper" nil t)
     (defun my/swiper ()
@@ -5644,16 +5635,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'haskell-mode-hook #'hindent-mode)))
 #+end_src
 ** Docker
-*** docker
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-get-bundle 'docker))
-
-  (with-delayed-execution
-    (message "Install docker...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/docker"))
-    (autoload-if-found '(docker) "docker" nil t))
-#+end_src
 *** docker-tramp
 #+begin_src emacs-lisp
   (eval-when-compile
