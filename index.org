@@ -635,7 +635,7 @@
 
   (with-delayed-execution-priority-high
     (message "Install async...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/async")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-async")))
 #+end_src
 ** bui
 #+begin_src emacs-lisp
@@ -724,8 +724,8 @@
     (el-clone :repo "emacsorphanage/ert-expectations"))
 
   (with-delayed-execution-priority-high
-    (message "Install eplert-expectations...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/eplert-expectations")))
+    (message "Install ert-expectations...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ert-expectations")))
 #+end_src
 ** espuds
 #+begin_src emacs-lisp
@@ -2183,10 +2183,12 @@
 ** terraform-mode
 #+BEGIN_SRC emacs-lisp
   (eval-when-compile
+    (el-clone :repo "syohex/emacs-hcl-mode")
     (el-clone :repo "emacsorphanage/terraform-mode"))
 
   (with-delayed-execution
     (message "Install terraform-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-hcl-mode"))
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/terraform-mode"))
 
     (autoload-if-found '(terraform-mode terraform-format-on-save-mode) "terraform-mode" nil t)
@@ -3509,7 +3511,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   (with-delayed-execution
     (message "Install lorem-ipsum...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/lorem-ipsum"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-lorem-ipsum"))
 
     (autoload-if-found '(lorem-ipsum-insert-sentences
                          lorem-ipsum-insert-paragraphs
@@ -5251,6 +5253,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install slime...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime/lib"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime/contrib"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime/swank"))
 
     (require 'slime)
     (slime-setup '(slime-repl slime-fancy slime-banner slime-indentation))
@@ -6798,6 +6803,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install org-roam...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/org-roam"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/org-roam/extensions"))
 
     (autoload-if-found '(org-roam-graph) "org-roam" nil t)
     (global-set-key (kbd "C-c n g") #'org-roam-graph)
