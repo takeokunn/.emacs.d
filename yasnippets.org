@@ -88,6 +88,15 @@
 (cond
  (${1:condition} ${2:body})$0)
 #+END_SRC
+*** el-clone
+#+begin_src snippet
+  # -*- mode: snippet -*-
+  # name: el-clone
+  # key: el-clone
+  # --
+  (eval-when-compile
+    (el-clone :repo "$1"))
+#+end_src
 *** el-get
 #+begin_src snippet
   # -*- mode: snippet -*-
@@ -193,7 +202,7 @@ ${11:(message "Hello World!")}
   # --
   (with-delayed-execution
     (message "Install $1...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-get/$1"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/$1"))
     (autoload-if-found '($0) "$1" nil t))
 #+end_src
 ** fish-mode/

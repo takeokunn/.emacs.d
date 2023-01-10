@@ -126,7 +126,7 @@
             (lambda ()
               (setq my/delayed-priority-high-configuration-timer
                     (run-with-timer
-                     0.1 0.01
+                     0.1 0.001
                      (lambda ()
                        (if my/delayed-priority-high-configurations
                            (let ((inhibit-message t))
@@ -135,7 +135,7 @@
                            (cancel-timer my/delayed-priority-high-configuration-timer))))))
               (setq my/delayed-priority-low-configuration-timer
                     (run-with-timer
-                     0.3 0.01
+                     0.3 0.001
                      (lambda ()
                        (if my/delayed-priority-low-configurations
                            (let ((inhibit-message t))
@@ -163,11 +163,22 @@
         (autoload f file docstring interactive type))
       t))
 #+end_src
+** common lispを使う
+#+begin_src emacs-lisp
+  (eval-and-compile
+    (setq byte-compile-warnings '(cl-functions))
+    (require 'cl-lib nil t))
+
+  (with-delayed-execution-priority-high
+    (message "Install cl-lib...")
+    (require 'cl-lib))
+#+end_src
 ** el-clone
 #+begin_src emacs-lisp
   (eval-when-compile
     (unless (file-directory-p (locate-user-emacs-file "elpa/el-clone"))
       (package-vc-install "https://github.com/takeokunn/el-clone.git"))
+
     (add-to-list 'load-path (locate-user-emacs-file "elpa/el-clone"))
     (require 'el-clone))
 #+end_src
@@ -230,24 +241,21 @@
 #+END_SRC
 ** coding system
 #+begin_src emacs-lisp
-  (with-delayed-execution-priority-high
-    (message "Install language...")
+  ;; language and locale
+  (set-language-environment "Japanese")
+  (setq system-time-locale "C")
 
-    ;; language and locale
-    (set-language-environment "Japanese")
-    (setq system-time-locale "C")
+  ;; coding system
+  (set-default-coding-systems 'utf-8-unix)
+  (prefer-coding-system 'utf-8-unix)
+  (set-selection-coding-system 'utf-8-unix)
 
-    ;; coding system
-    (set-default-coding-systems 'utf-8-unix)
-    (prefer-coding-system 'utf-8-unix)
-    (set-selection-coding-system 'utf-8-unix)
-
-    ;; prefer-coding-system take effect equally to follows
-    (set-buffer-file-coding-system 'utf-8-unix)
-    (set-file-name-coding-system 'utf-8-unix)
-    (set-terminal-coding-system 'utf-8-unix)
-    (set-keyboard-coding-system 'utf-8-unix)
-    (setq locale-coding-system 'utf-8-unix))
+  ;; prefer-coding-system take effect equally to follows
+  (set-buffer-file-coding-system 'utf-8-unix)
+  (set-file-name-coding-system 'utf-8-unix)
+  (set-terminal-coding-system 'utf-8-unix)
+  (set-keyboard-coding-system 'utf-8-unix)
+  (setq locale-coding-system 'utf-8-unix)
 #+end_src
 ** global-auto-revert-mode
 #+begin_src emacs-lisp
@@ -296,17 +304,8 @@
 #+begin_src emacs-lisp
   (with-eval-after-load 'minibuffer
     (define-key minibuffer-mode-map (kbd "C-h") #'delete-backward-char)
-    (define-key minibuffer-mode-map (kbd "M-h") #'backward-kill-word))
-#+end_src
-** common lispを使う
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (setq byte-compile-warnings '(cl-functions))
-    (require 'cl-lib nil t))
-
-  (with-delayed-execution-priority-high
-    (message "install cl-lib....")
-    (require 'cl-lib))
+    (define-key minibuffer-mode-map (kbd "M-h") #'backward-kill-word)
+    (define-key minibuffer-mode-map (kbd "M-RET") #'exit-minibuffer))
 #+end_src
 ** savehistを有効にする
 #+begin_src emacs-lisp
@@ -1001,7 +1000,9 @@
 ** treemacs
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-clone :repo "Alexander-Miller/treemacs"))
+    (el-clone :repo "Alexander-Miller/treemacs"
+              :load-paths `(,(locate-user-emacs-file "el-clone/treemacs/src/elisp")
+                            ,(locate-user-emacs-file "el-clone/treemacs/src/extra"))))
 
   (with-delayed-execution-priority-high
     (message "Install treemacs...")
@@ -1118,7 +1119,7 @@
 
   (with-delayed-execution
     (message "Install bazel-mode...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/bazel-mode"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-bazel-mode"))
     (autoload-if-found '(bazel-mode) "bazel" nil t))
 #+end_src
 ** bison-mode
@@ -3192,11 +3193,15 @@
 *** magit
 #+BEGIN_SRC emacs-lisp
   (eval-when-compile
-    (el-clone :repo "magit/transient")
-    (el-clone :repo "magit/ghub")
+    (el-clone :repo "magit/transient"
+              :load-paths `(,(locate-user-emacs-file "el-clone/transient/lisp")))
+    (el-clone :repo "magit/ghub"
+              :load-paths `(,(locate-user-emacs-file "el-clone/ghub/lisp")))
     (el-clone :repo "magit/magit-popup")
-    (el-clone :repo "magit/with-editor")
-    (el-clone :repo "magit/magit"))
+    (el-clone :repo "magit/with-editor"
+              :load-paths `(,(locate-user-emacs-file "el-clone/with-editor/lisp")))
+    (el-clone :repo "magit/magit"
+              :load-paths `(,(locate-user-emacs-file "el-clone/magit/lisp"))))
 
   (with-delayed-execution-priority-high
     (message "Install magit...")
@@ -3237,7 +3242,8 @@
 *** magit-forge
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-clone :repo "magit/forge"))
+    (el-clone :repo "magit/forge"
+              :load-paths `(,(locate-user-emacs-file "el-clone/forge/lisp"))))
 
   (with-delayed-execution
     (message "Install magit-forge...")
@@ -3448,7 +3454,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   (with-delayed-execution
     (message "Install ddskk-posframe...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ddskk-postframe"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ddskk-posframe"))
 
     (autoload-if-found '(ddskk-posframe-mode) "ddskk-posframe" nil t)
 
@@ -3605,7 +3611,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 *** lsp-mode
 #+BEGIN_SRC emacs-lisp
   (eval-when-compile
-    (el-clone :repo "emacs-lsp/lsp-mode"))
+    (el-clone :repo "emacs-lsp/lsp-mode"
+              :load-paths `(,(locate-user-emacs-file "el-clone/lsp-mode/clients"))))
 
   (with-delayed-execution
     (message "Install lsp-mode...")
@@ -3825,23 +3832,23 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key lsp-mode-map (kbd "C-c C-s") #'lsp-ui-sideline-mode)
       (define-key lsp-mode-map (kbd "C-c C-d") #'lsp-ui-doc-mode)))
 #+END_SRC
-*** TODO lsp-scheme
+*** lsp-scheme
 #+begin_src emacs-lisp
-  ;; (eval-when-compile
-  ;;   (el-clone :url "https://codeberg.org/rgherdt/emacs-lsp-scheme.git"))
+  (eval-when-compile
+    (el-clone :repo "takeokunn/emacs-lsp-scheme"))
 
-  ;; (with-delayed-execution
-  ;;   (message "Install lsp-scheme...")
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-lsp-scheme"))
+  (with-delayed-execution
+    (message "Install lsp-scheme...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-lsp-scheme"))
 
-  ;;   (autoload-if-found '(lsp-scheme) "lsp-scheme" nil t)
+    (autoload-if-found '(lsp-scheme) "lsp-scheme" nil t)
 
-  ;;   (with-eval-after-load 'scheme
-  ;;     ;; (add-hook 'scheme-mode-hook #'lsp-scheme)
-  ;;     )
+    (with-eval-after-load 'scheme
+      ;; (add-hook 'scheme-mode-hook #'lsp-scheme)
+      )
 
-  ;;   (with-eval-after-load 'lsp-scheme
-  ;;     (setq lsp-scheme-implementation "guile")))
+    (with-eval-after-load 'lsp-scheme
+      (setq lsp-scheme-implementation "guile")))
 #+end_src
 *** lsp-haskell
 #+begin_src emacs-lisp
@@ -3857,6 +3864,21 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'haskell-mode
       (add-hook 'haskell-mode-hook #'lsp)
       (add-hook 'haskell-literate-mode-hook #'lsp)))
+#+end_src
+*** TODO lsp-pyright
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "emacs-lsp/lsp-pyright"))
+
+  (with-delayed-execution
+    (message "Install lsp-pyright...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/lsp-pyright"))
+
+    ;; (with-eval-after-load 'python-mode
+    ;;   (add-hook 'python-mode-hook #'(lambda ()
+    ;;                                   (require 'lsp-pyright)
+    ;;                                   (lsp))))
+    )
 #+end_src
 *** lsp-bridge
 #+begin_src emacs-lisp
@@ -4049,7 +4071,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/projectile"))
 
     (autoload-if-found '(projectile-mode
-                         projectile-project-name
                          my/update-projectile-known-projects) "projectile" nil t)
     (projectile-mode +1)
 
@@ -4117,22 +4138,23 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 *** migemo
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-clone :repo "koron/cmigemo"))
+    (el-clone :repo "emacs-jp/migemo"))
 
   (with-delayed-execution
     (message "Install migemo...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/cmigemo"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/migemo"))
 
     (autoload-if-found '(migemo-init) "migemo" nil t)
-    ;; (migemo-init)
+    (migemo-init)
 
     (with-eval-after-load 'migemo
       (setq migemo-command "cmigemo")
       (setq migemo-options '("-q" "--emacs"))
-      (setq migemo-directory "/usr/local/share/migemo/utf-8/migemo-dict")
-      (setq migemo-user-dictionary nil)
-      (setq migemo-regex-dictionary nil)
-      (setq migemo-coding-system 'utf-8-unix)))
+      (setq migemo-dictionary "/usr/local/share/migemo/utf-8/migemo-dict")
+      (setq migemo-coding-system 'utf-8-unix))
+
+    (with-eval-after-load 'isearch
+      (define-key isearch-mode-map (kbd "C-y") #'isearch-yank-kill)))
 #+end_src
 *** swiper
 #+BEGIN_SRC emacs-lisp
@@ -4206,10 +4228,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(ivy-migemo-toggle-fuzzy ivy-migemo-toggle-migemo) "ivy-migemo" nil t)
 
-    ;; (with-eval-after-load 'ivy
-    ;;   (define-key ivy-minibuffer-map (kbd "M-f") #'ivy-migemo-toggle-fuzzy)
-    ;;   (define-key ivy-minibuffer-map (kbd "M-m") #'ivy-migemo-toggle-migemo))
-    )
+    (with-eval-after-load 'ivy
+      (define-key ivy-minibuffer-map (kbd "M-f") #'ivy-migemo-toggle-fuzzy)
+      (define-key ivy-minibuffer-map (kbd "M-m") #'ivy-migemo-toggle-migemo)))
 #+end_src
 ** Shell
 *** comint-mode
@@ -4515,7 +4536,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 *** doom-themes
 #+BEGIN_SRC emacs-lisp
   (eval-when-compile
-    (el-clone :repo "doomemacs/themes"))
+    (el-clone :repo "doomemacs/themes"
+              :load-paths `(,(locate-user-emacs-file "el-clone/themes/extensions"))))
 
   (with-delayed-execution-priority-high
     (message "Install doom-themes...")
@@ -4564,7 +4586,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   (with-delayed-execution
     (message "Install emojify...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emojify"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-emojify"))
 
     (autoload-if-found '(emojify-mode) "emojify" nil t))
 #+end_src
@@ -5249,7 +5271,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 *** slime
 #+BEGIN_SRC emacs-lisp
   (eval-when-compile
-    (el-clone :repo "slime/slime"))
+    (el-clone :repo "slime/slime"
+              :load-paths `(,(locate-user-emacs-file "el-clone/slime/lib")
+                            ,(locate-user-emacs-file "el-clone/slime/contrib")
+                            ,(locate-user-emacs-file "el-clone/slime/swank"))))
 
   (with-delayed-execution
     (message "Install slime...")
@@ -5457,6 +5482,19 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'elisp-mode
       (add-hook 'emacs-lisp-mode-hook #'highlight-quoted-mode)))
+#+end_src
+*** highlight-defined
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "Fanael/highlight-defined"))
+
+  (with-delayed-execution
+    (message "Install highlight-defined...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/highlight-defined"))
+    (autoload-if-found '(highlight-defined-mode) "highlight-defined" nil t)
+
+    (with-eval-after-load 'elisp-mode
+      (add-hook 'emacs-lisp-mode-hook #'highlight-defined-mode)))
 #+end_src
 *** my/ielm-history
 #+BEGIN_SRC emacs-lisp
@@ -6027,6 +6065,20 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(json-reformat-region) "json-reformat" nil t))
 #+end_src
+** Python
+*** py-isort
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "paetzke/py-isort.el"))
+
+  (with-delayed-execution
+    (message "Install py-isort...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/py-isort"))
+
+    (autoload-if-found '(py-isort-region
+                         py-isort-buffer
+                         py-isort-before-save) "py-isort" nil t))
+#+end_src
 * Elfeed
 ** elfeed
 #+begin_src emacs-lisp
@@ -6283,13 +6335,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 ** Basic
 *** org
 #+BEGIN_SRC emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "bzg/org-mode"))
-
   (with-eval-after-load 'org
-    (message "Install org...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/org-mode"))
-
+    ;; keybind
     (define-key org-mode-map (kbd "C-c ,") #'org-insert-structure-template)
     (define-key org-mode-map (kbd "C-c C-,") #'org-insert-structure-template)
 
@@ -6428,23 +6475,23 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(org-random-todo org-random-todo-goto-current) "org-random-todo" nil t))
 #+end_src
-*** TODO org-projectile
+*** org-projectile
 #+begin_src emacs-lisp
-  ;; (eval-when-compile
-  ;;   (el-get-bundle 'org-projectile))
+  (eval-when-compile
+    (el-clone :repo "IvanMalison/org-projectile"))
 
-  ;; (with-delayed-execution
-  ;;   (message "Install org-projectile...")
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-get/org-projectile"))
-  ;;   (autoload-if-found '(org-projectile-project-todo-completing-read) "org-projectile" nil t)
+  (with-delayed-execution
+    (message "Install org-projectile...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/org-projectile"))
 
-  ;;   (global-set-key (kbd "C-c n p") #'org-projectile-project-todo-completing-read)
+    (autoload-if-found '(org-projectile-todo-files
+                         org-projectile-project-todo-completing-read)
+                       "org-projectile" nil t)
 
-  ;;   (setq org-projectile-projects-file
-  ;;       "")
+    (global-set-key (kbd "C-c n p") #'org-projectile-project-todo-completing-read)
 
-  ;;   (with-eval-after-load 'org
-  ;;     (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))))
+    (with-eval-after-load 'org
+      (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))))
 #+end_src
 *** org-dashboard
 #+begin_src emacs-lisp
@@ -6797,7 +6844,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 *** el-get
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-clone :repo "org-roam/org-roam"))
+    (el-clone :repo "org-roam/org-roam"
+              :load-paths `(,(locate-user-emacs-file "el-clone/org-roam/extensions"))))
 #+end_src
 *** basic
 #+begin_src emacs-lisp
@@ -6808,10 +6856,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(org-roam-graph) "org-roam" nil t)
     (global-set-key (kbd "C-c n g") #'org-roam-graph)
-    ;; (with-eval-after-load 'org-roam
-    ;;   (setq org-roam-directory `,(concat (s-trim-right (shell-command-to-string "ghq root"))
-    ;;                                      "/github.com/takeokunn/blog")))
-    )
+
+    (with-eval-after-load 'org-roam
+      (setq org-roam-directory `,(concat (s-trim-right (shell-command-to-string "ghq root"))
+                                         "/github.com/takeokunn/blog"))))
 #+end_src
 *** org-roam-mode
 #+begin_src emacs-lisp
@@ -7156,6 +7204,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (view-mode)))
 #+end_src
 * Footer
+** byte-compileする
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone-byte-compile))
+#+end_src
 ** Magic File Name を有効にする
 #+begin_src emacs-lisp
   (setq file-name-handler-alist my/saved-file-name-handler-alist)
