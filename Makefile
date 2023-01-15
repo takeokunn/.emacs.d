@@ -6,11 +6,11 @@ HTMLIZE_FILE=$(TOP_DIR)/htmlize.el
 HTMLIZE_URL=https://raw.githubusercontent.com/hniksic/emacs-htmlize/master/htmlize.el
 
 .PHONY: init
-init: compile org-generate
+init: compile
 	mkdir -p ~/.emacs.d/.junk
 
 .PHONY: all
-all: compile org-generate org-to-html
+all: compile org-to-html
 
 .PHONY: clean
 clean:
@@ -31,10 +31,6 @@ compile:
 org-to-html: $(HTMLIZE_FILE)
 	$(EMACS) index.org -Q --batch --eval "(progn (load \""$(HTMLIZE_FILE)"\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
 	$(EMACS) yasnippets.org -Q --batch --eval "(progn (load \""$(HTMLIZE_FILE)"\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
-
-.PHONY: org-generate
-org-generate:
-	$(EMACS) -Q -l init.el --batch --eval "(progn (require 'org-generate) (setq org-generate-root \"snippets\") (setq org-generate-file (locate-user-emacs-file \"yasnippets.org\")) (org-generate \"snippet/default\"))"
 
 $(HTMLIZE_FILE):
 	wget $(HTMLIZE_URL)
