@@ -177,8 +177,9 @@
 #+begin_src emacs-lisp
   (eval-when-compile
     (unless (file-directory-p (locate-user-emacs-file "elpa/el-clone"))
-      (package-vc-install "https://github.com/takeokunn/el-clone.git"))
+      (package-vc-install "https://github.com/takeokunn/el-clone.git")))
 
+  (eval-and-compile
     (add-to-list 'load-path (locate-user-emacs-file "elpa/el-clone"))
     (require 'el-clone))
 #+end_src
@@ -2014,10 +2015,12 @@
     (add-to-list 'auto-mode-alist '("Procfile" . ruby-mode))
     (add-to-list 'auto-mode-alist '(".git-pr-template" . ruby-mode))
     (add-to-list 'auto-mode-alist '(".gemrc" . ruby-mode))
+    (add-to-list 'auto-mode-alist '("\\.Brewfile" . ruby-mode))
 
     (with-eval-after-load 'ruby-mode
       (setq ruby-insert-encoding-magic-comment nil)
-      (add-hook 'ruby-mode-hook #'lsp-deferred)))
+      ;; (add-hook 'ruby-mode-hook #'lsp-deferred)
+      ))
 #+END_SRC
 ** rust-mode
 #+BEGIN_SRC emacs-lisp
@@ -2232,23 +2235,24 @@
     (message "Install typescript-mode...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/typescript"))
 
-    (when (autoload-if-found '(typescript-mode typescript-tsx-mode) "typescript-mode" nil t)
-      (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
+    (autoload-if-found '(typescript-mode typescript-tsx-mode) "typescript-mode" nil t)
 
-      ;; for ts/deno
-      (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
-      (defun my/run-local-vars-mode-hook ()
-        "Run `major-mode' hook after the local variables have been processed."
-        (run-hooks (intern (concat (symbol-name major-mode) "-local-vars-hook"))))
+    (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
 
-      (add-hook 'hack-local-variables-hook #'my/run-local-vars-mode-hook)
-      (add-hook 'typescript-mode-local-vars-hook #'lsp)
+    ;; for ts/deno
+    (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
+    (defun my/run-local-vars-mode-hook ()
+      "Run `major-mode' hook after the local variables have been processed."
+      (run-hooks (intern (concat (symbol-name major-mode) "-local-vars-hook"))))
 
-      ;; for tsx
-      ;; (add-to-list 'auto-mode-alist '("\\.js$" . typescript-tsx-mode))
-      (add-to-list 'auto-mode-alist '("\\.jsx$" . typescript-tsx-mode))
-      (add-to-list 'auto-mode-alist '("\\.tsx$" . typescript-tsx-mode))
-      (add-hook 'typescript-tsx-mode-hook #'lsp-deferred)))
+    (add-hook 'hack-local-variables-hook #'my/run-local-vars-mode-hook)
+    (add-hook 'typescript-mode-local-vars-hook #'lsp)
+
+    ;; for tsx
+    ;; (add-to-list 'auto-mode-alist '("\\.js$" . typescript-tsx-mode))
+    (add-to-list 'auto-mode-alist '("\\.jsx$" . typescript-tsx-mode))
+    (add-to-list 'auto-mode-alist '("\\.tsx$" . typescript-tsx-mode))
+    (add-hook 'typescript-tsx-mode-hook #'lsp-deferred))
 #+END_SRC
 ** v-mode
 #+begin_src emacs-lisp
@@ -3406,7 +3410,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install ddskk...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/ddskk"))
 
-    (autoload-if-found '(skk-mode) "skk" nil t)
+    (autoload-if-found '(skk-mode) "skk-autoloads" nil t)
 
     (global-set-key (kbd "C-x C-j") #'skk-mode)
 
@@ -7206,8 +7210,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 * Footer
 ** byte-compileする
 #+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone-byte-compile))
+  ;; (eval-when-compile
+  ;;   (el-clone-byte-compile))
 #+end_src
 ** Magic File Name を有効にする
 #+begin_src emacs-lisp
