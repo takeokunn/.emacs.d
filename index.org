@@ -1162,6 +1162,12 @@
     (add-to-list 'auto-mode-alist '("/Cask\\'" . cask-mode)))
 #+end_src
 ** cfn-mode
+
+以下が必要
+
+- ~pip install cfn-lint~
+- ~gem install cfn_nag~
+
 #+begin_src emacs-lisp
   (eval-when-compile
     (el-clone :fetcher "gitlab"
@@ -1169,11 +1175,17 @@
 
   (with-delayed-execution
     (message "Install cfn-mode...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/cfn-mode"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/cfn-mode/cfn-mode"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/cfn-mode/flycheck-cfn"))
 
     (autoload-if-found '(cfn-mode) "cfn-mode" nil t)
+    (autoload-if-found '(cfn-nag cfn-lint) "flycheck-cfn" nil t)
 
-    (add-to-list 'magic-mode-alist '("\\(---\n\\)?AWSTemplateFormatVersion:" . cfn-mode)))
+    (add-to-list 'magic-mode-alist '("\\(---\n\\)?AWSTemplateFormatVersion:" . cfn-mode))
+
+    (with-eval-after-load 'flycheck
+      (add-to-list 'flycheck-checkers 'cfn-nag)
+      (add-to-list 'flycheck-checkers 'cfn-lint)))
 #+end_src
 ** clojure-mode
 #+BEGIN_SRC emacs-lisp
