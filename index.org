@@ -1873,6 +1873,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/nov"))
 
     (autoload-if-found '(nov-mode) "nov" nil t)
+
     (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
 #+end_src
 ** pcap-mode
@@ -2631,11 +2632,13 @@
 
     (with-eval-after-load 'hl-todo
       (setq hl-todo-keyword-faces
-            '(("TODO" . "#cc9393")
-              ("FIXME" . "#cc9393")
+            '(("HOLD" . "#d0bf8f")
+              ("TODO" . "#cc9393")
               ("NOW" . "#dca3a3")
-              ("WAIT" . "#d0bf8f")
-              ("DONE" . "#afd8af")))))
+              ("TODAY" . "#dc8cc3")
+              ("WAIT" . "#7cb8bb")
+              ("DONE" . "#afd8af")
+              ("FIXME" . "#cc9393")))))
 #+end_src
 *** xterm-color
 #+begin_src emacs-lisp
@@ -3124,17 +3127,17 @@
 
     (autoload-if-found '(open-junk-file) "open-junk-file" nil t)
 
-    (defun my/open-junk-file ()
-      (interactive)
-      (ivy-mode 0)
-      (let ((default-directory (format-time-string "~/.emacs.d/.junk/%Y-%m%d-%H%M%S." (current-time))))
-        (open-junk-file))
-      (ivy-mode 1))
+    (global-set-key (kbd "C-x j") #'open-junk-file)
 
-    (global-set-key (kbd "C-x j") #'my/open-junk-file)
+    (advice-add #'open-junk-file
+                :around
+                (defun my/open-junk-file (old-func &rest args)
+                  (ivy-mode 0)
+                  (apply old-func args)
+                  (ivy-mode 1)))
 
     (with-eval-after-load 'open-junk-file
-      (setq open-junk-file-format "")))
+      (setq open-junk-file-format "~/.emacs.d/.junk/%Y-%m-%d-%H%M%S.")))
 #+END_SRC
 *** vlf
 #+begin_src emacs-lisp
@@ -3643,6 +3646,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(lsp-modeline-code-actions-mode lsp-modeline-diagnostics-mode) "lsp-modeline" nil t)
     (autoload-if-found '(lsp-headerline-breadcrumb-mode) "lsp-headerline" nil t)
 
+    (advice-add 'lsp-rename :before #'(lambda (&rest _) (remove-hook 'find-file-hooks #'view-mode)))
+
     (defun my/disable-lsp-flycheck ()
       (interactive)
       (setq lsp-diagnostics-provider :none)
@@ -3961,8 +3966,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(fancy-narrow-mode) "fancy-narrow" nil t)
 
-    (with-eval-after-load 'org
-      (add-hook 'org-mode-hook #'fancy-narrow-mode))
+    ;; (with-eval-after-load 'org
+    ;;   (add-hook 'org-mode-hook #'fancy-narrow-mode))
 
     (with-eval-after-load 'elisp-mode
       (add-hook 'emacs-lisp-mode-hook #'fancy-narrow-mode))
@@ -4412,11 +4417,16 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+begin_src emacs-lisp
   (with-delayed-execution
     (message "Install tab-bar...")
-    (autoload-if-found '(tab-bar-mode tab-bar-history-mode) "tab-bar" nil t)
+    (autoload-if-found '(tab-bar-mode
+                         tab-bar-history-mode
+                         tab-previous
+                         tab-next) "tab-bar" nil t)
 
     (tab-bar-history-mode)
 
     (global-set-key (kbd "C-x C-t") tab-prefix-map)
+    (global-set-key (kbd "M-[") #'tab-previous)
+    (global-set-key (kbd "M-]") #'tab-next)
 
     (with-eval-after-load 'tab-bar
       (setq tab-bar-close-button-show nil)
@@ -6357,15 +6367,14 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (define-key org-mode-map (kbd "C-c C-,") #'org-insert-structure-template)
 
     ;; directory
-    ;; (setq org-directory `,(concat (s-trim-right (shell-command-to-string "ghq root"))
-    ;;                               "/github.com/takeokunn/private"))
-    ;; (setq org-agenda-files '(`,(concat org-directory "/agenda")))
+    (setq org-directory "~/.ghq/github.com/takeokunn/private")
+    (setq org-agenda-files `(,(concat org-directory "/agenda")))
 
     ;; todo
-    (setq org-todo-keywords '((sequence "TODO(t)" "NOW(n)" "WAIT(w)" "|" "DONE(d)")))
+    (setq org-todo-keywords '((sequence "TODO(t)" "TODAY(n)" "WAIT(w)" "|" "DONE(d)")))
 
     ;; startup
-    (setq org-startup-folded 'fold)
+    (setq org-startup-folded 'nofold)
     (setq org-startup-truncated nil)
 
     ;; archive
@@ -6407,12 +6416,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'org-capture
       (setq org-capture-use-agenda-date t)
-      (setq org-capture-templates `(("t" "Todo" entry (file+datetree ,(expand-file-name "todo.org" org-directory))
+      (setq org-capture-templates `(("t" "Todo" entry (file ,(expand-file-name "todo.org" org-directory))
                                      "* %?")
                                     ("m" "Memo" entry (file ,(expand-file-name "memo.org" org-directory))
-                                     "* %?")
-                                    ("j" "Journal" entry (file+datetree ,(expand-file-name "journal.org" org-directory))
-                                     "* %?\nEntered on %U\n  %i\n  %a")))))
+                                     "* %?")))))
 #+end_src
 *** org-id
 #+begin_src emacs-lisp
@@ -6603,8 +6610,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(org-link-beautify-mode) "org-link-beautify" nil t)
 
-    (with-eval-after-load 'org
-      (add-hook 'org-mode-hook #'org-link-beautify-mode)))
+    ;; (with-eval-after-load 'org
+    ;;   (add-hook 'org-mode-hook #'org-link-beautify-mode))
+    )
 #+end_src
 *** orgit
 #+begin_src emacs-lisp
@@ -6647,9 +6655,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'org-super-agenda
       (add-hook 'org-agenda-mode-hook #'org-super-agenda-mode)
 
-      (setq org-super-agenda-groups '((:name "NOW" :time-grid t)
+      (setq org-super-agenda-groups '((:name "TODAY" :time-grid t)
                                       (:todo "TODO" :order 8)
-                                      (:todo "WAITING" :order 8)))))
+                                      (:todo "WAIT" :order 8)))))
 #+end_src
 *** org-hyperscheduler
 #+begin_src emacs-lisp
