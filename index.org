@@ -1676,6 +1676,7 @@
     (autoload-if-found '(js2-mode) "js2-mode" nil t)
 
     (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+    (add-to-list 'auto-mode-alist '("\\.mjs$" . js2-mode))
 
     (with-eval-after-load 'js2-mode
       (setq js2-strict-missing-semi-warning nil)
@@ -1772,6 +1773,19 @@
                                                ("php" . php-mode))
                                              markdown-code-lang-modes))))
 #+END_SRC
+** mermaid-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "abrochard/mermaid-mode"))
+
+  (with-delayed-execution
+    (message "Install mermaid-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/mermaid-mode"))
+
+    (autoload-if-found '(mermaid-mode) "mermaid-mode" nil t)
+
+    (add-to-list 'auto-mode-alist '("\\.mmd\\'" . mermaid-mode)))
+#+end_src
 ** makefile-mode
 #+begin_src emacs-lisp
   (with-delayed-execution
@@ -4846,6 +4860,37 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'view-lock-mode
       (setq view-lock-start-time (* 30 60))))
 #+end_src
+** Password
+*** password-store
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "stuartsierra/password-store"))
+
+  (with-delayed-execution
+    (message "Install password-store...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/password-store/contrib/emacs"))
+    (autoload-if-found '(password-store-version) "password-store" nil t))
+#+end_src
+*** password-store-otp
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "volrath/password-store-otp.el"))
+
+  (with-delayed-execution
+    (message "Install password-store-otp...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/password-store-otp"))
+    (autoload-if-found '() "password-store-otp" nil t))
+#+end_src
+*** pass
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "NicolasPetton/pass"))
+
+  (with-delayed-execution
+    (message "Install pass...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/pass"))
+    (autoload-if-found '(pass) "pass" nil t))
+#+end_src
 ** Utility
 *** comint
 #+begin_src emacs-lisp
@@ -6419,7 +6464,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq org-capture-templates `(("t" "Todo" entry (file ,(expand-file-name "todo.org" org-directory))
                                      "* %?")
                                     ("m" "Memo" entry (file ,(expand-file-name "memo.org" org-directory))
-                                     "* %?")))))
+                                     "* %?")
+                                    ("j" "Journal" entry (file+olp+datetree ,(expand-file-name "journal.org" org-directory))
+                                     "* %U\n%?\n%i\n")))))
 #+end_src
 *** org-id
 #+begin_src emacs-lisp
@@ -6537,6 +6584,16 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/org-volume"))
 
     (autoload-if-found '(org-volume-update-entry-from-dblock) "org-volume" nil t))
+#+end_src
+*** org-ql
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "alphapapa/org-ql"))
+
+  (with-delayed-execution
+    (message "Install org-ql...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/org-ql"))
+    (autoload-if-found '(org-ql-query org-ql-select) "org-ql" nil t))
 #+end_src
 ** Theme
 *** org-faces
@@ -6783,6 +6840,18 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (org-babel-do-load-languages 'org-babel-load-languages
                                  '((http . t))))
+#+end_src
+*** ob-mermaid
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "arnm/ob-mermaid"))
+
+  (with-delayed-execution
+    (message "Install ob-mermaid...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-mermaid"))
+
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                 '((mermaid . t))))
 #+end_src
 ** Org Publish
 *** ox-html
