@@ -6413,17 +6413,20 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     ;; directory
     (setq org-directory "~/.ghq/github.com/takeokunn/private")
-    (setq org-agenda-files `(,(concat org-directory "/agenda")))
 
     ;; todo
     (setq org-todo-keywords '((sequence "TODO(t)" "TODAY(n)" "WAIT(w)" "|" "DONE(d)")))
 
     ;; startup
-    (setq org-startup-folded 'nofold)
+    (setq org-startup-folded 'show3levels)
     (setq org-startup-truncated nil)
 
     ;; archive
-    (setq org-archive-location `,(format (expand-file-name "archive/%s.org::" org-directory)
+    (advice-add 'org-archive-subtree :before #'(lambda (&rest _) (remove-hook 'find-file-hooks #'view-mode)))
+    (advice-add 'org-archive-subtree :after #'(lambda (&rest _) (add-hook 'find-file-hooks #'view-mode)))
+
+    (setq org-agenda-files `(,(concat org-directory "/agenda")))
+    (setq org-archive-location `,(format (expand-file-name "archive/%s.org::* Archived Tasks" org-directory)
                                          (format-time-string "%Y-%m-%d" (current-time))))
 
     ;; log
@@ -6476,7 +6479,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'org-id
       (setq org-id-locations-file (expand-file-name ".org-id-locations" org-directory))
       (setq org-id-extra-files (append org-agenda-text-search-extra-files))
-      (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)))
+      (setq org-id-link-to-org-use-id t)))
 #+end_src
 *** org-crypt
 #+begin_src emacs-lisp
