@@ -11,7 +11,7 @@ link:
 	ln -nfs $(TOP_DIR) ~/
 
 .PHONY: compile
-compile: compile byte-compile-libraries
+compile: byte-compile byte-compile-libraries
 
 .PHONY: byte-compile
 byte-compile:
