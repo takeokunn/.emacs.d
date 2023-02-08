@@ -1476,6 +1476,8 @@
     (add-to-list 'auto-mode-alist '("\\.gitignore$" . gitignore-mode))
     (add-to-list 'auto-mode-alist '("\\.prettierignore$" . gitignore-mode))
     (add-to-list 'auto-mode-alist '("/git/ignore\\'" . gitignore-mode))
+    (add-to-list 'auto-mode-alist '("/git/ignore\\'" . gitignore-mode))
+    (add-to-list 'auto-mode-alist '("CODEOWNERS" . gitignore-mode))
 
     ;; gitconfig-mode
     (add-to-list 'auto-mode-alist '("\\.git-pr-release$" . gitconfig-mode))
@@ -1917,7 +1919,7 @@
 
     (with-eval-after-load 'php-mode
       ;; hook
-      (add-hook 'php-mode-hook #'lsp-deferred)
+      (add-hook 'php-mode-hook #'lsp)
 
       ;; keybind
       (define-key php-mode-map (kbd "C-c C--") #'php-current-class)
@@ -3710,9 +3712,13 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (setq lsp-headerline-breadcrumb-icons-enable nil)))
 
     (with-eval-after-load 'lsp-php
+      ;; for intelephense
       (setq lsp-intelephense-clear-cache t)
-      (setq lsp-intelephense-php-version "8.1")
-      (setq lsp-intelephense-telemetry-enabled t))
+      (setq lsp-intelephense-php-version "8.2")
+      (setq lsp-intelephense-telemetry-enabled t)
+
+      ;; for phpactor
+      (setq lsp-phpactor-path "~/.ghq/github.com/phpactor/phpactor/bin/phpactor"))
 
     (with-eval-after-load 'lsp-ruby
       (setq lsp-solargraph-autoformat t)
