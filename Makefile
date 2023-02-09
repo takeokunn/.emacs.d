@@ -10,9 +10,6 @@ clean:
 link:
 	ln -nfs $(TOP_DIR) ~/
 
-.PHONY: compile
-compile: byte-compile byte-compile-libraries
-
 .PHONY: byte-compile
 byte-compile:
 	$(EMACS) -Q --batch --eval "(progn (require 'ob-tangle) (org-babel-tangle-file \"./early-init.org\" \"./early-init.el\" \"emacs-lisp\"))"

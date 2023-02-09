@@ -333,7 +333,7 @@
 ** pluginをnative compする
 #+begin_src emacs-lisp
   (with-eval-after-load 'comp
-    (setq native-comp-async-jobs-number 8)
+    (setq native-comp-async-jobs-number 12)
     (setq native-comp-speed 3)
     (setq native-comp-always-compile t)
     (defun my/native-comp-packages ()
@@ -1523,9 +1523,12 @@
     (add-to-list 'auto-mode-alist '("^go.mod$" . go-mode))
 
     (with-eval-after-load 'go-mode
-      (add-hook 'go-mode-hook #'lsp-deferred)
-      (add-hook 'before-save-hook #'gofmt-before-save)
-      (setq gofmt-command "goimports")))
+      ;; config
+      (setq gofmt-command "goimports")
+
+      ;; hook
+      ;; (remove-hook 'go-mode-hook #'lsp-deferred)
+      (add-hook 'before-save-hook #'gofmt-before-save)))
 #+END_SRC
 ** gradle-mode
 #+BEGIN_SRC emacs-lisp
@@ -1756,6 +1759,8 @@
     (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
 
     (with-eval-after-load 'markdown-mode
+      (setq tab-width 2)
+      (setq indent-tabs-mode nil)
       (setq markdown-code-lang-modes (append '(("diff" . diff-mode)
                                                ("hs" . haskell-mode)
                                                ("html" . web-mode)
