@@ -333,7 +333,7 @@
 ** pluginをnative compする
 #+begin_src emacs-lisp
   (with-eval-after-load 'comp
-    (setq native-comp-async-jobs-number 12)
+    (setq native-comp-async-jobs-number 8)
     (setq native-comp-speed 3)
     (setq native-comp-always-compile t)
     (defun my/native-comp-packages ()
@@ -1895,7 +1895,10 @@
 
     (autoload-if-found '(nov-mode) "nov" nil t)
 
-    (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
+    (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+
+    (with-eval-after-load 'nov
+      (add-hook 'nov-mode-hook #'(lambda () (view-mode -1)))))
 #+end_src
 ** pcap-mode
 #+begin_src emacs-lisp
@@ -7207,6 +7210,18 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                  " "))))
 
   (defalias 'gh-browse 'my/gh-browse)
+#+end_src
+** my/generate-nippo
+#+begin_src emacs-lisp
+  (defun my/generate-nippo-1 ()
+    )
+
+  (defun my/generate-nippo ()
+    (interactive)
+    (save-excursion
+      (save-restriction
+        (org-element-contents
+         (org-element-parse-buffer 'headline)))))
 #+end_src
 ** my/indent-all
 #+begin_src emacs-lisp
