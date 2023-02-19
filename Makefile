@@ -20,4 +20,4 @@ byte-compile:
 .PHONY: byte-compile-libraries
 byte-compile-libraries:
 	$(EMACS) -Q --batch --eval "(progn (add-to-list 'load-path (locate-user-emacs-file \"elpa/el-clone\")) (require 'el-clone) (el-clone-byte-compile))"
-	make -C el-clone/ddskk elc
+	make -C el-clone/ddskk install-elc

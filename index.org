@@ -2427,6 +2427,7 @@
     (autoload-if-found '(yaml-mode) "yaml-mode" nil t)
 
     (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
+    (add-to-list 'auto-mode-alist '("\\.aclpolicy$" . yaml-mode))
     (add-to-list 'auto-mode-alist '("phpstan.neon" . yaml-mode))
 
     (with-eval-after-load 'yaml-mode
@@ -4131,9 +4132,14 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                                        (split-string (shell-command-to-string "ghq list --full-path")))))
 
     (with-eval-after-load 'projectile
+      ;; keybind
       (global-set-key (kbd "M-p") #'projectile-command-map)
       (global-set-key (kbd "C-c p") #'projectile-command-map)
+
+      ;; hook
       (add-hook 'projectile-mode-hook #'my/update-projectile-known-projects)
+
+      ;; config
       (setq projectile-switch-project-action 'projectile-dired)
       (setq projectile-enable-caching t)))
 #+end_src
