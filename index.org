@@ -2560,6 +2560,20 @@
     (with-eval-after-load 'flycheck
       (add-to-list 'flycheck-checkers 'textlint)))
 #+end_src
+*** flycheck-elsa
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "emacs-elsa/flycheck-elsa"))
+
+  (with-delayed-execution
+    (message "Install flycheck-elsa...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/flycheck-elsa"))
+
+    (autoload-if-found '(flycheck-elsa-setup) "flycheck-elsa" nil t)
+
+    (with-eval-after-load 'elisp-mode
+      (add-hook 'emacs-lisp-mode-hook #'flycheck-elsa-setup)))
+#+end_src
 ** Client
 *** md4rd
 #+begin_src emacs-lisp
@@ -5489,6 +5503,25 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'ielm
       (add-hook 'ielm-mode-hook #'turn-on-eldoc-mode)))
+#+end_src
+*** trinary
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "emacs-elsa/trinary-logic"))
+
+  (with-delayed-execution
+    (message "Install trinary...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/trinary-logic")))
+#+end_src
+*** elsa
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "emacs-elsa/Elsa"))
+
+  (with-delayed-execution
+    (message "Install elsa...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/Elsa"))
+    (autoload-if-found '() "elsa" nil t))
 #+end_src
 *** lispxmp
 #+begin_src emacs-lisp
