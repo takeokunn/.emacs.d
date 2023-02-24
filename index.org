@@ -3721,7 +3721,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       ;; config
       (setq lsp-idle-delay 0.8)
       (setq lsp-enable-links nil)
-      (setq lsp-log-io nil))
+      (setq lsp-log-io nil)
+      (setq lsp-file-watch-threshold 10000))
 
     (with-eval-after-load 'lsp-completion
       (setq lsp-completion-no-cache t)
@@ -3753,6 +3754,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
       (define-advice widen (:after (&rest _))
         (lsp-lens-refresh t))))
+
 #+END_SRC
 *** lsp-php-key
 #+begin_src emacs-lisp
@@ -4214,7 +4216,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/migemo"))
 
     (autoload-if-found '(migemo-init) "migemo" nil t)
-    (migemo-init)
+    ;; (migemo-init)
 
     (with-eval-after-load 'migemo
       (setq migemo-command "cmigemo")
@@ -7367,6 +7369,13 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                       (if (boundp 'mac-ime--cursor-type) "with" "without")))
       (insert (format "Features:\t%s\n" system-configuration-features))
       (view-mode)))
+#+end_src
+** my/current-ip-address
+#+begin_src emacs-lisp
+  (defun my/current-ip-address ()
+    (interactive)
+    (insert
+     (shell-command-to-string "curl -s ifconfig.me")))
 #+end_src
 * Footer
 ** byte-compileする
