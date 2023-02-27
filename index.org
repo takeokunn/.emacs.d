@@ -4137,8 +4137,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install projectile...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/projectile"))
 
-    (autoload-if-found '(projectile-mode
-                         my/update-projectile-known-projects) "projectile" nil t)
+    (autoload-if-found '(projectile-mode) "projectile" nil t)
+
     (projectile-mode +1)
 
     (defun my/update-projectile-known-projects ()
@@ -7158,7 +7158,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(org-roam-timestamps-mode) "org-roam-timestamps" nil t)
 
-    (org-roam-timestamps-mode))
+    (org-roam-timestamps-mode)
+
+    (with-eval-after-load 'org-roam-timestamps
+      (setq org-roam-timestamps-remember-timestamps nil)))
 #+end_src
 *** org-roam-search-node-insert
 #+begin_src emacs-lisp
