@@ -1468,7 +1468,7 @@
     (message "Install git-modes...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/git-modes"))
 
-    (add-to-list 'load-path (locate-user-emacs-file (concat "el-get/git-modes")))
+    (add-to-list 'load-path (locate-user-emacs-file (concat "el-clone/git-modes")))
     (autoload-if-found '(gitignore-mode gitconfig-mode gitattributes-mode) "git-modes" nil t)
 
     ;; gitignore-mode
@@ -3686,6 +3686,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(lsp-headerline-breadcrumb-mode) "lsp-headerline" nil t)
 
     (advice-add 'lsp-rename :before #'(lambda (&rest _) (remove-hook 'find-file-hooks #'view-mode)))
+    (advice-add 'lsp-rename :after #'(lambda (&rest _) (add-hook 'find-file-hooks #'view-mode)))
 
     (defun my/disable-lsp-flycheck ()
       (interactive)
@@ -6992,7 +6993,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq org-hugo-auto-set-lastmod t)))
 #+end_src
 ** Org Roam
-*** el-get
+*** el-clone
 #+begin_src emacs-lisp
   (eval-when-compile
     (el-clone :repo "org-roam/org-roam"
