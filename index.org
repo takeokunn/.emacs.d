@@ -1825,6 +1825,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/neon-mode"))
 
     (autoload-if-found '(neon-mode) "neon-mode" nil t)
+
     (add-to-list 'auto-mode-alist '("\\.neon$" . neon-mode)))
 #+end_src
 ** nim-mode
@@ -2428,7 +2429,6 @@
 
     (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
     (add-to-list 'auto-mode-alist '("\\.aclpolicy$" . yaml-mode))
-    (add-to-list 'auto-mode-alist '("phpstan.neon" . yaml-mode))
 
     (with-eval-after-load 'yaml-mode
       (add-hook 'yaml-mode-hook #'flycheck-mode)))
@@ -6002,7 +6002,15 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install phpstan...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/phpstan"))
 
-    (autoload-if-found '(phpstan-analyze-file phpstan-analyze-this-file) "phpstan" nil t))
+    (autoload-if-found '(phpstan-analyze-file phpstan-analyze-this-file) "phpstan" nil t)
+
+    (defun my/flycheck-phpstan-setup ()
+      "Setup Flycheck with PHPStan."
+      (interactive)
+      (require 'flycheck-phpstan))
+
+    (with-eval-after-load 'phpstan
+      (setq phpstan-memory-limit -1)))
 #+end_src
 *** phpunit
 #+begin_src emacs-lisp
