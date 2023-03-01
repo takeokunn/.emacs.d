@@ -2164,6 +2164,8 @@
     (load-library "sql-indent")
 
     ;; config
+    (setq indent-tabs-mode nil)
+
     (setq sql-user "root")
     (setq sql-password "P@ssw0rd")
     (setq sql-server "127.0.0.1")
@@ -2234,7 +2236,10 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-hcl-mode"))
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/terraform-mode"))
 
+    (autoload-if-found '(hcl-mode) "hcl-mode" nil t)
     (autoload-if-found '(terraform-mode terraform-format-on-save-mode) "terraform-mode" nil t)
+
+    (add-to-list 'auto-mode-alist '("\\.hcl$" . hcl-mode))
     (add-to-list 'auto-mode-alist '("\\.tf$" . terraform-mode))
 
     (with-eval-after-load 'terraform-mode
@@ -2262,7 +2267,10 @@
 
     (autoload-if-found '(toml-mode) "toml-mode" nil t)
 
-    (add-to-list 'auto-mode-alist '("\\.toml$" . toml-mode)))
+    (add-to-list 'auto-mode-alist '("\\.toml$" . toml-mode))
+
+    (with-eval-after-load 'toml-mode
+      (add-hook 'toml-mode-hook #'flycheck-mode)))
 #+END_SRC
 ** typescript-mode
 #+BEGIN_SRC emacs-lisp
@@ -2650,10 +2658,11 @@
 
     (autoload-if-found '(highlight-indent-guides-mode) "highlight-indent-guides" nil t)
 
-    (with-eval-after-load 'yaml-mode
-      (add-hook 'yaml-mode-hook #'highlight-indent-guides-mode))
+    (with-eval-after-load 'prog-mode
+      (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
 
     (with-eval-after-load 'highlight-indent-guides
+      (setq highlight-indent-guides-responsive 'stack)
       (setq highlight-indent-guides-method 'bitmap)))
 #+end_src
 *** hl-todo
@@ -4786,11 +4795,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(idle-highlight-mode) "idle-highlight-mode" nil t)
 
-    (with-eval-after-load 'idle-highlight-mode
-      (setq idle-highlight-idle-time 0.1))
-
     (with-eval-after-load 'prog-mode
-      (add-hook 'prog-mode-hook #'idle-highlight-mode)))
+      (add-hook 'prog-mode-hook #'idle-highlight-mode))
+
+    (with-eval-after-load 'idle-highlight-mode
+      (setq idle-highlight-idle-time 0.1)))
 #+end_src
 ** Undo
 *** undo-tree
@@ -5924,7 +5933,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(sqlind-setup sqlind-minor-mode) "sql-indent" nil t)
 
-    (with-eval-after-load 'sql-mode
+    (with-eval-after-load 'sql
       (add-hook 'sql-mode-hook #'sqlind-setup)
       (add-hook 'sql-mode-hook #'sqlind-minor-mode)))
 #+END_SRC
@@ -6932,8 +6941,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (el-clone :repo "larstvei/ox-gfm"))
 
   (with-delayed-execution
-    (message "Install ox-gmf...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ox-gmf"))
+    (message "Install ox-gfm...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ox-gfm"))
 
     (autoload-if-found '(org-gfm-export-as-markdown
                          org-gfm-convert-region-to-md
@@ -7263,18 +7272,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                  " "))))
 
   (defalias 'gh-browse 'my/gh-browse)
-#+end_src
-** my/generate-nippo
-#+begin_src emacs-lisp
-  (defun my/generate-nippo-1 ()
-    )
-
-  (defun my/generate-nippo ()
-    (interactive)
-    (save-excursion
-      (save-restriction
-        (org-element-contents
-         (org-element-parse-buffer 'headline)))))
 #+end_src
 ** my/indent-all
 #+begin_src emacs-lisp
