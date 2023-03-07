@@ -1179,13 +1179,12 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/cfn-mode/flycheck-cfn"))
 
     (autoload-if-found '(cfn-mode) "cfn-mode" nil t)
-    (autoload-if-found '(cfn-nag cfn-lint) "flycheck-cfn" nil t)
+    (autoload-if-found '(flycheck-cfn-setup) "flycheck-cfn" nil t)
 
     (add-to-list 'magic-mode-alist '("\\(---\n\\)?AWSTemplateFormatVersion:" . cfn-mode))
 
-    (with-eval-after-load 'flycheck
-      (add-to-list 'flycheck-checkers 'cfn-nag)
-      (add-to-list 'flycheck-checkers 'cfn-lint)))
+    (with-eval-after-load 'cfn-mode
+      (add-hook 'cfn-mode-hook #'flycheck-cfn-setup)))
 #+end_src
 ** clojure-mode
 #+BEGIN_SRC emacs-lisp
@@ -1364,7 +1363,10 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/dockerfile-mode"))
 
     (autoload-if-found '(dockerfile-mode) "dockerfile-mode" nil t)
-    (add-to-list 'auto-mode-alist '("\\Dockerfile$" . dockerfile-mode)))
+    (add-to-list 'auto-mode-alist '("\\Dockerfile$" . dockerfile-mode))
+
+    (with-eval-after-load 'dockerfile-mode
+      (add-hook 'dockerfile-mode-hook #'flycheck-mode)))
 #+END_SRC
 ** dotenv-mode
 #+begin_src emacs-lisp
@@ -1709,6 +1711,31 @@
     (with-eval-after-load 'json-mode
       (add-hook 'json-mode-hook #'flycheck-mode)))
 #+END_SRC
+** jsonnet-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "tminor/jsonnet-mode"))
+
+  (with-delayed-execution
+    (message "Install jsonnet-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/jsonnet-mode"))
+    (autoload-if-found '(jsonnet-mode
+                         jsonnet-eval-buffer
+                         jsonnet-jump
+                         jsonnet-reformat-buffer) "jsonnet-mode" nil t)
+
+    (add-to-list 'auto-mode-alist (cons "\\.jsonnet\\'" 'jsonnet-mode))
+    (add-to-list 'auto-mode-alist (cons "\\.libsonnet\\'" 'jsonnet-mode))
+
+    (with-eval-after-load 'jsonnet-mode
+      ;; config
+      (setq jsonnet-indent-level 4)
+
+      ;; keybind
+      (define-key jsonnet-mode-map (kbd "C-c C-c") #'jsonnet-eval-buffer)
+      (define-key jsonnet-mode-map (kbd "C-c C-f") #'jsonnet-jump)
+      (define-key jsonnet-mode-map (kbd "C-c C-r") #'jsonnet-reformat-buffer)))
+#+end_src
 ** kotlin-mode
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -1963,6 +1990,19 @@
 
     (add-to-list 'auto-mode-alist '("\\.pu$" . plantuml-mode)))
 #+END_SRC
+** protobuf-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "protocolbuffers/protobuf"))
+
+  (with-delayed-execution
+    (message "Install protobuf-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/protobuf/editors"))
+
+    (autoload-if-found '(protobuf-mode) "protobuf-mode" nil t)
+
+    (add-to-list 'auto-mode-alist '("\\.proto\\'" . protobuf-mode)))
+#+end_src
 ** pug-mode
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -2112,6 +2152,7 @@
     (add-to-list 'auto-mode-alist '("\\.scss$" . scss-mode))
 
     (with-eval-after-load 'scss-mode
+      (add-hook 'scss-mode-hook #'flycheck-mode)
       (add-hook 'scss-mode-hook #'(lambda ()
                                     (let ((lsp-diagnostics-provider :none))
                                       (lsp-deferred))))))
@@ -2165,12 +2206,14 @@
 
     ;; config
     (setq indent-tabs-mode nil)
-
     (setq sql-user "root")
     (setq sql-password "P@ssw0rd")
     (setq sql-server "127.0.0.1")
     (setq sql-port 13306)
-    (setq sql-mysql-login-params '(server port user password database)))
+    (setq sql-mysql-login-params '(server port user password database))
+
+    ;; hook
+    (add-hook 'sql-mode-hook #'flycheck-mode))
 #+end_src
 ** swift-mode
 #+begin_src emacs-lisp
@@ -4024,14 +4067,15 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     ;; (with-eval-after-load 'org
     ;;   (add-hook 'org-mode-hook #'fancy-narrow-mode))
 
-    (with-eval-after-load 'elisp-mode
-      (add-hook 'emacs-lisp-mode-hook #'fancy-narrow-mode))
+    ;; (with-eval-after-load 'elisp-mode
+    ;;   (add-hook 'emacs-lisp-mode-hook #'fancy-narrow-mode))
 
-    (with-eval-after-load 'lisp-mode
-      (add-hook 'lisp-mode-hook #'fancy-narrow-mode))
+    ;; (with-eval-after-load 'lisp-mode
+    ;;   (add-hook 'lisp-mode-hook #'fancy-narrow-mode))
 
-    (with-eval-after-load 'clojure-mode
-      (add-hook 'clojure-mode-hook #'fancy-narrow-mode)))
+    ;; (with-eval-after-load 'clojure-mode
+    ;;   (add-hook 'clojure-mode-hook #'fancy-narrow-mode))
+    )
 #+end_src
 *** origami
 #+begin_src emacs-lisp
