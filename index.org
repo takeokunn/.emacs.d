@@ -2072,6 +2072,19 @@
     (with-eval-after-load 'python
       (add-hook 'python-mode #'lsp)))
 #+END_SRC
+** qt-pro-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "emacsorphanage/qt-pro-mode"))
+
+  (with-delayed-execution
+    (message "Install qt-pro-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/qt-pro-mode"))
+
+    (autoload-if-found '(qt-pro-mode) "qt-pro-mode" nil t)
+
+    (add-to-list 'auto-mode-alist '("\\.pr[io]$" . qt-pro-mode)))
+#+end_src
 ** robots-txt-mode
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -4052,11 +4065,26 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 ** Mail
 *** mu4e
 #+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "emacsmirror/mu4e"))
+
   (with-delayed-execution
     (message "Install mu4e...")
-    (when (file-directory-p "/usr/local/share/emacs/site-lisp/mu/mu4e")
-      (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e"))
-    (autoload-if-found '(mu4e) "mu4e" nil t))
+
+    (when (file-directory-p "/usr/local/share/emacs/site-lisp/mu4e")
+      (add-to-list 'load-path (locate-user-emacs-file "/usr/local/share/emacs/site-lisp/mu4e")))
+
+    (autoload-if-found '(mu4e) "mu4e" nil t)
+
+    (with-eval-after-load 'mu4e
+      ;; for mail
+      (setq mail-user-agent 'mu4e-user-agent)
+
+      ;; for mu4e
+      (setq mu4e-get-mail-command "offlineimap")
+      (setq mu4e-maildir-shortcuts '((:maildir "/INBOX" :key ?i)
+                                     (:maildir "/Emacs" :key ?e)
+                                     (:maildir "/Guix" :key ?g)))))
 #+end_src
 *** mu4e-dashboard
 #+begin_src emacs-lisp
