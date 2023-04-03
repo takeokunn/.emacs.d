@@ -3311,28 +3311,28 @@
 
   (with-delayed-execution
     (message "Install gcmh...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/gchm"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/gcmh"))
 
     (autoload-if-found '(gcmh-mode) "gcmh" nil t)
 
-    ;; (gcmh-mode 1)
+    (gcmh-mode 1)
 
-    ;; (defvar my/gcmh-status nil)
+    (defvar my/gcmh-status nil)
 
-    ;; (advice-add #'garbage-collect
-    ;;             :before
-    ;;             (defun my/gcmh-log-start (&rest _)
-    ;;               (when gcmh-verbose
-    ;;                 (setq my/gcmh-status "Running GC..."))))
+    (advice-add #'garbage-collect
+                :before
+                (defun my/gcmh-log-start (&rest _)
+                  (when gcmh-verbose
+                    (setq my/gcmh-status "Running GC..."))))
 
-    ;; (advice-add #'gcmh-message
-    ;;             :override
-    ;;             (defun my/gcmh-message (format-string &rest args)
-    ;;               (setq my/gcmh-status
-    ;;                     (apply #'format-message format-string args))
-    ;;               (run-with-timer 2 nil
-    ;;                               (lambda ()
-    ;;                                 (setq my/gcmh-status nil)))))
+    (advice-add #'gcmh-message
+                :override
+                (defun my/gcmh-message (format-string &rest args)
+                  (setq my/gcmh-status
+                        (apply #'format-message format-string args))
+                  (run-with-timer 2 nil
+                                  (lambda ()
+                                    (setq my/gcmh-status nil)))))
 
     (with-eval-after-load 'gcmh
       ;; config
@@ -6117,8 +6117,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (defun my/flycheck-phpstan-setup ()
       "Setup Flycheck with PHPStan."
-      (interactive)
-      (require 'flycheck-phpstan)))
+      (require 'flycheck-phpstan))
+
+    (with-eval-after-load 'php-mode
+      (add-hook 'php-mode-hook #'my/flycheck-phpstan-setup)))
 #+end_src
 *** phpunit
 #+begin_src emacs-lisp
