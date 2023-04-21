@@ -1961,7 +1961,9 @@
 
     (with-eval-after-load 'php-mode
       ;; hook
-      (add-hook 'php-mode-hook #'lsp)
+      ;; (add-hook 'php-mode-hook #'lsp)
+      ;; (add-hook 'php-mode-hook #'lsp-bridge-mode)
+      (add-hook 'php-mode-hook #'eglot-ensure)
       (add-hook 'php-mode-hook #'php-format-auto-mode)
 
       ;; keybind
@@ -4044,6 +4046,15 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     ;;                                   (require 'lsp-pyright)
     ;;                                   (lsp))))
     )
+#+end_src
+*** acm-terminal
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "twlz0ne/acm-terminal"))
+
+  (with-delayed-execution
+    (message "Install acm-terminal...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/acm-terminal")))
 #+end_src
 *** lsp-bridge
 #+begin_src emacs-lisp
@@ -6599,6 +6610,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     ;; startup
     (setq org-startup-folded 'show3levels)
     (setq org-startup-truncated nil)
+    (setq org-src-window-setup 'current-window)
 
     ;; archive
     (advice-add 'org-archive-subtree :before #'(lambda (&rest _) (remove-hook 'find-file-hooks #'view-mode)))
@@ -7275,9 +7287,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (org-roam-db-autosync-enable)
     (with-eval-after-load 'org-roam-db
       (setq org-roam-database-connector 'sqlite)
-      (setq org-roam-db-gc-threshold (* 4 gc-cons-threshold))
-      (setq org-roam-db-location `,(concat (s-trim-right (shell-command-to-string "ghq root"))
-                                           "/github.com/takeokunn/blog/org-roam.db"))))
+      (setq org-roam-db-gc-threshold (* 4 gc-cons-threshold))))
 #+end_src
 *** org-roam-capture
 #+begin_src emacs-lisp
