@@ -744,6 +744,15 @@
     (message "Install f...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/f")))
 #+end_src
+** flx
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "lewang/flx"))
+
+  (with-delayed-execution
+    (message "Install flx...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/flx")))
+#+end_src
 ** frame-local
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -1961,9 +1970,8 @@
 
     (with-eval-after-load 'php-mode
       ;; hook
-      ;; (add-hook 'php-mode-hook #'lsp)
-      ;; (add-hook 'php-mode-hook #'lsp-bridge-mode)
-      (add-hook 'php-mode-hook #'eglot-ensure)
+      (add-hook 'php-mode-hook #'lsp)
+      ;; (add-hook 'php-mode-hook #'eglot-ensure)
       (add-hook 'php-mode-hook #'php-format-auto-mode)
 
       ;; keybind
@@ -2814,6 +2822,17 @@
     (with-eval-after-load 'company-elisp
       (push 'company-elisp company-backends)))
 #+END_SRC
+*** company-flx
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "PythonNut/company-flx"))
+
+  (with-delayed-execution
+    (message "Install company-flx...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-flx"))
+    (autoload-if-found '(company-flx-mode) "company-flx" nil t)
+    (company-flx-mode))
+#+end_src
 *** company-box
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -3757,6 +3776,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'eglot
       ;; config
+      (setq eglot-events-buffer-size nil)
       (setq eglot-autoshutdown t)
       (setq eglot-extend-to-xref t)
 
@@ -3823,7 +3843,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq lsp-idle-delay 0.8)
       (setq lsp-enable-links nil)
       (setq lsp-log-io nil)
-      (setq lsp-file-watch-threshold 10000))
+      (setq lsp-file-watch-threshold 20000))
 
     (with-eval-after-load 'lsp-completion
       (setq lsp-completion-no-cache t)
@@ -3981,7 +4001,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     ;; lsp-ui-imenu
     (autoload-if-found '(lsp-ui-imenu) "lsp-ui-imenu" nil t)
     (with-eval-after-load 'lsp-ui-imenu
-      (setq lsp-ui-imenu-enable t)
+      (setq lsp-ui-imenu-enable nil)
       (setq lsp-ui-imenu-kind-position 'top))
 
     ;; lsp-ui-sideline
