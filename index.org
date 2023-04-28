@@ -6636,7 +6636,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (advice-add 'org-archive-subtree :before #'(lambda (&rest _) (remove-hook 'find-file-hooks #'view-mode)))
     (advice-add 'org-archive-subtree :after #'(lambda (&rest _) (add-hook 'find-file-hooks #'view-mode)))
 
-    (setq org-agenda-files `(,(concat org-directory "/agenda")))
+    (setq org-agenda-files `(,(concat org-directory "/agenda") ,(concat org-directory "/archive")))
     (setq org-archive-location `,(format (expand-file-name "archive/%s.org::* Archived Tasks" org-directory)
                                          (format-time-string "%Y-%m-%d" (current-time))))
 
@@ -6909,7 +6909,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'org-agenda
       (setq org-agenda-span 'day)
-      (setq org-agenda-start-on-weekday 0)
+      (setq org-agenda-start-on-weekday 1)
       (setq org-agenda-todo-ignore-with-date t)))
 #+end_src
 *** org-super-agenda
@@ -6925,7 +6925,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'org-super-agenda
       (add-hook 'org-agenda-mode-hook #'org-super-agenda-mode)
-
       (setq org-super-agenda-groups '((:name "TODAY" :time-grid t)
                                       (:todo "TODO" :order 8)
                                       (:todo "WAIT" :order 8)))))
