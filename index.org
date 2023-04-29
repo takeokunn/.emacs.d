@@ -843,6 +843,15 @@
     (message "Install list-utils...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/list-utils")))
 #+end_src
+** log4e
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "aki2o/log4e"))
+
+  (with-delayed-execution
+    (message "Install log4e...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/log4e")))
+#+end_src
 ** marshal
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -6402,7 +6411,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (elfeed-org)
 
     (with-eval-after-load 'elfeed-org
-      (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org"))
+      (setq rmh-elfeed-org-files '("~/.ghq/github.com/takeokunn/private/elfeed.org"))
       (setq rmh-elfeed-org-auto-ignore-invalid-feeds t)))
 #+end_src
 * Eshell
@@ -6938,7 +6947,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install org-hyperscheduler...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/org-hyperscheduler"))
 
-    (autoload-if-found '() "org-hyperscheduler" nil t))
+    (autoload-if-found '(org-hyperscheduler-open) "org-hyperscheduler" nil t))
 #+end_src
 ** Org External Tools
 *** org-redmine
@@ -7155,6 +7164,18 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (org-babel-do-load-languages 'org-babel-load-languages
                                  '((php . t))))
+#+end_src
+*** ob-phpstan
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "takeokunn/ob-phpstan"))
+
+  (with-delayed-execution
+    (message "Install ob-phpstan...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-phpstan"))
+
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                 '((phpstan . t))))
 #+end_src
 *** ob-http
 #+begin_src emacs-lisp
