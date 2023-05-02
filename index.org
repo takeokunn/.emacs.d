@@ -1099,6 +1099,15 @@
     (message "Install xelb...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/xelb")))
 #+end_src
+** xwidgets-reuse
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "lordpretzel/xwidgets-reuse"))
+
+  (with-delayed-execution
+    (message "Install xwidgets-reuse...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/xwidgets-reuse")))
+#+end_src
 ** gh-test
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -1725,7 +1734,6 @@
     (add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
     (add-to-list 'auto-mode-alist '("\\.textlintrc$" . json-mode))
     (add-to-list 'auto-mode-alist '("\\.prettierrc$" . json-mode))
-    (add-to-list 'auto-mode-alist '("\\composer.lock$" . json-mode))
 
     (with-eval-after-load 'json-mode
       (add-hook 'json-mode-hook #'flycheck-mode)))
@@ -4119,14 +4127,57 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(mu4e) "mu4e" nil t)
 
     (with-eval-after-load 'mu4e
-      ;; for mail
-      (setq mail-user-agent 'mu4e-user-agent)
+      (setq mail-user-agent 'mu4e-user-agent))
 
-      ;; for mu4e
+    (with-eval-after-load 'mu4e-update
       (setq mu4e-get-mail-command "offlineimap")
+      (setq mu4e-update-interval 180)
+      (setq mu4e-index-cleanup t)
+      (setq mu4e-index-lazy-check nil))
+
+    (with-eval-after-load 'mu4e-view
+      (setq mu4e-split-view 'horizontal))
+
+    (with-eval-after-load 'mu4e-folders
       (setq mu4e-maildir-shortcuts '((:maildir "/INBOX" :key ?i)
                                      (:maildir "/Emacs" :key ?e)
-                                     (:maildir "/Guix" :key ?g)))))
+                                     (:maildir "/GitHub" :key ?g))))
+
+    (with-eval-after-load 'mm-decode
+      (add-to-list 'mm-discouraged-alternatives "text/html")
+      (add-to-list 'mm-discouraged-alternatives "text/richtext")))
+#+end_src
+*** mu4e-views
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "lordpretzel/mu4e-views"))
+
+  (with-delayed-execution
+    (message "Install mu4e-views...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/mu4e-views"))
+
+    ;; (autoload-if-found '(mu4e-views-mu4e-select-view-msg-method
+    ;;                      mu4e-views-cursor-msg-view-window-down
+    ;;                      mu4e-views-cursor-msg-view-window-up
+    ;;                      mu4e-views-toggle-auto-view-selected-message
+    ;;                      mu4e-views-mu4e-view-as-nonblocked-html
+    ;;                      mu4e-views-mu4e-use-view-msg-method) "mu4e-views" nil t)
+
+    ;; (mu4e-views-mu4e-use-view-msg-method "html")
+
+    ;; (with-eval-after-load 'mu4e
+    ;;   (define-key mu4e-headers-mode-map (kbd "v") #'mu4e-views-mu4e-select-view-msg-method)
+    ;;   (define-key mu4e-headers-mode-map (kbd "M-n") #'mu4e-views-mu4e-select-view-msg-method)
+    ;;   (define-key mu4e-headers-mode-map (kbd "M-p") #'mu4e-views-cursor-msg-view-window-up)
+    ;;   (define-key mu4e-headers-mode-map (kbd "f") #'mu4e-views-toggle-auto-view-selected-message)
+    ;;   (define-key mu4e-headers-mode-map (kbd "f") #'mu4e-views-mu4e-view-as-nonblocked-html))
+
+    ;; (with-eval-after-load 'mu4e-view
+    ;;   (setq mu4e-views-completion-method 'ivy)
+    ;;   (setq mu4e-views-default-view-method "html")
+    ;;   (setq mu4e-views-next-previous-message-behaviour 'stick-to-current-window)
+    ;;   (setq mu4e-views-auto-view-selected-message t))
+    )
 #+end_src
 *** mu4e-dashboard
 #+begin_src emacs-lisp
@@ -6396,7 +6447,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq browse-url-browser-function 'eww-browse-url))
 
     (with-eval-after-load 'elfeed-curl
-      (setq elfeed-curl-max-connections 8)))
+      (setq elfeed-curl-max-connections 32)))
 #+end_src
 ** elfeed-org
 #+begin_src emacs-lisp
@@ -6932,11 +6983,18 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(org-super-agenda-mode) "org-super-agenda" nil t)
 
+    (org-super-agenda-mode)
+
     (with-eval-after-load 'org-super-agenda
-      (add-hook 'org-agenda-mode-hook #'org-super-agenda-mode)
-      (setq org-super-agenda-groups '((:name "TODAY" :time-grid t)
-                                      (:todo "TODO" :order 8)
-                                      (:todo "WAIT" :order 8)))))
+      (setq org-super-agenda-groups '((:log t)
+                                      (:auto-group t)
+                                      (:name "Today List..." :scheduled today)
+                                      (:name "Due Today List..." :deadline today)
+                                      (:name "Overdue List..." :deadline past)
+                                      (:name "Due Soon List" :deadline future)
+                                      (:name "TODO List..." :todo "TODO")
+                                      (:name "WAIT List..." :todo "WAIT")
+                                      (:name "DONE List..." :todo "DONE")))))
 #+end_src
 *** org-hyperscheduler
 #+begin_src emacs-lisp
