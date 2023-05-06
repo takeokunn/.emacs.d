@@ -608,6 +608,12 @@
 #+begin_src emacs-lisp
   (setq enable-local-variables :all)
 #+end_src
+** password
+#+begin_src emacs-lisp
+  (with-eval-after-load 'password-cache
+    (setq password-cache t)
+    (setq password-cache-expiry 3600))
+#+end_src
 * Utitlity
 ** a
 #+begin_src emacs-lisp
@@ -4132,8 +4138,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'mu4e-update
       (setq mu4e-get-mail-command "offlineimap")
       (setq mu4e-update-interval 180)
-      (setq mu4e-index-cleanup t)
-      (setq mu4e-index-lazy-check nil))
+      (setq mu4e-index-cleanup nil)
+      (setq mu4e-index-lazy-check t))
 
     (with-eval-after-load 'mu4e-view
       (setq mu4e-split-view 'horizontal))
@@ -5650,11 +5656,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install slime-company...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime-company"))
-
-    (autoload-if-found '(company-slime) "slime-company" nil t)
-
-    (with-eval-after-load 'company
-      (push 'company-slime company-backends)))
+    (autoload-if-found '(slime-company) "slime-company" nil t)
+    (slime-setup '(slime-company)))
 #+end_src
 *** hyperspec
 #+begin_src emacs-lisp
@@ -6741,6 +6744,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                                      "* %?")
                                     ("j" "Journal" entry (file+olp+datetree ,(expand-file-name "journal.org" org-directory))
                                      "* %U\n%?\n%i\n")))))
+#+end_src
+*** org-duration
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-duration
+   (setq org-duration-format (quote h:mm)))
 #+end_src
 *** org-id
 #+begin_src emacs-lisp
