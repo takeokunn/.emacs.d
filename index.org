@@ -4930,7 +4930,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install neotree...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-neotree"))
 
-    (autoload-if-found '(neotree-hide neotree-dir) "neotree" nil t)
+    (autoload-if-found '(neotree-hide neotree-dir neotree-make-executor neo-open-file neo-open-dir) "neotree" nil t)
 
     (defun my/neotree-toggle ()
       (interactive)
@@ -4969,7 +4969,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq neo-window-fixed-size nil)
 
       ;; hook
-      (add-hook 'neotree-mode-hook #'(lambda () (display-line-numbers-mode -1)))))
+      (add-hook 'neotree-mode-hook #'(lambda () (display-line-numbers-mode -1)))
+
+      ;; keybind
+      (define-key neotree-mode-map (kbd "C-j") (neotree-make-executor
+                                                :file-fn #'neo-open-file
+                                                :dir-fn  #'neo-open-dir))))
 #+END_SRC
 *** nyan-mode
 #+BEGIN_SRC emacs-lisp
