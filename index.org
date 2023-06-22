@@ -2357,6 +2357,7 @@
     (add-to-list 'auto-mode-alist '("\\.tf$" . terraform-mode))
 
     (with-eval-after-load 'terraform-mode
+      (add-hook 'terraform-mode-hook #'lsp)
       (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode)
       (add-hook 'terraform-mode-hook #'flycheck-mode)))
 #+END_SRC
@@ -2849,6 +2850,7 @@
       ;; keybind
       (define-key company-active-map (kbd "C-n") #'company-select-next)
       (define-key company-active-map (kbd "C-p") #'company-select-previous)
+      (define-key company-active-map (kbd "C-j") #'company-complete-selection)
 
       ;; config
       (setq company-minimum-prefix-length 2)
