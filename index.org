@@ -3564,8 +3564,11 @@
   (with-delayed-execution
     (message "Install epa-file...")
     (autoload-if-found '(epa-file-enable) "epa-file" nil t)
+
     (epa-file-enable)
+
     (with-eval-after-load 'epa-file
+      (setq epa-file-select-keys 'silent)
       (setq epa-file-cache-passphrase-for-symmetric-encryption t)))
 #+end_src
 *** pinentry
@@ -6786,7 +6789,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+begin_src emacs-lisp
   (with-delayed-execution
     (autoload-if-found '(org-encrypt-entry org-decrypt-entry org-crypt-use-before-save-magic) "org-crypt" nil t)
+
     (org-crypt-use-before-save-magic)
+
     (with-eval-after-load 'org-crypt
       (setq org-crypt-key nil)
       (setq org-tags-exclude-from-inheritance '("crypt"))))
