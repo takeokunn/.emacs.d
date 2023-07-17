@@ -1756,6 +1756,7 @@
     (add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
     (add-to-list 'auto-mode-alist '("\\.textlintrc$" . json-mode))
     (add-to-list 'auto-mode-alist '("\\.prettierrc$" . json-mode))
+    (add-to-list 'auto-mode-alist '("\\.markuplintrc$" . json-mode))
 
     (with-eval-after-load 'json-mode
       (add-hook 'json-mode-hook #'flycheck-mode)))
@@ -1987,6 +1988,24 @@
     (autoload-if-found '(pcap-mode) "pcap" nil t)
 
     (add-to-list 'auto-mode-alist '("\\.pcap$" . pcap-mode)))
+#+end_src
+** phel-mode
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install phel-mode...")
+
+    (define-derived-mode phel-mode clojure-mode "Phel"
+      "Major mode for editing Phel language source files."
+      (setq-local comment-start "#")
+      ;; We disable lockfiles so that ILT evaluation works.
+      ;; The lockfiles seem to modify the buffer-file-name somehow, when the buffer changes
+      ;; And that is detected by the currently running Phel process.
+      ;; That interferes with evaluation, as the running Phel process starts behaving badly because of that.
+      (setq-local create-lockfiles nil)
+      ;;(setq-local company-backends '((company-capf company-dabbrev-code)))
+      )
+
+    (add-to-list 'auto-mode-alist '("\\.phel$" . phel-mode)))
 #+end_src
 ** php-mode
 #+BEGIN_SRC emacs-lisp
@@ -4165,8 +4184,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'mu4e-folders
       (setq mu4e-maildir-shortcuts '((:maildir "/INBOX" :key ?i)
+                                     (:maildir "/GitHub" :key ?g)
                                      (:maildir "/Emacs" :key ?e)
-                                     (:maildir "/GitHub" :key ?g))))
+                                     (:maildir "/Guix" :key ?u))))
 
     (with-eval-after-load 'mm-decode
       (add-to-list 'mm-discouraged-alternatives "text/html")
