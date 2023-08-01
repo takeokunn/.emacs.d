@@ -18,27 +18,47 @@ jobs:
         with:
           version: 28.1
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
 
-      # build html
+      # for npm
+      - name: setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: cache ./node_modules
+        id: cache-npm
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-yarn-
+      - name: npm install
+        if: steps.cache-npm.outputs.cache-hit != 'true'
+        run: npm install
+      - name: Run secretlint
+        run: npx secretlint "./*.org"
+
+      # for build html
       - name: wget htmlize
         run: wget https://raw.githubusercontent.com/hniksic/emacs-htmlize/master/htmlize.el
       - name: mkdir public
         run: mkdir -p ./public
       - name: build index
         run: |
-          emacs index.org -Q --batch --eval "(progn (load \""$PWD"/htmlize.el\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
+          emacs index.org -Q --batch --eval "(progn (load \"$PWD/htmlize.el\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
           mv index.html ./public/index.html
       - name: build yasnippets
         run: |
-          emacs yasnippets.org -Q --batch --eval "(progn (load \""$PWD"/htmlize.el\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
+          emacs yasnippets.org -Q --batch --eval "(progn (load \"$PWD/htmlize.el\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
           mv yasnippets.html ./public/yasnippets.html
       - name: build early-init
         run: |
-          emacs early-init.org -Q --batch --eval "(progn (load \""$PWD"/htmlize.el\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
+          emacs early-init.org -Q --batch --eval "(progn (load \"$PWD/htmlize.el\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
           mv early-init.html ./public/early-init.html
       - name: build elfeed
         run: |
-          emacs elfeed.org -Q --batch --eval "(progn (load \""$PWD"/htmlize.el\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
+          emacs elfeed.org -Q --batch --eval "(progn (load \"$PWD/htmlize.el\") (setq org-html-htmlize-output-type 'css) (org-html-export-to-html))"
           mv elfeed.html ./public/elfeed.html
 
       # for github pages
