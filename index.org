@@ -2229,6 +2229,18 @@
     (with-eval-after-load 'scheme
       (setq scheme-program-name "gosh -i")))
 #+end_src
+** scad-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "openscad/emacs-scad-mode"))
+
+  (with-delayed-execution
+    (message "Install scad-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-scad-mode"))
+    (autoload-if-found '(scad-mode) "scad-mode" nil t)
+
+    (add-to-list 'auto-mode-alist '("\\.scad\\'" . scad-mode)))
+#+end_src
 ** scss-mode
 #+begin_src emacs-lisp
   (eval-when-compile
