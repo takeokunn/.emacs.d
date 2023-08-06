@@ -2023,7 +2023,7 @@
                          php-format-on-after-save-hook
                          php-format-auto-mode) "php-format" nil t)
 
-    (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+    ;; (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 
     (with-eval-after-load 'php-mode
       ;; hook
@@ -2041,6 +2041,21 @@
       ;; phpstan
       (define-derived-mode phpstan-mode php-mode "phpstan")))
 #+END_SRC
+** php-ts-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "emacs-php/php-ts-mode"))
+
+  (with-delayed-execution
+    (message "Install php-ts-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/php-ts-mode"))
+    (autoload-if-found '(php-ts-mode) "php-ts-mode" nil t)
+
+    (add-to-list 'auto-mode-alist '("\\.php$" . php-ts-mode))
+
+    (with-eval-after-load 'php-ts-mode
+      (add-hook 'php-ts-mode-hook #'lsp)))
+#+end_src
 ** phpt-mode
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -3846,7 +3861,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install eglot...")
 
-    (autoload-if-found '(eglot-ensure) "eglot" nil t)
+    (autoload-if-found '(eglot) "eglot" nil t)
 
     (with-eval-after-load 'eglot
       ;; config
@@ -3893,6 +3908,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'lsp-mode-hook #'flycheck-mode))
 
     (with-eval-after-load 'lsp-mode
+      (add-to-list 'lsp-language-id-configuration '("php-ts-mode" . "php"))
+
       ;; hook
       (add-hook 'lsp-mode-hook #'lsp-lens-mode)
       (add-hook 'lsp-mode-hook #'lsp-diagnostics-mode)
@@ -6276,7 +6293,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (require 'flycheck-phpstan))
 
     (with-eval-after-load 'php-mode
-      (add-hook 'php-mode-hook #'my/flycheck-phpstan-setup)))
+      (add-hook 'php-mode-hook #'my/flycheck-phpstan-setup))
+
+    (with-eval-after-load 'php-ts-mode
+      (add-hook 'php-ts-mode-hook #'my/flycheck-phpstan-setup)))
 #+end_src
 *** phpunit
 #+begin_src emacs-lisp
