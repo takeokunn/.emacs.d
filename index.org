@@ -3320,9 +3320,6 @@
       (setq eww-header-line-format nil)
       (setq eww-search-prefix "http://www.google.co.jp/search?q="))
 
-    (with-eval-after-load 'browse-url
-      (setq browse-url-browser-function 'eww-browse-url))
-
     ;; keybind
     (with-eval-after-load 'eww
       (define-key eww-mode-map (kbd "C") #'eww-set-character-encoding)
@@ -4203,6 +4200,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'load-path (locate-user-emacs-file "/usr/local/share/emacs/site-lisp/mu4e")))
 
     (autoload-if-found '(mu4e) "mu4e" nil t)
+
+    (global-set-key (kbd "C-x C-w") #'mu4e)
 
     (with-eval-after-load 'mu4e
       (setq mail-user-agent 'mu4e-user-agent))
@@ -6526,25 +6525,18 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (eval-when-compile
     (el-clone :repo "skeeto/elfeed"))
 
+  (setq elfeed-show-entry-switch #'display-buffer)
   (with-delayed-execution
     (message "Install elfeed...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/elfeed"))
 
-    (defconst my/elfeed-search-filter "@1-week-ago +unread")
-
     (autoload-if-found '(elfeed) "elfeed" nil t)
-    (global-set-key (kbd "C-x w") #'elfeed)
 
-    (defun my/elfeed-ivy-filter ()
-      (interactive)
-      (let ((filtered-tag (ivy-completing-read "Choose Tags: " (elfeed-db-get-all-tags))))
-        (setq elfeed-search-filter (concat my/elfeed-search-filter " +" filtered-tag))
-        (elfeed-search-update--force)))
+    (with-eval-after-load 'elfeed-db
+      (setq elfeed-db-directory "~/.cache/elfeed"))
 
-    (with-eval-after-load 'elfeed
-      (define-key elfeed-search-mode-map (kbd "+") #'my/elfeed-ivy-filter)
-      (setq elfeed-search-filter my/elfeed-search-filter)
-      (setq browse-url-browser-function 'eww-browse-url))
+    (with-eval-after-load 'elfeed-search
+      (setq elfeed-search-filter "@2-week-ago"))
 
     (with-eval-after-load 'elfeed-curl
       (setq elfeed-curl-max-connections 32)))
@@ -6564,6 +6556,22 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'elfeed-org
       (setq rmh-elfeed-org-files '("~/.ghq/github.com/takeokunn/private/elfeed.org"))
       (setq rmh-elfeed-org-auto-ignore-invalid-feeds t)))
+#+end_src
+** elfeed-dashboard
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "manojm321/elfeed-dashboard"))
+
+  (with-delayed-execution
+    (message "Install elfeed-dashboard...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/elfeed-dashboard"))
+
+    (autoload-if-found '(elfeed-dashboard) "elfeed-dashboard" nil t)
+
+    (global-set-key (kbd "C-x w") #'elfeed-dashboard)
+
+    (with-eval-after-load 'elfeed-dashboard
+      (setq elfeed-dashboard-file (locate-user-emacs-file "elfeed-dashboard.org"))))
 #+end_src
 * Eshell
 ** basic
@@ -7057,8 +7065,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+begin_src emacs-lisp
   (with-delayed-execution
     (message "Install ol...")
+
     (autoload-if-found '(org-store-link) "ol" nil t)
+
     (global-set-key (kbd "C-c l") #'org-store-link)
+
     (with-eval-after-load 'ol
       (setq org-link-file-path-type 'relative)))
 #+end_src
@@ -7097,6 +7108,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install org-agenda...")
     (autoload-if-found '(org-agenda) "org-agenda" nil t)
+
     (global-set-key (kbd "C-c a") #'org-agenda)
 
     (with-eval-after-load 'org-agenda
