@@ -333,7 +333,7 @@
 #+begin_src emacs-lisp
   (with-eval-after-load 'comp
     (setq native-comp-async-jobs-number 8)
-    (setq native-comp-speed 2)
+    (setq native-comp-speed 1)
     (setq native-comp-always-compile t)
     (defun my/native-comp-packages ()
       (interactive)
@@ -1837,6 +1837,7 @@
     (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
 
     (with-eval-after-load 'markdown-mode
+      ;; config
       (setq markdown-code-lang-modes (append '(("diff" . diff-mode)
                                                ("hs" . haskell-mode)
                                                ("html" . web-mode)
@@ -1854,7 +1855,10 @@
                                                ("yaml". yaml-mode)
                                                ("zsh" . sh-mode)
                                                ("php" . php-mode))
-                                             markdown-code-lang-modes))))
+                                             markdown-code-lang-modes))
+
+      ;; markdown
+      (add-hook 'markdown-mode #'orgtbl-mode)))
 #+END_SRC
 ** mermaid-mode
 #+begin_src emacs-lisp
@@ -2023,12 +2027,11 @@
                          php-format-on-after-save-hook
                          php-format-auto-mode) "php-format" nil t)
 
-    ;; (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+    (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 
     (with-eval-after-load 'php-mode
       ;; hook
-      (add-hook 'php-mode-hook #'lsp)
-      ;; (add-hook 'php-mode-hook #'eglot-ensure)
+      ;; (add-hook 'php-mode-hook #'lsp)
       (add-hook 'php-mode-hook #'php-format-auto-mode)
 
       ;; keybind
@@ -2051,10 +2054,11 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/php-ts-mode"))
     (autoload-if-found '(php-ts-mode) "php-ts-mode" nil t)
 
-    (add-to-list 'auto-mode-alist '("\\.php$" . php-ts-mode))
+    ;; (add-to-list 'auto-mode-alist '("\\.php$" . php-ts-mode))
 
     (with-eval-after-load 'php-ts-mode
-      (add-hook 'php-ts-mode-hook #'lsp)))
+      ;; (add-hook 'php-ts-mode-hook #'eglot)
+      ))
 #+end_src
 ** phpt-mode
 #+begin_src emacs-lisp
@@ -5433,6 +5437,15 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'scheme
       (add-hook 'scheme-mode-hook #'puni-disable-puni-mode))
 
+    (with-eval-after-load 'scheme
+      (add-hook 'scheme-mode-hook #'puni-disable-puni-mode))
+
+    (with-eval-after-load 'simple
+      (add-hook 'eval-expression-minibuffer-setup-hook #'puni-disable-puni-mode))
+
+    (with-eval-after-load 'ielm
+      (add-hook 'inferior-emacs-lisp-mode-hook #'puni-disable-puni-mode))
+
     (with-eval-after-load 'minibuffer
       (add-hook 'minibuffer-mode-hook #'puni-disable-puni-mode)))
 #+end_src
@@ -5637,7 +5650,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'scheme-mode-hook #'enable-paredit-mode))
 
     (with-eval-after-load 'simple
-      (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)))
+      (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode))
+
+    (with-eval-after-load 'ielm
+      (add-hook 'inferior-emacs-lisp-mode-hook #'enable-paredit-mode)))
 #+END_SRC
 *** rainbow-delimiter
 #+BEGIN_SRC emacs-lisp
@@ -5808,7 +5824,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install elsa...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/Elsa"))
-    (autoload-if-found '() "elsa" nil t))
+    (autoload-if-found '(elsa-run) "elsa" nil t))
 #+end_src
 *** lispxmp
 #+begin_src emacs-lisp
@@ -5878,7 +5894,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install elisp-refs...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/elisp-refs"))
 
-    (autoload-if-found '() "elisp-refs" nil t))
+    (autoload-if-found '(elisp-refs-function
+                         elisp-refs-macro
+                         elisp-refs-variable
+                         elisp-refs-special
+                         elisp-refs-symbol) "elisp-refs" nil t))
 #+end_src
 *** highlight-quoted
 #+begin_src emacs-lisp
@@ -6851,6 +6871,23 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'org-crypt
       (setq org-crypt-key nil)
       (setq org-tags-exclude-from-inheritance '("crypt"))))
+#+end_src
+*** org-table
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (autoload-if-found '(orgtbl-mode org-table-begin org-table-end) "org-table" nil t)
+
+    (defun my/org-table-align-markdown ()
+      "Replace \"+\" sign with \"|\" in org-table."
+      (when (member major-mode '(markdown-mode))
+        (save-excursion
+          (save-restriction
+            (narrow-to-region (org-table-begin) (org-table-end))
+            (goto-char (point-min))
+            (while (search-forward "-+-" nil t)
+              (replace-match "-|-"))))))
+
+    (advice-add 'org-table-align :before #'my/org-table-align-markdown))
 #+end_src
 *** org-journal
 #+begin_src emacs-lisp
