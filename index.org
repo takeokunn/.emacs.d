@@ -632,6 +632,15 @@
     (message "Install a...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/a")))
 #+end_src
+** acm-terminal
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "twlz0ne/acm-terminal"))
+
+  (with-delayed-execution
+    (message "Install acm-terminal...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/acm-terminal")))
+#+end_src
 ** alert
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -1470,7 +1479,9 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-fish"))
 
     (autoload-if-found '(fish-mode) "fish-mode" nil t)
+
     (add-to-list 'auto-mode-alist '("\\.fish$" . fish-mode))
+
     (with-eval-after-load 'fish-mode
       (setq fish-enable-auto-indent t)))
 #+END_SRC
@@ -1520,8 +1531,8 @@
   (with-delayed-execution
     (message "Install git-modes...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/git-modes"))
-
     (add-to-list 'load-path (locate-user-emacs-file (concat "el-clone/git-modes")))
+
     (autoload-if-found '(gitignore-mode gitconfig-mode gitattributes-mode) "git-modes" nil t)
 
     ;; gitignore-mode
@@ -1544,6 +1555,7 @@
 
     ;; gitattributes
     (add-to-list 'auto-mode-alist '("/\\.gitattributes\\'" . gitattributes-mode))
+    (add-to-list 'auto-mode-alist '("\.gitattributes$" . gitattributes-mode))
     (add-to-list 'auto-mode-alist '("/info/attributes\\'" . gitattributes-mode))
     (add-to-list 'auto-mode-alist '("/git/attributes\\'" . gitattributes-mode)))
 #+end_src
@@ -1877,9 +1889,15 @@
 #+begin_src emacs-lisp
   (with-delayed-execution
     (autoload-if-found '(makefile-mode) "makefile-mode" nil t)
+
     (add-to-list 'auto-mode-alist '("\\.mk$" . makefile-mode))
     (add-to-list 'auto-mode-alist '("Makefile" . makefile-mode))
+
     (with-eval-after-load 'makefile-mode
+      ;; config
+      (setq makefile-electric-keys t)
+
+      ;; hook
       (add-hook 'makefile-mode #'flycheck-mode)))
 #+end_src
 ** nasm-mode
@@ -2031,7 +2049,7 @@
 
     (with-eval-after-load 'php-mode
       ;; hook
-      ;; (add-hook 'php-mode-hook #'lsp)
+      (add-hook 'php-mode-hook #'lsp)
       (add-hook 'php-mode-hook #'php-format-auto-mode)
 
       ;; keybind
@@ -2419,6 +2437,7 @@
     (add-to-list 'auto-mode-alist '("\\.editrc$" . conf-space-mode))
     (add-to-list 'auto-mode-alist '("\\.inputrc$" . conf-space-mode))
     (add-to-list 'auto-mode-alist '("\\.colorrc$" . conf-space-mode))
+    (add-to-list 'auto-mode-alist '("\\.asdfrc$" . conf-space-mode))
     (add-to-list 'auto-mode-alist '("credentials$" . conf-space-mode)))
 #+end_src
 ** toml-mode
@@ -3223,8 +3242,7 @@
 
     (with-eval-after-load 'dired
       ;; config
-      (setq dired-auto-revert-buffer nil)
-      (setq dired-dwim-target t)
+      (setq dired-dwim-target nil)
       (setq dired-hide-details-hide-symlink-targets nil)
       (setq dired-listing-switches "-alh")
       (setq dired-recursive-copies 'always)
@@ -4159,15 +4177,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     ;;                                   (lsp))))
     )
 #+end_src
-*** acm-terminal
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "twlz0ne/acm-terminal"))
-
-  (with-delayed-execution
-    (message "Install acm-terminal...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/acm-terminal")))
-#+end_src
 *** lsp-bridge
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -4807,8 +4816,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install autoinsert...")
     (autoload-if-found '(auto-insert-mode define-auto-insert) "autoinsert" nil t)
+
     (auto-insert-mode)
-    (define-auto-insert "\.php" "template.php")
+
     (with-eval-after-load 'autoinsert
       (setq auto-insert-directory "~/.emacs.d/auto-insert")))
 #+end_src
@@ -4948,7 +4958,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install emojify...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-emojify"))
 
-    (autoload-if-found '(emojify-mode) "emojify" nil t))
+    (autoload-if-found '(emojify-mode) "emojify" nil t)
+
+    (with-eval-after-load 'esh-mode
+      (add-hook 'eshell-mode-hook #'emojify-mode)))
 #+end_src
 *** hl-line
 #+BEGIN_SRC emacs-lisp
@@ -5214,6 +5227,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install pass...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/pass"))
+
     (autoload-if-found '(pass) "pass" nil t))
 #+end_src
 ** Utility
@@ -5608,6 +5622,33 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(zoom-window-zoom) "zoom-window" nil t)
 
     (global-set-key (kbd "C-c C-z") #'zoom-window-zoom))
+#+end_src
+** Remote Access
+*** counsel-tramp
+#+begin_src emacs-lisp
+
+  (eval-when-compile
+    (el-clone :repo "masasam/emacs-counsel-tramp"))
+
+  (with-delayed-execution
+    (message "Install counsel-tramp...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-counsel-tramp"))
+    (autoload-if-found '(counsel-tramp) "counsel-tramp" nil t))
+#+end_src
+*** docker-tramp
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "emacs-pe/docker-tramp.el"))
+
+  (with-delayed-execution
+    (message "Install docker-tramp...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/docker-tramp"))
+
+    (autoload-if-found '(docker-tramp-add-method) "docker-tramp" nil t)
+
+    (with-eval-after-load 'tramp
+      (docker-tramp-add-method)
+      (tramp-set-completion-function docker-tramp-method docker-tramp-completion-function-alist)))
 #+end_src
 * Language Specific
 ** Basic Lisp
@@ -6423,18 +6464,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'haskell-mode
       (add-hook 'haskell-mode-hook #'hindent-mode)))
-#+end_src
-** Docker
-*** docker-tramp
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "emacs-pe/docker-tramp.el"))
-
-  (with-delayed-execution
-    (message "Install docker-tramp...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/docker-tramp"))
-
-    (autoload-if-found '() "docker-tramp" nil t))
 #+end_src
 ** Web
 *** emmet-mode
