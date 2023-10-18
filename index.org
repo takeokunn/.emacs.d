@@ -2054,7 +2054,7 @@
 
     (with-eval-after-load 'php-mode
       ;; hook
-      (add-hook 'php-mode-hook #'lsp)
+      ;; (add-hook 'php-mode-hook #'lsp)
       (add-hook 'php-mode-hook #'php-format-auto-mode)
 
       ;; keybind
@@ -3604,6 +3604,21 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/blamer"))
 
     (autoload-if-found '(blamer-mode) "blamer" nil t))
+#+end_src
+*** git-auto-commit-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "ryuslash/git-auto-commit-mode"))
+
+  (with-delayed-execution
+    (message "Install git-auto-commit-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/git-auto-commit-mode"))
+    (autoload-if-found '(git-auto-commit-mode) "git-auto-commit-mode" nil t)
+
+    (with-eval-after-load 'git-auto-commit-mode
+      (setq gac-automatically-push-p t)
+      (setq gac-debounce-interval (* 60 3))
+      (setq gac-default-message "Update")))
 #+end_src
 ** Googling
 *** google-this
