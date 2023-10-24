@@ -2054,7 +2054,7 @@
 
     (with-eval-after-load 'php-mode
       ;; hook
-      ;; (add-hook 'php-mode-hook #'lsp)
+      (add-hook 'php-mode-hook #'lsp)
       (add-hook 'php-mode-hook #'php-format-auto-mode)
 
       ;; keybind
@@ -2228,9 +2228,7 @@
     (add-to-list 'auto-mode-alist '("\\.Brewfile" . ruby-mode))
 
     (with-eval-after-load 'ruby-mode
-      (setq ruby-insert-encoding-magic-comment nil)
-      ;; (add-hook 'ruby-mode-hook #'lsp-deferred)
-      ))
+      (setq ruby-insert-encoding-magic-comment nil)))
 #+END_SRC
 ** rust-mode
 #+BEGIN_SRC emacs-lisp
@@ -2294,6 +2292,7 @@
 
     (autoload-if-found '(scss-mode) "scss-mode" nil t)
     (add-to-list 'auto-mode-alist '("\\.scss$" . scss-mode))
+    (add-to-list 'auto-mode-alist '("\\.sass$" . scss-mode))
 
     (with-eval-after-load 'scss-mode
       (add-hook 'scss-mode-hook #'flycheck-mode)
@@ -2484,7 +2483,7 @@
     (add-hook 'typescript-mode-local-vars-hook #'lsp)
 
     ;; for tsx
-    ;; (add-to-list 'auto-mode-alist '("\\.js$" . typescript-tsx-mode))
+    (add-to-list 'auto-mode-alist '("\\.js$" . typescript-tsx-mode))
     (add-to-list 'auto-mode-alist '("\\.jsx$" . typescript-tsx-mode))
     (add-to-list 'auto-mode-alist '("\\.tsx$" . typescript-tsx-mode))
     (add-hook 'typescript-tsx-mode-hook #'lsp-deferred))
@@ -4237,7 +4236,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'mu4e-update
       (setq mu4e-get-mail-command "offlineimap")
-      (setq mu4e-update-interval 180)
+      (setq mu4e-update-interval (* 5 60))
       (setq mu4e-index-cleanup nil)
       (setq mu4e-index-lazy-check t))
 
@@ -6206,9 +6205,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'company
       (push 'company-robe company-backends))
-    ;; (with-eval-after-load 'ruby-mode
-    ;;   (add-hook 'ruby-mode-hook #'robe-mode))
-    )
+
+    (with-eval-after-load 'ruby-mode
+      (add-hook 'ruby-mode-hook #'robe-mode)))
 #+end_src
 *** rubocop
 #+begin_src emacs-lisp
