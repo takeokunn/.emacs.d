@@ -284,6 +284,7 @@
   (global-set-key (kbd "C-z") #'undo)
   (global-set-key (kbd "C-a") #'back-to-indentation)
   (global-set-key (kbd "C-c i") #'find-function)
+  (global-set-key (kbd "C-c C-o") #'org-open-at-point)
   (global-set-key (kbd "C-x C-o") #'other-window)
   (global-set-key (kbd "C-x :") #'goto-line)
   (global-set-key (kbd "M-h") #'backward-kill-word)
@@ -1162,6 +1163,15 @@
   (with-delayed-execution-priority-high
     (message "Install gh...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/gh")))
+#+end_src
+** web-server
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "eschulte/emacs-web-server" :name "web-server"))
+
+  (with-delayed-execution-priority-high
+    (message "Install web-server...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/web-server")))
 #+end_src
 * Language
 ** apache-mode
@@ -4249,16 +4259,13 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'mu4e-update
       ;; config
       (setq mu4e-get-mail-command "offlineimap")
-      (setq mu4e-update-interval (* 5 60))
+      (setq mu4e-update-interval (* 10 60))
       (setq mu4e-index-cleanup nil)
       (setq mu4e-index-lazy-check t))
 
     (with-eval-after-load 'mu4e-view
       ;; config
-      (setq mu4e-split-view 'horizontal)
-
-      ;; keymap
-      (define-key mu4e-view-mode-map (kbd "C-c C-o") #'org-open-at-point))
+      (setq mu4e-split-view 'horizontal))
 
     (with-eval-after-load 'mu4e-folders
       ;; config
@@ -6222,10 +6229,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(robe-mode inf-ruby-console-auto) "robe" nil t)
 
     (with-eval-after-load 'company
-      (push 'company-robe company-backends))
-
-    (with-eval-after-load 'ruby-mode
-      (add-hook 'ruby-mode-hook #'robe-mode)))
+      (push 'company-robe company-backends)))
 #+end_src
 *** rubocop
 #+begin_src emacs-lisp
