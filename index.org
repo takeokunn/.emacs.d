@@ -291,6 +291,7 @@
 
   (global-set-key (kbd "C-x l") 'next-buffer)
   (global-set-key (kbd "C-x h") 'previous-buffer)
+  (global-set-key (kbd "C-x C-b") #'switch-to-buffer)
 
   (global-set-key (kbd "C-x C-k") nil)
   (global-set-key (kbd "C-x C-n") nil)
@@ -1764,9 +1765,13 @@
     (add-to-list 'auto-mode-alist '("\\.mjs$" . js2-mode))
 
     (with-eval-after-load 'js2-mode
+      ;; config
       (setq js2-strict-missing-semi-warning nil)
       (setq js2-missing-semi-one-line-override nil)
-      (add-hook 'js2-mode-hook #'lsp-deferred)))
+
+      ;; hook
+      ;; (add-hook 'js2-mode-hook #'lsp-deferred)
+      ))
 #+END_SRC
 ** json-mode
 #+BEGIN_SRC emacs-lisp
@@ -2238,6 +2243,7 @@
     (add-to-list 'auto-mode-alist '("\\.Brewfile" . ruby-mode))
 
     (with-eval-after-load 'ruby-mode
+      ;; config
       (setq ruby-insert-encoding-magic-comment nil)))
 #+END_SRC
 ** rust-mode
@@ -4107,8 +4113,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                                          :host "localhost"
                                          :port 9003)))
 
-    (with-eval-after-load 'js2-mode
-      (add-hook 'js2-mode-hook #'dap-node-setup))
+    ;; (with-eval-after-load 'js2-mode
+    ;;   (add-hook 'js2-mode-hook #'dap-node-setup))
 
     (with-eval-after-load 'go-mode
       (add-hook 'go-mode-hook #'dap-go-setup))
@@ -6243,6 +6249,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(rubocop-mode) "rubocop" nil t)
 
     (with-eval-after-load 'ruby-mode
+      ;; hook
       (add-hook 'ruby-mode-hook #'rubocop-mode)))
 #+end_src
 *** ruby-refactor
