@@ -1308,6 +1308,10 @@
     (autoload-if-found '(coffee-mode) "coffee-mode" nil t)
     (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode)))
 #+END_SRC
+** conf-mode
+#+begin_src emacs-lisp
+  (add-to-list 'auto-mode-alist '("\\.cnf$" . conf-mode))
+#+end_src
 ** crontab-mode
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -2069,7 +2073,7 @@
 
     (with-eval-after-load 'php-mode
       ;; hook
-      (add-hook 'php-mode-hook #'lsp)
+      ;; (add-hook 'php-mode-hook #'lsp)
       (add-hook 'php-mode-hook #'php-format-auto-mode)
 
       ;; keybind
@@ -2510,10 +2514,11 @@
     (add-hook 'typescript-mode-local-vars-hook #'lsp)
 
     ;; for tsx
-    ;; (add-to-list 'auto-mode-alist '("\\.js$" . typescript-tsx-mode))
+    (add-to-list 'auto-mode-alist '("\\.js$" . typescript-tsx-mode))
     (add-to-list 'auto-mode-alist '("\\.jsx$" . typescript-tsx-mode))
     (add-to-list 'auto-mode-alist '("\\.tsx$" . typescript-tsx-mode))
-    (add-hook 'typescript-tsx-mode-hook #'lsp-deferred))
+    ;; (add-hook 'typescript-tsx-mode-hook #'lsp-deferred)
+    )
 #+END_SRC
 ** v-mode
 #+begin_src emacs-lisp
