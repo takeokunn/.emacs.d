@@ -6570,11 +6570,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(jq-interactively) "jq-mode" nil t)
 
     (with-eval-after-load 'json-mode
-      (define-key json-mode-map (kbd "C-c C-j") #'jq-interactively))
-
-    (with-eval-after-load 'ob-babel
-      (org-babel-do-load-languages 'org-babel-load-languages
-                                   '((jq . t)))))
+      (define-key json-mode-map (kbd "C-c C-j") #'jq-interactively)))
 #+end_src
 *** json-reformat
 #+begin_src emacs-lisp
@@ -7271,6 +7267,104 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq org-ai-default-chat-model "gpt-3.5-turbo")))
 #+end_src
 ** Org Babel
+*** ob-async
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "astahlman/ob-async"))
+
+  (with-delayed-execution
+    (message "Install ob-async...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-async"))
+
+    (autoload-if-found '(ob-async-org-babel-execute-src-block) "ob-async" nil t)
+
+    (advice-add 'org-babel-execute-src-block :before #'(lambda () (setq org-babel-hide-result-overlays nil)))
+    (advice-add 'org-babel-execute-src-block :around #'ob-async-org-babel-execute-src-block)
+    )
+#+end_src
+*** ob-fish
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "takeokunn/ob-fish"))
+
+  (with-delayed-execution
+    (message "Install ob-fish...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-fish")))
+#+end_src
+*** ob-rust
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "micanzhang/ob-rust"))
+
+  (with-delayed-execution
+    (message "Install ob-rust...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-rust")))
+#+end_src
+*** ob-go
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "pope/ob-go"))
+
+  (with-delayed-execution
+    (message "Install ob-go...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-go")))
+#+end_src
+*** ob-translate
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "krisajenkins/ob-translate"))
+
+  (with-delayed-execution
+    (message "Install ob-translate...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-translate"))
+
+    (define-derived-mode translate-mode text-mode "translate"))
+#+end_src
+*** ob-typescript
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "lurdan/ob-typescript"))
+
+  (with-delayed-execution
+    (message "Install ob-typescript...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-typescript")))
+#+end_src
+*** ob-php
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "Sasanidas/ob-php"))
+
+  (with-delayed-execution
+    (message "Install ob-php...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-php")))
+#+end_src
+*** ob-phpstan
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "takeokunn/ob-phpstan"))
+
+  (with-delayed-execution
+    (message "Install ob-phpstan...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-phpstan")))
+#+end_src
+*** ob-http
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "zweifisch/ob-http"))
+
+  (with-delayed-execution
+    (message "Install ob-http...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-http")))
+#+end_src
+*** ob-mermaid
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "arnm/ob-mermaid"))
+
+  (with-delayed-execution
+    (message "Install ob-mermaid...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-mermaid")))
+#+end_src
 *** org-babel
 #+begin_src emacs-lisp
   (with-delayed-execution
@@ -7297,130 +7391,16 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                                    (ruby . t)
                                    (scheme . t)
                                    (shell . t)
-                                   (sql . t))))
-#+end_src
-*** ob-async
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "astahlman/ob-async"))
-
-  (with-delayed-execution
-    (message "Install ob-async...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-async"))
-
-    (autoload-if-found '(ob-async-org-babel-execute-src-block) "ob-async" nil t)
-
-    (defalias 'org-babel-execute-src-block:async 'ob-async-org-babel-execute-src-block))
-#+end_src
-*** ob-fish
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "takeokunn/ob-fish"))
-
-  (with-delayed-execution
-    (message "Install ob-fish...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-fish"))
-
-    (org-babel-do-load-languages 'org-babel-load-languages
-                                 '((fish . t))))
-#+end_src
-*** ob-rust
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "micanzhang/ob-rust"))
-
-  (with-delayed-execution
-    (message "Install ob-rust...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-rust"))
-
-    (org-babel-do-load-languages 'org-babel-load-languages
-                                 '((rust . t))))
-#+end_src
-*** ob-go
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "pope/ob-go"))
-
-  (with-delayed-execution
-    (message "Install ob-go...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-go"))
-
-    (org-babel-do-load-languages 'org-babel-load-languages
-                                 '((go . t))))
-#+end_src
-*** ob-translate
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "krisajenkins/ob-translate"))
-
-  (with-delayed-execution
-    (message "Install ob-translate...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-translate"))
-
-    (define-derived-mode translate-mode text-mode "translate")
-
-    (org-babel-do-load-languages 'org-babel-load-languages
-                                 '((translate . t))))
-#+end_src
-*** ob-typescript
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "lurdan/ob-typescript"))
-
-  (with-delayed-execution
-    (message "Install ob-typescript...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-typescript"))
-
-    (org-babel-do-load-languages 'org-babel-load-languages
-                                 '((typescript . t))))
-#+end_src
-*** ob-php
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "Sasanidas/ob-php"))
-
-  (with-delayed-execution
-    (message "Install ob-php...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-php"))
-
-    (org-babel-do-load-languages 'org-babel-load-languages
-                                 '((php . t))))
-#+end_src
-*** ob-phpstan
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "takeokunn/ob-phpstan"))
-
-  (with-delayed-execution
-    (message "Install ob-phpstan...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-phpstan"))
-
-    (org-babel-do-load-languages 'org-babel-load-languages
-                                 '((phpstan . t))))
-#+end_src
-*** ob-http
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "zweifisch/ob-http"))
-
-  (with-delayed-execution
-    (message "Install ob-http...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-http"))
-
-    (org-babel-do-load-languages 'org-babel-load-languages
-                                 '((http . t))))
-#+end_src
-*** ob-mermaid
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "arnm/ob-mermaid"))
-
-  (with-delayed-execution
-    (message "Install ob-mermaid...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-mermaid"))
-
-    (org-babel-do-load-languages 'org-babel-load-languages
-                                 '((mermaid . t))))
+                                   (sql . t)
+                                   ;; (fish . t)
+                                   (rust . t)
+                                   (go . t)
+                                   (translate . t)
+                                   (typescript . t)
+                                   (php . t)
+                                   (phpstan . t)
+                                   (http . t)
+                                   (mermaid . t))))
 #+end_src
 ** Org Publish
 *** ox-html
