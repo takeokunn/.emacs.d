@@ -3500,9 +3500,7 @@
 
     (with-eval-after-load 'gcmh
       ;; config
-      (setq gcmh-verbose nil)
-      (setq gcmh-low-cons-threshold (* 800000 16))
-      (setq gcmh-high-cons-threshold (* #x40000000 16))
+      (setq gcmh-verbose t)
       (setq gcmh-idle-delay 120)
       (setq gcmh-auto-idle-delay-factor 60)))
 #+end_src
@@ -5245,10 +5243,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install view-lock-mode...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/view-lock-mode"))
 
-    (autoload-if-found '(view-lock-timer-setup view-lock-quit) "view-lock-mode" nil t)
+    (autoload-if-found '(view-lock-timer-start view-lock-quit) "view-lock-mode" nil t)
 
     (with-eval-after-load 'view
-      (add-hook 'view-mode-hook #'view-lock-timer-setup))
+      (add-hook 'view-mode-hook #'view-lock-timer-start))
 
     (with-eval-after-load 'view-lock-mode
       (setq view-lock-start-time (* 30 60))))
@@ -6245,7 +6243,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 *** rubocop
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-clone :repo "rubocop/rubocop-emacs"))
+    (el-clone :repo "takeokunn/rubocop-emacs"))
 
   (with-delayed-execution
     (message "Install rubocop...")
@@ -7278,8 +7276,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(ob-async-org-babel-execute-src-block) "ob-async" nil t)
 
-    (advice-add 'org-babel-execute-src-block :before #'(lambda () (setq org-babel-hide-result-overlays nil)))
-    (advice-add 'org-babel-execute-src-block :around #'ob-async-org-babel-execute-src-block)
+    ;; (advice-add 'org-babel-execute-src-block :around #'ob-async-org-babel-execute-src-block)
     )
 #+end_src
 *** ob-fish
