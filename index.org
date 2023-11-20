@@ -1612,7 +1612,7 @@
       (setq gofmt-command "goimports")
 
       ;; hook
-      ;; (remove-hook 'go-mode-hook #'lsp-deferred)
+      (add-hook 'go-mode-hook #'lsp-deferred)
       (add-hook 'before-save-hook #'gofmt-before-save)))
 #+END_SRC
 ** gradle-mode
@@ -2319,6 +2319,12 @@
       (add-hook 'scss-mode-hook #'(lambda ()
                                     (let ((lsp-diagnostics-provider :none))
                                       (lsp-deferred))))))
+#+end_src
+** shell-mode
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (autoload-if-found '(shell-mode) "shell-mode" nil t)
+    (define-derived-mode console-mode shell-mode "console"))
 #+end_src
 ** slim-mode
 #+BEGIN_SRC emacs-lisp
@@ -4268,7 +4274,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'mu4e-update
       ;; config
       (setq mu4e-get-mail-command "offlineimap")
-      (setq mu4e-update-interval (* 10 60))
+      (setq mu4e-update-interval (* 5 60))
       (setq mu4e-index-cleanup nil)
       (setq mu4e-index-lazy-check t))
 
@@ -4279,6 +4285,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'mu4e-folders
       ;; config
       (setq mu4e-maildir-shortcuts '((:maildir "/INBOX" :key ?i)
+                                     (:maildir "/Redmine" :key ?r)
                                      (:maildir "/GitHub" :key ?g)
                                      (:maildir "/Emacs" :key ?e)
                                      (:maildir "/Guix" :key ?u))))
@@ -6368,10 +6375,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/laravel-tinker-repl"))
 
     (autoload-if-found '(laravel-tinker-repl) "laravel-tinker-repl" nil t)
-
-    (with-eval-after-load 'laravel-tinker-repl
-      (define-key laravel-tinker-repl-mode-map (kbd "TAB") #'completion-at-point)
-      (define-key laravel-tinker-repl-mode-map (kbd "C-c C-c") #'laravel-tinker-repl-quit-or-cancel))
 
     (with-eval-after-load 'php-mode
       (define-key php-mode-map (kbd "C-c C-c") #'laravel-tinker-repl-send-line)
