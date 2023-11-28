@@ -1064,7 +1064,10 @@
   (with-delayed-execution-priority-high
     (message "Install treemacs...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/treemacs/src/elisp"))
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/treemacs/src/extra")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/treemacs/src/extra"))
+
+    ;; for lsp
+    (autoload-if-found '(treemacs-define-doubleclick-action) "treemacs-mouse-interface" nil t))
 #+end_src
 ** treepy
 #+begin_src emacs-lisp
@@ -3485,7 +3488,7 @@
 
     (autoload-if-found '(gcmh-mode) "gcmh" nil t)
 
-    (gcmh-mode 1)
+    (gcmh-mode)
 
     (defvar my/gcmh-status nil)
 
@@ -3507,8 +3510,8 @@
     (with-eval-after-load 'gcmh
       ;; config
       (setq gcmh-verbose t)
-      (setq gcmh-idle-delay 120)
-      (setq gcmh-auto-idle-delay-factor 60)))
+      (setq gcmh-idle-delay 10)
+      (setq gcmh-auto-idle-delay-factor 10)))
 #+end_src
 ** Git
 *** magit
@@ -7279,8 +7282,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(ob-async-org-babel-execute-src-block) "ob-async" nil t)
 
-    ;; (advice-add 'org-babel-execute-src-block :around #'ob-async-org-babel-execute-src-block)
-    )
+    (advice-add 'org-babel-execute-src-block :around #'ob-async-org-babel-execute-src-block))
 #+end_src
 *** ob-fish
 #+begin_src emacs-lisp
@@ -7289,7 +7291,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   (with-delayed-execution
     (message "Install ob-fish...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-fish")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-fish"))
+
+    (autoload-if-found '(org-babel-execute:fish) "ob-fish" nil t)
+
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("fish" . fish))))
 #+end_src
 *** ob-rust
 #+begin_src emacs-lisp
@@ -7298,7 +7305,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   (with-delayed-execution
     (message "Install ob-rust...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-rust")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-rust"))
+
+    (autoload-if-found '(org-babel-execute:rust) "ob-rust" nil t)
+
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("rust" . rust))))
 #+end_src
 *** ob-go
 #+begin_src emacs-lisp
@@ -7307,7 +7319,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   (with-delayed-execution
     (message "Install ob-go...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-go")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-go"))
+
+    (autoload-if-found '(org-babel-execute:go) "ob-go" nil t)
+
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("go" . go))))
 #+end_src
 *** ob-translate
 #+begin_src emacs-lisp
@@ -7318,7 +7335,13 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install ob-translate...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-translate"))
 
-    (define-derived-mode translate-mode text-mode "translate"))
+    (autoload-if-found '(ob-translate:google-translate) "ob-translate" nil t)
+
+    (with-eval-after-load 'text-mode
+      (define-derived-mode translate-mode text-mode "translate"))
+
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("translate" . translate))))
 #+end_src
 *** ob-typescript
 #+begin_src emacs-lisp
@@ -7327,7 +7350,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   (with-delayed-execution
     (message "Install ob-typescript...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-typescript")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-typescript"))
+
+    (autoload-if-found '(org-babel-execute:typescript) "ob-typescript" nil t)
+
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("typescript" . typescript))))
 #+end_src
 *** ob-php
 #+begin_src emacs-lisp
@@ -7336,7 +7364,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   (with-delayed-execution
     (message "Install ob-php...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-php")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-php"))
+
+    (autoload-if-found '(org-babel-execute:php) "ob-php" nil t)
+
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("php" . php))))
 #+end_src
 *** ob-phpstan
 #+begin_src emacs-lisp
@@ -7345,7 +7378,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   (with-delayed-execution
     (message "Install ob-phpstan...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-phpstan")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-phpstan"))
+
+    (autoload-if-found '(org-babel-execute:phpstan) "ob-phpstan" nil t)
+
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("phpstan" . phpstan))))
 #+end_src
 *** ob-http
 #+begin_src emacs-lisp
@@ -7354,7 +7392,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   (with-delayed-execution
     (message "Install ob-http...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-http")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-http"))
+
+    (autoload-if-found '(org-babel-execute:http) "ob-http" nil t)
+
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("http" . http))))
 #+end_src
 *** ob-mermaid
 #+begin_src emacs-lisp
@@ -7363,7 +7406,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   (with-delayed-execution
     (message "Install ob-mermaid...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-mermaid")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-mermaid"))
+
+    (autoload-if-found '(org-babel-execute:mermaid) "ob-mermaid" nil t)
+
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("mermaid" . mermaid))))
 #+end_src
 *** org-babel
 #+begin_src emacs-lisp
@@ -7373,6 +7421,13 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'ob-core
       (setq org-confirm-babel-evaluate nil))
+
+    (with-eval-after-load 'ob-eval
+      (advice-add #'org-babel-eval-error-notify
+                  :around #'(lambda (old-func &rest args)
+                              (when (not (string= (nth 1 args)
+                                                  "mysql: [Warning] Using a password on the command line interface can be insecure.\n"))
+                                (apply old-func args)))))
 
     (org-babel-do-load-languages 'org-babel-load-languages
                                  '((awk . t)
@@ -7392,15 +7447,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                                    (scheme . t)
                                    (shell . t)
                                    (sql . t)
-                                   ;; (fish . t)
-                                   (rust . t)
-                                   (go . t)
-                                   (translate . t)
-                                   (typescript . t)
-                                   (php . t)
-                                   (phpstan . t)
-                                   (http . t)
-                                   (mermaid . t))))
+                                   (shell . t))))
 #+end_src
 ** Org Publish
 *** ox-html
