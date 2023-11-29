@@ -3509,9 +3509,7 @@
 
     (with-eval-after-load 'gcmh
       ;; config
-      (setq gcmh-verbose t)
-      (setq gcmh-idle-delay 10)
-      (setq gcmh-auto-idle-delay-factor 10)))
+      (setq gcmh-verbose t)))
 #+end_src
 ** Git
 *** magit
@@ -3692,7 +3690,8 @@
 
     (with-eval-after-load 'epa-file
       (setq epa-file-select-keys 'silent)
-      (setq epa-file-cache-passphrase-for-symmetric-encryption t)))
+      (setq epa-file-cache-passphrase-for-symmetric-encryption t)
+      (fset 'epg-wait-for-status 'ignore)))
 #+end_src
 *** pinentry
 https://github.com/ch11ng/exwm/wiki#gpg-pinentry
@@ -7578,11 +7577,16 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq org-roam-db-gc-threshold (* 4 gc-cons-threshold))))
 #+end_src
 *** org-roam-capture
+:PROPERTIES:
+:ID:       730D63A6-9F2E-4437-B111-DB5A3D2D9B1C
+:END:
 #+begin_src emacs-lisp
   (with-delayed-execution
     (message "Install org-roam-capture...")
     (autoload-if-found '(org-roam-capture) "org-roam-capture" nil t)
+
     (global-set-key (kbd "C-c n c") #'org-roam-capture)
+
     (with-eval-after-load 'org-roam-capture
       (setq org-roam-capture-templates '(("f" "Fleeting(一時メモ)" plain "%?"
                                           :target (file+head "org/fleeting/%<%Y%m%d%H%M%S>-${slug}.org" "#+TITLE: ${title}\n")
@@ -7595,6 +7599,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                                           :unnarrowed t)
                                          ("d" "Diary(日記)" plain "%?"
                                           :target (file+head "org/diary/%<%Y%m%d%H%M%S>-${slug}.org" "#+TITLE: ${title}\n")
+                                          :unnarrowed t)
+                                         ("z" "Zenn" plain "%?"
+                                          :target (file+head "org/zenn/%<%Y%m%d%H%M%S>-${slug}.org" "#+TITLE: ${title}\n")
                                           :unnarrowed t)))))
 #+end_src
 *** org-roam-dailies
