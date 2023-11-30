@@ -7412,6 +7412,19 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'org-src
       (add-to-list 'org-src-lang-modes '("mermaid" . mermaid))))
 #+end_src
+*** ob-graphql
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "jdormit/ob-graphql"))
+
+  (with-delayed-execution
+    (message "Install ob-graphql...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-graphql"))
+    (autoload-if-found '(org-babel-execute:graphql) "ob-graphql" nil t)
+
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("graphql" . graphql))))
+#+end_src
 *** org-babel
 #+begin_src emacs-lisp
   (with-delayed-execution
