@@ -6173,6 +6173,21 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install inferior-cling...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/inferior-cling")))
 #+end_src
+** Csv
+*** rainbow-csv
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "emacs-vs/rainbow-csv"))
+
+  (with-delayed-execution
+    (message "Install rainbow-csv...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/rainbow-csv"))
+
+    (autoload-if-found '(rainbow-csv-mode) "rainbow-csv" nil t)
+
+    (with-eval-after-load 'csv-mode
+      (add-hook 'csv-mode-hook #'rainbow-csv-mode)))
+#+end_src
 ** JavaScript/TypeScript
 *** js2-refactor
 #+BEGIN_SRC emacs-lisp
@@ -6931,6 +6946,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'org-capture
       (setq org-capture-use-agenda-date t)
+      (setq org-capture-bookmark nil)
       (setq org-capture-templates `(("t" "Todo" entry (file ,(expand-file-name "todo.org" org-directory))
                                      "* %?")
                                     ("m" "Memo" entry (file ,(expand-file-name "memo.org" org-directory))
@@ -6947,11 +6963,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+begin_src emacs-lisp
   (with-delayed-execution
     (message "Install org-id...")
+
     (autoload-if-found '(org-id-store-link) "org-id" nil t)
+
     (with-eval-after-load 'org-id
       (setq org-id-locations-file (expand-file-name ".org-id-locations" org-directory))
-      (setq org-id-extra-files (append org-agenda-text-search-extra-files))
-      (setq org-id-link-to-org-use-id t)))
+      (setq org-id-extra-files (append org-agenda-text-search-extra-files))))
 #+end_src
 *** org-crypt
 #+begin_src emacs-lisp
@@ -7270,7 +7287,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'org-ai
       ;; config
-      (setq org-ai-default-chat-model "gpt-3.5-turbo")))
+      (setq org-ai-default-chat-model "gpt-4")))
 #+end_src
 ** Org Babel
 *** ob-async
@@ -7667,7 +7684,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+begin_src emacs-lisp
   (with-delayed-execution
     (message "Install org-roam-graph...")
-    (autoload-if-found '(org-roam-graph--open) "org-roam-graph" nil t))
+    (autoload-if-found '(org-roam-graph org-roam-graph--open) "org-roam-graph" nil t))
 #+end_src
 *** org-roam-overlay
 #+begin_src emacs-lisp
