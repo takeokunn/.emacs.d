@@ -1419,8 +1419,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-direnv"))
 
     (autoload-if-found '(direnv-mode direnv-envrc-mode) "direnv" nil t)
-    (add-to-list 'auto-mode-alist '("\\.envrc" . direnv-envrc-mode))
-    (direnv-mode))
+    (add-to-list 'auto-mode-alist '("\\.envrc" . direnv-envrc-mode)))
 #+end_src
 ** docker-compose-mode
 #+begin_src emacs-lisp
@@ -2889,7 +2888,8 @@
     (autoload-if-found '(highlight-indent-guides-mode) "highlight-indent-guides" nil t)
 
     (with-eval-after-load 'prog-mode
-      (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
+      ;; (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+      )
 
     (with-eval-after-load 'highlight-indent-guides
       (setq highlight-indent-guides-responsive 'stack)
@@ -7741,7 +7741,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(org-roam-timestamps-mode) "org-roam-timestamps" nil t)
 
-    (org-roam-timestamps-mode)
+    (with-eval-after-load 'org-roam-mode
+      (add-hook 'org-roam-mode #'org-roam-timestamps-mode))
 
     (with-eval-after-load 'org-roam-timestamps
       (setq org-roam-timestamps-remember-timestamps nil)))
