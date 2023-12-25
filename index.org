@@ -6907,7 +6907,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (advice-add 'org-archive-subtree :after #'(lambda (&rest _) (add-hook 'find-file-hooks #'view-mode)))
 
     (setq org-agenda-files `(,(concat org-directory "/agenda") ,(concat org-directory "/archive")))
-    (setq org-archive-location `,(format (expand-file-name "archive/%s.org::* Archived Tasks" org-directory)
+    (setq org-archive-location `,(format (expand-file-name "archive/%s/%s.org::* Archived Tasks" org-directory)
+                                         (format-time-string "%Y" (current-time))
                                          (format-time-string "%Y-%m-%d" (current-time))))
 
     ;; log
