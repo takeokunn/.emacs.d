@@ -2003,8 +2003,19 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/nix-mode"))
 
     (autoload-if-found '(nix-mode) "nix-mode" nil t)
+    (autoload-if-found '(nix-drv-mode) "nix-drv-mode" nil t)
+    (autoload-if-found '(company-nix) "nix-company" nil t)
+    (autoload-if-found '(nix-shell-unpack nix-shell-configure nix-shell-build) "nix-shell" nil t)
+    (autoload-if-found '(nix-repl) "nix-repl" nil t)
 
-    (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-mode)))
+    (add-to-list 'auto-mode-alist '("\\.nix$" . nix-mode))
+    (add-to-list 'auto-mode-alist '("\\.drv$" . nix-drv-mode))
+
+    (with-eval-after-load 'nix-mode
+      (add-hook 'nix-mode-hook #'flycheck-mode))
+
+    (with-eval-after-load 'company
+      (push 'company-nix company-backends)))
 #+end_src
 ** nginx-mode
 #+BEGIN_SRC emacs-lisp
