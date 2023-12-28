@@ -7572,6 +7572,19 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'org-src
       (add-to-list 'org-src-lang-modes '("dart" . dart))))
 #+end_src
+*** ob-fsharp
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "juergenhoetzel/ob-fsharp"))
+
+  (with-delayed-execution
+    (message "Install ob-fsharp...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-fsharp"))
+    (autoload-if-found '(org-babel-execute:fsharp) "ob-fsharp" nil t)
+
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("fsharp" . fsharp))))
+#+end_src
 ** Org Publish
 *** ox-html
 #+begin_src emacs-lisp
