@@ -7329,6 +7329,42 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq org-ai-default-chat-model "gpt-3.5-turbo")))
 #+end_src
 ** Org Babel
+*** basic
+#+begin_src emacs-lisp
+  (with-delayed-execution
+    (message "Install ob-babel...")
+    (autoload-if-found '(org-babel-do-load-languages) "org" nil t)
+
+    (with-eval-after-load 'ob-core
+      (setq org-confirm-babel-evaluate nil))
+
+    (with-eval-after-load 'ob-eval
+      (advice-add #'org-babel-eval-error-notify
+                  :around #'(lambda (old-func &rest args)
+                              (when (not (string= (nth 1 args)
+                                                  "mysql: [Warning] Using a password on the command line interface can be insecure.\n"))
+                                (apply old-func args)))))
+
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                 '((awk . t)
+                                   (C . t)
+                                   (R . t)
+                                   (clojure . t)
+                                   (emacs-lisp . t)
+                                   (haskell . t)
+                                   (java . t)
+                                   (js . t)
+                                   (lisp . t)
+                                   (makefile . t)
+                                   (perl . t)
+                                   (plantuml . t)
+                                   (python . t)
+                                   (ruby . t)
+                                   (scheme . t)
+                                   (shell . t)
+                                   (sql . t)
+                                   (shell . t))))
+#+end_src
 *** ob-async
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -7484,41 +7520,57 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'org-src
       (add-to-list 'org-src-lang-modes '("graphql" . graphql))))
 #+end_src
-*** org-babel
+*** ob-rust
 #+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "micanzhang/ob-rust"))
+
   (with-delayed-execution
-    (message "Install ob-babel...")
-    (autoload-if-found '(org-babel-do-load-languages) "org" nil t)
+    (message "Install ob-rust...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-rust"))
+    (autoload-if-found '(org-babel-execute:rust) "ob-rust" nil t)
 
-    (with-eval-after-load 'ob-core
-      (setq org-confirm-babel-evaluate nil))
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("rust" . rust))))
+#+end_src
+*** ob-swift
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "zweifisch/ob-swift"))
 
-    (with-eval-after-load 'ob-eval
-      (advice-add #'org-babel-eval-error-notify
-                  :around #'(lambda (old-func &rest args)
-                              (when (not (string= (nth 1 args)
-                                                  "mysql: [Warning] Using a password on the command line interface can be insecure.\n"))
-                                (apply old-func args)))))
+  (with-delayed-execution
+    (message "Install ob-swift...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-swift"))
+    (autoload-if-found '(org-babel-execute:swift) "ob-swift" nil t)
 
-    (org-babel-do-load-languages 'org-babel-load-languages
-                                 '((awk . t)
-                                   (C . t)
-                                   (R . t)
-                                   (clojure . t)
-                                   (emacs-lisp . t)
-                                   (haskell . t)
-                                   (java . t)
-                                   (js . t)
-                                   (lisp . t)
-                                   (makefile . t)
-                                   (perl . t)
-                                   (plantuml . t)
-                                   (python . t)
-                                   (ruby . t)
-                                   (scheme . t)
-                                   (shell . t)
-                                   (sql . t)
-                                   (shell . t))))
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("swift" . swift))))
+#+end_src
+*** ob-elixir
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "zweifisch/ob-elixir"))
+
+  (with-delayed-execution
+    (message "Install ob-elixir...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-elixir"))
+    (autoload-if-found '(org-babel-execute:elixir) "ob-elixir" nil t)
+
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("elixir" . elixir))))
+#+end_src
+*** ob-dart
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "mzimmerm/ob-dart"))
+
+  (with-delayed-execution
+    (message "Install ob-dart...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-dart"))
+    (autoload-if-found '(org-babel-execute:dart) "ob-dart" nil t)
+
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("dart" . dart))))
 #+end_src
 ** Org Publish
 *** ox-html
