@@ -1838,7 +1838,12 @@
       ;; keybind
       (define-key jsonnet-mode-map (kbd "C-c C-c") #'jsonnet-eval-buffer)
       (define-key jsonnet-mode-map (kbd "C-c C-f") #'jsonnet-jump)
-      (define-key jsonnet-mode-map (kbd "C-c C-r") #'jsonnet-reformat-buffer)))
+      (define-key jsonnet-mode-map (kbd "C-c C-r") #'jsonnet-reformat-buffer)
+
+      ;; hook
+      (add-hook 'jsonnet-mode-hook #'(lambda ()
+                                       (require 'lsp-jsonnet)
+                                       (lsp)))))
 #+end_src
 ** kotlin-mode
 #+begin_src emacs-lisp
@@ -4059,10 +4064,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       ;; for intelephense
       (setq lsp-intelephense-clear-cache t)
       (setq lsp-intelephense-php-version "8.2")
-      (setq lsp-intelephense-telemetry-enabled t)
-
-      ;; for phpactor
-      (setq lsp-phpactor-path "~/.ghq/github.com/phpactor/phpactor/bin/phpactor"))
+      (setq lsp-intelephense-telemetry-enabled t))
 
     (with-eval-after-load 'lsp-ruby
       (setq lsp-solargraph-autoformat t)
@@ -4074,7 +4076,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
       (define-advice widen (:after (&rest _))
         (lsp-lens-refresh t))))
-
 #+END_SRC
 *** lsp-php-key
 #+begin_src emacs-lisp
@@ -7900,6 +7901,65 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
       (with-eval-after-load 'exwm-modeline
         (setq exwm-modeline-short t))))
+#+end_src
+* LLM
+** llm
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "ahyatt/llm"))
+
+  (with-delayed-execution
+    (message "Install llm...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/llm")))
+#+end_src
+** ellama
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "s-kostyaev/ellama"))
+
+  (with-delayed-execution
+    (message "Install ellama...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ellama"))
+    (autoload-if-found '(ellama-chat
+                         ellama-ask
+                         ellama-ask-about
+                         ellama-ask-line
+                         ellama-complete
+                         ellama-translate
+                         ellama-define-word
+                         ellama-summarize
+                         ellama-code-review
+                         ellama-change
+                         ellama-enhance-grammar-spelling
+                         ellama-enhance-wording
+                         ellama-make-concise
+                         ellama-change-code
+                         ellama-enhance-code
+                         ellama-complete-code
+                         ellama-add-code
+                         ellama-render
+                         ellama-make-list
+                         ellama-make-table
+                         ellama-summarize-webpage
+                         ellama-provider-select
+                         ellama-code-complete
+                         ellama-code-add
+                         ellama-code-edit
+                         ellama-code-improve
+                         ellama-improve-wording
+                         ellama-improve-wording
+                         ellama-improve-grammar
+                         ellama-improve-conciseness
+                         ellama-make-format
+                         ellama-ask-interactive)
+                       "ellama" nil t)
+
+    (autoload-if-found '(make-llm-ollama) "llm-ollama" nil t)
+
+    (with-eval-after-load 'ellama
+      (setq ellama-language "Japanese")
+      (setq ellama-provider (make-llm-ollama :chat-model "zephyr:7b-beta-q6_K"
+                                             :embedding-model "zephyr:7b-beta-q6_K"))))
 #+end_src
 * MyFunc
 ** my/beginning-of-intendation
