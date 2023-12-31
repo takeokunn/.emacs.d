@@ -945,6 +945,24 @@
     (message "Install ov...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/ov")))
 #+end_src
+** peg
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "emacsmirror/peg"))
+
+  (with-delayed-execution
+    (message "Install peg...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/peg")))
+#+end_src
+** persist
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "emacsmirror/persist"))
+
+  (with-delayed-execution
+    (message "Install persist...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/persist")))
+#+end_src
 ** pfuture
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -2035,7 +2053,7 @@
     (add-to-list 'auto-mode-alist '("\\.drv$" . nix-drv-mode))
 
     (with-eval-after-load 'nix-mode
-      (add-hook 'nix-mode-hook #'flycheck-mode))
+      (add-hook 'nix-mode-hook #'lsp))
 
     (with-eval-after-load 'company
       (push 'company-nix company-backends)))
@@ -7324,6 +7342,16 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(org-hyperscheduler-open) "org-hyperscheduler" nil t))
 #+end_src
+*** org-timeblock
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "ichernyshovvv/org-timeblock"))
+
+  (with-delayed-execution
+    (message "Install org-timeblock...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/org-timeblock"))
+    (autoload-if-found '(org-timeblock-list org-timeblock-mode) "org-timeblock" nil t))
+#+end_src
 ** Org External Tools
 *** org-redmine
 #+begin_src emacs-lisp
@@ -7990,9 +8018,18 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                        "ellama" nil t)
 
     (with-eval-after-load 'ellama
-      (setq ellama-keymap-prefix "C-c s")
-      (setq ellama-provider (make-llm-ollama :chat-model "zephyr:latest"
-                                             :embedding-model "zephyr:latest"))))
+      (setq ellama-language "Japanese")
+      (setq ellama-providers "llama2:13b")
+      (setq ellama-provider (progn
+                              (make-llm-ollama :chat-model "llama2" :embedding-model "llama2")
+                              (make-llm-ollama :chat-model "llama2:13b" :embedding-model "llama2:13b")))))
+#+end_src
+
+text:
+
+#+begin_src shell :results output
+  ls ~/.ghq/github.com/takeokunn/private/**/*.org | xargs -IFILE ollama run llama2 $(cat FILE)
+  ollama run llama2 '2023年11月20日に何をしましたか？'
 #+end_src
 * MyFunc
 ** my/beginning-of-intendation
