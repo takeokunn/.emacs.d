@@ -972,6 +972,15 @@
     (message "Install popup-el...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/popup-el")))
 #+end_src
+** powerline
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "milkypostman/powerline"))
+
+  (with-delayed-execution-priority-high
+    (message "Install powerline...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/powerline")))
+#+end_src
 ** queue
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -2541,24 +2550,15 @@
 
     (autoload-if-found '(typescript-mode typescript-tsx-mode) "typescript-mode" nil t)
 
-    (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
-
     ;; for ts/deno
     (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
-    (defun my/run-local-vars-mode-hook ()
-      "Run `major-mode' hook after the local variables have been processed."
-      (run-hooks (intern (concat (symbol-name major-mode) "-local-vars-hook"))))
-
-    (add-hook 'hack-local-variables-hook #'my/run-local-vars-mode-hook)
-    (add-hook 'typescript-mode-local-vars-hook #'lsp)
+    (add-hook 'typescript-mode-hook #'lsp)
 
     ;; for tsx
-    (add-to-list 'auto-mode-alist '("\\.js$" . typescript-tsx-mode))
+    (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
     (add-to-list 'auto-mode-alist '("\\.jsx$" . typescript-tsx-mode))
     (add-to-list 'auto-mode-alist '("\\.tsx$" . typescript-tsx-mode))
-
-    ;; for tsx hook
-    (add-hook 'typescript-tsx-mode-hook #'lsp-deferred))
+    (add-hook 'typescript-tsx-mode-hook #'lsp))
 #+END_SRC
 ** v-mode
 #+begin_src emacs-lisp
@@ -4289,17 +4289,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 ** Mail
 *** mu4e
 #+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "emacsmirror/mu4e"))
-
   (with-delayed-execution
     (message "Install mu4e...")
-
-    (when (file-directory-p "/usr/local/share/emacs/site-lisp/mu4e")
-      (add-to-list 'load-path (locate-user-emacs-file "/usr/local/share/emacs/site-lisp/mu4e")))
+    (add-to-list 'load-path (locate-user-emacs-file "/nix/store/5cqpq7q9yjmsdgdmchl4p3vq9advb5kz-emacs-mu4e-1.10.8/share/emacs/site-lisp/elpa/mu4e-1.10.8"))
 
     (autoload-if-found '(mu4e) "mu4e" nil t)
-
     (global-set-key (kbd "C-x C-w") #'mu4e)
 
     (with-eval-after-load 'mu4e
@@ -6657,12 +6651,14 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (eval-when-compile
     (el-clone :repo "skeeto/elfeed"))
 
-  (setq elfeed-show-entry-switch #'display-buffer)
   (with-delayed-execution
     (message "Install elfeed...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/elfeed"))
 
     (autoload-if-found '(elfeed) "elfeed" nil t)
+
+    (with-eval-after-load 'elfeed-show
+      (setq elfeed-show-entry-switch #'display-buffer))
 
     (with-eval-after-load 'elfeed-db
       (setq elfeed-db-directory "~/.cache/elfeed"))
@@ -6704,6 +6700,19 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'elfeed-dashboard
       (setq elfeed-dashboard-file (locate-user-emacs-file "elfeed-dashboard.org"))))
+#+end_src
+** elfeed-goodies
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "jeetelongname/elfeed-goodies"))
+
+  (with-delayed-execution
+    (message "Install elfeed-goodies...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/elfeed-goodies"))
+    (autoload-if-found '(elfeed-goodies/setup) "elfeed-goodies" nil t)
+
+    (with-eval-after-load 'elfeed-dashboard
+      (add-hook 'elfeed-dashboard-mode-hook #'elfeed-goodies/setup)))
 #+end_src
 * Eshell
 ** basic
