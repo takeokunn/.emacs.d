@@ -873,6 +873,15 @@
     (message "Install jump...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/jump")))
 #+end_src
+** link-hint
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "noctuid/link-hint.el"))
+
+  (with-delayed-execution
+    (message "Install link-hint...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/link-hint")))
+#+end_src
 ** list-utils
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -6712,7 +6721,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(elfeed-goodies/setup) "elfeed-goodies" nil t)
 
     (with-eval-after-load 'elfeed-dashboard
-      (add-hook 'elfeed-dashboard-mode-hook #'elfeed-goodies/setup)))
+      (add-hook 'elfeed-dashboard-mode-hook #'elfeed-goodies/setup))
+
+    (with-eval-after-load 'elfeed-goodies
+      (setq elfeed-goodies/entry-pane-size 0.6)))
 #+end_src
 * Eshell
 ** basic
