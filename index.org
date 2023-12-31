@@ -2927,9 +2927,8 @@
 
     (autoload-if-found '(highlight-indent-guides-mode) "highlight-indent-guides" nil t)
 
-    (with-eval-after-load 'prog-mode
-      ;; (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-      )
+    (with-eval-after-load 'yaml-mode
+      (add-hook 'yaml-mode-hook 'highlight-indent-guides-mode))
 
     (with-eval-after-load 'highlight-indent-guides
       (setq highlight-indent-guides-responsive 'stack)
@@ -6933,6 +6932,17 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (when (executable-find "fish")
       (global-fish-completion-mode)))
 #+end_src
+** eat
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :url "https://codeberg.org/akib/emacs-eat.git"
+              :repo "emacs-eat"))
+
+  (with-delayed-execution
+    (message "Install emacs-eat...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-eat"))
+    (autoload-if-found '(eat) "eat" nil t))
+#+end_src
 * Org Mode
 ** Basic
 *** org
@@ -7931,7 +7941,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   (with-delayed-execution
     (message "Install llm...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/llm")))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/llm"))
+
+    (autoload-if-found '(make-llm-ollama) "llm-ollama" nil t)
+
+    (with-eval-after-load 'llm
+      (setq llm-warn-on-nonfree nil)))
 #+end_src
 ** ellama
 #+begin_src emacs-lisp
@@ -7968,19 +7983,16 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          ellama-code-edit
                          ellama-code-improve
                          ellama-improve-wording
-                         ellama-improve-wording
                          ellama-improve-grammar
                          ellama-improve-conciseness
                          ellama-make-format
                          ellama-ask-interactive)
                        "ellama" nil t)
 
-    (autoload-if-found '(make-llm-ollama) "llm-ollama" nil t)
-
     (with-eval-after-load 'ellama
-      (setq ellama-language "Japanese")
-      (setq ellama-provider (make-llm-ollama :chat-model "zephyr:7b-beta-q6_K"
-                                             :embedding-model "zephyr:7b-beta-q6_K"))))
+      (setq ellama-keymap-prefix "C-c s")
+      (setq ellama-provider (make-llm-ollama :chat-model "zephyr:latest"
+                                             :embedding-model "zephyr:latest"))))
 #+end_src
 * MyFunc
 ** my/beginning-of-intendation
