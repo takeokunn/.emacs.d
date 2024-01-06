@@ -7645,6 +7645,23 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'org-src
       (add-to-list 'org-src-lang-modes '("fsharp" . fsharp))))
 #+end_src
+*** ob-treesitter
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "takeokunn/ob-treesitter"))
+
+  (with-delayed-execution
+    (message "Install ob-treesitter...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-treesitter"))
+
+    (autoload-if-found '(org-babel-execute:treesitter) "ob-treesitter" nil t)
+
+    (with-eval-after-load 'prog-mode
+      (define-derived-mode treesitter-mode prog-mode "treesitter"))
+
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("treesitter" . treesitter))))
+#+end_src
 ** Org Publish
 *** ox-html
 #+begin_src emacs-lisp
