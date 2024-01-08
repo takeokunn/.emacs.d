@@ -5321,8 +5321,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   (with-delayed-execution
     (message "Install password-store...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/password-store/contrib/emacs"))
-    (autoload-if-found '(password-store-version) "password-store" nil t))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/password-store/contrib/emacs")))
 #+end_src
 *** password-store-otp
 #+begin_src emacs-lisp
@@ -5331,8 +5330,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   (with-delayed-execution
     (message "Install password-store-otp...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/password-store-otp"))
-    (autoload-if-found '() "password-store-otp" nil t))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/password-store-otp")))
 #+end_src
 *** pass
 #+begin_src emacs-lisp
@@ -5343,7 +5341,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install pass...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/pass"))
 
-    (autoload-if-found '(pass) "pass" nil t))
+    (autoload-if-found '(pass pass-view-mode) "pass" nil t)
+
+    (add-to-list 'auto-mode-alist (cons (substitute-in-file-name "$HOME/ghq/github.com/takeokunn/password-store/.*\\.gpg") 'pass-view-mode))
+
+    (with-eval-after-load 'pass
+      (setq pass-suppress-confirmations t)))
 #+end_src
 ** Utility
 *** comint
@@ -5719,10 +5722,13 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                        "writeroom-mode" nil t)
 
     (with-eval-after-load 'writeroom-mode
+      ;; keybind
       (define-key writeroom-mode-map (kbd "C-M-<") #'writeroom-decrease-width)
       (define-key writeroom-mode-map (kbd "C-M->") #'writeroom-increase-width)
       (define-key writeroom-mode-map (kbd "C-M-=") #'writeroom-adjust-width)
-      (setq writeroom-width 200)
+
+      ;; config
+      (setq writeroom-width 150)
       (setq writeroom-maximize-window nil)))
 #+end_src
 *** zoom-window
@@ -7775,10 +7781,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install org-roam-node...")
     (autoload-if-found '(org-roam-node-find org-roam-node-insert) "org-roam-node" nil t)
+
     (global-set-key (kbd "C-c n f") #'org-roam-node-find)
     (global-set-key (kbd "C-c n i") #'org-roam-node-insert)
+
     (with-eval-after-load 'org-roam-node
-      (setq org-roam-completion-everywhere t)))
+      (setq org-roam-completion-everywhere nil)))
 #+end_src
 *** org-roam-db
 #+begin_src emacs-lisp
