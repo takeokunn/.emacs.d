@@ -2142,7 +2142,7 @@
 
     (with-eval-after-load 'php-mode
       ;; hook
-      ;; (add-hook 'php-mode-hook #'lsp)
+      (add-hook 'php-mode-hook #'lsp)
       (add-hook 'php-mode-hook #'php-format-auto-mode)
 
       ;; keybind
@@ -2583,6 +2583,7 @@
 
     ;; for tsx
     (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
+    ;; (add-to-list 'auto-mode-alist '("\\.js$" . typescript-tsx-mode))
     (add-to-list 'auto-mode-alist '("\\.jsx$" . typescript-tsx-mode))
     (add-to-list 'auto-mode-alist '("\\.tsx$" . typescript-tsx-mode))
     (add-hook 'typescript-tsx-mode-hook #'lsp))
@@ -7798,9 +7799,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq org-roam-db-gc-threshold (* 4 gc-cons-threshold))))
 #+end_src
 *** org-roam-capture
-:PROPERTIES:
-:ID:       730D63A6-9F2E-4437-B111-DB5A3D2D9B1C
-:END:
 #+begin_src emacs-lisp
   (with-delayed-execution
     (message "Install org-roam-capture...")
@@ -7826,6 +7824,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                                           :unnarrowed t)
                                          ("m" "Private" plain "%?"
                                           :target (file+head "org/private/%<%Y%m%d%H%M%S>.org.gpg" "#+TITLE: ${title}\n")
+                                          :unnarrowed t)
+                                         ("o" "Poem" plain "%?"
+                                          :target (file+head "org/poem/%<%Y%m%d%H%M%S>.org.gpg" "#+TITLE: ${title}\n")
                                           :unnarrowed t)))))
 #+end_src
 *** org-roam-dailies
