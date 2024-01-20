@@ -2048,9 +2048,12 @@
     (autoload-if-found '(company-nix) "nix-company" nil t)
     (autoload-if-found '(nix-shell-unpack nix-shell-configure nix-shell-build) "nix-shell" nil t)
     (autoload-if-found '(nix-repl) "nix-repl" nil t)
+    (autoload-if-found '(nix-format-before-save) "nix-format" nil t)
 
     (add-to-list 'auto-mode-alist '("\\.nix$" . nix-mode))
     (add-to-list 'auto-mode-alist '("\\.drv$" . nix-drv-mode))
+
+    (add-hook 'before-save-hook #'nix-format-before-save)
 
     (with-eval-after-load 'nix-mode
       (add-hook 'nix-mode-hook #'lsp))
@@ -2586,7 +2589,10 @@
     ;; (add-to-list 'auto-mode-alist '("\\.js$" . typescript-tsx-mode))
     (add-to-list 'auto-mode-alist '("\\.jsx$" . typescript-tsx-mode))
     (add-to-list 'auto-mode-alist '("\\.tsx$" . typescript-tsx-mode))
-    (add-hook 'typescript-tsx-mode-hook #'lsp))
+
+    ;; hook
+    (add-hook 'typescript-tsx-mode-hook #'lsp)
+    (add-hook 'typescript-tsx-mode-hook #'emmet-mode))
 #+END_SRC
 ** v-mode
 #+begin_src emacs-lisp
