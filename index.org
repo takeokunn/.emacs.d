@@ -1442,6 +1442,20 @@
     (autoload-if-found '(dart-mode) "dart-mode" nil t)
     (add-to-list 'auto-mode-alist '("\\.dart$" . dart-mode)))
 #+end_src
+** dbd-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "ccod/dbd-mode"))
+
+  (with-delayed-execution
+    (message "Install dbd-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/dbd-mode"))
+
+    (autoload-if-found '(dbdiagram-mode) "dbdiagram-mode" nil t)
+
+    (add-to-list 'auto-mode-alist '("\\.dbd\\'" . dbdiagram-mode))
+    (add-to-list 'auto-mode-alist '("\\.dbml\\'" . dbdiagram-mode)))
+#+end_src
 ** dhall-mode
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -2586,7 +2600,7 @@
 
     ;; for tsx
     (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
-    ;; (add-to-list 'auto-mode-alist '("\\.js$" . typescript-tsx-mode))
+    (add-to-list 'auto-mode-alist '("\\.js$" . typescript-tsx-mode))
     (add-to-list 'auto-mode-alist '("\\.jsx$" . typescript-tsx-mode))
     (add-to-list 'auto-mode-alist '("\\.tsx$" . typescript-tsx-mode))
 
@@ -3280,7 +3294,7 @@
 
     (global-set-key (kbd "C-M-@") 'er/expand-region))
 #+end_src
-*** multiple-cursors
+** multiple-cursors
 #+BEGIN_SRC emacs-lisp
   (eval-when-compile
     (el-clone :repo "magnars/multiple-cursors.el"))
@@ -4651,23 +4665,23 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (eval-when-compile
     (el-clone :repo "emacs-jp/migemo"))
 
-  (with-delayed-execution
-    (message "Install migemo...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/migemo"))
+  ;; (with-delayed-execution
+  ;;   (message "Install migemo...")
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-clone/migemo"))
 
-    (autoload-if-found '(migemo-init) "migemo" nil t)
+  ;;   (autoload-if-found '(migemo-init) "migemo" nil t)
 
-    (with-eval-after-load 'migemo
-      (setq migemo-command "cmigemo")
-      (setq migemo-dictionary "~/.nix-profile/share/migemo/utf-8/migemo-dict")
-      (setq migemo-user-dictionary nil)
-      (setq migemo-regex-dictionary nil)
-      (setq migemo-coding-system 'utf-8-unix)
-      (setq migemo-use-pattern-alist t)
-      (setq migemo-use-frequent-pattern-alist t))
+  ;;   (with-eval-after-load 'migemo
+  ;;     (setq migemo-command "cmigemo")
+  ;;     (setq migemo-dictionary "~/.nix-profile/share/migemo/utf-8/migemo-dict")
+  ;;     (setq migemo-user-dictionary nil)
+  ;;     (setq migemo-regex-dictionary nil)
+  ;;     (setq migemo-coding-system 'utf-8-unix)
+  ;;     (setq migemo-use-pattern-alist t)
+  ;;     (setq migemo-use-frequent-pattern-alist t))
 
-    ;; (migemo-init)
-    )
+  ;;   ;; (migemo-init)
+  ;;   )
 #+end_src
 *** swiper
 #+BEGIN_SRC emacs-lisp
@@ -4735,15 +4749,15 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (eval-when-compile
     (el-clone :repo "ROCKTAKEY/ivy-migemo"))
 
-  (with-delayed-execution
-    (message "Install ivy-migemo...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ivy-migemo"))
+  ;; (with-delayed-execution
+  ;;   (message "Install ivy-migemo...")
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-clone/ivy-migemo"))
 
-    (autoload-if-found '(ivy-migemo-toggle-fuzzy ivy-migemo-toggle-migemo) "ivy-migemo" nil t)
+  ;;   (autoload-if-found '(ivy-migemo-toggle-fuzzy ivy-migemo-toggle-migemo) "ivy-migemo" nil t)
 
-    (with-eval-after-load 'ivy
-      (define-key ivy-minibuffer-map (kbd "M-f") #'ivy-migemo-toggle-fuzzy)
-      (define-key ivy-minibuffer-map (kbd "M-m") #'ivy-migemo-toggle-migemo)))
+  ;;   (with-eval-after-load 'ivy
+  ;;     (define-key ivy-minibuffer-map (kbd "M-f") #'ivy-migemo-toggle-fuzzy)
+  ;;     (define-key ivy-minibuffer-map (kbd "M-m") #'ivy-migemo-toggle-migemo)))
 #+end_src
 ** Shell
 *** comint-mode
@@ -5781,7 +5795,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 ** Remote Access
 *** counsel-tramp
 #+begin_src emacs-lisp
-
   (eval-when-compile
     (el-clone :repo "masasam/emacs-counsel-tramp"))
 
@@ -5800,9 +5813,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/docker-tramp"))
 
     (autoload-if-found '(docker-tramp-add-method) "docker-tramp" nil t)
+    (docker-tramp-add-method)
 
     (with-eval-after-load 'tramp
-      (docker-tramp-add-method)
       (tramp-set-completion-function docker-tramp-method docker-tramp-completion-function-alist)))
 #+end_src
 * Language Specific
@@ -7986,8 +7999,17 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install org-roam-ql...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/org-roam-ql"))
-    (autoload-if-found '() "org-roam-ql" nil t))
+    (autoload-if-found '(org-roam-ql-nodes
+                         org-roam-ql-search
+                         org-roam-ql-defpred
+                         org-roam-ql-agenda-buffer-from-roam-buffer
+                         org-roam-ql-refresh-buffer
+                         org-dblock-write:org-roam-ql) "org-roam-ql" nil t)
+    (autoload-if-found '(org-roam-ql-ql-init) "org-roam-ql-ql" nil t)
+
+    (org-roam-ql-ql-init))
 #+end_src
+
 * EXWM
 ** exwm
 #+begin_src emacs-lisp
