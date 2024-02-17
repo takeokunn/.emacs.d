@@ -3527,13 +3527,6 @@
 
     (global-set-key (kbd "C-x j") #'open-junk-file)
 
-    (advice-add #'open-junk-file
-                :around
-                (defun my/open-junk-file (old-func &rest args)
-                  (ivy-mode 0)
-                  (apply old-func args)
-                  (ivy-mode 1)))
-
     (with-eval-after-load 'open-junk-file
       (setq open-junk-file-format "~/.emacs.d/.junk/%Y-%m-%d-%H%M%S.")))
 #+END_SRC
@@ -3641,7 +3634,8 @@
       (setq magit-refresh-status-buffer nil))
 
     (with-eval-after-load 'magit-base
-      (setq magit-completing-read-function #'ivy-completing-read))
+      ;; (setq magit-completing-read-function #'ivy-completing-read)
+      )
 
     (with-eval-after-load 'magit-status
       (define-key magit-status-mode-map (kbd "C-j") #'magit-visit-thing))
@@ -3827,11 +3821,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (global-set-key (kbd "C-h k") #'helpful-key)
       (global-set-key (kbd "C-c C-d") #'helpful-at-point)
       (global-set-key (kbd "C-h F") #'helpful-function)
-      (global-set-key (kbd "C-h C") #'helpful-command))
-
-    (with-eval-after-load 'counsel
-      (setq counsel-describe-function-function #'helpful-callable)
-      (setq counsel-describe-variable-function #'helpful-variable)))
+      (global-set-key (kbd "C-h C") #'helpful-command)))
 #+end_src
 ** IME
 *** ddskk
@@ -4137,7 +4127,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       ;; for intelephense
       (setq lsp-intelephense-clear-cache t)
       (setq lsp-intelephense-php-version "8.2")
-      (setq lsp-intelephense-telemetry-enabled t))
+      (setq lsp-intelephense-telemetry-enabled t)
+      (setq lsp-intelephense-files-exclude ["**/.git/**" "**/.svn/**" "**/.hg/**" "**/CVS/**" "**/.DS_Store/**" 
+                                            "**/node_modules/**" "**/bower_components/**" "**/vendor/**/{Test,test,Tests,tests}/**" 
+                                            "**/.direnv/**"]))
 
     (with-eval-after-load 'lsp-ruby
       (setq lsp-solargraph-autoformat t)
@@ -4510,41 +4503,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'prescient
       (setq prescient-aggressive-file-save t)))
 #+end_src
-*** ivy-prescient
-#+begin_src emacs-lisp
-  (with-delayed-execution
-    (message "Install ivy-prescient...")
-
-    (autoload-if-found '(ivy-prescient-mode ivy-prescient-re-builder) "ivy-prescient" nil t)
-
-    (defun my/ivy-prescient-non-fuzzy (str)
-      (let ((prescient-filter-method '(literal regexp)))
-        (ivy-prescient-re-builder str)))
-
-    (with-eval-after-load 'ivy
-      (add-hook 'ivy-mode-hook #'ivy-prescient-mode))
-
-    (with-eval-after-load 'ivy-prescient
-      (setq ivy-re-builders-alist
-            '((counsel-ag . my/ivy-prescient-non-fuzzy)
-              (counsel-rg . my/ivy-prescient-non-fuzzy)
-              (counsel-pt . my/ivy-prescient-non-fuzzy)
-              (counsel-grep . my/ivy-prescient-non-fuzzy)
-              (counsel-imenu . my/ivy-prescient-non-fuzzy)
-              (counsel-yank-pop . my/ivy-prescient-non-fuzzy)
-              (swiper . my/ivy-prescient-non-fuzzy)
-              (swiper-isearch . my/ivy-prescient-non-fuzzy)
-              (swiper-all . my/ivy-prescient-non-fuzzy)
-              (lsp-ivy-workspace-symbol . my/ivy-prescient-non-fuzzy)
-              (lsp-ivy-global-workspace-symbol . my/ivy-prescient-non-fuzzy)
-              (insert-char . my/ivy-prescient-non-fuzzy)
-              (counsel-unicode-char . my/ivy-prescient-non-fuzzy)
-              (t . ivy-prescient-re-builder)))
-      (setq ivy-prescient-sort-commands
-            '(:not swiper swiper-isearch ivy-switch-buffer
-                   counsel-grep counsel-git-grep counsel-ag counsel-imenu
-                   counsel-yank-pop counsel-recentf counsel-buffer-or-recentf))))
-#+end_src
 *** company-prescient
 #+begin_src emacs-lisp
   (with-delayed-execution
@@ -4614,28 +4572,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq projectile-switch-project-action 'projectile-dired)
       (setq projectile-enable-caching t)))
 #+end_src
-*** counsel-projectile
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "ericdanan/counsel-projectile"))
-
-  (with-delayed-execution-priority-high
-    (message "Install counsel-projectile...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/counsel-projectile"))
-
-    (autoload-if-found '(counsel-projectile-mode) "counsel-projectile" nil t)
-
-    (with-eval-after-load 'counsel
-      (add-hook 'counsel-mode-hook #'counsel-projectile-mode))
-
-    (with-eval-after-load 'counsel-projectile
-      (setq counsel-projectile-sort-files t)
-      (setq counsel-projectile-sort-projects t)
-      (setq counsel-projectile-sort-buffers t)
-      (setq counsel-projectile-grep-initial-input '(ivy-thing-at-point))
-      (setq counsel-projectile-ag-initial-input '(ivy-thing-at-point))
-      (setq counsel-projectile-rg-initial-input '(ivy-thing-at-point))))
-#+end_src
 ** Refactor
 *** emr
 #+BEGIN_SRC emacs-lisp
@@ -4652,15 +4588,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key prog-mode-map (kbd "M-RET") #'emr-show-refactor-menu)))
 #+END_SRC
 ** Search
-*** basic
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "abo-abo/swiper"))
-
-  (with-delayed-execution-priority-high
-    (message "Install swiper base...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/swiper")))
-#+end_src
 *** migemo
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -4683,82 +4610,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   ;;   ;; (migemo-init)
   ;;   )
-#+end_src
-*** swiper
-#+BEGIN_SRC emacs-lisp
-  (with-delayed-execution-priority-high
-    (message "Install swiper...")
-
-    (autoload-if-found '(swiper) "swiper" nil t)
-
-    (defun my/swiper ()
-      (interactive)
-      (let ((word (thing-at-point 'symbol 'no-properties)))
-        (swiper word)))
-
-    (global-set-key (kbd "C-o") #'my/swiper))
-#+END_SRC
-*** counsel
-#+begin_src emacs-lisp
-  (with-delayed-execution-priority-high
-    (message "Install counsel...")
-
-    (autoload-if-found '(counsel-mode counsel-compile) "counsel" nil t)
-    (counsel-mode 1)
-
-    (global-set-key (kbd "C-x m") #'counsel-compile)
-
-    (with-eval-after-load 'counsel
-      (setq counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
-#+end_src
-*** ivy
-#+begin_src emacs-lisp
-  (with-delayed-execution
-    (message "Install ivy...")
-
-    (autoload-if-found '(ivy-mode ivy-read ivy-completing-read) "ivy" nil t)
-    (autoload-if-found '(ivy-avy) "ivy-avy" nil t)
-
-    (add-hook 'minibuffer-setup-hook #'ivy-mode)
-
-    (with-eval-after-load 'ivy
-      ;; config
-      (setq ivy-use-virtual-buffers t)
-
-      ;; keybind
-      (define-key ivy-minibuffer-map (kbd "C-'") #'ivy-avy)
-      (define-key ivy-minibuffer-map (kbd "C-h") #'delete-backward-char)
-      (define-key ivy-minibuffer-map (kbd "M-h") #'backward-kill-word)))
-#+end_src
-*** ivy-rich
-#+BEGIN_SRC emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "Yevgnen/ivy-rich"))
-
-  (with-delayed-execution
-    (message "Install ivy-rich...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ivy-rich"))
-
-    (autoload-if-found '(ivy-rich-mode) "ivy-rich" nil t)
-    (ivy-rich-mode 1)
-
-    (with-eval-after-load 'ivy-rich
-      (setq ivy-rich-path-style 'abbrev)))
-#+END_SRC
-*** ivy-migemo
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "ROCKTAKEY/ivy-migemo"))
-
-  ;; (with-delayed-execution
-  ;;   (message "Install ivy-migemo...")
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-clone/ivy-migemo"))
-
-  ;;   (autoload-if-found '(ivy-migemo-toggle-fuzzy ivy-migemo-toggle-migemo) "ivy-migemo" nil t)
-
-  ;;   (with-eval-after-load 'ivy
-  ;;     (define-key ivy-minibuffer-map (kbd "M-f") #'ivy-migemo-toggle-fuzzy)
-  ;;     (define-key ivy-minibuffer-map (kbd "M-m") #'ivy-migemo-toggle-migemo)))
 #+end_src
 ** Shell
 *** comint-mode
@@ -4816,20 +4667,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'yasnippet-org
       (setq yasnippet-org-verbose t)))
-#+end_src
-*** ivy-yasnippet
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "mkcms/ivy-yasnippet"))
-
-  (with-delayed-execution
-    (message "Install ivy-yasnippet...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ivy-yasnippet"))
-
-    (autoload-if-found '(ivy-yasnippet) "ivy-yasnippet" nil t)
-
-    (global-set-key (kbd "C-c y") #'ivy-yasnippet)
-    (global-set-key (kbd "C-c C-y") #'ivy-yasnippet))
 #+end_src
 ** Statistics
 *** esup
@@ -4945,14 +4782,14 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq tab-bar-tab-name-truncated-max 12)
       (setq tab-bar-separator " | "))
 
-    (defun my/advice-completing-read-to-ivy (orig-func &rest args)
-      (interactive
-       (let* ((recent-tabs (mapcar (lambda (tab)
-                                     (alist-get 'name tab))
-                                   (tab-bar--tabs-recent))))
-         (list (ivy-completing-read "Switch to tab by name (default recent): "
-                                    recent-tabs nil nil nil nil recent-tabs))))
-      (apply orig-func args))
+    ;; (defun my/advice-completing-read-to-ivy (orig-func &rest args)
+    ;;   (interactive
+    ;;    (let* ((recent-tabs (mapcar (lambda (tab)
+    ;;                                  (alist-get 'name tab))
+    ;;                                (tab-bar--tabs-recent))))
+    ;;      (list (ivy-completing-read "Switch to tab by name (default recent): "
+    ;;                                 recent-tabs nil nil nil nil recent-tabs))))
+    ;;   (apply orig-func args))
 
     (defun my/tab-bar-rename-tab ()
       (interactive)
@@ -4961,18 +4798,19 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'tab-bar
       ;; switch tab with ivy
-      (advice-add #'tab-bar-switch-to-tab :around #'my/advice-completing-read-to-ivy)
+      ;; (advice-add #'tab-bar-switch-to-tab :around #'my/advice-completing-read-to-ivy
+      )
 
-      ;; rename tab-bar with projectile
-      (define-key tab-prefix-map (kbd "r") #'my/tab-bar-rename-tab)
+    ;; rename tab-bar with projectile
+    (define-key tab-prefix-map (kbd "r") #'my/tab-bar-rename-tab)
 
-      ;; close neotree when tab bar action
-      (advice-add 'tab-new :before #'(lambda (&rest _) (neotree-hide)))
-      (advice-add 'tab-next :before #'(lambda (&rest _) (neotree-hide)))
-      (advice-add 'tab-bar-switch-to-tab :before #'(lambda (&rest _) (neotree-hide)))
+    ;; close neotree when tab bar action
+    (advice-add 'tab-new :before #'(lambda (&rest _) (neotree-hide)))
+    (advice-add 'tab-next :before #'(lambda (&rest _) (neotree-hide)))
+    (advice-add 'tab-bar-switch-to-tab :before #'(lambda (&rest _) (neotree-hide)))
 
-      ;; hook
-      (add-hook 'tab-bar-mode-hook #'(lambda () (display-line-numbers-mode -1)))))
+    ;; hook
+    (add-hook 'tab-bar-mode-hook #'(lambda () (display-line-numbers-mode -1)))))
 #+end_src
 ** Template
 *** auto-insert
@@ -5009,26 +4847,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'dired
       (add-hook 'dired-mode-hook #'all-the-icons-dired-mode)))
-#+end_src
-*** all-the-icons-ivy-rich
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "seagle0128/all-the-icons-ivy-rich"))
-
-  (with-delayed-execution
-    (message "Install all-the-icons-ivy-rich...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/all-the-icons-ivy-rich"))
-
-    (autoload-if-found '(all-the-icons-ivy-rich-mode) "all-the-icons-ivy-rich" nil t)
-
-    (all-the-icons-ivy-rich-mode 1)
-
-    (with-eval-after-load 'all-the-icons-ivy-rich
-      (setq all-the-icons-ivy-rich-icon t)
-      (setq all-the-icons-ivy-rich-color-icon t)
-      (setq all-the-icons-ivy-rich-icon-size 1.0)
-      (setq all-the-icons-ivy-rich-project t)
-      (setq all-the-icons-ivy-rich-field-width 80)))
 #+end_src
 *** dashboard
 #+begin_src emacs-lisp
@@ -5794,16 +5612,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (global-set-key (kbd "C-c C-z") #'zoom-window-zoom))
 #+end_src
 ** Remote Access
-*** counsel-tramp
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "masasam/emacs-counsel-tramp"))
-
-  (with-delayed-execution
-    (message "Install counsel-tramp...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-counsel-tramp"))
-    (autoload-if-found '(counsel-tramp) "counsel-tramp" nil t))
-#+end_src
 *** docker-tramp
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -7603,6 +7411,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-http"))
 
     (autoload-if-found '(org-babel-execute:http) "ob-http" nil t)
+
+    (define-derived-mode http-mode prog-mode "http")
 
     (with-eval-after-load 'org-src
       (add-to-list 'org-src-lang-modes '("http" . http))))
