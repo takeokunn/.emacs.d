@@ -1974,7 +1974,8 @@
                                                ("rb" . ruby-mode)
                                                ("rs" . rustic-mode)
                                                ("sqlite3" . sql-mode)
-                                               ("ts" . web-mode)
+                                               ("ts" . typescript-mode)
+                                               ("typescript" . typescript-mode)
                                                ("tsx" . web-mode)
                                                ("yaml". yaml-mode)
                                                ("zsh" . sh-mode)
@@ -4092,37 +4093,15 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/lsp-mode/clients"))
 
     (autoload-if-found '(lsp lsp-deferred lsp-org) "lsp-mode" nil t)
-    (autoload-if-found '(lsp-lens-mode lsp-lens-refresh) "lsp-lens" nil t)
-    (autoload-if-found '(lsp-diagnostics-mode) "lsp-diagnostics" nil t)
-    (autoload-if-found '(lsp-completion-mode) "lsp-completion" nil t)
-    (autoload-if-found '(lsp-dired-mode) "lsp-dired" nil t)
-    (autoload-if-found '(lsp-modeline-code-actions-mode lsp-modeline-diagnostics-mode) "lsp-modeline" nil t)
+    (autoload-if-found '(lsp-lens-mode lsp-lens-refresh lsp-lens--enable) "lsp-lens" nil t)
+    (autoload-if-found '(lsp-modeline-workspace-status-mode) "lsp-modeline" nil t)
     (autoload-if-found '(lsp-headerline-breadcrumb-mode) "lsp-headerline" nil t)
 
     (advice-add 'lsp-rename :before #'(lambda (&rest _) (remove-hook 'find-file-hooks #'view-mode)))
     (advice-add 'lsp-rename :after #'(lambda (&rest _) (add-hook 'find-file-hooks #'view-mode)))
 
-    (defun my/disable-lsp-flycheck ()
-      (interactive)
-      (setq lsp-diagnostics-provider :none)
-      (remove-hook 'lsp-mode-hook #'flycheck-mode))
-
-    (defun my/enable-lsp-flycheck ()
-      (interactive)
-      (setq lsp-diagnostics-provider :flycheck)
-      (add-hook 'lsp-mode-hook #'flycheck-mode))
-
     (with-eval-after-load 'lsp-mode
       (add-to-list 'lsp-language-id-configuration '("php-ts-mode" . "php"))
-
-      ;; hook
-      (add-hook 'lsp-mode-hook #'lsp-lens-mode)
-      (add-hook 'lsp-mode-hook #'lsp-diagnostics-mode)
-      (add-hook 'lsp-mode-hook #'lsp-completion-mode)
-      (add-hook 'lsp-mode-hook #'lsp-dired-mode)
-      (add-hook 'lsp-mode-hook #'lsp-modeline-code-actions-mode)
-      (add-hook 'lsp-mode-hook #'lsp-modeline-diagnostics-mode)
-      (add-hook 'lsp-mode-hook #'lsp-headerline-breadcrumb-mode)
 
       ;; ignore path
       (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]vendor")
@@ -4149,10 +4128,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'lsp-diagnostics
       (setq lsp-diagnostics-provider :flycheck))
 
-    (with-eval-after-load 'lsp-icons
-      (unless window-system
-        (setq lsp-headerline-breadcrumb-icons-enable nil)))
-
     (with-eval-after-load 'lsp-php
       ;; for intelephense
       (setq lsp-intelephense-clear-cache t)
@@ -4164,14 +4139,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'lsp-ruby
       (setq lsp-solargraph-autoformat t)
-      (setq lsp-solargraph-multi-root nil))
-
-    (with-eval-after-load 'lsp-lens
-      (define-advice narrow-to-region (:after (&rest _))
-        (lsp-lens-refresh t))
-
-      (define-advice widen (:after (&rest _))
-        (lsp-lens-refresh t))))
+      (setq lsp-solargraph-multi-root nil)))
 #+END_SRC
 *** lsp-php-key
 #+begin_src emacs-lisp
