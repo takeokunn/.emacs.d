@@ -1023,6 +1023,16 @@
     (message "Install queue...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/queue")))
 #+end_src
+** ripgrep
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "nlamirault/ripgrep.el"))
+
+  (with-delayed-execution
+    (message "Install ripgrep...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ripgrep")))
+
+#+end_src
 ** reformatter
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -4585,7 +4595,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(projectile-mode) "projectile" nil t)
 
-    (projectile-mode +1)
+    (projectile-mode)
 
     (defun my/update-projectile-known-projects ()
       (interactive)
@@ -4604,7 +4614,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
       ;; config
       (setq projectile-switch-project-action 'projectile-dired)
-      (setq projectile-enable-caching t)))
+      (setq projectile-enable-caching t)
+      (setq projectile-use-git-grep t)))
 #+end_src
 *** consult-projectile
 #+begin_src emacs-lisp
@@ -4614,6 +4625,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install consult-projectile...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/consult-projectile"))
+
     (autoload-if-found '(consult-projectile-switch-to-buffer
                          consult-projectile-switch-to-buffer-other-window
                          consult-projectile-switch-to-buffer-other-frame
@@ -4622,8 +4634,18 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          consult-projectile-find-file-other-window
                          consult-projectile-find-file-other-frame
                          consult-projectile-recentf
-                         consult-projectile-switch-project
-                         consult-projectile) "consult-projectile" nil t))
+                         consult-projectile-switch-project) "consult-projectile" nil t)
+
+    (with-eval-after-load 'projectile
+      (advice-add 'projectile-switch-to-buffer :override #'consult-projectile-switch-to-buffer)
+      (advice-add 'projectile-switch-to-buffer-other-window :override #'consult-projectile-switch-to-buffer-other-window)
+      (advice-add 'projectile-switch-to-buffer-other-frame :override #'consult-projectile-switch-to-buffer-other-frame)
+      (advice-add 'projectile-find-dir :override #'consult-projectile-find-dir)
+      (advice-add 'projectile-find-file :override #'consult-projectile-find-file)
+      (advice-add 'projectile-find-file-other-window :override #'consult-projectile-find-file-other-window)
+      (advice-add 'projectile-find-file-other-frame :override #'consult-projectile-find-file-other-frame)
+      (advice-add 'projectile-recentf :override #'consult-projectile-recentf)
+      (advice-add 'projectile-switch-project :override #'consult-projectile-switch-project)))
 #+end_src
 ** Refactor
 *** emr
@@ -4663,6 +4685,20 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   ;;   ;; (migemo-init)
   ;;   )
+#+end_src
+*** wgrep
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "mhayashi1120/Emacs-wgrep"))
+
+  (with-delayed-execution
+    (message "Install wgrep...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-wgrep"))
+
+    (autoload-if-found '(wgrep-setup) "wgrep" nil t)
+
+    (with-eval-after-load 'grep
+      (add-hook 'grep-setup-hook 'wgrep-setup)))
 #+end_src
 *** consult
 #+begin_src emacs-lisp
@@ -7169,7 +7205,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-keys
     (setq org-use-extra-keys t)
-    (setq org-use-speed-commands t))
+    (setq org-use-speed-commands t)
+
+    (add-to-list 'org-speed-commands '("d" org-todo "DONE"))
+    (add-to-list 'org-speed-commands '("j" call-interactively #'consult-org-heading)))
 #+end_src
 *** org-capture
 #+begin_src emacs-lisp
