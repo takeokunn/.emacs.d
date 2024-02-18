@@ -2612,7 +2612,7 @@
 
     ;; for ts/deno
     (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
-    (add-hook 'typescript-mode-hook #'lsp)
+    (add-hook 'typescript-mode-hook #'lsp-deferred)
 
     ;; for tsx
     (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
@@ -4862,12 +4862,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'rfn-eshadow-update-overlay #'vertico-directory-tidy))
 
     (with-eval-after-load 'vertico
-      (setq vertico-count 15)
-      (setq vertico-cycle t)
-
-      (define-key 'vertico-map (kbd "RET") #'vertico-directory-enter)
-      (define-key 'vertico-map (kbd "DEL") #'vertico-directory-delete-char)
-      (define-key 'vertico-map (kbd "M-DEL") #'vertico-directory-delete-word)))
+      (setq vertico-count 8)
+      (setq vertico-cycle t)))
 #+end_src
 *** marginalia
 #+begin_src emacs-lisp
