@@ -629,6 +629,12 @@
 #+begin_src emacs-lisp
   (setq-default indent-tabs-mode nil)
 #+end_src
+** 検索で大文字小文字を区別しない
+#+begin_src emacs-lisp
+  (setq read-file-name-completion-ignore-case t)
+  (setq read-buffer-completion-ignore-case t)
+  (setq completion-ignore-case t)
+#+end_src
 * Utitlity
 ** a
 #+begin_src emacs-lisp
@@ -3055,6 +3061,20 @@
     (with-eval-after-load 'company-elisp
       (push 'company-elisp company-backends)))
 #+END_SRC
+*** consult-company
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "mohkale/consult-company"))
+
+  (with-delayed-execution
+    (message "Install consult-company...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/consult-company"))
+
+    (autoload-if-found '(consult-company) "consult-company" nil t)
+
+    (with-eval-after-load 'company
+      (define-key company-mode-map [remap completion-at-point] #'consult-company)))
+#+end_src
 *** company-flx
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -4128,8 +4148,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq lsp-intelephense-clear-cache t)
       (setq lsp-intelephense-php-version "8.2")
       (setq lsp-intelephense-telemetry-enabled t)
-      (setq lsp-intelephense-files-exclude ["**/.git/**" "**/.svn/**" "**/.hg/**" "**/CVS/**" "**/.DS_Store/**" 
-                                            "**/node_modules/**" "**/bower_components/**" "**/vendor/**/{Test,test,Tests,tests}/**" 
+      (setq lsp-intelephense-files-exclude ["**/.git/**" "**/.svn/**" "**/.hg/**" "**/CVS/**" "**/.DS_Store/**"
+                                            "**/node_modules/**" "**/bower_components/**" "**/vendor/**/{Test,test,Tests,tests}/**"
                                             "**/.direnv/**"]))
 
     (with-eval-after-load 'lsp-ruby
@@ -4149,6 +4169,20 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install lsp-php-key...")
     (with-eval-after-load 'lsp-php
       (setq lsp-intelephense-licence-key "00OXTX8OROOJH9P")))
+#+end_src
+*** consult-lsp
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "gagbo/consult-lsp"))
+
+  (with-delayed-execution
+    (message "Install consult-lsp...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/consult-lsp"))
+
+    (autoload-if-found '(consult-lsp-symbols) "consult-lsp" nil t)
+
+    (with-eval-after-load 'lsp-mode
+      (define-key lsp-mode-map [remap xref-find-apropos] #'consult-lsp-symbols)))
 #+end_src
 *** lsp-treemacs
 #+begin_src emacs-lisp
@@ -4572,6 +4606,25 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq projectile-switch-project-action 'projectile-dired)
       (setq projectile-enable-caching t)))
 #+end_src
+*** consult-projectile
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :fetcher "gitlab" :repo "OlMon/consult-projectile"))
+
+  (with-delayed-execution
+    (message "Install consult-projectile...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/consult-projectile"))
+    (autoload-if-found '(consult-projectile-switch-to-buffer
+                         consult-projectile-switch-to-buffer-other-window
+                         consult-projectile-switch-to-buffer-other-frame
+                         consult-projectile-find-dir
+                         consult-projectile-find-file
+                         consult-projectile-find-file-other-window
+                         consult-projectile-find-file-other-frame
+                         consult-projectile-recentf
+                         consult-projectile-switch-project
+                         consult-projectile) "consult-projectile" nil t))
+#+end_src
 ** Refactor
 *** emr
 #+BEGIN_SRC emacs-lisp
@@ -4610,6 +4663,209 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   ;;   ;; (migemo-init)
   ;;   )
+#+end_src
+*** consult
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "minad/consult"))
+
+  (with-delayed-execution
+    (message "Install consult...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/consult"))
+
+    (autoload-if-found '(consult-bookmark
+                         consult-buffer
+                         consult-buffer-other-frame
+                         consult-buffer-other-tab
+                         consult-buffer-other-window
+                         consult-complex-command
+                         consult-find
+                         consult-flycheck
+                         consult-focus-lines
+                         consult-git-grep
+                         consult-global-mark
+                         consult-goto-line
+                         consult-grep
+                         consult-history
+                         consult-isearch-history
+                         consult-keep-lines
+                         consult-line
+                         consult-line-multi
+                         consult-locate
+                         consult-man
+                         consult-mark
+                         consult-outline
+                         consult-project-buffer
+                         consult-register
+                         consult-register-load
+                         consult-register-store
+                         consult-ripgrep
+                         consult-yank-pop
+                         consult-mode-command
+
+                         ;; other
+                         consult-preview-at-point-mode
+                         consult-register-window) "consult" nil t)
+    (autoload-if-found '(consult-compile-error) "consult-compile" nil t)
+    (autoload-if-found '(consult-org-heading consult-org-agenda) "consult-org" nil t)
+    (autoload-if-found '(consult-imenu consult-imenu-multi) "consult-imenu" nil t)
+    (autoload-if-found '(consult-kmacro) "consult-kmacro" nil t)
+    (autoload-if-found '(consult-xref) "consult-xref" nil t)
+
+    ;; keybind
+    ;; C-c bindings in `mode-specific-map'
+    (global-set-key (kbd "C-c M-x") #'consult-mode-command)
+    (global-set-key (kbd "C-c h") #'consult-history)
+
+    ;; C-x bindings in `ctl-x-map'
+    (global-set-key (kbd "C-x M-:") #'consult-complex-command)
+    (global-set-key (kbd "C-x b") #'consult-buffer)
+    (global-set-key (kbd "C-x 4 b") #'consult-buffer-other-window)
+    (global-set-key (kbd "C-x 5 b") #'consult-buffer-other-frame)
+
+    ;; Other custom bindings
+    (global-set-key (kbd "M-y") #'consult-yank-pop)
+
+    ;; M-g bindings in `goto-map'
+    (global-set-key (kbd "M-g e") #'consult-compile-error)
+    (global-set-key (kbd "M-g f") #'consult-flycheck)
+    (global-set-key (kbd "M-g g") #'consult-goto-line)
+    (global-set-key (kbd "M-g M-g") #'consult-goto-line)
+    (global-set-key (kbd "M-g o") #'consult-outline)
+    (global-set-key (kbd "M-g m") #'consult-mark)
+    (global-set-key (kbd "M-g k") #'consult-global-mark)
+    (global-set-key (kbd "M-g i") #'consult-imenu)
+    (global-set-key (kbd "M-g I") #'consult-imenu-multi)
+
+    ;; C-o bindings in `search-map'
+    (global-set-key (kbd "C-o") #'(lambda ()
+                                    (interactive)
+                                    (let ((word (thing-at-point 'symbol 'no-properties)))
+                                      (consult-line word))))
+
+    ;; Isearch integration
+    (with-eval-after-load 'isearch
+      (define-key isearch-mode-map (kbd "M-e") #'consult-isearch-history))
+
+    ;; Minibuffer history
+    (with-eval-after-load 'minibuffer
+      (define-key minibuffer-local-map (kbd "M-s") #'consult-history)
+      (define-key minibuffer-local-map (kbd "M-r") #'consult-history))
+
+    (with-eval-after-load 'simple
+      (add-hook 'completion-list-mode #'consult-preview-at-point-mode))
+
+    (with-eval-after-load 'register
+      (advice-add #'register-preview :override #'consult-register-window))
+
+    (with-eval-after-load 'xref
+      (setq xref-show-xrefs-function #'consult-xref)
+      (setq xref-show-definitions-function #'consult-xref)))
+#+end_src
+*** affe
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "minad/affe"))
+
+  (with-delayed-execution
+    (message "Install affe...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/affe"))
+
+    (autoload-if-found '(affe-grep) "affe" nil t)
+
+    (with-eval-after-load 'affe
+      (setq affe-highlight-function 'orderless-highlight-matches)
+      (setq affe-find-command "fd --color=never --full-path")
+      (setq affe-regexp-function 'orderless-pattern-compiler)))
+#+end_src
+*** compile-multi
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "mohkale/compile-multi"))
+
+  (with-delayed-execution
+    (message "Install compile-multi...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/compile-multi"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/compile-multi/extensions/consult-compile-multi"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/compile-multi/extensions/compile-multi-embark"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/compile-multi/extensions/compile-multi-all-the-icons"))
+
+
+    (autoload-if-found '(compile-multi) "compile-multi" nil t)
+    (autoload-if-found '(consult-compile-multi-mode) "consult-compile-multi" nil t)
+    (autoload-if-found '(compile-multi-embark-mode) "compile-multi-embark" nil t)
+
+    (global-set-key (kbd "C-x m") #'compile-multi)
+
+    (with-eval-after-load 'consult
+      (consult-compile-multi-mode))
+
+    (with-eval-after-load 'embark
+      (compile-multi-embark-mode)))
+#+end_src
+*** vertico
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "minad/vertico"))
+
+  (with-delayed-execution
+    (message "Install vertico...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/vertico"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/vertico/extensions"))
+
+    (autoload-if-found '(vertico-mode) "vertico" nil t)
+    (autoload-if-found '(vertico-directory-tidy
+                         vertico-directory-enter
+                         vertico-directory-delete-char
+                         vertico-directory-delete-word) "vertico-directory" nil t)
+    (autoload-if-found '(vertico-flat-mode) "vertico-flat" nil t)
+
+    (vertico-mode)
+
+    (with-eval-after-load 'rfn-eshadow
+      (add-hook 'rfn-eshadow-update-overlay #'vertico-directory-tidy))
+
+    (with-eval-after-load 'vertico
+      (setq vertico-count 15)
+      (setq vertico-cycle t)
+
+      (define-key 'vertico-map (kbd "RET") #'vertico-directory-enter)
+      (define-key 'vertico-map (kbd "DEL") #'vertico-directory-delete-char)
+      (define-key 'vertico-map (kbd "M-DEL") #'vertico-directory-delete-word)))
+#+end_src
+*** marginalia
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "minad/marginalia"))
+
+  (with-delayed-execution
+    (message "Install marginalia...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/marginalia"))
+    (autoload-if-found '(marginalia-mode) "marginalia" nil t)
+
+    (marginalia-mode)
+
+    (with-eval-after-load 'minibuffer
+      (define-key minibuffer-local-map (kbd "M-A") #'marginalia-cycle)))
+#+end_src
+*** orderless
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "oantolin/orderless"))
+
+  (with-delayed-execution
+    (message "Install orderless...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/orderless"))
+
+    (autoload-if-found '(orderless-all-completions
+                         orderless-try-completion) "orderless" nil t)
+
+    (with-eval-after-load 'minibuffer
+      (setq completion-styles '(orderless basic))
+      (setq completion-category-overrides '((file (styles basic partial-completion))))
+
+      (add-to-list 'completion-styles-alist '(orderless orderless-try-completion orderless-all-completions
+                                                        "Completion of multiple components, in any order."))))
 #+end_src
 ** Shell
 *** comint-mode
@@ -4653,6 +4909,20 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(yas-global-mode) "yasnippet" nil t)
 
     (yas-global-mode 1))
+#+end_src
+*** consult-yasnippet
+#+begin_src emacs-lisp
+  (eval-when-compile
+   (el-clone :repo "mohkale/consult-yasnippet"))
+
+  (with-delayed-execution
+    (message "Install consult-yasnippet...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/consult-yasnippet"))
+
+    (autoload-if-found '(consult-yasnippet) "consult-yasnippet" nil t)
+
+    (global-set-key (kbd "C-c y") #'consult-yasnippet)
+    (global-set-key (kbd "C-c C-y") #'consult-yasnippet))
 #+end_src
 *** yasnippet-org
 #+begin_src emacs-lisp
@@ -4782,24 +5052,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq tab-bar-tab-name-truncated-max 12)
       (setq tab-bar-separator " | "))
 
-    ;; (defun my/advice-completing-read-to-ivy (orig-func &rest args)
-    ;;   (interactive
-    ;;    (let* ((recent-tabs (mapcar (lambda (tab)
-    ;;                                  (alist-get 'name tab))
-    ;;                                (tab-bar--tabs-recent))))
-    ;;      (list (ivy-completing-read "Switch to tab by name (default recent): "
-    ;;                                 recent-tabs nil nil nil nil recent-tabs))))
-    ;;   (apply orig-func args))
-
     (defun my/tab-bar-rename-tab ()
       (interactive)
       (let ((proj-name (projectile-project-name)))
         (tab-bar-rename-tab proj-name)))
-
-    (with-eval-after-load 'tab-bar
-      ;; switch tab with ivy
-      ;; (advice-add #'tab-bar-switch-to-tab :around #'my/advice-completing-read-to-ivy
-      )
 
     ;; rename tab-bar with projectile
     (define-key tab-prefix-map (kbd "r") #'my/tab-bar-rename-tab)
@@ -4810,7 +5066,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (advice-add 'tab-bar-switch-to-tab :before #'(lambda (&rest _) (neotree-hide)))
 
     ;; hook
-    (add-hook 'tab-bar-mode-hook #'(lambda () (display-line-numbers-mode -1)))))
+    (add-hook 'tab-bar-mode-hook #'(lambda () (display-line-numbers-mode -1))))
 #+end_src
 ** Template
 *** auto-insert
@@ -4847,6 +5103,19 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'dired
       (add-hook 'dired-mode-hook #'all-the-icons-dired-mode)))
+#+end_src
+*** all-the-icons-completion
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "iyefrat/all-the-icons-completion"))
+
+  (with-delayed-execution
+    (message "Install all-the-icons-completion...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/all-the-icons-completion"))
+
+    (autoload-if-found '(all-the-icons-completion-marginalia-setup) "all-the-icons-completion" nil t)
+
+    (all-the-icons-completion-marginalia-setup))
 #+end_src
 *** dashboard
 #+begin_src emacs-lisp
@@ -5300,6 +5569,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/embark"))
 
     (autoload-if-found '(embark-act embark-dwim embark-prefix-help-command) "embark" nil t)
+    (autoload-if-found '(embark-consult-outline-candidates
+                         embark-consult-imenu-candidates
+                         embark-consult-imenu-or-outline-candidates) "embark-consult" nil t)
 
     (global-set-key (kbd "C-.") #'embark-act)
     (global-set-key (kbd "C-;") #'embark-dwim)
@@ -5354,7 +5626,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key embark-bookmark-map (kbd "3") (my/embark-split-action bookmark-jump split-window-right))
 
       ;; sudo
-      (define-key embark-file-map (kbd "S") #'my/sudo-find-file)))
+      (define-key embark-file-map (kbd "S") #'my/sudo-find-file)
+
+      ;; consult
+      (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode)))
 #+end_src
 *** goto-addr
 #+BEGIN_SRC emacs-lisp
@@ -5626,6 +5901,16 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'tramp
       (tramp-set-completion-function docker-tramp-method docker-tramp-completion-function-alist)))
+#+end_src
+*** consult-tramp
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "Ladicle/consult-tramp"))
+
+  (with-delayed-execution
+    (message "Install consult-tramp...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/consult-tramp"))
+    (autoload-if-found '(consult-tramp) "consult-tramp" nil t))
 #+end_src
 * Language Specific
 ** Basic Lisp
@@ -7753,6 +8038,31 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
       ;; config
       (setq org-roam-protocol-store-links t)))
+#+end_src
+*** consult-org-roam
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "jgru/consult-org-roam"))
+
+  (with-delayed-execution
+    (message "Install consult-org-roam...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/consult-org-roam"))
+
+    (autoload-if-found '(consult-org-roam-mode) "consult-org-roam" nil t)
+
+    (consult-org-roam-mode)
+
+    ;; keybinds
+    (global-set-key (kbd "C-c n e") #'consult-org-roam-file-find)
+    (global-set-key (kbd "C-c n b") #'consult-org-roam-backlinks)
+    (global-set-key (kbd "C-c n B") #'consult-org-roam-backlinks-recursive)
+    (global-set-key (kbd "C-c n l") #'consult-org-roam-forward-links)
+    (global-set-key (kbd "C-c n r") #'consult-org-roam-search)
+
+    (with-eval-after-load 'consult-org-roam
+      (setq consult-org-roam-grep-func #'consult-ripgrep)
+      (setq consult-org-roam-buffer-narrow-key ?r)
+      (setq consult-org-roam-buffer-after-buffers t)))
 #+end_src
 *** org-roam-ui
 #+begin_src emacs-lisp
