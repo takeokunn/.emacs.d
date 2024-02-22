@@ -2075,7 +2075,6 @@
 
     (autoload-if-found '(nix-mode) "nix-mode" nil t)
     (autoload-if-found '(nix-drv-mode) "nix-drv-mode" nil t)
-    (autoload-if-found '(company-nix) "nix-company" nil t)
     (autoload-if-found '(nix-shell-unpack nix-shell-configure nix-shell-build) "nix-shell" nil t)
     (autoload-if-found '(nix-repl) "nix-repl" nil t)
     (autoload-if-found '(nix-format-before-save) "nix-format" nil t)
@@ -2086,10 +2085,7 @@
     (add-hook 'before-save-hook #'nix-format-before-save)
 
     (with-eval-after-load 'nix-mode
-      (add-hook 'nix-mode-hook #'lsp))
-
-    (with-eval-after-load 'company
-      (push 'company-nix company-backends)))
+      (add-hook 'nix-mode-hook #'lsp)))
 #+end_src
 ** nginx-mode
 #+BEGIN_SRC emacs-lisp
@@ -2151,7 +2147,6 @@
       ;; And that is detected by the currently running Phel process.
       ;; That interferes with evaluation, as the running Phel process starts behaving badly because of that.
       (setq-local create-lockfiles nil)
-      ;;(setq-local company-backends '((company-capf company-dabbrev-code)))
       )
 
     (add-to-list 'auto-mode-alist '("\\.phel$" . phel-mode)))
@@ -3043,222 +3038,6 @@
       (setq amx-history-length 100)))
 #+END_SRC
 ** Completion
-*** company
-#+BEGIN_SRC emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "company-mode/company-mode"))
-
-  (with-delayed-execution
-    (message "Install company...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-mode"))
-
-    (autoload-if-found '(global-company-mode) "company" nil t)
-
-    (global-company-mode)
-
-    (with-eval-after-load 'company
-      ;; keybind
-      (define-key company-active-map (kbd "C-n") #'company-select-next)
-      (define-key company-active-map (kbd "C-p") #'company-select-previous)
-      (define-key company-active-map (kbd "C-j") #'company-complete-selection)
-
-      ;; config
-      (setq company-minimum-prefix-length 2)
-      (setq company-idle-delay 0.2))
-
-    (with-eval-after-load 'company-css
-      (push 'company-css company-backends))
-
-    (with-eval-after-load 'company-elisp
-      (push 'company-elisp company-backends)))
-#+END_SRC
-*** consult-company
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "mohkale/consult-company"))
-
-  (with-delayed-execution
-    (message "Install consult-company...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/consult-company"))
-
-    (autoload-if-found '(consult-company) "consult-company" nil t)
-
-    (with-eval-after-load 'company
-      (define-key company-mode-map [remap completion-at-point] #'consult-company)))
-#+end_src
-*** company-flx
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "PythonNut/company-flx"))
-
-  (with-delayed-execution
-    (message "Install company-flx...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-flx"))
-    (autoload-if-found '(company-flx-mode) "company-flx" nil t)
-    (company-flx-mode))
-#+end_src
-*** company-box
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "sebastiencs/company-box"))
-
-  (with-delayed-execution
-    (message "Install company-box...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-box"))
-
-    (autoload-if-found '(company-box-mode) "company-box" nil t)
-
-    (with-eval-after-load 'company-mode
-      (when window-system
-        (add-hook 'company-mode-hook #'company-box-mode)))
-
-    (with-eval-after-load 'company-box-doc
-      (setq company-box-doc-enable nil)))
-#+end_src
-*** company-dockerfile
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "takeokunn/company-dockerfile"))
-
-  (with-delayed-execution
-    (message "Install company-dockerfile...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-dockerfile"))
-
-    (autoload-if-found '(company-dockerfile) "company-dockerfile" nil t)
-
-    (with-eval-after-load 'company
-      (push 'company-dockerfile company-backends)))
-#+end_src
-*** company-glsl
-#+BEGIN_SRC emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "Kaali/company-glsl"))
-
-  (with-delayed-execution
-    (message "Install company-glsl...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-glsl"))
-
-    (autoload-if-found '(company-glsl) "company-glsl" nil t)
-
-    (with-eval-after-load 'company
-      (push 'company-glsl company-backends)))
-#+END_SRC
-*** company-c-headers
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "randomphrase/company-c-headers"))
-
-  (with-delayed-execution
-    (message "Install company-c-headers...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-c-headers"))
-
-    (autoload-if-found '(company-c-headers) "company-c-headers" nil t)
-
-    (with-eval-after-load 'company
-      (push 'company-c-headers company-backends)))
-#+end_src
-*** company-shell
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "takeokunn/company-shell"))
-
-  (with-delayed-execution
-    (message "Install company-shell...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-shell"))
-
-    (autoload-if-found '(company-shell company-shell-env company-fish-shell) "company-shell" nil t)
-
-    (with-eval-after-load 'company
-      (push 'company-shell company-backends)
-      (push 'company-shell-env company-backends)
-      (push 'company-fish-shell company-backends)))
-#+end_src
-*** company-terraform
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "rafalcieslak/emacs-company-terraform"))
-
-  (with-delayed-execution
-    (message "Install company-terraform...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-company-terraform"))
-
-    (autoload-if-found '(company-terraform) "company-terraform" nil t)
-
-    (defun my/push-company-terraform ()
-      (push 'company-terraform company-backends))
-
-    (with-eval-after-load 'terraform-mode
-      (add-hook 'terraform-mode-hook #'my/push-company-terraform)))
-#+end_src
-*** company-nginx
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "Ygenks/company-nginx"))
-
-  (with-delayed-execution
-    (message "Install company-nginx...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-nginx"))
-
-    (autoload-if-found '(company-nginx) "company-nginx" nil t)
-
-    (with-eval-after-load 'company
-      (push 'company-nginx company-backends)))
-#+end_src
-*** company-gemoji
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "takeokunn/company-gemoji"))
-
-  (with-delayed-execution
-    (message "Install company-gemoji...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-gemoji"))
-
-    (autoload-if-found '(company-gemoji) "company-gemoji" nil t)
-
-    (with-eval-after-load 'company
-      (push 'company-gemoji company-backends)))
-#+end_src
-*** company-lua
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "ptrv/company-lua"))
-
-  (with-delayed-execution
-    (message "Install company-lua...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-lua"))
-
-    (autoload-if-found '(company-lua) "company-lua" nil t)
-
-    (with-eval-after-load 'company
-      (push 'company-lua company-backends)))
-#+end_src
-*** company-org-block
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "xenodium/company-org-block"))
-
-  (with-delayed-execution
-    (message "Install company-org-block...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-org-block"))
-
-    (autoload-if-found '(company-org-block) "company-org-block" nil t)
-
-    (with-eval-after-load 'company
-      (push 'company-org-block company-backends)))
-#+end_src
-*** company-statistics
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "company-mode/company-statistics"))
-
-  (with-delayed-execution
-    (message "Install company-statistics...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/company-statistics"))
-
-    (autoload-if-found '(company-statistics-mode) "company-statistics" nil t)
-
-    (company-statistics-mode))
-#+end_src
 *** copilot.el
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -4515,16 +4294,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'prescient
       (setq prescient-aggressive-file-save t)))
 #+end_src
-*** company-prescient
-#+begin_src emacs-lisp
-  (with-delayed-execution
-    (message "Install company-prescient...")
-
-    (autoload-if-found '(company-prescient-mode) "company-prescient" nil t)
-
-    (with-eval-after-load 'company
-      (add-hook 'company-mode-hook #'company-prescient-mode)))
-#+end_src
 ** Process
 *** proced
 #+begin_src emacs-lisp
@@ -5145,13 +4914,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(dimmer-configure-which-key
                          dimmer-configure-org
-                         dimmer-configure-company-box
                          dimmer-mode)
                        "dimmer" nil t)
 
     (dimmer-configure-which-key)
     (dimmer-configure-org)
-    (dimmer-configure-company-box)
     (dimmer-mode t))
 #+end_src
 *** doom-themes
@@ -6040,17 +5807,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'slime-repl
       (define-key slime-repl-mode-map (kbd "C-c C-r") #'my/slime-history)))
 #+END_SRC
-*** slime-company
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "anwyn/slime-company"))
-
-  (with-delayed-execution
-    (message "Install slime-company...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime-company"))
-    (autoload-if-found '(slime-company) "slime-company" nil t)
-    (slime-setup '(slime-company)))
-#+end_src
 *** hyperspec
 #+begin_src emacs-lisp
   (with-delayed-execution
@@ -6461,10 +6217,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install robe...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/robe"))
 
-    (autoload-if-found '(robe-mode inf-ruby-console-auto) "robe" nil t)
-
-    (with-eval-after-load 'company
-      (push 'company-robe company-backends)))
+    (autoload-if-found '(robe-mode inf-ruby-console-auto) "robe" nil t))
 #+end_src
 *** rubocop
 #+begin_src emacs-lisp
