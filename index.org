@@ -7586,7 +7586,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(ob-async-org-babel-execute-src-block) "ob-async" nil t)
 
-    (advice-add 'org-babel-execute-src-block :around #'ob-async-org-babel-execute-src-block))
+    ;; (advice-add 'org-babel-execute-src-block :around #'ob-async-org-babel-execute-src-block)
+    )
 #+end_src
 *** ob-fish
 #+begin_src emacs-lisp
@@ -7699,8 +7700,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-http"))
 
     (autoload-if-found '(org-babel-execute:http) "ob-http" nil t)
-
-    (define-derived-mode http-mode prog-mode "http")
+    (autoload-if-found '(ob-http-mode) "ob-http-mode" nil t)
 
     (with-eval-after-load 'org-src
       (add-to-list 'org-src-lang-modes '("http" . http))))
@@ -7813,6 +7813,20 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'org-src
       (add-to-list 'org-src-lang-modes '("treesitter" . treesitter))))
+#+end_src
+*** org-nix-shell
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "AntonHakansson/org-nix-shell"))
+
+  (with-delayed-execution
+    (message "Install org-nix-shell...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/org-nix-shell"))
+
+    (autoload-if-found '(org-nix-shell-mode) "org-nix-shell" nil t)
+
+    (with-eval-after-load 'org
+      (add-hook 'org-mode-hook #'org-nix-shell-mode)))
 #+end_src
 ** Org Publish
 *** ox-html
