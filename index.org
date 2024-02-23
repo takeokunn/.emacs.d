@@ -7618,6 +7618,20 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'org-src
       (add-to-list 'org-src-lang-modes '("treesitter" . treesitter))))
 #+end_src
+*** ob-base64
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "KeyWeeUsr/ob-base64"))
+
+  (with-delayed-execution
+    (message "Install ob-base64...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/ob-base64"))
+
+    (autoload-if-found '(org-babel-execute:base64) "ob-base64" nil t)
+
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("base64" . base64))))
+#+end_src
 *** org-nix-shell
 #+begin_src emacs-lisp
   (eval-when-compile
