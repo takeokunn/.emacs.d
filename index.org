@@ -339,8 +339,9 @@
 #+begin_src emacs-lisp
   (with-eval-after-load 'comp
     (setq native-comp-async-jobs-number 8)
-    (setq native-comp-speed 3)
+    (setq native-comp-speed 2)
     (setq native-comp-always-compile t)
+
     (defun my/native-comp-packages ()
       (interactive)
       (native-compile-async "~/.emacs.d/init.el")
@@ -3049,15 +3050,12 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/corfu/extensions"))
 
     (autoload-if-found '(global-corfu-mode) "corfu" nil t)
-    (autoload-if-found '(corfu-popupinfo-mode) "corfu-popupinfo" nil t)
 
     (global-corfu-mode)
-    (corfu-popupinfo-mode)
 
     (with-eval-after-load 'corfu
       (setq corfu-auto t)
-      (setq corfu-auto-delay 0)
-      (setq corfu-auto-prefix 2)
+      (setq corfu-auto-delay 0.2)
       (setq corfu-cycle t)
       (setq corfu-on-exact-match nil))
 
@@ -3095,18 +3093,11 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/prescient"))
 
     (autoload-if-found '(prescient-persist-mode) "prescient" nil t)
-    (autoload-if-found '(corfu-prescient-mode) "corfu-prescient" nil t)
-    (autoload-if-found '(vertico-prescient-mode) "vertico-prescient" nil t)
 
     (prescient-persist-mode)
-    (corfu-prescient-mode)
-    (vertico-prescient-mode)
 
     (with-eval-after-load 'prescient
-      (setq prescient-aggressive-file-save t))
-
-    (with-eval-after-load 'orderless
-      (setq corfu-prescient-enable-filtering nil)))
+      (setq prescient-aggressive-file-save t)))
 #+end_src
 *** kind-icon
 #+begin_src emacs-lisp
@@ -3487,7 +3478,7 @@
     (message "Install magit...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/transient/lisp"))
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/ghub/lisp"))
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/magit-pop"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/magit-popup"))
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/with-editor/lisp"))
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/magit/lisp"))
 
@@ -4682,7 +4673,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'minibuffer
       (setq completion-styles '(orderless basic))
-      (setq completion-category-overrides '((file (styles basic partial-completion))))
+      ;; (setq completion-category-overrides '((file (styles basic partial-completion))))
 
       (add-to-list 'completion-styles-alist '(orderless orderless-try-completion orderless-all-completions
                                                         "Completion of multiple components, in any order."))))
@@ -6529,6 +6520,20 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key js2-mode-map (kbd "C-c C-c") #'nodejs-repl-send-buffer)
       (define-key js2-mode-map (kbd "C-c C-l") #'nodejs-repl-load-file)
       (define-key js2-mode-map (kbd "C-c C-z") #'nodejs-repl-switch-to-repl)))
+#+end_src
+*** jest
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "edmundmiller/emacs-jest"))
+
+  (with-delayed-execution
+    (message "Install jest...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-jest"))
+
+    (autoload-if-found '(jest-minor-mode) "jest" nil t)
+
+    (with-eval-after-load 'js2-mode
+      (add-hook 'js2-mode-hook #'jest-minor-mode)))
 #+end_src
 ** Haskell
 *** hindent
