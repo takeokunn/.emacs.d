@@ -938,7 +938,7 @@
   (eval-when-compile
     (el-clone :repo "rainstormstudio/nerd-icons.el"))
 
-  (with-delayed-execution
+  (with-delayed-execution-priority-high
     (message "Install nerd-icons...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/nerd-icons")))
 #+end_src
@@ -3517,7 +3517,8 @@
     (message "Install magit-forge...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/forge/lisp"))
 
-    (add-hook 'magit-mode-hook #'(lambda () (require 'forge))))
+    ;; (add-hook 'magit-mode-hook #'(lambda () (require 'forge)))
+    )
 #+end_src
 *** git-gutter
 #+begin_src emacs-lisp
@@ -4203,7 +4204,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+begin_src emacs-lisp
   (with-delayed-execution
     (message "Install mu4e...")
-    (add-to-list 'load-path (locate-user-emacs-file "/nix/store/5cqpq7q9yjmsdgdmchl4p3vq9advb5kz-emacs-mu4e-1.10.8/share/emacs/site-lisp/elpa/mu4e-1.10.8"))
+    (add-to-list 'load-path (locate-user-emacs-file "/nix/store/w9ifyfgj31lp0l4ksdx66a3c07qpi2b9-emacs-mu4e-1.12.0/share/emacs/site-lisp/elpa/mu4e-1.12.0"))
 
     (autoload-if-found '(mu4e) "mu4e" nil t)
     (global-set-key (kbd "C-x C-w") #'mu4e)
@@ -4996,8 +4997,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'doom-modeline
       (setq doom-modeline-buffer-file-name-style 'truncate-with-project)
-      (setq doom-modeline-icon t)
-      (setq doom-modeline-major-mode-icon t)
+      (setq doom-modeline-icon `,(display-graphic-p))
+      (setq doom-modeline-major-mode-icon `,(display-graphic-p))
       (setq doom-modeline-minor-modes nil)))
 #+END_SRC
 *** emojify
