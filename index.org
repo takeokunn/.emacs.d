@@ -816,6 +816,15 @@
     (message "Install fringe-helper...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/fringe-helper")))
 #+end_src
+** gptel
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "karthink/gptel"))
+
+  (with-delayed-execution
+    (message "Install gptel...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/gptel")))
+#+end_src
 ** helm
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -2171,7 +2180,7 @@
 
     (with-eval-after-load 'php-mode
       ;; hook
-      (add-hook 'php-mode-hook #'lsp)
+      ;; (add-hook 'php-mode-hook #'lsp)
       (add-hook 'php-mode-hook #'php-format-auto-mode)
 
       ;; keybind
@@ -2725,7 +2734,7 @@
 
     (autoload-if-found '(web-php-blade-mode) "web-php-blade-mode" nil t)
 
-    (add-to-list 'auto-mode-alist '("\\.blade.php$" . web-php-blade-mode)))
+    (add-to-list 'auto-mode-alist '("\\.blade\\.php$" . web-php-blade-mode)))
 #+end_src
 ** wolfram-mode
 #+begin_src emacs-lisp
@@ -3507,6 +3516,26 @@
     (with-eval-after-load 'git-commit
       (define-key git-commit-mode-map (kbd "C-h") #'delete-backward-char)))
 #+END_SRC
+*** magit-gptcommit
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "douo/magit-gptcommit"))
+
+  (with-delayed-execution
+    (message "Install magit-gptcommit...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/magit-gptcommit"))
+    (autoload-if-found '(magit-gptcommit-status-buffer-setup
+                         magit-gptcommit-mode
+                         magit-gptcommit-commit-accept) "magit-gptcommit" nil t)
+
+    (magit-gptcommit-status-buffer-setup)
+
+    (with-eval-after-load 'magit
+      (add-hook 'magit-mode #'magit-gptcommit-mode))
+
+    (with-eval-after-load 'git-commit
+      (define-key git-commit-mode-map (kbd "C-c C-g") #'magit-gptcommit-commit-accept)))
+#+end_src
 *** magit-forge
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -3892,6 +3921,16 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (global-dmacro-mode))
 #+end_src
+*** god-mode
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "emacsorphanage/god-mode"))
+
+  (with-delayed-execution
+    (message "Install god-mode...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/god-mode"))
+    (autoload-if-found '(god-mode) "god-mode" nil t))
+#+end_src
 ** LSP
 *** eglot
 #+begin_src emacs-lisp
@@ -4204,9 +4243,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+begin_src emacs-lisp
   (with-delayed-execution
     (message "Install mu4e...")
-    (add-to-list 'load-path (locate-user-emacs-file "/nix/store/w9ifyfgj31lp0l4ksdx66a3c07qpi2b9-emacs-mu4e-1.12.0/share/emacs/site-lisp/elpa/mu4e-1.12.0"))
+    (add-to-list 'load-path (locate-user-emacs-file "/nix/store/lnlypkq2ij43dbahjm2xyls2flfx0dvc-emacs-mu4e-1.12.4/share/emacs/site-lisp/elpa/mu4e-1.12.4"))
 
     (autoload-if-found '(mu4e) "mu4e" nil t)
+
     (global-set-key (kbd "C-x C-w") #'mu4e)
 
     (with-eval-after-load 'mu4e
@@ -5426,6 +5466,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key embark-buffer-map   (kbd "3") (my/embark-split-action switch-to-buffer split-window-right))
       (define-key embark-bookmark-map (kbd "3") (my/embark-split-action bookmark-jump split-window-right))
 
+      ;; embark-select
+
       ;; sudo
       (define-key embark-file-map (kbd "S") #'my/sudo-find-file)
 
@@ -5781,62 +5823,62 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 ** Common Lisp
 *** slime
 #+BEGIN_SRC emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "slime/slime"
-              :load-paths `(,(locate-user-emacs-file "el-clone/slime/lib")
-                            ,(locate-user-emacs-file "el-clone/slime/contrib")
-                            ,(locate-user-emacs-file "el-clone/slime/swank"))))
+  ;; (eval-when-compile
+  ;;   (el-clone :repo "slime/slime"
+  ;;             :load-paths `(,(locate-user-emacs-file "el-clone/slime/lib")
+  ;;                           ,(locate-user-emacs-file "el-clone/slime/contrib")
+  ;;                           ,(locate-user-emacs-file "el-clone/slime/swank"))))
 
-  (with-delayed-execution
-    (message "Install slime...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime"))
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime/lib"))
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime/contrib"))
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime/swank"))
+  ;; (with-delayed-execution
+  ;;   (message "Install slime...")
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime"))
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime/lib"))
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime/contrib"))
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime/swank"))
 
-    (require 'slime)
-    (slime-setup '(slime-repl slime-fancy slime-banner slime-indentation))
+  ;;   (require 'slime)
+  ;;   (slime-setup '(slime-repl slime-fancy slime-banner slime-indentation))
 
-    (when-darwin
-     (defun my/roswell-configdir ()
-       (substring (shell-command-to-string "ros roswell-internal-use version confdir") 0 -1))
+  ;;   (when-darwin
+  ;;    (defun my/roswell-configdir ()
+  ;;      (substring (shell-command-to-string "ros roswell-internal-use version confdir") 0 -1))
 
-     (defun my/roswell-opt (var)
-       (with-temp-buffer
-         (insert-file-contents (concat (my/roswell-configdir) "config"))
-         (goto-char (point-min))
-         (re-search-forward (concat "^" var "\t[^\t]+\t\\(.*\\)$"))
-         (match-string 1)))
+  ;;    (defun my/roswell-opt (var)
+  ;;      (with-temp-buffer
+  ;;        (insert-file-contents (concat (my/roswell-configdir) "config"))
+  ;;        (goto-char (point-min))
+  ;;        (re-search-forward (concat "^" var "\t[^\t]+\t\\(.*\\)$"))
+  ;;        (match-string 1)))
 
-     (defun my/roswell-directory (type)
-       (concat
-        (my/roswell-configdir)
-        "lisp/"
-        type
-        "/"
-        (my/roswell-opt (concat type ".version"))
-        "/"))
+  ;;    (defun my/roswell-directory (type)
+  ;;      (concat
+  ;;       (my/roswell-configdir)
+  ;;       "lisp/"
+  ;;       type
+  ;;       "/"
+  ;;       (my/roswell-opt (concat type ".version"))
+  ;;       "/"))
 
-     (with-eval-after-load 'slime
-       (setq slime-path `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
-       (setq slime-backend `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
-       (setq inferior-lisp-program "ros -Q run")))
+  ;;    (with-eval-after-load 'slime
+  ;;      (setq slime-path `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
+  ;;      (setq slime-backend `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
+  ;;      (setq inferior-lisp-program "ros -Q run")))
 
-    (when-guix
-     (with-eval-after-load 'slime
-       (setq inferior-lisp-program "sbcl")))
+  ;;   (when-guix
+  ;;    (with-eval-after-load 'slime
+  ;;      (setq inferior-lisp-program "sbcl")))
 
-    (defun my/slime-history ()
-      (interactive)
-      (if (and (fboundp '-distinct)
-               (fboundp 'f-read-text))
-          (insert
-           (completing-read
-            "choice history: "
-            (-distinct (read (f-read-text "~/.slime-history.eld")))))))
+  ;;   (defun my/slime-history ()
+  ;;     (interactive)
+  ;;     (if (and (fboundp '-distinct)
+  ;;              (fboundp 'f-read-text))
+  ;;         (insert
+  ;;          (completing-read
+  ;;           "choice history: "
+  ;;           (-distinct (read (f-read-text "~/.slime-history.eld")))))))
 
-    (with-eval-after-load 'slime-repl
-      (define-key slime-repl-mode-map (kbd "C-c C-r") #'my/slime-history)))
+  ;;   (with-eval-after-load 'slime-repl
+  ;;     (define-key slime-repl-mode-map (kbd "C-c C-r") #'my/slime-history)))
 #+END_SRC
 *** hyperspec
 #+begin_src emacs-lisp
@@ -6908,6 +6950,16 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-eat"))
     (autoload-if-found '(eat) "eat" nil t))
 #+end_src
+** mistty
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "szermatt/mistty"))
+
+  (with-delayed-execution
+    (message "Install mistty...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/mistty"))
+    (autoload-if-found '(mistty) "mistty" nil t))
+#+end_src
 * Org Mode
 ** Basic
 *** org
@@ -7344,7 +7396,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(org-babel-do-load-languages) "org" nil t)
 
     (with-eval-after-load 'ob-core
-      (setq org-confirm-babel-evaluate nil))
+      (setq org-confirm-babel-evaluate nil)
+
+      (add-to-list 'org-babel-default-header-args '(:results . "output")))
 
     (with-eval-after-load 'ob-eval
       (advice-add #'org-babel-eval-error-notify
