@@ -4243,7 +4243,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+begin_src emacs-lisp
   (with-delayed-execution
     (message "Install mu4e...")
-    (add-to-list 'load-path (locate-user-emacs-file "/nix/store/lnlypkq2ij43dbahjm2xyls2flfx0dvc-emacs-mu4e-1.12.4/share/emacs/site-lisp/elpa/mu4e-1.12.4"))
+    (add-to-list 'load-path (locate-user-emacs-file "/nix/store/iyqr1hy0195pzvd4rmn9cz5hxmzqj42j-emacs-mu4e-1.12.5/share/emacs/site-lisp/elpa/mu4e-1.12.5"))
 
     (autoload-if-found '(mu4e) "mu4e" nil t)
 
@@ -4415,6 +4415,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (defun my/update-projectile-known-projects ()
       (interactive)
+      (projectile-clear-known-projects)
+      (projectile-cleanup-known-projects)
       (setq projectile-known-projects (mapcar
                                        (lambda (x)
                                          (abbreviate-file-name (concat x "/")))
@@ -5096,7 +5098,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (defun my/neotree-toggle ()
       (interactive)
-      (let ((default-directory (locate-dominating-file default-directory ".git")))
+      (let ((default-directory (or (locate-dominating-file default-directory ".neotree")
+                                   (locate-dominating-file default-directory ".git"))))
         (if (and (fboundp 'neo-global--window-exists-p)
                  (neo-global--window-exists-p))
             (neotree-hide)
@@ -5137,6 +5140,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key neotree-mode-map (kbd "C-j") (neotree-make-executor
                                                 :file-fn #'neo-open-file
                                                 :dir-fn  #'neo-open-dir))))
+
 #+END_SRC
 *** nyan-mode
 #+BEGIN_SRC emacs-lisp
