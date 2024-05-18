@@ -2912,6 +2912,16 @@
     (with-eval-after-load 'elisp-mode
       (add-hook 'emacs-lisp-mode-hook #'flycheck-elsa-setup)))
 #+end_src
+*** flycheck-projectile-list-errors
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "nbfalcon/flycheck-projectile"))
+
+  (with-delayed-execution
+    (message "Install flycheck-projectile...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/flycheck-projectile"))
+    (autoload-if-found '(flycheck-projectile-list-errors) "flycheck-projectile" nil t))
+#+end_src
 ** Client
 *** md4rd
 #+begin_src emacs-lisp
@@ -3966,6 +3976,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(lsp-lens-mode lsp-lens-refresh lsp-lens--enable) "lsp-lens" nil t)
     (autoload-if-found '(lsp-modeline-workspace-status-mode) "lsp-modeline" nil t)
     (autoload-if-found '(lsp-headerline-breadcrumb-mode) "lsp-headerline" nil t)
+    (autoload-if-found '(lsp-diagnostics-mode) "lsp-diagnostics" nil t)
 
     (advice-add 'lsp-rename :before #'(lambda (&rest _) (remove-hook 'find-file-hooks #'view-mode)))
     (advice-add 'lsp-rename :after #'(lambda (&rest _) (add-hook 'find-file-hooks #'view-mode)))
@@ -3985,18 +3996,22 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       ;; enable flycheck
       (add-hook 'lsp-mode-hook #'flycheck-mode)
 
+      ;; enable diagnostics
+      (add-hook 'lsp-configure-hook #'lsp-diagnostics-mode)
+
       ;; config
       (setq lsp-idle-delay 0.8)
       (setq lsp-enable-links nil)
       (setq lsp-log-io nil)
       (setq lsp-file-watch-threshold 20000))
 
+    (with-eval-after-load 'lsp-diagnostics
+      (setq lsp-diagnostic-clean-after-change t)
+      (setq lsp-diagnostics-flycheck-default-level 'info))
+
     (with-eval-after-load 'lsp-completion
       (setq lsp-completion-no-cache t)
       (setq lsp-prefer-capf t))
-
-    (with-eval-after-load 'lsp-diagnostics
-      (setq lsp-diagnostics-provider :flycheck))
 
     (with-eval-after-load 'lsp-php
       ;; for intelephense
@@ -5062,8 +5077,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (with-delayed-execution
     (message "Install hl-line...")
     (autoload-if-found '(global-hl-line-mode) "hl-line-mode" nil t)
+
     (when (not window-system)
       (global-hl-line-mode))
+
     (with-eval-after-load 'hl-line
       (set-face-attribute 'hl-line nil :inherit nil)
       (set-face-background 'hl-line "#444642")))
