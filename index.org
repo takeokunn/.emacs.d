@@ -6238,6 +6238,31 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'csv-mode-hook #'rainbow-csv-mode)))
 #+end_src
 ** JavaScript/TypeScript
+*** nodejs-repl
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "abicky/nodejs-repl.el"))
+
+  (with-delayed-execution
+    (message "Install nodejs-repl...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/nodejs-repl"))
+
+    (autoload-if-found '(nodejs-repl
+                         nodejs-repl-send-last-expression
+                         nodejs-repl-send-line
+                         nodejs-repl-send-region
+                         nodejs-repl-send-buffer
+                         nodejs-repl-load-file
+                         nodejs-repl-switch-to-repl) "nodejs-repl" nil t)
+
+    (with-eval-after-load 'js2-mode
+      (define-key js2-mode-map (kbd "C-x C-e") #'nodejs-repl-send-last-expression)
+      (define-key js2-mode-map (kbd "C-c C-j") #'nodejs-repl-send-line)
+      (define-key js2-mode-map (kbd "C-c C-r") #'nodejs-repl-send-region)
+      (define-key js2-mode-map (kbd "C-c C-c") #'nodejs-repl-send-buffer)
+      (define-key js2-mode-map (kbd "C-c C-l") #'nodejs-repl-load-file)
+      (define-key js2-mode-map (kbd "C-c C-z") #'nodejs-repl-switch-to-repl)))
+#+end_src
 *** js2-refactor
 #+BEGIN_SRC emacs-lisp
   (eval-when-compile
@@ -6258,48 +6283,35 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'typescript-mode
       (add-hook 'typescript-mode-hook #'js2-refactor-mode)))
 #+END_SRC
-*** TODO tree-sitter
+*** jest
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-clone :repo "emacs-tree-sitter/elisp-tree-sitter")
-    (el-clone :repo "emacs-tree-sitter/tree-sitter-langs"))
+    (el-clone :repo "edmundmiller/emacs-jest"))
 
-  ;; (with-delayed-execution
-  ;;   (message "Install tree-sitter...")
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-clone/elisp-tree-sitter/core"))
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-clone/elisp-tree-sitter/lisp"))
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-clone/tree-sitter-langs"))
+  (with-delayed-execution
+    (message "Install emacs-jest...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-jest"))
 
-  ;;   (autoload-if-found '(tree-sitter-mode) "tree-sitter" nil t)
-  ;;   (autoload-if-found '(tree-sitter-require) "tree-sitter-load" nil t)
-  ;;   (autoload-if-found '(tree-sitter-hl-mode tree-sitter-hl-add-patterns) "tree-sitter-hl" nil t)
+    (autoload-if-found '(jest
+                         jest-file
+                         jest-file-dwim
+                         jest-function
+                         jest-last-failed
+                         jest-repeat
+                         jest-minor-mode) "jest" nil t)
 
-  ;;   (when (require 'tree-sitter-langs)
-  ;;     (tree-sitter-require 'tsx))
+    (with-eval-after-load 'typescript-mode
+      ;; hook
+      (add-hook 'typescript-mode-hook #'jest-minor-mode)
 
-  ;;   (tree-sitter-hl-add-patterns 'tsx
-  ;;     [(call_expression
-  ;;       ;; styled.div``
-  ;;       function: (member_expression
-  ;;                  object: (identifier) @function.call
-  ;;                  (.eq? @function.call "styled"))
-  ;;       arguments: ((template_string) @property.definition
-  ;;                   (.offset! @property.definition 0 1 0 -1)))
-  ;;      (call_expression
-  ;;       ;; styled(Component)``
-  ;;       function: (call_expression
-  ;;                  function: (identifier) @function.call
-  ;;                  (.eq? @function.call "styled"))
-  ;;       arguments: ((template_string) @property.definition
-  ;;                   (.offset! @property.definition 0 1 0 -1)))])
+      ;; config
+      (setq jest-executable "npx jest"))
 
-  ;;   (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx))
-
-  ;;   (with-eval-after-load 'typescript-mode
-  ;;     (add-hook 'typescript-tsx-mode-hook #'tree-sitter-mode))
-
-  ;;   (with-eval-after-load 'tree-sitter
-  ;;     (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)))
+    (with-eval-after-load 'projectile
+      (projectile-register-project-type 'npx '("package.json" "yarn.lock")
+                                        :project-file "package.json"
+                                        :test "npx jest"
+                                        :test-suffix ".spec")))
 #+end_src
 ** Ruby
 *** robe
@@ -6535,46 +6547,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/fish-repl"))
 
     (autoload-if-found '(fish-repl) "fish-repl" nil t))
-#+end_src
-** NodeJS
-*** nodejs-repl
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "abicky/nodejs-repl.el"))
-
-  (with-delayed-execution
-    (message "Install nodejs-repl...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/nodejs-repl"))
-
-    (autoload-if-found '(nodejs-repl
-                         nodejs-repl-send-last-expression
-                         nodejs-repl-send-line
-                         nodejs-repl-send-region
-                         nodejs-repl-send-buffer
-                         nodejs-repl-load-file
-                         nodejs-repl-switch-to-repl) "nodejs-repl" nil t)
-
-    (with-eval-after-load 'js2-mode
-      (define-key js2-mode-map (kbd "C-x C-e") #'nodejs-repl-send-last-expression)
-      (define-key js2-mode-map (kbd "C-c C-j") #'nodejs-repl-send-line)
-      (define-key js2-mode-map (kbd "C-c C-r") #'nodejs-repl-send-region)
-      (define-key js2-mode-map (kbd "C-c C-c") #'nodejs-repl-send-buffer)
-      (define-key js2-mode-map (kbd "C-c C-l") #'nodejs-repl-load-file)
-      (define-key js2-mode-map (kbd "C-c C-z") #'nodejs-repl-switch-to-repl)))
-#+end_src
-*** jest
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "edmundmiller/emacs-jest"))
-
-  (with-delayed-execution
-    (message "Install jest...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-jest"))
-
-    (autoload-if-found '(jest-minor-mode) "jest" nil t)
-
-    (with-eval-after-load 'js2-mode
-      (add-hook 'js2-mode-hook #'jest-minor-mode)))
 #+end_src
 ** Haskell
 *** hindent
