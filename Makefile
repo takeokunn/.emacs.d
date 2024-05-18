@@ -8,7 +8,8 @@ clean:
 
 .PHONY: link
 link:
-	ln -nfs $(TOP_DIR) ~/
+	mkdir -p $HOME/.config/emacs
+	ln -nfs $(TOP_DIR) ~/.config/emacs
 
 .PHONY: byte-compile
 byte-compile:
@@ -16,8 +17,3 @@ byte-compile:
 	$(EMACS) -Q --batch --eval "(progn (require 'ob-tangle) (org-babel-tangle-file \"./index.org\" \"./init.el\" \"emacs-lisp\"))"
 	$(EMACS) -Q --batch -f batch-byte-compile early-init.el
 	$(EMACS) -Q --batch -f batch-byte-compile init.el
-
-.PHONY: byte-compile-libraries
-byte-compile-libraries:
-	$(EMACS) -Q --batch --eval "(progn (add-to-list 'load-path (locate-user-emacs-file \"elpa/el-clone\")) (require 'el-clone) (el-clone-byte-compile))"
-	make -C el-clone/ddskk install-elc
