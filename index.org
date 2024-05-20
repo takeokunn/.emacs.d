@@ -735,6 +735,15 @@
     (message "Install elquery...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/elquery")))
 #+end_src
+** el-patch
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "radian-software/el-patch"))
+
+  (with-delayed-execution
+    (message "Install el-patch...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/el-patch")))
+#+end_src
 ** esxml
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -3526,6 +3535,20 @@
     (with-eval-after-load 'git-commit
       (define-key git-commit-mode-map (kbd "C-h") #'delete-backward-char)))
 #+END_SRC
+*** magit-file-icons
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "gekoke/magit-file-icons"))
+
+  (with-delayed-execution
+    (message "Install magit-file-icons...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/magit-file-icons"))
+
+    (autoload-if-found '(magit-file-icons-mode) "magit-file-icons" nil t)
+
+    (with-eval-after-load 'magit
+      (add-hook 'magit-mode-hook #'magit-file-icons-mode)))
+#+end_src
 *** magit-gptcommit
 #+begin_src emacs-lisp
   (eval-when-compile
