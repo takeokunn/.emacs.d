@@ -8,8 +8,7 @@ clean:
 
 .PHONY: link
 link:
-	mkdir -p $HOME/.config/emacs
-	ln -nfs $(TOP_DIR) ~/.config/emacs
+	ln -nfs $(TOP_DIR) ~/.emacs.d
 
 .PHONY: byte-compile
 byte-compile:
