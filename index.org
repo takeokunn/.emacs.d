@@ -2623,7 +2623,7 @@
     (message "Install typescript-mode...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/typescript"))
 
-    (autoload-if-found '(typescript-mode typescript-tsx-mode) "typescript-mode" nil t)
+    (autoload-if-found '(typescript-mode) "typescript-mode" nil t)
 
     ;; for ts/deno
     (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
@@ -4046,7 +4046,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                                             "**/node_modules/**" "**/bower_components/**" "**/vendor/**/{Test,test,Tests,tests}/**"
                                             "**/.direnv/**"]))
 
-
     (with-eval-after-load 'lsp-completion
       (setq lsp-completion-provider :none))
 
@@ -4054,6 +4053,18 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq lsp-solargraph-autoformat t)
       (setq lsp-solargraph-multi-root nil)))
 #+END_SRC
+*** emacs-ccls
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "emacs-lsp/emacs-ccls"))
+
+  (with-delayed-execution
+    (message "Install emacs-ccls...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-ccls"))
+
+    (with-eval-after-load 'lsp-mode
+      (add-hook 'lsp-mode-hook #'(lambda () (require 'ccls)))))
+#+end_src
 *** lsp-php-key
 #+begin_src emacs-lisp
   (with-delayed-execution
@@ -8305,6 +8316,15 @@ text:
     (interactive)
     (insert
      (shell-command-to-string "curl -s ifconfig.me")))
+#+end_src
+** my/today
+#+begin_src emacs-lisp
+  (defun my/today ()
+    (interactive)
+    (insert
+     (format-time-string "%Y-%m-%d %a" (current-time))))
+
+  (defalias 'today 'my/today)
 #+end_src
 * Footer
 ** byte-compileする
