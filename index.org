@@ -1294,16 +1294,6 @@
     (add-to-list 'auto-mode-alist '("\\.l\\'" . flex-mode))
     (add-to-list 'auto-mode-alist '("\\.jison\\'" . jison-mode)))
 #+end_src
-** c++-mode
-#+begin_src emacs-lisp
-  (with-eval-after-load 'c++-mode
-    (add-hook 'c++-mode-hook #'lsp-deferred))
-#+end_src
-** c-mode
-#+begin_src emacs-lisp
-  (with-eval-after-load 'cc-mode
-    (add-hook 'c-mode-hook #'lsp-deferred))
-#+end_src
 ** cask-mode
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -1359,9 +1349,6 @@
     (with-eval-after-load 'clojure-mode
       ;; config
       (setq clojure-toplevel-inside-comment-form t)
-
-      ;; hook
-      ;; (add-hook 'clojure-mode-hook #'lsp-deferred)
 
       ;; keybind
       (define-key clojure-mode-map (kbd "C-:") #'avy-goto-word-1)))
@@ -1713,7 +1700,6 @@
       (setq gofmt-command "goimports")
 
       ;; hook
-      (add-hook 'go-mode-hook #'lsp-deferred)
       (add-hook 'before-save-hook #'gofmt-before-save)))
 #+END_SRC
 ** gradle-mode
@@ -1872,11 +1858,7 @@
     (with-eval-after-load 'js2-mode
       ;; config
       (setq js2-strict-missing-semi-warning nil)
-      (setq js2-missing-semi-one-line-override nil)
-
-      ;; hook
-      ;; (add-hook 'js2-mode-hook #'lsp-deferred)
-      ))
+      (setq js2-missing-semi-one-line-override nil)))
 #+END_SRC
 ** json-mode
 #+BEGIN_SRC emacs-lisp
@@ -2101,10 +2083,7 @@
     (add-to-list 'auto-mode-alist '("\\.nix$" . nix-mode))
     (add-to-list 'auto-mode-alist '("\\.drv$" . nix-drv-mode))
 
-    (add-hook 'before-save-hook #'nix-format-before-save)
-
-    (with-eval-after-load 'nix-mode
-      (add-hook 'nix-mode-hook #'lsp)))
+    (add-hook 'before-save-hook #'nix-format-before-save))
 #+end_src
 ** nginx-mode
 #+BEGIN_SRC emacs-lisp
@@ -2189,7 +2168,6 @@
 
     (with-eval-after-load 'php-mode
       ;; hook
-      ;; (add-hook 'php-mode-hook #'lsp)
       (add-hook 'php-mode-hook #'php-format-auto-mode)
 
       ;; keybind
@@ -2313,10 +2291,7 @@
 
     (autoload-if-found '(python-mode) "python-mode" nil t)
 
-    (add-to-list 'auto-mode-alist '("\\.py$" . python-mode))
-
-    (with-eval-after-load 'python
-      (add-hook 'python-mode #'lsp)))
+    (add-to-list 'auto-mode-alist '("\\.py$" . python-mode)))
 #+END_SRC
 ** qt-pro-mode
 #+begin_src emacs-lisp
@@ -2380,8 +2355,7 @@
     (add-to-list 'auto-mode-alist '("\\.rs$" . rust-mode))
 
     (with-eval-after-load 'rust-mode
-      (setq rust-format-on-save t)
-      (add-hook 'rust-mode-hook #'lsp)))
+      (setq rust-format-on-save t)))
 #+END_SRC
 ** scala-mode
 #+BEGIN_SRC emacs-lisp
@@ -2572,7 +2546,6 @@
     (add-to-list 'auto-mode-alist '("\\.tf$" . terraform-mode))
 
     (with-eval-after-load 'terraform-mode
-      (add-hook 'terraform-mode-hook #'lsp)
       (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode)
       (add-hook 'terraform-mode-hook #'flycheck-mode)))
 #+END_SRC
@@ -2627,7 +2600,6 @@
 
     ;; for ts/deno
     (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
-    (add-hook 'typescript-mode-hook #'lsp-deferred)
 
     ;; for tsx
     (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
@@ -2636,7 +2608,6 @@
     (add-to-list 'auto-mode-alist '("\\.tsx$" . typescript-tsx-mode))
 
     ;; hook
-    (add-hook 'typescript-tsx-mode-hook #'lsp)
     (add-hook 'typescript-tsx-mode-hook #'emmet-mode))
 #+END_SRC
 ** v-mode
@@ -2691,10 +2662,7 @@
     (autoload-if-found '(vimrc-mode) "vimrc-mode" nil t)
 
     (add-to-list 'auto-mode-alist '("vimrc" . vimrc-mode))
-    (add-to-list 'auto-mode-alist '("\\.vim\\(rc\\)?\\'" . vimrc-mode))
-
-    (with-eval-after-load 'vimrc-mode
-      (add-hook 'vimrc-mode-hook #'lsp-deferred)))
+    (add-to-list 'auto-mode-alist '("\\.vim\\(rc\\)?\\'" . vimrc-mode)))
 #+end_src
 ** wat-mode
 #+begin_src emacs-lisp
@@ -2804,10 +2772,7 @@
 
     (autoload-if-found '(zig-mode) "zig-mode" nil t)
 
-    (add-to-list 'auto-mode-alist '("\\.zig$" . zig-mode))
-
-    (with-eval-after-load 'zig-mode
-      (add-hook 'zig-mode-hook #'lsp-deferred)))
+    (add-to-list 'auto-mode-alist '("\\.zig$" . zig-mode)))
 #+end_src
 * Awesome Package
 ** Buffer
@@ -4039,12 +4004,21 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'lsp-php
       ;; for intelephense
-      (setq lsp-intelephense-clear-cache t)
-      (setq lsp-intelephense-php-version "8.2")
       (setq lsp-intelephense-telemetry-enabled t)
       (setq lsp-intelephense-files-exclude ["**/.git/**" "**/.svn/**" "**/.hg/**" "**/CVS/**" "**/.DS_Store/**"
                                             "**/node_modules/**" "**/bower_components/**" "**/vendor/**/{Test,test,Tests,tests}/**"
                                             "**/.direnv/**"]))
+
+    (with-eval-after-load 'lsp-javascript
+      ;; for typescript-language-server
+      (setq lsp-clients-typescript-log-verbosity "verbose")
+      (setq lsp-typescript-references-code-lens-enabled t)
+      (setq lsp-typescript-implementations-code-lens-enabled t)
+      (setq lsp-javascript-display-return-type-hints t)
+      (setq lsp-javascript-display-parameter-type-hints t)
+      (setq lsp-javascript-display-parameter-name-hints-when-argument-matches-name t)
+      (setq lsp-javascript-display-property-declaration-type-hints t)
+      (setq lsp-javascript-display-variable-type-hints t))
 
     (with-eval-after-load 'lsp-completion
       (setq lsp-completion-provider :none))
