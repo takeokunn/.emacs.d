@@ -951,15 +951,6 @@
     (message "Install mustache...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/mustache")))
 #+end_src
-** nerd-icons
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "rainstormstudio/nerd-icons.el"))
-
-  (with-delayed-execution-priority-high
-    (message "Install nerd-icons...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/nerd-icons")))
-#+end_src
 ** ov
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -4666,8 +4657,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/compile-multi"))
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/compile-multi/extensions/consult-compile-multi"))
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/compile-multi/extensions/compile-multi-embark"))
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/compile-multi/extensions/compile-multi-all-the-icons"))
-
 
     (autoload-if-found '(compile-multi) "compile-multi" nil t)
     (autoload-if-found '(consult-compile-multi-mode) "consult-compile-multi" nil t)
@@ -4950,41 +4939,41 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq auto-insert-directory "~/.emacs.d/auto-insert")))
 #+end_src
 ** Theme
-*** all-the-icons
-#+BEGIN_SRC emacs-lisp
+*** nerd-icons
+#+begin_src emacs-lisp
   (eval-when-compile
-    (el-clone :repo "domtronn/all-the-icons.el"))
+    (el-clone :repo "rainstormstudio/nerd-icons.el"))
 
   (with-delayed-execution-priority-high
-    (message "Install all-the-icons...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/all-the-icons")))
-#+END_SRC
-*** all-the-icons-dired
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "jtbm37/all-the-icons-dired"))
-
-  (with-delayed-execution
-    (message "Install all-the-icons-dired...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/all-the-icons-dired"))
-
-    (autoload-if-found '(all-the-icons-dired-mode) "all-the-icons-dired")
-
-    (with-eval-after-load 'dired
-      (add-hook 'dired-mode-hook #'all-the-icons-dired-mode)))
+    (message "Install nerd-icons...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/nerd-icons")))
 #+end_src
-*** all-the-icons-completion
+*** nerd-icons-dired
 #+begin_src emacs-lisp
   (eval-when-compile
-    (el-clone :repo "iyefrat/all-the-icons-completion"))
+    (el-clone :repo "rainstormstudio/nerd-icons-dired"))
 
   (with-delayed-execution
-    (message "Install all-the-icons-completion...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/all-the-icons-completion"))
+    (message "Install nerd-icons-dired...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/nerd-icons-dired"))
 
-    (autoload-if-found '(all-the-icons-completion-marginalia-setup) "all-the-icons-completion" nil t)
+    (autoload-if-found '(nerd-icons-dired-mode) "nerd-icons-dired" nil t)
 
-    (all-the-icons-completion-marginalia-setup))
+    (with-eval-after-load 'dired-mode
+      (add-hook 'dired-mode-hook #'nerd-icons-dired-mode)))
+#+end_src
+*** nerd-icons-completion
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "rainstormstudio/nerd-icons-completion"))
+
+  (with-delayed-execution
+    (message "Install nerd-icons-completion...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/nerd-icons-completion"))
+
+    (autoload-if-found '(nerd-icons-completion-marginalia-setup) "nerd-icons-completion" nil t)
+
+    (nerd-icons-completion-marginalia-setup))
 #+end_src
 *** dashboard
 #+begin_src emacs-lisp
@@ -5033,10 +5022,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/themes/extensions"))
 
     (autoload-if-found '(doom-themes-enable-org-fontification) "doom-themes-ext-org" nil t)
-    (autoload-if-found '(doom-themes-neotree-config) "doom-themes-ext-neotree" nil t)
 
     (doom-themes-enable-org-fontification)
-    (doom-themes-neotree-config)
 
     (when (require 'doom-themes)
       (load-theme 'doom-dracula t))
@@ -5067,20 +5054,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq doom-modeline-major-mode-icon `,(display-graphic-p))
       (setq doom-modeline-minor-modes nil)))
 #+END_SRC
-*** emojify
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "iqbalansari/emacs-emojify"))
-
-  (with-delayed-execution
-    (message "Install emojify...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-emojify"))
-
-    (autoload-if-found '(global-emojify-mode global-emojify-mode-line-mode) "emojify" nil t)
-
-    (global-emojify-mode)
-    (global-emojify-mode-line-mode))
-#+end_src
 *** hl-line
 #+BEGIN_SRC emacs-lisp
   (with-delayed-execution
@@ -5131,33 +5104,13 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
             (neotree-hide)
           (neotree-dir default-directory))))
 
-    (if window-system
-        (defun neo-buffer--insert-fold-symbol (name &optional file-name)
-          (or
-           (and
-            (equal name 'open)
-            (insert
-             (format " %s "
-                     (all-the-icons-icon-for-dir file-name "down"))))
-           (and
-            (equal name 'close)
-            (insert
-             (format " %s "
-                     (all-the-icons-icon-for-dir file-name "right"))))
-           (and
-            (equal name 'leaf)
-            (insert
-             (format " %s "
-                     (all-the-icons-icon-for-file file-name)))))))
-
     (global-set-key (kbd "C-q") #'my/neotree-toggle)
 
     (with-eval-after-load 'neotree
       ;; config
-      (setq neo-autorefresh nil)
-      (setq neo-theme 'nerd2)
+      (setq neo-autorefresh t)
+      (setq neo-theme 'ascii)
       (setq neo-show-hidden-files t)
-      (setq neo-window-fixed-size nil)
 
       ;; hook
       (add-hook 'neotree-mode-hook #'(lambda () (display-line-numbers-mode -1)))
