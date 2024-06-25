@@ -960,15 +960,6 @@
     (message "Install ov...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/ov")))
 #+end_src
-** peg
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "emacsmirror/peg"))
-
-  (with-delayed-execution
-    (message "Install peg...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/peg")))
-#+end_src
 ** persist
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -2594,7 +2585,6 @@
 
     ;; for tsx
     (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
-    (add-to-list 'auto-mode-alist '("\\.js$" . typescript-tsx-mode))
     (add-to-list 'auto-mode-alist '("\\.jsx$" . typescript-tsx-mode))
     (add-to-list 'auto-mode-alist '("\\.tsx$" . typescript-tsx-mode))
 
@@ -4002,7 +3992,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'lsp-javascript
       ;; for typescript-language-server
-      (setq lsp-clients-typescript-log-verbosity "verbose")
+      (setq lsp-clients-typescript-log-verbosity "info")
       (setq lsp-typescript-references-code-lens-enabled t)
       (setq lsp-typescript-implementations-code-lens-enabled t)
       (setq lsp-javascript-display-return-type-hints t)
@@ -6173,15 +6163,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-hook 'before-save-hook #'(lambda ()
                                     (when (member major-mode '(c-mode c++-mode))
                                       (clang-format-buffer)))))
-#+end_src
-*** inferior-cling
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "brianqq/inferior-cling"))
-
-  (with-delayed-execution
-    (message "Install inferior-cling...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/inferior-cling")))
 #+end_src
 ** Csv
 *** rainbow-csv
