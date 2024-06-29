@@ -32,9 +32,6 @@
 
   (defconst my/enable-profile nil
     "If true, enable profile")
-
-  (defconst my/enable-c-h-backspace nil
-    "If true, enable C-h backspace")
 #+end_src
 * Macro Utilities
 ** when-darwin
@@ -274,19 +271,11 @@
 #+end_src
 ** global keybind
 #+BEGIN_SRC emacs-lisp
-  (when my/enable-c-h-backspace
-    (keyboard-translate ?\C-h ?\C-?)
-    (global-set-key (kbd "C-h") #'c-hungry-delete-backwards))
-
-  (global-set-key (kbd "C-?") #'help-command)
-
   (global-set-key (kbd "M-¥") #'(lambda () (interactive) (insert "\\")))
-  (global-set-key (kbd "C-z") #'undo)
   (global-set-key (kbd "C-a") #'back-to-indentation)
   (global-set-key (kbd "C-c i") #'find-function)
   (global-set-key (kbd "C-c C-o") #'org-open-at-point)
   (global-set-key (kbd "C-x C-o") #'other-window)
-  (global-set-key (kbd "C-x :") #'goto-line)
   (global-set-key (kbd "M-h") #'backward-kill-word)
 
   (global-set-key (kbd "C-x l") 'next-buffer)
@@ -294,17 +283,9 @@
   (global-set-key (kbd "C-x C-b") #'switch-to-buffer)
 
   (global-set-key (kbd "C-x C-k") nil)
-  (global-set-key (kbd "C-x C-n") nil)
 
   (when window-system
     (global-set-key (kbd "C-x C-c") nil))
-
-  ;; (global-set-key [return] #'(lambda ()
-  ;;                              (interactive)
-  ;;                              (message "Don't use RETURN!!! Press C-m!! C-m!!!")))
-  ;; (global-set-key [tab] #'(lambda ()
-  ;;                              (interactive)
-  ;;                              (message "Don't use TAB!!! Press C-i!! C-i!!!")))
 #+END_SRC
 ** minibuffer
 #+begin_src emacs-lisp
@@ -3508,7 +3489,7 @@
                          magit-gptcommit-mode
                          magit-gptcommit-commit-accept) "magit-gptcommit" nil t)
 
-    (magit-gptcommit-status-buffer-setup)
+    ;; (magit-gptcommit-status-buffer-setup)
 
     (with-eval-after-load 'magit
       (add-hook 'magit-mode #'magit-gptcommit-mode))
@@ -3686,13 +3667,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          helpful-variable
                          helpful-at-point) "helpful" nil t)
     ;; keybinds
-    (when (not my/enable-c-h-backspace)
-      (global-set-key (kbd "C-h f") #'helpful-callable)
-      (global-set-key (kbd "C-h v") #'helpful-variable)
-      (global-set-key (kbd "C-h k") #'helpful-key)
-      (global-set-key (kbd "C-c C-d") #'helpful-at-point)
-      (global-set-key (kbd "C-h F") #'helpful-function)
-      (global-set-key (kbd "C-h C") #'helpful-command)))
+    (global-set-key (kbd "C-h f") #'helpful-callable)
+    (global-set-key (kbd "C-h v") #'helpful-variable)
+    (global-set-key (kbd "C-h k") #'helpful-key)
+    (global-set-key (kbd "C-c C-d") #'helpful-at-point)
+    (global-set-key (kbd "C-h F") #'helpful-function)
+    (global-set-key (kbd "C-h C") #'helpful-command))
 #+end_src
 ** IME
 *** ddskk
@@ -5171,7 +5151,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (global-undo-tree-mode)
 
     (with-eval-after-load 'undo-tree
-      (setq undo-tree-auto-save-history nil)))
+      (setq undo-tree-auto-save-history t)))
 #+end_src
 ** View Mode
 *** view-mode
