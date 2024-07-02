@@ -273,6 +273,7 @@
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "M-¥") #'(lambda () (interactive) (insert "\\")))
   (global-set-key (kbd "C-a") #'back-to-indentation)
+  (global-set-key (kbd "C-z") nil)
   (global-set-key (kbd "C-c i") #'find-function)
   (global-set-key (kbd "C-c C-o") #'org-open-at-point)
   (global-set-key (kbd "C-x C-o") #'other-window)
@@ -5148,10 +5149,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/undo-tree"))
 
     (autoload-if-found '(global-undo-tree-mode) "undo-tree" nil t)
-    (global-undo-tree-mode)
 
-    (with-eval-after-load 'undo-tree
-      (setq undo-tree-auto-save-history t)))
+    (global-undo-tree-mode))
 #+end_src
 ** View Mode
 *** view-mode
