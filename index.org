@@ -274,6 +274,8 @@
   (global-set-key (kbd "M-¥") #'(lambda () (interactive) (insert "\\")))
   (global-set-key (kbd "C-a") #'back-to-indentation)
   (global-set-key (kbd "C-z") nil)
+  (global-set-key (kbd "C-;") #'comment-dwim)
+  (global-set-key (kbd "C-M-/") #'undo-redo)
   (global-set-key (kbd "C-c i") #'find-function)
   (global-set-key (kbd "C-c C-o") #'org-open-at-point)
   (global-set-key (kbd "C-x C-o") #'other-window)
@@ -4755,17 +4757,17 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 *** yasnippet-org
 #+begin_src emacs-lisp
-  (eval-when-compile
-    (el-clone :repo "takeokunn/yasnippet-org"))
+  ;; (eval-when-compile
+  ;;   (el-clone :repo "takeokunn/yasnippet-org"))
 
-  (with-delayed-execution
-    (message "Install yasnippet-org...")
-    (add-to-list 'load-path (locate-user-emacs-file "el-clone/yasnippet-org"))
+  ;; (with-delayed-execution
+  ;;   (message "Install yasnippet-org...")
+  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-clone/yasnippet-org"))
 
-    (autoload-if-found '(yasnippet-org) "yasnippet-org" nil t)
+  ;;   (autoload-if-found '(yasnippet-org) "yasnippet-org" nil t)
 
-    (with-eval-after-load 'yasnippet-org
-      (setq yasnippet-org-verbose t)))
+  ;;   (with-eval-after-load 'yasnippet-org
+  ;;     (setq yasnippet-org-verbose t)))
 #+end_src
 ** Statistics
 *** esup
@@ -5366,7 +5368,6 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          embark-consult-imenu-or-outline-candidates) "embark-consult" nil t)
 
     (global-set-key (kbd "C-.") #'embark-act)
-    (global-set-key (kbd "C-;") #'embark-dwim)
     (global-set-key (kbd "C-h B") #'embark-prefix-help-command)
 
     (defmacro my/embark-ace-action (fn)
