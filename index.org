@@ -971,6 +971,16 @@
     (message "Install pkg-info...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/pkg-info")))
 #+end_src
+** plz
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "alphapapa/plz.el"))
+
+  (with-delayed-execution-priority-high
+    (message "Install plz...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/plz")))
+#+end_src
+
 ** posframe
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -8034,17 +8044,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'ellama
       (setopt ellama-language "Japanese")
-      (setopt ellama-providers "llama2:13b")
+      (setopt ellama-providers nil)
       (setopt ellama-provider (progn
-                              (make-llm-ollama :chat-model "llama2" :embedding-model "llama2")
-                              (make-llm-ollama :chat-model "llama2:13b" :embedding-model "llama2:13b")))))
-#+end_src
-
-text:
-
-#+begin_src shell :results output
-  ls ~/.ghq/github.com/takeokunn/private/**/*.org | xargs -IFILE ollama run llama2:13b $(cat FILE)
-  ollama run llama2 '2023年11月20日に何をしましたか？'
+                                (make-llm-ollama :chat-model "gemma2:27b" :embedding-model "gemma2:27b")
+                                (make-llm-ollama :chat-model "elyza:jp8b" :embedding-model "elyza:jp8b")))))
 #+end_src
 * MyFunc
 ** my/beginning-of-intendation
