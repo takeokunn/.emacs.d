@@ -8042,7 +8042,30 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                        "ellama" nil t)
 
     (with-eval-after-load 'ellama
-      (setopt ellama-language "Japanese")
+      (setopt ellama-language "日本語")
+      (setopt ellama-translation-template "
+  Translate this text to %s.
+
+  Original text:
+  %s
+
+  Translation to %s:
+
+
+  以下のフォーマットで出力してください。
+
+  元テキスト:
+
+  <ここに元テキストを出力する>
+
+  翻訳後テキスト:
+
+  <ここに翻訳後テキストを出力する>
+
+  英語構文解説:
+
+  <ここに英語の構文解説する>
+  ")
       (setopt ellama-provider (progn
                                 (make-llm-ollama :chat-model "gemma2:27b" :embedding-model "gemma2:27b")))))
 #+end_src
