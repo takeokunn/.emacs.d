@@ -3129,7 +3129,7 @@
 
     (global-set-key (kbd "C-M-@") 'er/expand-region))
 #+end_src
-** multiple-cursors
+*** multiple-cursors
 #+BEGIN_SRC emacs-lisp
   (eval-when-compile
     (el-clone :repo "magnars/multiple-cursors.el"))
@@ -3982,8 +3982,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       ;; for intelephense
       (setopt lsp-intelephense-telemetry-enabled t)
       (setopt lsp-intelephense-files-exclude ["**/.git/**" "**/.svn/**" "**/.hg/**" "**/CVS/**" "**/.DS_Store/**"
-                                            "**/node_modules/**" "**/bower_components/**" "**/vendor/**/{Test,test,Tests,tests}/**"
-                                            "**/.direnv/**"]))
+                                              "**/node_modules/**" "**/bower_components/**" "**/vendor/**/{Test,test,Tests,tests}/**"
+                                              "**/.direnv/**"]))
 
     (with-eval-after-load 'lsp-javascript
       ;; for typescript-language-server
@@ -4001,7 +4001,10 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'lsp-ruby
       (setopt lsp-solargraph-autoformat t)
-      (setopt lsp-solargraph-multi-root nil)))
+      (setopt lsp-solargraph-multi-root nil))
+
+    (with-eval-after-load 'lsp-nil
+      (setopt lsp-nix-nil-max-mem 100000)))
 #+END_SRC
 *** emacs-ccls
 #+begin_src emacs-lisp
@@ -8064,7 +8067,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
   英語構文解説:
 
-  <ここに英語の構文解説する>
+  <ここに英語の構文解説を日本語でする>
   ")
       (setopt ellama-provider (progn
                                 (make-llm-ollama :chat-model "gemma2:27b" :embedding-model "gemma2:27b")))))
