@@ -2582,10 +2582,7 @@
     ;; for tsx
     (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
     (add-to-list 'auto-mode-alist '("\\.jsx$" . typescript-tsx-mode))
-    (add-to-list 'auto-mode-alist '("\\.tsx$" . typescript-tsx-mode))
-
-    ;; hook
-    (add-hook 'typescript-tsx-mode-hook #'emmet-mode))
+    (add-to-list 'auto-mode-alist '("\\.tsx$" . typescript-tsx-mode)))
 #+END_SRC
 ** v-mode
 #+begin_src emacs-lisp
@@ -5776,90 +5773,39 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 ** Common Lisp
 *** slime
 #+BEGIN_SRC emacs-lisp
-  ;; (eval-when-compile
-  ;;   (el-clone :repo "slime/slime"
-  ;;             :load-paths `(,(locate-user-emacs-file "el-clone/slime/lib")
-  ;;                           ,(locate-user-emacs-file "el-clone/slime/contrib")
-  ;;                           ,(locate-user-emacs-file "el-clone/slime/swank"))))
+  (eval-when-compile
+    (el-clone :repo "slime/slime"
+              :load-paths `(,(locate-user-emacs-file "el-clone/slime/lib")
+                            ,(locate-user-emacs-file "el-clone/slime/contrib")
+                            ,(locate-user-emacs-file "el-clone/slime/swank"))))
 
-  ;; (with-delayed-execution
-  ;;   (message "Install slime...")
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime"))
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime/lib"))
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime/contrib"))
-  ;;   (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime/swank"))
+  (with-delayed-execution
+    (message "Install slime...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime/lib"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime/contrib"))
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime/swank"))
 
-  ;;   (require 'slime)
-  ;;   (slime-setup '(slime-repl slime-fancy slime-banner slime-indentation))
+    (require 'slime)
+    (load (expand-file-name "$HOME/.roswell/helper.el"))
 
-  ;;   (when-darwin
-  ;;    (defun my/roswell-configdir ()
-  ;;      (substring (shell-command-to-string "ros roswell-internal-use version confdir") 0 -1))
+    (defun my/slime-history ()
+      (interactive)
+      (if (and (fboundp '-distinct)
+               (fboundp 'f-read-text))
+          (insert
+           (completing-read
+            "choice history: "
+            (-distinct (read (f-read-text "~/.slime-history.eld")))))))
 
-  ;;    (defun my/roswell-opt (var)
-  ;;      (with-temp-buffer
-  ;;        (insert-file-contents (concat (my/roswell-configdir) "config"))
-  ;;        (goto-char (point-min))
-  ;;        (re-search-forward (concat "^" var "\t[^\t]+\t\\(.*\\)$"))
-  ;;        (match-string 1)))
-
-  ;;    (defun my/roswell-directory (type)
-  ;;      (concat
-  ;;       (my/roswell-configdir)
-  ;;       "lisp/"
-  ;;       type
-  ;;       "/"
-  ;;       (my/roswell-opt (concat type ".version"))
-  ;;       "/"))
-
-  ;;    (with-eval-after-load 'slime
-  ;;      (setopt slime-path `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
-  ;;      (setopt slime-backend `,(expand-file-name "swank-loader.lisp" (my/roswell-directory "slime")))
-  ;;      (setopt inferior-lisp-program "ros -Q run")))
-
-  ;;   (when-guix
-  ;;    (with-eval-after-load 'slime
-  ;;      (setopt inferior-lisp-program "sbcl")))
-
-  ;;   (defun my/slime-history ()
-  ;;     (interactive)
-  ;;     (if (and (fboundp '-distinct)
-  ;;              (fboundp 'f-read-text))
-  ;;         (insert
-  ;;          (completing-read
-  ;;           "choice history: "
-  ;;           (-distinct (read (f-read-text "~/.slime-history.eld")))))))
-
-  ;;   (with-eval-after-load 'slime-repl
-  ;;     (define-key slime-repl-mode-map (kbd "C-c C-r") #'my/slime-history)))
+    (with-eval-after-load 'slime-repl
+      (define-key slime-repl-mode-map (kbd "C-c C-r") #'my/slime-history)))
 #+END_SRC
 *** hyperspec
 #+begin_src emacs-lisp
   (with-delayed-execution
     (message "Install hyperspec...")
     (autoload-if-found '(hyperspec-lookup) "hyperspec" nil t)
-
-    (defadvice common-lisp-hyperspec (around common-lisp-hyperspec-around activate)
-      (let ((buf (current-buffer)))
-        ad-do-it
-        (switch-to-buffer buf)
-        (pop-to-buffer "*eww*")))
-
-    (defadvice common-lisp-hyperspec-lookup-reader-macro (around common-lisp-hyperspec-lookup-reader-macro-around activate)
-      (let ((buf (current-buffer)))
-        ad-do-it
-        (switch-to-buffer buf)
-        (pop-to-buffer "*eww*")))
-
-    (defadvice common-lisp-hyperspec-format (around common-lisp-hyperspec-format activate)
-      (let ((buf (current-buffer)))
-        ad-do-it
-        (switch-to-buffer buf)
-        (pop-to-buffer "*eww*")))
-
-    (with-eval-after-load 'hyperspec
-      (setopt common-lisp-hyperspec--reader-macros nil)
-      (setopt common-lisp-hyperspec--format-characters nil))
 
     (with-eval-after-load 'lisp-mode
       (define-key lisp-mode-map (kbd "C-c h") #'hyperspec-lookup)))
