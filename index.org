@@ -3934,7 +3934,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/lsp-mode"))
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/lsp-mode/clients"))
 
-    (autoload-if-found '(lsp lsp-deferred lsp-org) "lsp-mode" nil t)
+    (autoload-if-found '(lsp lsp-deferred lsp-org lsp-register-client make-lsp-client) "lsp-mode" nil t)
     (autoload-if-found '(lsp-lens-mode lsp-lens-refresh lsp-lens--enable) "lsp-lens" nil t)
     (autoload-if-found '(lsp-modeline-workspace-status-mode) "lsp-modeline" nil t)
     (autoload-if-found '(lsp-headerline-breadcrumb-mode) "lsp-headerline" nil t)
@@ -3969,7 +3969,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'lsp-diagnostics
       (setopt lsp-diagnostic-clean-after-change t)
-      (setopt lsp-diagnostics-flycheck-default-level 'info))
+      (setopt lsp-diagnostics-flycheck-default-level 'warning))
 
     (with-eval-after-load 'lsp-completion
       (setopt lsp-completion-no-cache t)
@@ -4002,7 +4002,20 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'lsp-nil
       (setopt lsp-nix-nil-max-mem 100000)))
+
 #+END_SRC
+*** lsp-sourcekit
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (el-clone :repo "emacs-lsp/lsp-sourcekit"))
+
+  (with-delayed-execution
+    (message "Install lsp-sourcekit...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/lsp-sourcekit"))
+
+    (with-eval-after-load 'lsp-mode
+      (require 'lsp-sourcekit)))
+#+end_src
 *** emacs-ccls
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -5416,13 +5429,15 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key embark-buffer-map   (kbd "3") (my/embark-split-action switch-to-buffer split-window-right))
       (define-key embark-bookmark-map (kbd "3") (my/embark-split-action bookmark-jump split-window-right))
 
-      ;; embark-select
-
       ;; sudo
       (define-key embark-file-map (kbd "S") #'my/sudo-find-file)
 
       ;; consult
-      (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode)))
+      (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode)
+
+      ;; ellama
+      (define-key 'embark-prose-map (kbd "t") )
+      ))
 #+end_src
 *** goto-addr
 #+BEGIN_SRC emacs-lisp
@@ -5787,6 +5802,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/slime/swank"))
 
     (require 'slime)
+    (require 'slime-autoloads)
+
     (load (expand-file-name "$HOME/.roswell/helper.el"))
 
     (defun my/slime-history ()
@@ -5797,6 +5814,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
            (completing-read
             "choice history: "
             (-distinct (read (f-read-text "~/.slime-history.eld")))))))
+
+    (with-eval-after-load 'slime
+      (setq slime-net-coding-system 'utf-8-unix))
 
     (with-eval-after-load 'slime-repl
       (define-key slime-repl-mode-map (kbd "C-c C-r") #'my/slime-history)))
