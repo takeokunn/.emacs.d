@@ -271,24 +271,24 @@
 #+end_src
 ** global keybind
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "M-¥") #'(lambda () (interactive) (insert "\\")))
-  (global-set-key (kbd "C-a") #'back-to-indentation)
-  (global-set-key (kbd "C-z") nil)
-  (global-set-key (kbd "C-;") #'comment-dwim)
-  (global-set-key (kbd "C-M-/") #'undo-redo)
-  (global-set-key (kbd "C-c i") #'find-function)
-  (global-set-key (kbd "C-c C-o") #'org-open-at-point)
-  (global-set-key (kbd "C-x C-o") #'other-window)
-  (global-set-key (kbd "M-h") #'backward-kill-word)
+  (keymap-global-set "M-¥" #'(lambda () (interactive) (insert "\\")))
+  (keymap-global-set "C-a" #'back-to-indentation)
+  (keymap-global-set "C-z" nil)
+  (keymap-global-set "C-;" #'comment-dwim)
+  (keymap-global-set "C-M-/" #'undo-redo)
+  (keymap-global-set "C-c i" #'find-function)
+  (keymap-global-set "C-c C-o" #'org-open-at-point)
+  (keymap-global-set "C-x C-o" #'other-window)
+  (keymap-global-set "M-h" #'backward-kill-word)
 
-  (global-set-key (kbd "C-x l") 'next-buffer)
-  (global-set-key (kbd "C-x h") 'previous-buffer)
-  (global-set-key (kbd "C-x C-b") #'switch-to-buffer)
+  (keymap-global-set "C-x l" 'next-buffer)
+  (keymap-global-set "C-x h" 'previous-buffer)
+  (keymap-global-set "C-x C-b" #'switch-to-buffer)
 
-  (global-set-key (kbd "C-x C-k") nil)
+  (keymap-global-set "C-x C-k" nil)
 
   (when window-system
-    (global-set-key (kbd "C-x C-c") nil))
+    (keymap-global-set "C-x C-c" nil))
 #+END_SRC
 ** minibuffer
 #+begin_src emacs-lisp
@@ -3092,7 +3092,7 @@
 
     (autoload-if-found '(avy-goto-word-1) "avy" nil t)
 
-    (global-set-key (kbd "C-:") #'avy-goto-word-1)
+    (keymap-global-set "C-:" #'avy-goto-word-1)
 
     (with-eval-after-load 'avy
       (setopt avy-all-windows nil)
@@ -3109,7 +3109,7 @@
 
     (autoload-if-found '(avy-zap-up-to-char-dwim) "avy-zap" nil t)
 
-    (global-set-key (kbd "M-z") 'avy-zap-up-to-char-dwim))
+    (keymap-global-set "M-z" 'avy-zap-up-to-char-dwim))
 #+end_src
 *** expand-region
 #+begin_src emacs-lisp
@@ -3124,7 +3124,7 @@
 
     (transient-mark-mode)
 
-    (global-set-key (kbd "C-M-@") 'er/expand-region))
+    (keymap-global-set "C-M-@" 'er/expand-region))
 #+end_src
 *** multiple-cursors
 #+BEGIN_SRC emacs-lisp
@@ -3137,9 +3137,9 @@
 
     (autoload-if-found '(mc/mark-next-like-this mc/mark-previous-like-this mc/mark-all-like-this) "multiple-cursors" nil t)
 
-    (global-set-key (kbd "C->") #'mc/mark-next-like-this)
-    (global-set-key (kbd "C-<") #'mc/mark-previous-like-this)
-    (global-set-key (kbd "C-c C-<") #'mc/mark-all-like-this))
+    (keymap-global-set "C->" #'mc/mark-next-like-this)
+    (keymap-global-set "C-<" #'mc/mark-previous-like-this)
+    (keymap-global-set "C-c C-<" #'mc/mark-all-like-this))
 #+END_SRC
 *** subword
 #+begin_src emacs-lisp
@@ -3147,7 +3147,7 @@
     (message "Install subword...")
     (autoload-if-found '(my/delete-forward-block) "subword" nil t)
 
-    (global-set-key (kbd "M-d") #'my/delete-forward-block)
+    (keymap-global-set "M-d" #'my/delete-forward-block)
 
     (defun my/delete-forward-block ()
       (interactive)
@@ -3357,7 +3357,7 @@
 
     (autoload-if-found '(open-junk-file) "open-junk-file" nil t)
 
-    (global-set-key (kbd "C-x j") #'open-junk-file)
+    (keymap-global-set "C-x j" #'open-junk-file)
 
     (with-eval-after-load 'open-junk-file
       (setopt open-junk-file-format "~/.emacs.d/.junk/%Y-%m-%d-%H%M%S.")))
@@ -3459,8 +3459,8 @@
       (let ((default-directory (locate-dominating-file default-directory ".git")))
         (magit-status)))
 
-    (global-set-key (kbd "C-x g") #'my/magit-status)
-    (global-set-key (kbd "C-x G") #'magit-blame)
+    (keymap-global-set "C-x g" #'my/magit-status)
+    (keymap-global-set "C-x G" #'magit-blame)
 
     (with-eval-after-load 'magit
       (setopt magit-refresh-status-buffer nil))
@@ -3679,12 +3679,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          helpful-variable
                          helpful-at-point) "helpful" nil t)
     ;; keybinds
-    (global-set-key (kbd "C-h f") #'helpful-callable)
-    (global-set-key (kbd "C-h v") #'helpful-variable)
-    (global-set-key (kbd "C-h k") #'helpful-key)
-    (global-set-key (kbd "C-c C-d") #'helpful-at-point)
-    (global-set-key (kbd "C-h F") #'helpful-function)
-    (global-set-key (kbd "C-h C") #'helpful-command))
+    (keymap-global-set "C-h f" #'helpful-callable)
+    (keymap-global-set "C-h v" #'helpful-variable)
+    (keymap-global-set "C-h k" #'helpful-key)
+    (keymap-global-set "C-c C-d" #'helpful-at-point)
+    (keymap-global-set "C-h F" #'helpful-function)
+    (keymap-global-set "C-h C" #'helpful-command))
 #+end_src
 ** IME
 *** ddskk
@@ -3698,7 +3698,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(skk-mode) "skk-autoloads" nil t)
 
-    (global-set-key (kbd "C-x C-j") #'skk-mode)
+    (keymap-global-set "C-x C-j" #'skk-mode)
 
     (defun my/skk-C-j-key (arg)
       (interactive "P")
@@ -3814,9 +3814,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          lorem-ipsum-insert-paragraphs
                          lorem-ipsum-insert-list) "lorem-ipsum" nil t)
 
-    (global-set-key (kbd "C-c C-l s") #'lorem-ipsum-insert-sentences)
-    (global-set-key (kbd "C-c C-l p") #'lorem-ipsum-insert-paragraphs)
-    (global-set-key (kbd "C-c C-l l") #'lorem-ipsum-insert-list))
+    (keymap-global-set "C-c C-l s" #'lorem-ipsum-insert-sentences)
+    (keymap-global-set "C-c C-l p" #'lorem-ipsum-insert-paragraphs)
+    (keymap-global-set "C-c C-l l" #'lorem-ipsum-insert-list))
 #+end_src
 ** Keyboard
 *** key-chord
@@ -4260,7 +4260,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(mu4e) "mu4e" nil t)
 
-    (global-set-key (kbd "C-x C-w") #'mu4e)
+    (keymap-global-set "C-x C-w" #'mu4e)
 
     (with-eval-after-load 'mu4e
       ;; config
@@ -4383,8 +4383,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(global-origami-mode origami-recursively-toggle-node origami-recursively-toggle-node) "origami" nil t)
     (global-origami-mode)
 
-    (global-set-key (kbd "C-c t") #'origami-recursively-toggle-node)
-    (global-set-key (kbd "C-c C-t") #'origami-recursively-toggle-node))
+    (keymap-global-set "C-c t" #'origami-recursively-toggle-node)
+    (keymap-global-set "C-c C-t" #'origami-recursively-toggle-node))
 #+end_src
 ** Process
 *** proced
@@ -4437,8 +4437,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (with-eval-after-load 'projectile
       ;; keybind
-      (global-set-key (kbd "M-p") #'projectile-command-map)
-      (global-set-key (kbd "C-c p") #'projectile-command-map)
+      (keymap-global-set "M-p" #'projectile-command-map)
+      (keymap-global-set "C-c p" #'projectile-command-map)
 
       ;; hook
       (add-hook 'projectile-mode-hook #'my/update-projectile-known-projects)
@@ -4581,31 +4581,31 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     ;; keybind
     ;; C-c bindings in `mode-specific-map'
-    (global-set-key (kbd "C-c M-x") #'consult-mode-command)
-    (global-set-key (kbd "C-c h") #'consult-history)
+    (keymap-global-set "C-c M-x" #'consult-mode-command)
+    (keymap-global-set "C-c h" #'consult-history)
 
     ;; C-x bindings in `ctl-x-map'
-    (global-set-key (kbd "C-x M-:") #'consult-complex-command)
-    (global-set-key (kbd "C-x b") #'consult-buffer)
-    (global-set-key (kbd "C-x 4 b") #'consult-buffer-other-window)
-    (global-set-key (kbd "C-x 5 b") #'consult-buffer-other-frame)
+    (keymap-global-set "C-x M-:" #'consult-complex-command)
+    (keymap-global-set "C-x b" #'consult-buffer)
+    (keymap-global-set "C-x 4 b" #'consult-buffer-other-window)
+    (keymap-global-set "C-x 5 b" #'consult-buffer-other-frame)
 
     ;; Other custom bindings
-    (global-set-key (kbd "M-y") #'consult-yank-pop)
+    (keymap-global-set "M-y" #'consult-yank-pop)
 
     ;; M-g bindings in `goto-map'
-    (global-set-key (kbd "M-g e") #'consult-compile-error)
-    (global-set-key (kbd "M-g f") #'consult-flycheck)
-    (global-set-key (kbd "M-g g") #'consult-goto-line)
-    (global-set-key (kbd "M-g M-g") #'consult-goto-line)
-    (global-set-key (kbd "M-g o") #'consult-outline)
-    (global-set-key (kbd "M-g m") #'consult-mark)
-    (global-set-key (kbd "M-g k") #'consult-global-mark)
-    (global-set-key (kbd "M-g i") #'consult-imenu)
-    (global-set-key (kbd "M-g I") #'consult-imenu-multi)
+    (keymap-global-set "M-g e" #'consult-compile-error)
+    (keymap-global-set "M-g f" #'consult-flycheck)
+    (keymap-global-set "M-g g" #'consult-goto-line)
+    (keymap-global-set "M-g M-g" #'consult-goto-line)
+    (keymap-global-set "M-g o" #'consult-outline)
+    (keymap-global-set "M-g m" #'consult-mark)
+    (keymap-global-set "M-g k" #'consult-global-mark)
+    (keymap-global-set "M-g i" #'consult-imenu)
+    (keymap-global-set "M-g I" #'consult-imenu-multi)
 
     ;; C-o bindings in `search-map'
-    (global-set-key (kbd "C-o") #'(lambda ()
+    (keymap-global-set "C-o" #'(lambda ()
                                     (interactive)
                                     (let ((word (thing-at-point 'symbol 'no-properties)))
                                       (consult-line word))))
@@ -4660,7 +4660,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(consult-compile-multi-mode) "consult-compile-multi" nil t)
     (autoload-if-found '(compile-multi-embark-mode) "compile-multi-embark" nil t)
 
-    (global-set-key (kbd "C-x m") #'compile-multi)
+    (keymap-global-set "C-x m" #'compile-multi)
 
     (with-eval-after-load 'consult
       (consult-compile-multi-mode))
@@ -4777,8 +4777,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(consult-yasnippet) "consult-yasnippet" nil t)
 
-    (global-set-key (kbd "C-c y") #'consult-yasnippet)
-    (global-set-key (kbd "C-c C-y") #'consult-yasnippet))
+    (keymap-global-set "C-c y" #'consult-yasnippet)
+    (keymap-global-set "C-c C-y" #'consult-yasnippet))
 #+end_src
 ** Statistics
 *** esup
@@ -4880,9 +4880,9 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (tab-bar-history-mode)
 
-    (global-set-key (kbd "C-x C-t") tab-prefix-map)
-    (global-set-key (kbd "M-[") #'tab-previous)
-    (global-set-key (kbd "M-]") #'tab-next)
+    (keymap-global-set "C-x C-t" tab-prefix-map)
+    (keymap-global-set "M-[" #'tab-previous)
+    (keymap-global-set "M-]" #'tab-next)
 
     (with-eval-after-load 'tab-bar
       (setopt tab-bar-close-button-show nil)
@@ -5088,7 +5088,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
             (neotree-hide)
           (neotree-dir default-directory))))
 
-    (global-set-key (kbd "C-q") #'my/neotree-toggle)
+    (keymap-global-set "C-q" #'my/neotree-toggle)
 
     (with-eval-after-load 'neotree
       ;; config
@@ -5321,19 +5321,18 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          crux-kill-line-backwards) "crux" nil t)
 
     ;; keybind
-    (global-set-key (kbd "C-c o") #'crux-open-with)
-    (global-set-key (kbd "C-S-o") #'crux-smart-open-line-above)
-    ;; (global-set-key (kbd "C-c n") #'crux-cleanup-buffer-or-region)
-    (global-set-key (kbd "C-c u") #'crux-view-url)
-    (global-set-key (kbd "C-x 4 t") #'crux-transpose-windows)
-    (global-set-key (kbd "C-c d") #'crux-duplicate-current-line-or-region)
-    (global-set-key (kbd "C-c M-d") #'crux-duplicate-and-comment-current-line-or-region)
-    (global-set-key (kbd "C-c r") #'crux-rename-file-and-buffer)
-    (global-set-key (kbd "C-c M-t") #'crux-visit-term-buffer)
-    (global-set-key (kbd "C-c k") #'crux-kill-other-buffers)
-    (global-set-key (kbd "C-M-z") #'crux-indent-defun)
-    (global-set-key (kbd "C-^") #'crux-top-join-lines)
-    (global-set-key (kbd "C-DEL") #'crux-kill-line-backwards))
+    (keymap-global-set "C-c o" #'crux-open-with)
+    (keymap-global-set "C-S-o" #'crux-smart-open-line-above)
+    (keymap-global-set "C-c u" #'crux-view-url)
+    (keymap-global-set "C-x 4 t" #'crux-transpose-windows)
+    (keymap-global-set "C-c d" #'crux-duplicate-current-line-or-region)
+    (keymap-global-set "C-c M-d" #'crux-duplicate-and-comment-current-line-or-region)
+    (keymap-global-set "C-c r" #'crux-rename-file-and-buffer)
+    (keymap-global-set "C-c M-t" #'crux-visit-term-buffer)
+    (keymap-global-set "C-c k" #'crux-kill-other-buffers)
+    (keymap-global-set "C-M-z" #'crux-indent-defun)
+    (keymap-global-set "C-^" #'crux-top-join-lines)
+    (keymap-global-set "C-DEL" #'crux-kill-line-backwards))
 #+end_src
 *** delsel
 #+begin_src emacs-lisp
@@ -5358,11 +5357,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          dogears-sidebar) "dogears" nil t)
 
     ;; keybind
-    (global-set-key (kbd "M-g d") #'dogears-go)
-    (global-set-key (kbd "M-g M-b") #'dogears-back)
-    (global-set-key (kbd "M-g M-f") #'dogears-forward)
-    (global-set-key (kbd "M-g M-d") #'dogears-list)
-    (global-set-key (kbd "M-g M-D") #'dogears-sidebar))
+    (keymap-global-set "M-g d" #'dogears-go)
+    (keymap-global-set "M-g M-b" #'dogears-back)
+    (keymap-global-set "M-g M-f" #'dogears-forward)
+    (keymap-global-set "M-g M-d" #'dogears-list)
+    (keymap-global-set "M-g M-D" #'dogears-sidebar))
 #+end_src
 *** embark
 #+begin_src emacs-lisp
@@ -5378,8 +5377,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          embark-consult-imenu-candidates
                          embark-consult-imenu-or-outline-candidates) "embark-consult" nil t)
 
-    (global-set-key (kbd "C-.") #'embark-act)
-    (global-set-key (kbd "C-h B") #'embark-prefix-help-command)
+    (keymap-global-set "C-." #'embark-act)
+    (keymap-global-set "C-h B" #'embark-prefix-help-command)
 
     (defmacro my/embark-ace-action (fn)
       `(defun ,(intern (concat "my/embark-ace-" (symbol-name fn))) ()
@@ -5483,7 +5482,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(minimap-mode) "minimap" nil t)
 
-    (global-set-key (kbd "C-c m") #'minimap-mode)
+    (keymap-global-set "C-c m" #'minimap-mode)
 
     (with-eval-after-load 'minimap
       (setopt minimap-window-location 'right)
@@ -5644,7 +5643,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(ace-window) "ace-window" nil t)
 
-    (global-set-key (kbd "C-x o") #'ace-window)
+    (keymap-global-set "C-x o" #'ace-window)
 
     (with-eval-after-load 'ace-window
       (setopt aw-dispatch-always t)
@@ -5689,7 +5688,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(zoom-window-zoom) "zoom-window" nil t)
 
-    (global-set-key (kbd "C-c C-z") #'zoom-window-zoom))
+    (keymap-global-set "C-c C-z" #'zoom-window-zoom))
 #+end_src
 ** Remote Access
 *** docker-tramp
@@ -5734,8 +5733,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          paredit-define-keys)
                        "paredit" nil t)
 
-    (global-set-key (kbd "C-c f") #'paredit-forward-slurp-sexp)
-    (global-set-key (kbd "M-s") #'paredit-splice-sexp)
+    (keymap-global-set "C-c f" #'paredit-forward-slurp-sexp)
+    (keymap-global-set "M-s" #'paredit-splice-sexp)
 
     (with-eval-after-load 'paredit
       (add-hook 'paredit-mode-hook #'paredit-define-keys))
@@ -6585,7 +6584,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(elfeed-dashboard) "elfeed-dashboard" nil t)
 
-    (global-set-key (kbd "C-x w") #'elfeed-dashboard)
+    (keymap-global-set "C-x w" #'elfeed-dashboard)
 
     (with-eval-after-load 'elfeed-dashboard
       (setopt elfeed-dashboard-file (locate-user-emacs-file "elfeed-dashboard.org"))))
@@ -6902,7 +6901,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+begin_src emacs-lisp
   (with-delayed-execution
     (autoload-if-found '(org-capture) "org-capture" nil t)
-    (global-set-key (kbd "C-c c") #'org-capture)
+    (keymap-global-set "C-c c" #'org-capture)
 
     (advice-add 'org-capture :before #'(lambda (&rest _) (remove-hook 'find-file-hooks #'view-mode)))
     (advice-add 'org-capture :after #'(lambda (&rest _) (add-hook 'find-file-hooks #'view-mode)))
@@ -7032,7 +7031,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          org-projectile-project-todo-completing-read)
                        "org-projectile" nil t)
 
-    (global-set-key (kbd "C-c n p") #'org-projectile-project-todo-completing-read)
+    (keymap-global-set "C-c n p" #'org-projectile-project-todo-completing-read)
 
     (with-eval-after-load 'org
       (setopt org-agenda-files (append org-agenda-files (org-projectile-todo-files)))))
@@ -7134,7 +7133,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(org-store-link) "ol" nil t)
 
-    (global-set-key (kbd "C-c l") #'org-store-link)
+    (keymap-global-set "C-c l" #'org-store-link)
 
     (with-eval-after-load 'ol
       (setopt org-link-file-path-type 'relative)))
@@ -7175,7 +7174,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install org-agenda...")
     (autoload-if-found '(org-agenda) "org-agenda" nil t)
 
-    (global-set-key (kbd "C-c a") #'org-agenda)
+    (keymap-global-set "C-c a" #'org-agenda)
 
     (with-eval-after-load 'org-agenda
       (setopt org-agenda-span 'day)
@@ -7665,7 +7664,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/org-roam/extensions"))
 
     (autoload-if-found '(org-roam-graph) "org-roam" nil t)
-    (global-set-key (kbd "C-c n g") #'org-roam-graph)
+    (keymap-global-set "C-c n g" #'org-roam-graph)
 
     (with-eval-after-load 'org-roam
       (setopt org-roam-directory `,(concat (s-trim-right (shell-command-to-string "ghq root"))
@@ -7678,7 +7677,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
     (autoload-if-found '(org-roam-buffer-toggle) "org-roam-mode" nil t)
 
-    (global-set-key (kbd "C-c n l") #'org-roam-buffer-toggle))
+    (keymap-global-set "C-c n l" #'org-roam-buffer-toggle))
 #+end_src
 *** org-roam-node
 #+begin_src emacs-lisp
@@ -7686,8 +7685,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install org-roam-node...")
     (autoload-if-found '(org-roam-node-find org-roam-node-insert) "org-roam-node" nil t)
 
-    (global-set-key (kbd "C-c n f") #'org-roam-node-find)
-    (global-set-key (kbd "C-c n i") #'org-roam-node-insert)
+    (keymap-global-set "C-c n f" #'org-roam-node-find)
+    (keymap-global-set "C-c n i" #'org-roam-node-insert)
 
     (with-eval-after-load 'org-roam-node
       (setopt org-roam-completion-everywhere nil)))
@@ -7710,7 +7709,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (message "Install org-roam-capture...")
     (autoload-if-found '(org-roam-capture) "org-roam-capture" nil t)
 
-    (global-set-key (kbd "C-c n c") #'org-roam-capture)
+    (keymap-global-set "C-c n c" #'org-roam-capture)
 
     (with-eval-after-load 'org-roam-capture
       (setopt org-roam-capture-templates '(("f" "Fleeting(一時メモ)" plain "%?"
@@ -7750,8 +7749,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          org-roam-dailies-capture-date
                          org-roam-dailies-find-directory) "org-roam-dailies" nil t)
 
-    (global-set-key (kbd "C-c n d") #'org-roam-dailies-map)
-    (global-set-key (kbd "C-c n j") #'org-roam-dailies-goto-today)
+    (keymap-global-set "C-c n d" #'org-roam-dailies-map)
+    (keymap-global-set "C-c n j" #'org-roam-dailies-goto-today)
 
     (with-eval-after-load 'org-roam-dailies
       ;; config
@@ -7816,11 +7815,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (consult-org-roam-mode)
 
     ;; keybinds
-    (global-set-key (kbd "C-c n e") #'consult-org-roam-file-find)
-    (global-set-key (kbd "C-c n b") #'consult-org-roam-backlinks)
-    (global-set-key (kbd "C-c n B") #'consult-org-roam-backlinks-recursive)
-    (global-set-key (kbd "C-c n l") #'consult-org-roam-forward-links)
-    (global-set-key (kbd "C-c n r") #'consult-org-roam-search)
+    (keymap-global-set "C-c n e" #'consult-org-roam-file-find)
+    (keymap-global-set "C-c n b" #'consult-org-roam-backlinks)
+    (keymap-global-set "C-c n B" #'consult-org-roam-backlinks-recursive)
+    (keymap-global-set "C-c n l" #'consult-org-roam-forward-links)
+    (keymap-global-set "C-c n r" #'consult-org-roam-search)
 
     (with-eval-after-load 'consult-org-roam
       (setopt consult-org-roam-grep-func #'consult-ripgrep)
@@ -8112,8 +8111,8 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (interactive)
     (my/move-line -1))
 
-  (global-set-key (kbd "M-N") #'my/move-line-down)
-  (global-set-key (kbd "M-P") #'my/move-line-up)
+  (keymap-global-set "M-N" #'my/move-line-down)
+  (keymap-global-set "M-P" #'my/move-line-up)
 #+end_src
 ** my/reload-major-mode
 #+BEGIN_SRC emacs-lisp
@@ -8135,11 +8134,11 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (progn
           (message "C-x C-c save-buffers-kill-emacs OFF")
           (setq my/kill-emacs-keybind-p nil)
-          (global-set-key (kbd "C-x C-c") nil))
+          (keymap-global-set "C-x C-c" nil))
       (progn
         (message "C-x C-c save-buffers-kill-emacs ON")
         (setq my/kill-emacs-keybind-p t)
-        (global-set-key (kbd "C-x C-c") 'save-buffers-kill-emacs))))
+        (keymap-global-set "C-x C-c" 'save-buffers-kill-emacs))))
 #+end_src
 ** my/get-class-name-by-file-name
 #+begin_src emacs-lisp
