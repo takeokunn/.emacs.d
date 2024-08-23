@@ -574,10 +574,6 @@
       ;; Nerd Font (defined thru -#xfd46)
       (set-fontset-font t '( #xe000 .  #xf136) "Inconsolata Nerd Font")))
 #+end_src
-** warning
-#+begin_src emacs-lisp
-  (setq display-warning-minimum-level :error)
-#+end_src
 ** キーコマンド入力中に入力過程をミニバッファに反映する
 #+begin_src emacs-lisp
   (setq echo-keystrokes 0.1)
@@ -3994,8 +3990,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt lsp-file-watch-threshold 20000))
 
     (with-eval-after-load 'lsp-diagnostics
-      (setopt lsp-diagnostic-clean-after-change t)
-      (setopt lsp-diagnostics-flycheck-default-level 'warning))
+      (setopt lsp-diagnostics-flycheck-default-level 'info))
 
     (with-eval-after-load 'lsp-completion
       (setopt lsp-completion-no-cache t)
@@ -5458,11 +5453,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key embark-file-map (kbd "S") #'my/sudo-find-file)
 
       ;; consult
-      (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode)
-
-      ;; ellama
-      (define-key 'embark-prose-map (kbd "t") )
-      ))
+      (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode)))
 #+end_src
 *** goto-addr
 #+BEGIN_SRC emacs-lisp
