@@ -20,13 +20,13 @@
 - [[./elfeed][elfeed.org]]
 * Initialize
 ** Header
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   ;; init.el --- My init.el -*- lexical-binding: t -*-
   ;; Configurations for Emacs
   ;;                                         Takeo Obara  <bararararatty@gmail.com>
 #+end_src
 ** env
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defconst my/loading-profile-p nil
     "If non-nil, use built-in profiler.el.")
 
@@ -35,43 +35,43 @@
 #+end_src
 * Macro Utilities
 ** when-darwin
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defmacro when-darwin (&rest body)
     (when (string= system-type "darwin")
       `(progn ,@body)))
 #+end_src
 ** when-darwin-not-window-system
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defmacro when-darwin-not-window-system (&rest body)
     (when (and (string= system-type "darwin")
                window-system)
       `(progn ,@body)))
 #+end_src
 ** when-guix
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defmacro when-guix (&rest body)
     (when (string= system-type "guix")
       `(progn ,@body)))
 #+end_src
 * Boot
 ** user
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (setq user-full-name "takeokunn")
   (setq user-mail-address "bararararatty@gmail.com")
 #+end_src
 ** profile
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (when my/enable-profile
     (require 'profiler)
     (profiler-start 'cpu))
 #+end_src
 ** Magic File Name を一時的に無効にする
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defconst my/saved-file-name-handler-alist file-name-handler-alist)
   (setq file-name-handler-alist nil)
 #+end_src
 ** 起動時間計測
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defconst my/before-load-init-time (current-time))
 
   ;;;###autoload
@@ -111,7 +111,7 @@
   (add-hook 'after-init-hook #'my/emacs-init-time)
 #+end_src
 ** async load
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defvar my/delayed-priority-high-configurations '())
   (defvar my/delayed-priority-high-configuration-timer nil)
 
@@ -150,7 +150,7 @@
            (append my/delayed-priority-low-configurations ',body)))
 #+end_src
 ** autoload-if-found
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   ;;;###autoload
   (defun autoload-if-found (functions file &optional docstring interactive type)
     "set autoload iff. FILE has found."
@@ -160,7 +160,7 @@
       t))
 #+end_src
 ** common lispを使う
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-and-compile
     (setq byte-compile-warnings '(cl-functions))
     (require 'cl-lib nil t))
@@ -170,7 +170,7 @@
     (require 'cl-lib))
 #+end_src
 ** el-clone
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (unless (file-directory-p (locate-user-emacs-file "elpa/el-clone"))
       (package-vc-install "https://github.com/takeokunn/el-clone.git")))
@@ -180,13 +180,13 @@
     (require 'el-clone))
 #+end_src
 ** flymake初期化
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (require 'flymake)
   (require 'flymake-proc)
 #+end_src
 * Basic
 ** 末尾のスペースを可視化する
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install disable-show-trailing-whitespace...")
 
@@ -212,7 +212,7 @@
       (add-hook 'fundamental-mode-hook #'my/disable-show-trailing-whitespace)))
 #+END_SRC
 ** 行番号を表示する
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install display-line-numbers...")
     (autoload-if-found '(global-display-line-numbers-mode) "display-line-numbers" nil t)
@@ -222,12 +222,12 @@
       (setq display-line-numbers-grow-only t)))
 #+END_SRC
 ** C-kで行削除
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-eval-after-load 'simple
     (setq kill-whole-line t))
 #+END_SRC
 ** カッコの中をハイライトする
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install show-paren-mode...")
     (show-paren-mode t)
@@ -236,13 +236,13 @@
       (setq show-paren-style 'mixed)))
 #+END_SRC
 ** カッコが自動的に作られるようにする
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install electric-pair-mode...")
     (electric-pair-mode 1))
 #+END_SRC
 ** coding system
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   ;; language and locale
   (setq system-time-locale "C")
 
@@ -259,18 +259,18 @@
   (setq locale-coding-system 'utf-8-unix)
 #+end_src
 ** global-auto-revert-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install global-auto-revert-mode...")
     (global-auto-revert-mode t))
 #+end_src
 ** yes/no to y/n
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (fset 'yes-or-no-p 'y-or-n-p))
 #+end_src
 ** global keybind
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (keymap-global-set "M-¥" #'(lambda () (interactive) (insert "\\")))
   (keymap-global-set "C-a" #'back-to-indentation)
   (keymap-global-set "C-z" nil)
@@ -291,20 +291,20 @@
     (keymap-global-set "C-x C-c" nil))
 #+END_SRC
 ** minibuffer
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (define-key minibuffer-mode-map (kbd "C-h") #'delete-backward-char)
   (define-key minibuffer-mode-map (kbd "M-h") #'backward-kill-word)
   (define-key minibuffer-mode-map (kbd "C-j") #'exit-minibuffer)
   (define-key minibuffer-mode-map (kbd "M-RET") #'exit-minibuffer)
 #+end_src
 ** savehistを有効にする
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution-priority-high
     (message "Install savehist...")
     (savehist-mode 1))
 #+end_src
 ** [mac] clipboardに入るようにする
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (defun my/copy-from-osx ()
       (shell-command-to-string "pbpaste"))
@@ -320,7 +320,7 @@
      (setq interprogram-paste-function #'my/copy-from-osx)))
 #+end_src
 ** pluginをnative compする
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-eval-after-load 'comp
     (setq native-comp-async-jobs-number 8)
     (setq native-comp-speed 2)
@@ -334,21 +334,21 @@
       (native-compile-async "~/.emacs.d/elpa" 'recursively)))
 #+end_src
 ** native compを無効にする
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-eval-after-load 'comp
     (setq package-native-compile nil))
 #+end_src
 ** native compのwarningを抑える
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (custom-set-variables '(warning-suppress-types '((comp))))
 #+end_src
 ** 同一bufferの名前を変える
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-eval-after-load 'uniquify
     (setq uniquify-buffer-name-style 'post-forward-angle-brackets))
 #+end_src
 ** killできないようにする
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-current-buffer "*scratch*"
     (emacs-lock-mode 'kill))
 
@@ -356,17 +356,17 @@
     (emacs-lock-mode 'kill))
 #+end_src
 ** 日時表示
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-eval-after-load 'time
     (setq display-time-24hr-format t)
     (setq display-time-day-and-date t))
 #+end_src
 ** warning
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (setq warning-minimum-level :error)
 #+end_src
 ** fontset
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (defconst my/enable-warning-log nil)
 
@@ -579,49 +579,49 @@
       (set-fontset-font t '( #xe000 .  #xf136) "Inconsolata Nerd Font")))
 #+end_src
 ** キーコマンド入力中に入力過程をミニバッファに反映する
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (setq echo-keystrokes 0.1)
 #+end_src
 ** recursive minibuffers
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (setq enable-recursive-minibuffers t)
 #+end_src
 ** inhibit-compacting-font-caches
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (setq inhibit-compacting-font-caches t)
 #+end_src
 ** save-place-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (save-place-mode 1))
 #+end_src
 ** enable-local-variables
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (setq enable-local-variables :all)
 #+end_src
 ** password
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-eval-after-load 'password-cache
     (setq password-cache t)
     (setq password-cache-expiry 3600))
 #+end_src
 ** tab-width
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (setq tab-width 4)
 #+end_src
 ** indentはspaceにする
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (setq-default indent-tabs-mode nil)
 #+end_src
 ** 検索で大文字小文字を区別しない
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (setq read-file-name-completion-ignore-case t)
   (setq read-buffer-completion-ignore-case t)
   (setq completion-ignore-case t)
 #+end_src
 * Utitlity
 ** a
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "plexus/a.el"))
 
@@ -630,7 +630,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/a")))
 #+end_src
 ** acm-terminal
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "twlz0ne/acm-terminal"))
 
@@ -639,7 +639,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/acm-terminal")))
 #+end_src
 ** alert
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "jwiegley/alert"))
 
@@ -648,7 +648,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/alert")))
 #+end_src
 ** async
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "jwiegley/emacs-async"))
 
@@ -657,7 +657,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-async")))
 #+end_src
 ** bui
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "alezost/bui.el"))
 
@@ -666,7 +666,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/bui")))
 #+end_src
 ** buttercup
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "jorgenschaefer/emacs-buttercup"))
 
@@ -675,7 +675,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-buttercup")))
 #+end_src
 ** cfrs
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Alexander-Miller/cfrs"))
 
@@ -684,7 +684,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/cfrs")))
 #+end_src
 ** closql
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "magit/closql"))
 
@@ -693,7 +693,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/closql")))
 #+end_src
 ** compat
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "phikal/compat.el"))
 
@@ -702,7 +702,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/compat")))
 #+end_src
 ** dash
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "magnars/dash.el"))
 
@@ -711,7 +711,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/dash")))
 #+end_src
 ** elquery
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "AdamNiederer/elquery"))
 
@@ -720,7 +720,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/elquery")))
 #+end_src
 ** el-patch
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "radian-software/el-patch"))
 
@@ -729,7 +729,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/el-patch")))
 #+end_src
 ** esxml
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "tali713/esxml"))
 
@@ -738,7 +738,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/esxml")))
 #+end_src
 ** emacsql
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "magit/emacsql"))
 
@@ -747,7 +747,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacsql")))
 #+end_src
 ** epl
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "cask/epl"))
 
@@ -756,7 +756,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/epl")))
 #+end_src
 ** ert-expectations
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsorphanage/ert-expectations"))
 
@@ -765,7 +765,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/ert-expectations")))
 #+end_src
 ** espuds
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ecukes/espuds"))
 
@@ -774,7 +774,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/espuds")))
 #+end_src
 ** f
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "rejeep/f.el"))
 
@@ -783,7 +783,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/f")))
 #+end_src
 ** flx
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "lewang/flx"))
 
@@ -792,7 +792,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/flx")))
 #+end_src
 ** frame-local
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "sebastiencs/frame-local"))
 
@@ -801,7 +801,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/frame-local")))
 #+end_src
 ** fringe-helper
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "nschum/fringe-helper.el"))
 
@@ -810,7 +810,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/fringe-helper")))
 #+end_src
 ** gptel
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "karthink/gptel"))
 
@@ -819,7 +819,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/gptel")))
 #+end_src
 ** helm
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-helm/helm"))
 
@@ -828,7 +828,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/helm")))
 #+end_src
 ** hide-lines
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "vapniks/hide-lines"))
 
@@ -837,7 +837,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/hide-lines")))
 #+end_src
 ** hsluv
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "hsluv/hsluv-emacs"))
 
@@ -846,7 +846,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/hsluv-emacs")))
 #+end_src
 ** ht
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Wilfred/ht.el"))
 
@@ -855,7 +855,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/ht")))
 #+end_src
 ** hydra
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "abo-abo/hydra"))
 
@@ -864,7 +864,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/hydra")))
 #+end_src
 ** iedit
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "victorhge/iedit"))
 
@@ -873,7 +873,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/iedit")))
 #+end_src
 ** jump
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "eschulte/jump.el"))
 
@@ -882,7 +882,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/jump")))
 #+end_src
 ** link-hint
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "noctuid/link-hint.el"))
 
@@ -891,7 +891,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/link-hint")))
 #+end_src
 ** list-utils
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "rolandwalker/list-utils"))
 
@@ -900,7 +900,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/list-utils")))
 #+end_src
 ** log4e
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "aki2o/log4e"))
 
@@ -909,7 +909,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/log4e")))
 #+end_src
 ** marshal
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "sigma/marshal.el"))
 
@@ -918,7 +918,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/marshal")))
 #+end_src
 ** mocker
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "sigma/mocker.el"))
 
@@ -927,7 +927,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/mocker")))
 #+end_src
 ** mustache
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Wilfred/mustache.el"))
 
@@ -936,7 +936,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/mustache")))
 #+end_src
 ** ov
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsorphanage/ov"))
 
@@ -945,7 +945,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/ov")))
 #+end_src
 ** persist
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsmirror/persist"))
 
@@ -954,7 +954,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/persist")))
 #+end_src
 ** pfuture
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Alexander-Miller/pfuture"))
 
@@ -963,7 +963,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/pfuture")))
 #+end_src
 ** pkg-info
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsorphanage/pkg-info"))
 
@@ -972,7 +972,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/pkg-info")))
 #+end_src
 ** plz
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "alphapapa/plz.el"))
 
@@ -982,7 +982,7 @@
 #+end_src
 
 ** posframe
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "tumashu/posframe"))
 
@@ -991,7 +991,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/posframe")))
 #+end_src
 ** popup
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "auto-complete/popup-el"))
 
@@ -1000,7 +1000,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/popup-el")))
 #+end_src
 ** powerline
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "milkypostman/powerline"))
 
@@ -1009,7 +1009,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/powerline")))
 #+end_src
 ** queue
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsmirror/queue"))
 
@@ -1018,7 +1018,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/queue")))
 #+end_src
 ** ripgrep
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "nlamirault/ripgrep.el"))
 
@@ -1028,7 +1028,7 @@
 
 #+end_src
 ** reformatter
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "purcell/emacs-reformatter"))
 
@@ -1037,7 +1037,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-reformatter")))
 #+end_src
 ** request
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "tkf/emacs-request"))
 
@@ -1046,7 +1046,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-request")))
 #+end_src
 ** s
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "magnars/s.el"))
 
@@ -1055,7 +1055,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/s")))
 #+end_src
 ** sesman
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "vspinu/sesman"))
 
@@ -1064,7 +1064,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/sesman")))
 #+end_src
 ** simple-httpd
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "skeeto/emacs-web-server"))
 
@@ -1073,7 +1073,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-web-server")))
 #+end_src
 ** spinner
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Malabarba/spinner.el"))
 
@@ -1082,7 +1082,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/spinner")))
 #+end_src
 ** shrink-path
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :fetcher "gitlab"
               :repo "bennya/shrink-path.el"))
@@ -1092,7 +1092,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/shrink-path")))
 #+end_src
 ** tablist
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "politza/tablist"))
 
@@ -1101,7 +1101,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/tablist")))
 #+end_src
 ** tomelr
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "kaushalmodi/tomelr"))
 
@@ -1110,7 +1110,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/tomelr")))
 #+end_src
 ** treemacs
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Alexander-Miller/treemacs"
               :load-paths `(,(locate-user-emacs-file "el-clone/treemacs/src/elisp")
@@ -1125,7 +1125,7 @@
     (autoload-if-found '(treemacs-define-doubleclick-action) "treemacs-mouse-interface" nil t))
 #+end_src
 ** treepy
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "volrath/treepy.el"))
 
@@ -1134,7 +1134,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/treepy")))
 #+end_src
 ** tree-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsorphanage/tree-mode"))
 
@@ -1143,7 +1143,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/tree-mode")))
 #+end_src
 ** ts
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "alphapapa/ts.el"))
 
@@ -1152,7 +1152,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/ts")))
 #+end_src
 ** yaml
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "zkry/yaml.el"))
 
@@ -1161,7 +1161,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/yaml")))
 #+end_src
 ** visual-fill-column
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "joostkremers/visual-fill-column"))
 
@@ -1170,7 +1170,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/visual-fill-column")))
 #+end_src
 ** web-server
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "skeeto/emacs-web-server"))
 
@@ -1179,7 +1179,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-web-server")))
 #+end_src
 ** websocket
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ahyatt/emacs-websocket"))
 
@@ -1188,7 +1188,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/emacs-websocket")))
 #+end_src
 ** xelb
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ch11ng/xelb"))
 
@@ -1197,7 +1197,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/xelb")))
 #+end_src
 ** xwidgets-reuse
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "lordpretzel/xwidgets-reuse"))
 
@@ -1206,7 +1206,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/xwidgets-reuse")))
 #+end_src
 ** gh-test
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "edivangalindo/gh-test"))
 
@@ -1215,7 +1215,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/gh-test")))
 #+end_src
 ** gh
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "sigma/gh.el"))
 
@@ -1224,7 +1224,7 @@
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/gh")))
 #+end_src
 ** web-server
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "eschulte/emacs-web-server" :name "web-server"))
 
@@ -1234,7 +1234,7 @@
 #+end_src
 * Language
 ** apache-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-php/apache-mode"))
 
@@ -1246,7 +1246,7 @@
     (add-to-list 'auto-mode-alist '("\\.htaccess$" . apache-mode)))
 #+end_src
 ** bazel-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "bazelbuild/emacs-bazel-mode"))
 
@@ -1256,7 +1256,7 @@
     (autoload-if-found '(bazel-mode) "bazel" nil t))
 #+end_src
 ** bison-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Wilfred/bison-mode"))
 
@@ -1271,7 +1271,7 @@
     (add-to-list 'auto-mode-alist '("\\.jison\\'" . jison-mode)))
 #+end_src
 ** cask-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Wilfred/cask-mode"))
 
@@ -1290,7 +1290,7 @@
 - ~pip install cfn-lint~
 - ~gem install cfn_nag~
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :fetcher "gitlab"
               :repo "worr/cfn-mode"))
@@ -1309,7 +1309,7 @@
       (add-hook 'cfn-mode-hook #'flycheck-cfn-setup)))
 #+end_src
 ** clojure-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "clojure-emacs/clojure-mode"))
 
@@ -1330,7 +1330,7 @@
       (define-key clojure-mode-map (kbd "C-:") #'avy-goto-word-1)))
 #+END_SRC
 ** cmake-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsmirror/cmake-mode"))
 
@@ -1342,7 +1342,7 @@
     (add-to-list 'auto-mode-alist '("\\.cmake$" . cmake-mode)))
 #+END_SRC
 ** coffee-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "defunkt/coffee-mode"))
 
@@ -1354,13 +1354,13 @@
     (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode)))
 #+END_SRC
 ** conf-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (add-to-list 'auto-mode-alist '("\\.cnf$" . conf-mode))
   (add-to-list 'auto-mode-alist '("yabairc$" . conf-mode))
   (add-to-list 'auto-mode-alist '("skhdrc$" . conf-mode))
 #+end_src
 ** crontab-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-pe/crontab-mode"))
 
@@ -1372,7 +1372,7 @@
     (add-to-list 'auto-mode-alist '("\\.?cron\\(tab\\)?\\'" . crontab-mode)))
 #+end_src
 ** csharp-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-csharp/csharp-mode"))
 
@@ -1384,12 +1384,12 @@
     (add-to-list 'auto-mode-alist '("\\.cs$" . csharp-mode)))
 #+END_SRC
 ** css-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-eval-after-load 'css-mode
     (add-hook 'css-mode-hook #'lsp-deferred))
 #+end_src
 ** csv-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsmirror/csv-mode"))
 
@@ -1401,7 +1401,7 @@
     (push '("\\.csv$" . csv-mode) auto-mode-alist))
 #+END_SRC
 ** cuda-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsmirror/cuda-mode"))
 
@@ -1413,7 +1413,7 @@
     (add-to-list 'auto-mode-alist '("\\.cu$" . cuda-mode)))
 #+end_src
 ** crystal-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "jpellerin/emacs-crystal-mode"))
 
@@ -1430,7 +1430,7 @@
                                          "\\)\\'")) 'crystal-mode)))
 #+end_src
 ** dart-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "bradyt/dart-mode"))
 
@@ -1442,7 +1442,7 @@
     (add-to-list 'auto-mode-alist '("\\.dart$" . dart-mode)))
 #+end_src
 ** dbd-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ccod/dbd-mode"))
 
@@ -1456,7 +1456,7 @@
     (add-to-list 'auto-mode-alist '("\\.dbml\\'" . dbdiagram-mode)))
 #+end_src
 ** dhall-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "psibi/dhall-mode"))
 
@@ -1468,7 +1468,7 @@
     (add-to-list 'auto-mode-alist '("\\.dhall$" . dhall-mode)))
 #+end_src
 ** direnv-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "wbolster/emacs-direnv"))
 
@@ -1480,7 +1480,7 @@
     (add-to-list 'auto-mode-alist '("\\.envrc" . direnv-envrc-mode)))
 #+end_src
 ** docker-compose-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "meqif/docker-compose-mode"))
 
@@ -1492,7 +1492,7 @@
     (add-to-list 'auto-mode-alist '("\\docker-compose*" . docker-compose-mode)))
 #+end_src
 ** dockerfile-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "spotify/dockerfile-mode"))
 
@@ -1509,7 +1509,7 @@
       (add-hook 'dockerfile-mode-hook #'flycheck-mode)))
 #+END_SRC
 ** dotenv-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "preetpalS/emacs-dotenv-mode"))
 
@@ -1522,7 +1522,7 @@
     (add-to-list 'auto-mode-alist '("\\.env\\..*\\'" . dotenv-mode)))
 #+end_src
 ** elixir-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "elixir-editors/emacs-elixir"))
 
@@ -1538,7 +1538,7 @@
     (add-to-list 'auto-mode-alist '("mix\\.lock" . elixir-mode)))
 #+end_src
 ** elm-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "jcollard/elm-mode"))
 
@@ -1550,13 +1550,13 @@
     (add-to-list 'auto-mode-alist '("\\.elm$" . elm-mode)))
 #+end_src
 ** emacs-lisp-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install emacs-lisp-mode...")
     (add-to-list 'auto-mode-alist '("Keg" . emacs-lisp-mode)))
 #+end_src
 ** fish-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "wwwjfy/emacs-fish"))
 
@@ -1572,7 +1572,7 @@
       (setopt fish-enable-auto-indent t)))
 #+END_SRC
 ** forth-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "larsbrinkhoff/forth-mode"))
 
@@ -1589,7 +1589,7 @@
     (add-to-list 'auto-mode-alist '("\\.4th$" . forth-mode)))
 #+end_src
 ** fortran
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install fortran...")
     (autoload-if-found '(f90-mode) "f90" nil t)
@@ -1598,7 +1598,7 @@
       (add-hook 'f90-mode-hook #'lsp)))
 #+end_src
 ** fsharp-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "fsharp/emacs-fsharp-mode"))
 
@@ -1610,7 +1610,7 @@
     (add-to-list 'auto-mode-alist '("\\.fs[iylx]?$" . fsharp-mode)))
 #+end_src
 ** git-modes
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "magit/git-modes"))
 
@@ -1646,7 +1646,7 @@
     (add-to-list 'auto-mode-alist '("/git/attributes\\'" . gitattributes-mode)))
 #+end_src
 ** glsl-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "jimhourihan/glsl-mode"))
 
@@ -1660,7 +1660,7 @@
     (add-to-list 'auto-mode-alist '("\\.fsh$" . glsl-mode)))
 #+END_SRC
 ** go-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "dominikh/go-mode.el"))
 
@@ -1681,7 +1681,7 @@
       (add-hook 'before-save-hook #'gofmt-before-save)))
 #+END_SRC
 ** gradle-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "jacobono/emacs-gradle-mode"))
 
@@ -1694,7 +1694,7 @@
     (add-to-list 'auto-mode-alist '("\\.gradle$" . gradle-mode)))
 #+END_SRC
 ** graphql-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "davazp/graphql-mode"))
 
@@ -1709,7 +1709,7 @@
       (setopt graphql-indent-level 4)))
 #+end_src
 ** graphviz-dot-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ppareit/graphviz-dot-mode"))
 
@@ -1727,7 +1727,7 @@
       (setopt graphviz-dot-indent-width 2)))
 #+end_src
 ** groovy-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Groovy-Emacs-Modes/groovy-emacs-modes"))
 
@@ -1742,7 +1742,7 @@
     (add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode)))
 #+end_src
 ** hack-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "hhvm/hack-mode"))
 
@@ -1757,7 +1757,7 @@
     (add-to-list 'auto-mode-alist '("\\.hhi$" . hack-mode)))
 #+end_src
 ** haskell-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "haskell/haskell-mode"))
 
@@ -1772,7 +1772,7 @@
     (add-to-list 'auto-mode-alist '("\\.cable$" . haskell-mode)))
 #+END_SRC
 ** hy-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "hylang/hy-mode"))
 
@@ -1785,7 +1785,7 @@
     (add-to-list 'auto-mode-alist '("\\.hy$" . hy-mode)))
 #+end_src
 ** ini-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Lindydancer/ini-mode"))
 
@@ -1798,7 +1798,7 @@
     (add-to-list 'auto-mode-alist '("\\.ini$" . ini-mode)))
 #+end_src
 ** jade-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "brianc/jade-mode"))
 
@@ -1813,14 +1813,14 @@
     (add-to-list 'auto-mode-alist '("\\.styl\\'" . stylus-mode)))
 #+end_src
 ** java-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install java-mode...")
     (autoload-if-found '(java-mode) "java-mode" nil t)
     (add-to-list 'auto-mode-alist '("\\.java$" . java-mode)))
 #+end_src
 ** js2-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "mooz/js2-mode"))
 
@@ -1844,7 +1844,7 @@
       (setopt js2-missing-semi-one-line-override nil)))
 #+END_SRC
 ** json-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Sterlingg/json-snatcher")
     (el-clone :repo "joshwnj/json-mode"))
@@ -1865,7 +1865,7 @@
       (add-hook 'json-mode-hook #'flycheck-mode)))
 #+END_SRC
 ** jsonnet-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "tminor/jsonnet-mode"))
 
@@ -1895,7 +1895,7 @@
                                        (lsp)))))
 #+end_src
 ** kotlin-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Emacs-Kotlin-Mode-Maintainers/kotlin-mode"))
 
@@ -1908,14 +1908,14 @@
     (add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-mode)))
 #+end_src
 ** lisp-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (autoload-if-found '(lisp-mode) "lisp-mode" nil t)
     (add-to-list 'auto-mode-alist '("\\.lemrc$" . lisp-mode))
     (add-to-list 'auto-mode-alist '("\\.sbclrc$" . lisp-mode)))
 #+END_SRC
 ** lua-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "immerrr/lua-mode"))
 
@@ -1928,7 +1928,7 @@
     (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode)))
 #+end_src
 ** markdown-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "polymode/poly-markdown")
     (el-clone :repo "jrblevin/markdown-mode"))
@@ -1969,7 +1969,7 @@
       (add-hook 'markdown-mode #'orgtbl-mode)))
 #+END_SRC
 ** mermaid-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "abrochard/mermaid-mode"))
 
@@ -1982,7 +1982,7 @@
     (add-to-list 'auto-mode-alist '("\\.mmd\\'" . mermaid-mode)))
 #+end_src
 ** makefile-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (autoload-if-found '(makefile-mode) "makefile-mode" nil t)
 
@@ -1997,7 +1997,7 @@
       (add-hook 'makefile-mode #'flycheck-mode)))
 #+end_src
 ** nasm-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "skeeto/nasm-mode"))
 
@@ -2010,7 +2010,7 @@
     (add-to-list 'auto-mode-alist '("\\.s$" . nasm-mode)))
 #+end_src
 ** neon-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Fuco1/neon-mode"))
 
@@ -2023,7 +2023,7 @@
     (add-to-list 'auto-mode-alist '("\\.neon$" . neon-mode)))
 #+end_src
 ** nim-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "nim-lang/nim-mode"))
 
@@ -2036,7 +2036,7 @@
     (add-to-list 'auto-mode-alist '("\\.nim\\'" . nim-mode)))
 #+end_src
 ** ninja-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ninja-build/ninja"))
 
@@ -2049,7 +2049,7 @@
     (add-to-list 'auto-mode-alist '("\\.ninja$" . ninja-mode)))
 #+end_src
 ** nix-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "NixOS/nix-mode"))
 
@@ -2069,7 +2069,7 @@
     (add-hook 'before-save-hook #'nix-format-before-save))
 #+end_src
 ** nginx-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ajc/nginx-mode"))
 
@@ -2087,7 +2087,7 @@
       (setopt nginx-indent-tabs-mode t)))
 #+END_SRC
 ** nov-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "wasamasa/nov.el"))
 
@@ -2103,7 +2103,7 @@
       (add-hook 'nov-mode-hook #'(lambda () (view-mode -1)))))
 #+end_src
 ** pcap-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "orgcandman/pcap-mode"))
 
@@ -2116,7 +2116,7 @@
     (add-to-list 'auto-mode-alist '("\\.pcap$" . pcap-mode)))
 #+end_src
 ** phel-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install phel-mode...")
 
@@ -2133,7 +2133,7 @@
     (add-to-list 'auto-mode-alist '("\\.phel$" . phel-mode)))
 #+end_src
 ** php-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-php/php-mode"))
 
@@ -2165,7 +2165,7 @@
       (define-derived-mode phpstan-mode php-mode "phpstan")))
 #+END_SRC
 ** php-ts-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-php/php-ts-mode"))
 
@@ -2181,7 +2181,7 @@
       ))
 #+end_src
 ** phpt-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-php/phpt-mode"))
 
@@ -2194,7 +2194,7 @@
     (add-to-list 'auto-mode-alist '("\\.phpt$" . phpt-mode)))
 #+end_src
 ** plantuml-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "skuro/plantuml-mode"))
 
@@ -2207,7 +2207,7 @@
     (add-to-list 'auto-mode-alist '("\\.pu$" . plantuml-mode)))
 #+END_SRC
 ** protobuf-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "protocolbuffers/protobuf"))
 
@@ -2220,7 +2220,7 @@
     (add-to-list 'auto-mode-alist '("\\.proto\\'" . protobuf-mode)))
 #+end_src
 ** pug-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "hlissner/emacs-pug-mode"))
 
@@ -2233,7 +2233,7 @@
     (add-to-list 'auto-mode-alist '("\\.pug$" . pug-mode)))
 #+end_src
 ** prisma-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "pimeys/emacs-prisma-mode"))
 
@@ -2246,7 +2246,7 @@
     (add-to-list 'auto-mode-alist '("\\.prisma" . prisma-mode)))
 #+end_src
 ** processing-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ptrv/processing2-emacs"))
 
@@ -2263,7 +2263,7 @@
       (setopt processing-output-dir "/tmp")))
 #+END_SRC
 ** python-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :fetcher "gitlab"
               :repo "python-mode-devs/python-mode"))
@@ -2277,7 +2277,7 @@
     (add-to-list 'auto-mode-alist '("\\.py$" . python-mode)))
 #+END_SRC
 ** qt-pro-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsorphanage/qt-pro-mode"))
 
@@ -2290,7 +2290,7 @@
     (add-to-list 'auto-mode-alist '("\\.pr[io]$" . qt-pro-mode)))
 #+end_src
 ** robots-txt-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-php/robots-txt-mode"))
 
@@ -2303,7 +2303,7 @@
     (add-to-list 'auto-mode-alist '("/robots\\.txt\\'" . robots-txt-mode)))
 #+end_src
 ** ruby-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install ruby-mode...")
     (autoload-if-found '(ruby-mode) "ruby-mode" nil t)
@@ -2326,7 +2326,7 @@
       (setopt ruby-insert-encoding-magic-comment nil)))
 #+END_SRC
 ** rust-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "rust-lang/rust-mode"))
 
@@ -2341,7 +2341,7 @@
       (setopt rust-format-on-save t)))
 #+END_SRC
 ** scala-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "hvesalai/emacs-scala-mode"))
 
@@ -2354,7 +2354,7 @@
     (add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode)))
 #+END_SRC
 ** scheme-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install scheme...")
     (autoload-if-found '(scheme-mode) "scheme-mode" nil t)
@@ -2364,7 +2364,7 @@
       (setopt scheme-program-name "gosh -i")))
 #+end_src
 ** scad-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "openscad/emacs-scad-mode"))
 
@@ -2376,7 +2376,7 @@
     (add-to-list 'auto-mode-alist '("\\.scad\\'" . scad-mode)))
 #+end_src
 ** scss-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "antonj/scss-mode"))
 
@@ -2395,13 +2395,13 @@
                                       (lsp-deferred))))))
 #+end_src
 ** shell-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (autoload-if-found '(shell-mode) "shell-mode" nil t)
     (define-derived-mode console-mode shell-mode "console"))
 #+end_src
 ** slim-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "slim-template/emacs-slim"))
 
@@ -2414,7 +2414,7 @@
     (add-to-list 'auto-mode-alist '("\\.slim$" . slim-mode)))
 #+END_SRC
 ** solidity-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ethereum/emacs-solidity"))
 
@@ -2427,7 +2427,7 @@
     (add-to-list 'auto-mode-alist '("\\.sol$" . solidity-mode)))
 #+end_src
 ** ssh-config-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "jhgorrell/ssh-config-mode-el"))
 
@@ -2443,7 +2443,7 @@
     (add-to-list 'auto-mode-alist '("/authorized_keys2?\\'" . ssh-config-mode)))
 #+END_SRC
 ** sql-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-eval-after-load 'sql
     (load-library "sql-indent")
 
@@ -2459,7 +2459,7 @@
     (add-hook 'sql-mode-hook #'flycheck-mode))
 #+end_src
 ** swift-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "swift-emacs/swift-mode"))
 
@@ -2472,7 +2472,7 @@
     (add-to-list 'auto-mode-alist '("\\.swift$" . swift-mode)))
 #+end_src
 ** syslog-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "vapniks/syslog-mode"))
 
@@ -2485,7 +2485,7 @@
     (add-to-list 'auto-mode-alist '("\\.log$" . syslog-mode)))
 #+end_src
 ** systemd-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "holomorph/systemd-mode"))
 
@@ -2512,7 +2512,7 @@
                                     . systemd-mode)))
 #+end_src
 ** terraform-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "syohex/emacs-hcl-mode")
     (el-clone :repo "emacsorphanage/terraform-mode"))
@@ -2533,7 +2533,7 @@
       (add-hook 'terraform-mode-hook #'flycheck-mode)))
 #+END_SRC
 ** text-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (autoload-if-found '(conf-space-mode) "conf-mode" nil t)
     (add-to-list 'auto-mode-alist '("\\.tigrc$" . conf-space-mode))
@@ -2544,7 +2544,7 @@
     (add-to-list 'auto-mode-alist '("credentials$" . conf-space-mode)))
 #+end_src
 ** toml-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "dryman/toml-mode.el"))
 
@@ -2560,7 +2560,7 @@
       (add-hook 'toml-mode-hook #'flycheck-mode)))
 #+END_SRC
 ** tmux-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "nverno/tmux-mode"))
 
@@ -2571,7 +2571,7 @@
     (add-to-list 'auto-mode-alist '("\\.tmux\\.conf$" . tmux-mode)))
 #+end_src
 ** typescript-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-typescript/typescript.el"))
 
@@ -2590,7 +2590,7 @@
     (add-to-list 'auto-mode-alist '("\\.tsx$" . typescript-tsx-mode)))
 #+END_SRC
 ** v-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "damon-kwok/v-mode"))
 
@@ -2606,7 +2606,7 @@
       (define-key v-mode-map (kbd "C-c C-f") #'v-format-buffer)))
 #+end_src
 ** vue-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "AdamNiederer/ssass-mode")
     (el-clone :repo "AdamNiederer/vue-html-mode")
@@ -2630,7 +2630,7 @@
       (setopt vue-html-extra-indent 4)))
 #+END_SRC
 ** vimrc-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "mcandre/vimrc-mode"))
 
@@ -2644,7 +2644,7 @@
     (add-to-list 'auto-mode-alist '("\\.vim\\(rc\\)?\\'" . vimrc-mode)))
 #+end_src
 ** wat-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "devonsparks/wat-mode"))
 
@@ -2657,7 +2657,7 @@
     (add-to-list 'auto-mode-alist '("\\.wat?\\'" . wat-mode)))
 #+end_src
 ** web-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "fxbois/web-mode"))
 
@@ -2680,7 +2680,7 @@
       (setopt web-mode-enable-auto-indentation nil)))
 #+END_SRC
 ** web-php-blade-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "takeokunn/web-php-blade-mode"))
 
@@ -2693,7 +2693,7 @@
     (add-to-list 'auto-mode-alist '("\\.blade\\.php$" . web-php-blade-mode)))
 #+end_src
 ** wolfram-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "kawabata/wolfram-mode"))
 
@@ -2711,7 +2711,7 @@
       (setopt wolfram-path "path-to-dir")))
 #+end_src
 ** yaml-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "yoshiki/yaml-mode"))
 
@@ -2728,7 +2728,7 @@
       (add-hook 'yaml-mode-hook #'flycheck-mode)))
 #+END_SRC
 ** yarn-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "anachronic/yarn-mode"))
 
@@ -2741,7 +2741,7 @@
     (add-to-list 'auto-mode-alist '("yarn\\.lock\\'" . yarn-mode)))
 #+end_src
 ** zig-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ziglang/zig-mode"))
 
@@ -2756,7 +2756,7 @@
 * Awesome Package
 ** Buffer
 *** auto-save-buffers-enhanced
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "kentaro/auto-save-buffers-enhanced"))
 
@@ -2770,7 +2770,7 @@
       (setopt auto-save-buffers-enhanced-interval 10)))
 #+end_src
 *** editorconfig
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "editorconfig/editorconfig-emacs"))
 
@@ -2783,7 +2783,7 @@
     (editorconfig-mode 1))
 #+END_SRC
 *** persistent-scratch
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Fanael/persistent-scratch"))
 
@@ -2799,7 +2799,7 @@
       (setopt persistent-scratch-autosave-interval 100)))
 #+end_src
 *** popwin
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsorphanage/popwin"))
 
@@ -2812,7 +2812,7 @@
     (popwin-mode 1))
 #+end_src
 *** whitespace
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install whitespace...")
     (when (autoload-if-found '(global-whitespace-mode) "whitespace" nil t)
@@ -2825,7 +2825,7 @@
 #+END_SRC
 ** Check
 *** flycheck
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "flycheck/flycheck"))
 
@@ -2836,7 +2836,7 @@
     (autoload-if-found '(flycheck-mode flycheck-define-checker) "flycheck" nil t))
 #+end_src
 *** flycheck-textlint
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (flycheck-define-checker textlint
       "A linter for prose."
@@ -2852,7 +2852,7 @@
       (add-to-list 'flycheck-checkers 'textlint)))
 #+end_src
 *** flycheck-elsa
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-elsa/flycheck-elsa"))
 
@@ -2866,7 +2866,7 @@
       (add-hook 'emacs-lisp-mode-hook #'flycheck-elsa-setup)))
 #+end_src
 *** flycheck-projectile-list-errors
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "nbfalcon/flycheck-projectile"))
 
@@ -2877,7 +2877,7 @@
 #+end_src
 ** Client
 *** md4rd
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ahungry/md4rd"))
 
@@ -2927,7 +2927,7 @@
 #+end_src
 ** Color
 *** ansi-color
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install ansi-color...")
     (autoload 'ansi-color-for-comint-mode-on "ansi-color" "Set `ansi-color-for-comint-mode' to t." t)
@@ -2941,7 +2941,7 @@
                                              (ansi-color-apply-on-region (point-min) (point-max))))))
 #+end_src
 *** highlight-indent-guides
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "DarthFennec/highlight-indent-guides"))
 
@@ -2959,7 +2959,7 @@
       (setopt highlight-indent-guides-method 'bitmap)))
 #+end_src
 *** hl-todo
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "tarsius/hl-todo"))
 
@@ -2982,7 +2982,7 @@
               ("FIXME" . "#cc9393")))))
 #+end_src
 *** xterm-color
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "atomontage/xterm-color"))
 
@@ -2999,7 +2999,7 @@
 #+end_src
 ** Command
 *** amx
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "DarwinAwardWinner/amx"))
 
@@ -3012,7 +3012,7 @@
 #+END_SRC
 ** Completion
 *** corfu
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "minad/corfu"))
 
@@ -3035,7 +3035,7 @@
       (setopt tab-always-indent 'complete)))
 #+end_src
 *** cape
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "minad/cape"))
 
@@ -3056,7 +3056,7 @@
       (add-to-list 'completion-at-point-functions #'cape-history)))
 #+end_src
 *** prescient
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "radian-software/prescient.el"))
 
@@ -3072,7 +3072,7 @@
       (setopt prescient-aggressive-file-save t)))
 #+end_src
 *** kind-icon
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "jdtsmith/kind-icon"))
 
@@ -3087,7 +3087,7 @@
 #+end_src
 ** Cursor
 *** avy
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "abo-abo/avy"))
 
@@ -3104,7 +3104,7 @@
       (setopt avy-background t)))
 #+end_src
 *** avy-zap
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "cute-jumper/avy-zap"))
 
@@ -3117,7 +3117,7 @@
     (keymap-global-set "M-z" 'avy-zap-up-to-char-dwim))
 #+end_src
 *** expand-region
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "magnars/expand-region.el"))
 
@@ -3132,7 +3132,7 @@
     (keymap-global-set "C-M-@" 'er/expand-region))
 #+end_src
 *** multiple-cursors
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "magnars/multiple-cursors.el"))
 
@@ -3147,7 +3147,7 @@
     (keymap-global-set "C-c C-<" #'mc/mark-all-like-this))
 #+END_SRC
 *** subword
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install subword...")
     (autoload-if-found '(my/delete-forward-block) "subword" nil t)
@@ -3170,7 +3170,7 @@
 #+end_src
 ** Dictionary
 *** define-word
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "abo-abo/define-word"))
 
@@ -3193,7 +3193,7 @@
 #+end_src
 ** Dired
 *** basic
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Fuco1/dired-hacks"))
 
@@ -3214,7 +3214,7 @@
 
 #+end_src
 *** dired-collapse
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install dired-collapse...")
 
@@ -3224,7 +3224,7 @@
       (add-hook 'dired-mode #'dired-collapse-mode)))
 #+end_src
 *** dired-filter
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install dired-filter...")
     (autoload-if-found '(dired-filter-mode) "dired-filter" nil t)
@@ -3232,7 +3232,7 @@
       (add-hook 'dired-mode #'dired-filter-mode)))
 #+end_src
 *** dired-narrow
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install dired-narrow...")
 
@@ -3242,7 +3242,7 @@
       (add-hook 'dired-mode-hook #'dired-narrow-mode)))
 #+end_src
 *** dired-open
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install dired-open...")
 
@@ -3252,13 +3252,13 @@
       (define-key dired-mode-map [remap dired-find-file] #'dired-open-file)))
 #+end_src
 *** dired-ranger
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install dired-ranger...")
     (autoload-if-found '() "dired-ranger" nil t))
 #+end_src
 *** dired-quick-sort
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :fetcher "gitlab"
               :repo "xuhdev/dired-quick-sort"))
@@ -3273,13 +3273,13 @@
       (add-hook 'dired-mode-hook #'dired-quick-sort-setup)))
 #+end_src
 *** dired-subtree
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install dired-subtree...")
     (autoload-if-found '(dired-subtree-apply-filter) "dired-subtree" nil t))
 #+end_src
 *** diredfl
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "purcell/diredfl"))
 
@@ -3292,7 +3292,7 @@
 
 ** EWW
 *** basic
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install eww...")
 
@@ -3323,7 +3323,7 @@
       (add-hook 'eww-after-render #'my/eww-rename-buffer)))
 #+end_src
 *** eww-lnum
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "m00natic/eww-lnum"))
 
@@ -3339,7 +3339,7 @@
 #+end_src
 ** File
 *** recentf
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install recentf...")
     (autoload-if-found '(recentf-mode) "recentf" nil t)
@@ -3352,7 +3352,7 @@
       (setopt recentf-exclude '(".recentf" "\\.gpg\\"))))
 #+END_SRC
 *** open-junk-file
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "rubikitch/open-junk-file"))
 
@@ -3368,7 +3368,7 @@
       (setopt open-junk-file-format "~/.emacs.d/.junk/%Y-%m-%d-%H%M%S.")))
 #+END_SRC
 *** vlf
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "m00natic/vlfi"))
 
@@ -3387,7 +3387,7 @@
 #+end_src
 ** Font
 *** font-lock-studio
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Lindydancer/font-lock-studio"))
 
@@ -3399,7 +3399,7 @@
 #+END_SRC
 ** GC
 *** gcmh
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsmirror/gcmh"))
 
@@ -3434,7 +3434,7 @@
 #+end_src
 ** Git
 *** magit
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "magit/transient"
               :load-paths `(,(locate-user-emacs-file "el-clone/transient/lisp")))
@@ -3501,7 +3501,7 @@
       (define-key git-commit-mode-map (kbd "C-h") #'delete-backward-char)))
 #+END_SRC
 *** magit-file-icons
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "gekoke/magit-file-icons"))
 
@@ -3516,7 +3516,7 @@
     )
 #+end_src
 *** magit-gptcommit
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "douo/magit-gptcommit"))
 
@@ -3536,7 +3536,7 @@
       (define-key git-commit-mode-map (kbd "C-c C-g") #'magit-gptcommit-commit-accept)))
 #+end_src
 *** magit-forge
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "magit/forge"
               :load-paths `(,(locate-user-emacs-file "el-clone/forge/lisp"))))
@@ -3549,7 +3549,7 @@
     )
 #+end_src
 *** git-gutter
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsorphanage/git-gutter"))
 
@@ -3564,7 +3564,7 @@
       (setopt git-gutter:update-hooks '(after-save-hook after-revert-hook))))
 #+end_src
 *** git-gutter-fringe
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsorphanage/git-gutter-fringe"))
 
@@ -3584,7 +3584,7 @@
       (setopt git-gutter:clear-function #'git-gutter-fr:clear)))
 #+end_src
 *** git-timemachine
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsmirror/git-timemachine"))
 
@@ -3595,7 +3595,7 @@
     (autoload-if-found '(git-timemachine) "git-timemachine" nil t))
 #+end_src
 *** gist
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "defunkt/gist.el"))
 
@@ -3606,7 +3606,7 @@
     (autoload-if-found '(gist-mode) "gist" nil t))
 #+end_src
 *** blamer
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Artawower/blamer.el"))
 
@@ -3617,7 +3617,7 @@
     (autoload-if-found '(blamer-mode) "blamer" nil t))
 #+end_src
 *** git-auto-commit-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ryuslash/git-auto-commit-mode"))
 
@@ -3635,7 +3635,7 @@
 #+end_src
 ** Googling
 *** google-this
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Malabarba/emacs-google-this"))
 
@@ -3646,7 +3646,7 @@
     (autoload-if-found '(google-this) "google-this" nil t))
 #+END_SRC
 *** google-translate
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "zonuexe/google-translate"))
 
@@ -3658,7 +3658,7 @@
 #+end_src
 ** GPG
 *** epa-file
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install epa-file...")
     (autoload-if-found '(epa-file-enable) "epa-file" nil t)
@@ -3675,7 +3675,7 @@
 #+end_src
 *** pinentry
 https://github.com/ch11ng/exwm/wiki#gpg-pinentry
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ueno/pinentry-el"))
 
@@ -3689,7 +3689,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Help
 *** helpful
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Wilfred/helpful"))
 
@@ -3714,7 +3714,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** IME
 *** ddskk
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "skk-dev/ddskk"))
 
@@ -3764,7 +3764,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'skk-rom-kana-rule-list '(skk-kakutei-key nil my/skk-C-j-key))))
 #+END_SRC
 *** ddskk-posframe
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "conao3/ddskk-posframe.el"))
 
@@ -3779,7 +3779,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Joke
 *** hacker-typer
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "dieggsy/emacs-hacker-typer"))
 
@@ -3790,7 +3790,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(hacker-typer) "hacker-typer" nil t))
 #+end_src
 *** power-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "elizagamedev/power-mode.el"))
 
@@ -3801,7 +3801,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(power-mode) "power-mode" nil t))
 #+end_src
 *** sudden-death
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "yewton/sudden-death.el"))
 
@@ -3812,7 +3812,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(sudden-death) "sudden-death" nil t))
 #+end_src
 *** redacted
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "bkaestner/redacted.el"))
 
@@ -3828,7 +3828,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (redacted-mode (if redacted-mode -1 1))))
 #+end_src
 *** lorem ipsum
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "jschaf/emacs-lorem-ipsum"))
 
@@ -3846,7 +3846,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Keyboard
 *** key-chord
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsorphanage/key-chord"))
 
@@ -3862,7 +3862,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (key-chord-define-global "jf" #'view-mode))
 #+end_src
 *** key-combo
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "uk-ar/key-combo"))
 
@@ -3894,7 +3894,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                     (key-combo-define-local (kbd "</") #'web-mode-element-close)))))
 #+end_src
 *** which-key
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "justbur/emacs-which-key"))
 
@@ -3907,7 +3907,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (which-key-mode))
 #+end_src
 *** dmacro
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-jp/dmacro"))
 
@@ -3920,7 +3920,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (global-dmacro-mode))
 #+end_src
 *** god-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsorphanage/god-mode"))
 
@@ -3931,7 +3931,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** LSP
 *** eglot
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install eglot...")
 
@@ -3950,7 +3950,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                                                             "listen" "--verbose")))))
 #+end_src
 *** lsp-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-lsp/lsp-mode"
               :load-paths `(,(locate-user-emacs-file "el-clone/lsp-mode/clients"))))
@@ -4030,7 +4030,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
 #+END_SRC
 *** lsp-sourcekit
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-lsp/lsp-sourcekit"))
 
@@ -4042,7 +4042,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (require 'lsp-sourcekit)))
 #+end_src
 *** emacs-ccls
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-lsp/emacs-ccls"))
 
@@ -4054,14 +4054,14 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'lsp-mode-hook #'(lambda () (require 'ccls)))))
 #+end_src
 *** lsp-php-key
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install lsp-php-key...")
     (with-eval-after-load 'lsp-php
       (setopt lsp-intelephense-licence-key "00OXTX8OROOJH9P")))
 #+end_src
 *** consult-lsp
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "gagbo/consult-lsp"))
 
@@ -4075,7 +4075,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key lsp-mode-map [remap xref-find-apropos] #'consult-lsp-symbols)))
 #+end_src
 *** lsp-treemacs
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-lsp/lsp-treemacs"))
 
@@ -4093,7 +4093,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt lsp-treemacs-error-list-current-project-only t)))
 #+end_src
 *** lsp-docker
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-lsp/lsp-docker"))
 
@@ -4104,7 +4104,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(lsp-docker-start) "lsp-docker" nil t))
 #+end_src
 *** dap-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-lsp/dap-mode"))
 
@@ -4157,7 +4157,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'ruby-mode-hook #'dap-ruby-setup)))
 #+END_SRC
 *** lsp-ui
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-lsp/lsp-ui"))
 
@@ -4210,7 +4210,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key lsp-mode-map (kbd "C-c C-d") #'lsp-ui-doc-mode)))
 #+END_SRC
 *** lsp-scheme
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "takeokunn/emacs-lsp-scheme"))
 
@@ -4228,7 +4228,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt lsp-scheme-implementation "guile")))
 #+end_src
 *** lsp-haskell
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-lsp/lsp-haskell"))
 
@@ -4243,7 +4243,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'haskell-literate-mode-hook #'lsp)))
 #+end_src
 *** TODO lsp-pyright
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-lsp/lsp-pyright"))
 
@@ -4258,7 +4258,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     )
 #+end_src
 *** lsp-bridge
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "manateelazycat/lsp-bridge"))
 
@@ -4278,7 +4278,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Mail
 *** mu4e
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install mu4e...")
     (add-to-list 'load-path (locate-user-emacs-file "/nix/store/iyqr1hy0195pzvd4rmn9cz5hxmzqj42j-emacs-mu4e-1.12.5/share/emacs/site-lisp/elpa/mu4e-1.12.5"))
@@ -4315,7 +4315,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'mm-discouraged-alternatives "text/richtext")))
 #+end_src
 *** mu4e-views
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "lordpretzel/mu4e-views"))
 
@@ -4347,7 +4347,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     )
 #+end_src
 *** mu4e-dashboard
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "rougier/mu4e-dashboard"))
 
@@ -4359,7 +4359,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Minor Modes
 *** command-log-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "lewang/command-log-mode"))
 
@@ -4373,7 +4373,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Narrowing
 *** fancy-narrow
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "takeokunn/fancy-narrow"))
 
@@ -4397,7 +4397,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     )
 #+end_src
 *** origami
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "gregsexton/origami.el"))
 
@@ -4413,7 +4413,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Process
 *** proced
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install proced...")
     (autoload-if-found '(proced) "proced" nil t)
@@ -4424,7 +4424,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt proced-format 'long)))
 #+end_src
 *** proced-narrow
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "travisjeffery/proced-narrow"))
 
@@ -4439,7 +4439,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Project
 *** projectile
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "bbatsov/projectile"))
 
@@ -4474,7 +4474,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt projectile-use-git-grep t)))
 #+end_src
 *** consult-projectile
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :fetcher "gitlab" :repo "OlMon/consult-projectile"))
 
@@ -4505,7 +4505,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Refactor
 *** emr
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Wilfred/emacs-refactor"))
 
@@ -4520,7 +4520,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+END_SRC
 ** Search
 *** migemo
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-jp/migemo"))
 
@@ -4543,7 +4543,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   ;;   )
 #+end_src
 *** wgrep
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "mhayashi1120/Emacs-wgrep"))
 
@@ -4557,7 +4557,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'grep-setup-hook 'wgrep-setup)))
 #+end_src
 *** consult
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "minad/consult"))
 
@@ -4655,7 +4655,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt xref-show-definitions-function #'consult-xref)))
 #+end_src
 *** affe
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "minad/affe"))
 
@@ -4671,7 +4671,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt affe-regexp-function 'orderless-pattern-compiler)))
 #+end_src
 *** compile-multi
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "mohkale/compile-multi"))
 
@@ -4694,7 +4694,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (compile-multi-embark-mode)))
 #+end_src
 *** vertico
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "minad/vertico"))
 
@@ -4720,7 +4720,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt vertico-cycle t)))
 #+end_src
 *** marginalia
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "minad/marginalia"))
 
@@ -4735,7 +4735,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key minibuffer-local-map (kbd "M-A") #'marginalia-cycle)))
 #+end_src
 *** orderless
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "oantolin/orderless"))
 
@@ -4755,7 +4755,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Shell
 *** exec-path-from-shell
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "purcell/exec-path-from-shell"))
 
@@ -4779,7 +4779,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+END_SRC
 ** Snippet
 *** yasnippet
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "joaotavora/yasnippet"))
 
@@ -4792,7 +4792,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (yas-global-mode 1))
 #+end_src
 *** consult-yasnippet
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
    (el-clone :repo "mohkale/consult-yasnippet"))
 
@@ -4807,7 +4807,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Statistics
 *** esup
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "jschaf/esup"))
 
@@ -4818,7 +4818,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(esup) "esup" nil t))
 #+END_SRC
 *** explain-pause-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "lastquestion/explain-pause-mode"))
 
@@ -4829,7 +4829,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(explain-pause-mode) "explain-pause-mode" nil t))
 #+end_src
 *** disk-usage
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-straight/disk-usage"))
 
@@ -4840,7 +4840,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(disk-usage disk-usage-here) "disk-usage" nil t))
 #+end_src
 *** keyfreq
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "dacap/keyfreq"))
 
@@ -4854,7 +4854,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (keyfreq-autosave-mode 1))
 #+end_src
 *** uptimes
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "davep/uptimes.el"))
 
@@ -4866,7 +4866,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Syntax
 *** syntax-subword
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "jpkotta/syntax-subword"))
 
@@ -4880,7 +4880,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** System
 *** symon
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "zk-phi/symon"))
 
@@ -4895,7 +4895,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Tab
 *** tab-bar
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install tab-bar...")
     (autoload-if-found '(tab-bar-mode
@@ -4937,7 +4937,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Template
 *** auto-insert
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install autoinsert...")
     (autoload-if-found '(auto-insert-mode) "autoinsert" nil t)
@@ -4949,7 +4949,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Theme
 *** nerd-icons
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "rainstormstudio/nerd-icons.el"))
 
@@ -4958,7 +4958,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/nerd-icons")))
 #+end_src
 *** nerd-icons-dired
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "rainstormstudio/nerd-icons-dired"))
 
@@ -4972,7 +4972,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'dired-mode-hook #'nerd-icons-dired-mode)))
 #+end_src
 *** nerd-icons-completion
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "rainstormstudio/nerd-icons-completion"))
 
@@ -4985,7 +4985,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (nerd-icons-completion-marginalia-setup))
 #+end_src
 *** dashboard
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-dashboard/emacs-dashboard"))
 
@@ -5002,7 +5002,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt dashboard-items '((recents . 10)))))
 #+end_src
 *** dimmer
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "gonewest818/dimmer.el"))
 
@@ -5020,7 +5020,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (dimmer-mode t))
 #+end_src
 *** doom-themes
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "doomemacs/themes"
               :load-paths `(,(locate-user-emacs-file "el-clone/themes/extensions"))))
@@ -5043,7 +5043,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt doom-themes-enable-italic t)))
 #+END_SRC
 *** doom-modeline
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "seagle0128/doom-modeline"))
 
@@ -5064,7 +5064,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt doom-modeline-minor-modes nil)))
 #+END_SRC
 *** hl-line
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install hl-line...")
     (autoload-if-found '(global-hl-line-mode) "hl-line-mode" nil t)
@@ -5077,7 +5077,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (set-face-background 'hl-line "#444642")))
 #+END_SRC
 *** idle-highlight-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "nonsequitur/idle-highlight-mode"))
 
@@ -5094,7 +5094,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'prog-mode-hook #'idle-highlight-mode)))
 #+end_src
 *** neotree
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "jaypei/emacs-neotree"))
 
@@ -5130,7 +5130,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
 #+END_SRC
 *** nyan-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "TeMPOraL/nyan-mode"))
 
@@ -5147,7 +5147,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt nyan-animate-nyancat t)))
 #+END_SRC
 *** volatile-highlights
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "k-talo/volatile-highlights.el"))
 
@@ -5160,7 +5160,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (volatile-highlights-mode t))
 #+end_src
 *** idle-highlight-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "nonsequitur/idle-highlight-mode"))
 
@@ -5178,7 +5178,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Undo
 *** undo-tree
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "apchamberlain/undo-tree.el"))
 
@@ -5192,7 +5192,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** View Mode
 *** view-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install view-mode...")
 
@@ -5263,7 +5263,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key view-mode-map (kbd "S-C-i") #'my/view-shifttab)))
 #+end_src
 *** view-lock-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "s-fubuki/view-lock-mode"))
 
@@ -5281,7 +5281,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Password
 *** password-store
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "zx2c4/password-store"))
 
@@ -5290,7 +5290,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/password-store/contrib/emacs")))
 #+end_src
 *** password-store-otp
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "volrath/password-store-otp.el"))
 
@@ -5299,7 +5299,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/password-store-otp")))
 #+end_src
 *** pass
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "NicolasPetton/pass"))
 
@@ -5316,14 +5316,14 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Utility
 *** comint
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-eval-after-load 'comint
     (setopt comint-buffer-maximum-size 100000)
     (setopt comint-prompt-read-only t)
     (setopt comint-terminfo-terminal "eterm-256color"))
 #+end_src
 *** crux
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "bbatsov/crux"))
 
@@ -5360,14 +5360,14 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (keymap-global-set "C-DEL" #'crux-kill-line-backwards))
 #+end_src
 *** delsel
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install delsel...")
     (autoload-if-found '(delete-selection-mode) "delsel" nil t)
     (delete-selection-mode))
 #+end_src
 *** dogears
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "alphapapa/dogears.el"))
 
@@ -5389,7 +5389,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (keymap-global-set "M-g M-D" #'dogears-sidebar))
 #+end_src
 *** embark
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "oantolin/embark"))
 
@@ -5460,7 +5460,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode)))
 #+end_src
 *** goto-addr
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install goto-addr...")
     (autoload-if-found '(goto-address-prog-mode goto-address-mode) "goto-address" nil t)
@@ -5472,7 +5472,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'text-mode-hook #'goto-address-mode)))
 #+END_SRC
 *** htmlize
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "hniksic/emacs-htmlize"))
 
@@ -5484,7 +5484,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt htmlize-html-charset 'utf-8)))
 #+end_src
 *** midnight
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install midnight...")
     (autoload-if-found '(midnight-mode) "midnight" nil t)
@@ -5493,7 +5493,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt clean-buffer-list-delay-general 1)))
 #+end_src
 *** minimap
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "dengste/minimap"))
 
@@ -5512,7 +5512,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt minimap-major-modes '(prog-mode org-mode))))
 #+end_src
 *** puni
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "AmaiKinono/puni"))
 
@@ -5548,7 +5548,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'minibuffer-mode-hook #'puni-disable-puni-mode)))
 #+end_src
 *** quickrun
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsorphanage/quickrun"))
 
@@ -5559,7 +5559,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(quickrun) "quickrun" nil t))
 #+end_src
 *** restclient
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "pashky/restclient.el"))
 
@@ -5570,7 +5570,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(restclient-mode) "restclient" nil t))
 #+end_src
 *** smartparens
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Fuco1/smartparens"))
 
@@ -5581,7 +5581,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'smartparens))
 #+END_SRC
 *** smart-jump
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "jojojames/smart-jump"))
 
@@ -5592,7 +5592,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (with-eval-after-load 'smart-jump))
 #+end_src
 *** string-inflection
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "akicho8/string-inflection"))
 
@@ -5603,7 +5603,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(string-inflection-all-cycle) "string-inflection" nil t))
 #+end_src
 *** sudo-edit
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "nflath/sudo-edit"))
 
@@ -5614,7 +5614,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(sudo-edit-current-file) "sudo-edit" nil t))
 #+end_src
 *** topsy
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "alphapapa/topsy.el"))
 
@@ -5631,7 +5631,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     )
 #+end_src
 *** uuid
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "nicferrier/emacs-uuid"))
 
@@ -5648,13 +5648,13 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (defalias 'uuid #'my/uuid))
 #+end_src
 *** woman
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (autoload-if-found '(woman woman-find-file) "woman" nil t))
 #+end_src
 ** Window
 *** ace-window
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "abo-abo/ace-window"))
 
@@ -5673,7 +5673,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt aw-minibuffer-flag t)))
 #+end_src
 *** writeroom-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "joostkremers/writeroom-mode"))
 
@@ -5699,7 +5699,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt writeroom-maximize-window nil)))
 #+end_src
 *** zoom-window
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsorphanage/zoom-window"))
 
@@ -5713,7 +5713,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Remote Access
 *** docker-tramp
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-pe/docker-tramp.el"))
 
@@ -5728,7 +5728,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (tramp-set-completion-function docker-tramp-method docker-tramp-completion-function-alist)))
 #+end_src
 *** consult-tramp
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Ladicle/consult-tramp"))
 
@@ -5740,7 +5740,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 * Language Specific
 ** Basic Lisp
 *** paredit
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsmirror/paredit"))
 
@@ -5783,7 +5783,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'inferior-emacs-lisp-mode-hook #'enable-paredit-mode)))
 #+END_SRC
 *** rainbow-delimiter
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Fanael/rainbow-delimiters"))
 
@@ -5807,7 +5807,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+END_SRC
 ** Common Lisp
 *** slime
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "slime/slime"
               :load-paths `(,(locate-user-emacs-file "el-clone/slime/lib")
@@ -5842,7 +5842,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key slime-repl-mode-map (kbd "C-c C-r") #'my/slime-history)))
 #+END_SRC
 *** hyperspec
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install hyperspec...")
     (autoload-if-found '(hyperspec-lookup) "hyperspec" nil t)
@@ -5852,7 +5852,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Emacs Lisp
 *** eros
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "xiongtx/eros"))
 
@@ -5866,7 +5866,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'emacs-lisp-mode-hook #'eros-mode)))
 #+end_src
 *** eldoc
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install eldoc...")
     (autoload-if-found '(turn-on-eldoc-mode) "eldoc" nil t)
@@ -5879,7 +5879,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'ielm-mode-hook #'turn-on-eldoc-mode)))
 #+end_src
 *** trinary
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-elsa/trinary-logic"))
 
@@ -5888,7 +5888,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/trinary-logic")))
 #+end_src
 *** elsa
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-elsa/Elsa"))
 
@@ -5898,7 +5898,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(elsa-run) "elsa" nil t))
 #+end_src
 *** lispxmp
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsmirror/lispxmp"))
 
@@ -5909,7 +5909,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(lispxmp) "lispxmp" nil t))
 #+end_src
 *** macrostep
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "joddie/macrostep"))
 
@@ -5923,7 +5923,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key emacs-lisp-mode-map (kbd "C-c e") #'macrostep-expand)))
 #+end_src
 *** elisp-slime-nav
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "purcell/elisp-slime-nav"))
 
@@ -5940,7 +5940,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'ielm-mode-hook #'elisp-slime-nav-mode)))
 #+END_SRC
 *** nameless
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Malabarba/Nameless"))
 
@@ -5957,7 +5957,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'ielm-mode-hook #'nameless-mode)))
 #+END_SRC
 *** elisp-refs
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Wilfred/elisp-refs"))
 
@@ -5972,7 +5972,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          elisp-refs-symbol) "elisp-refs" nil t))
 #+end_src
 *** highlight-quoted
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Fanael/highlight-quoted"))
 
@@ -5986,7 +5986,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'emacs-lisp-mode-hook #'highlight-quoted-mode)))
 #+end_src
 *** highlight-defined
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Fanael/highlight-defined"))
 
@@ -5999,7 +5999,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'emacs-lisp-mode-hook #'highlight-defined-mode)))
 #+end_src
 *** my/ielm-history
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (when (autoload-if-found '(my/ielm-history) "ielm" nil t))
     (defun my/ielm-history ()
@@ -6016,7 +6016,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+END_SRC
 ** Clojure
 *** anakondo
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "didibus/anakondo"))
 
@@ -6032,7 +6032,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     )
 #+end_src
 *** cider
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "clojure-emacs/parseclj")
     (el-clone :repo "clojure-emacs/parseedn")
@@ -6075,7 +6075,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key clojure-mode-map (kbd "C-c h") #'cider-doc)))
 #+END_SRC
 *** kibit-helper
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "brunchboy/kibit-helper"))
 
@@ -6086,7 +6086,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(kibit kibit-current-file kibit-accept-proposed-change) "kibit-helper" nil t))
 #+end_src
 *** clj-refactor
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "clojure-emacs/clj-refactor.el"))
 
@@ -6105,7 +6105,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     )
 #+end_src
 *** inf-clojure
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "clojure-emacs/inf-clojure"))
 
@@ -6117,7 +6117,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** C/C++
 *** clang-format
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsmirror/clang-format"))
 
@@ -6133,7 +6133,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Csv
 *** rainbow-csv
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-vs/rainbow-csv"))
 
@@ -6148,7 +6148,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** JavaScript/TypeScript
 *** nodejs-repl
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "abicky/nodejs-repl.el"))
 
@@ -6173,7 +6173,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key js2-mode-map (kbd "C-c C-z") #'nodejs-repl-switch-to-repl)))
 #+end_src
 *** js2-refactor
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "js-emacs/js2-refactor.el"))
 
@@ -6193,7 +6193,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'typescript-mode-hook #'js2-refactor-mode)))
 #+END_SRC
 *** jest
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "edmundmiller/emacs-jest"))
 
@@ -6224,7 +6224,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Ruby
 *** robe
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "dgutov/robe"))
 
@@ -6235,7 +6235,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(robe-mode inf-ruby-console-auto) "robe" nil t))
 #+end_src
 *** rubocop
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "takeokunn/rubocop-emacs"))
 
@@ -6253,7 +6253,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'ruby-mode-hook #'rubocop-mode)))
 #+end_src
 *** ruby-refactor
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ajvargo/ruby-refactor"))
 
@@ -6267,7 +6267,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'ruby-mode-hook #'ruby-refactor-mode-launch)))
 #+END_SRC
 *** inf-ruby
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "nonsequitur/inf-ruby"))
 
@@ -6291,7 +6291,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'ruby-mode-hook #'inf-ruby-minor-mode)))
 #+END_SRC
 *** yard-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "pd/yard-mode.el"))
 
@@ -6306,7 +6306,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** SQL
 *** sql-indent
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "alex-hhh/emacs-sql-indent"))
 
@@ -6322,7 +6322,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+END_SRC
 ** PHP
 *** composer
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-php/composer.el"))
 
@@ -6331,7 +6331,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/composer")))
 #+end_src
 *** php-runtime
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-php/php-runtime.el"))
 
@@ -6342,7 +6342,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(php-runtime-expr php-runtime-eval) "php-runtime" nil t))
 #+end_src
 *** psysh
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-php/psysh.el"))
 
@@ -6356,7 +6356,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key php-mode-map (kbd "C-c h") #'psysh-doc)))
 #+end_src
 *** laravel-tinker-repl
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "takeokunn/laravel-tinker-repl.el"))
 
@@ -6371,7 +6371,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key php-mode-map (kbd "C-c C-z") #'laravel-tinker-repl-switch-to-repl)))
 #+end_src
 *** emacs-php-doc-block
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "moskalyovd/emacs-php-doc-block"))
 
@@ -6382,7 +6382,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(php-doc-block) "php-doc-block" nil t))
 #+end_src
 *** phpstan
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacs-php/phpstan.el"))
 
@@ -6406,7 +6406,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt phpstan-memory-limit "4G")))
 #+end_src
 *** phpunit
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "nlamirault/phpunit.el"))
 
@@ -6421,7 +6421,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Markdown
 *** poly-markdown
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "polymode/polymode")
     (el-clone :repo "polymode/poly-markdown"))
@@ -6435,7 +6435,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'auto-mode-alist '("\\.md" . poly-markdown-mode))))
 #+end_src
 *** markdown-preview-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ancane/markdown-preview-mode"))
 
@@ -6450,7 +6450,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Fish
 *** fish-repl
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "takeokunn/fish-repl.el"))
 
@@ -6462,7 +6462,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Haskell
 *** hindent
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "mihaimaruseac/hindent"))
 
@@ -6477,7 +6477,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Web
 *** emmet-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "smihica/emmet-mode"))
 
@@ -6516,7 +6516,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+END_SRC
 ** JSON
 *** jq-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ljos/jq-mode"))
 
@@ -6530,7 +6530,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key json-mode-map (kbd "C-c C-j") #'jq-interactively)))
 #+end_src
 *** json-reformat
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "gongo/json-reformat"))
 
@@ -6542,7 +6542,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Python
 *** py-isort
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "paetzke/py-isort.el"))
 
@@ -6556,7 +6556,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 * Elfeed
 ** elfeed
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "skeeto/elfeed"))
 
@@ -6579,7 +6579,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt elfeed-curl-max-connections 32)))
 #+end_src
 ** elfeed-org
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "remyhonig/elfeed-org"))
 
@@ -6595,7 +6595,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq rmh-elfeed-org-auto-ignore-invalid-feeds t)))
 #+end_src
 ** elfeed-dashboard
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "manojm321/elfeed-dashboard"))
 
@@ -6611,7 +6611,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt elfeed-dashboard-file (locate-user-emacs-file "elfeed-dashboard.org"))))
 #+end_src
 ** elfeed-goodies
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "jeetelongname/elfeed-goodies"))
 
@@ -6628,7 +6628,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 * Eshell
 ** basic
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install eshell...")
 
@@ -6663,7 +6663,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt eshell-destroy-buffer-when-process-dies t)))
 #+end_src
 ** functions
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install eshell functions...")
 
@@ -6713,7 +6713,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (advice-add 'eshell/cat :override #'my/cat-with-syntax-highlight))
 #+end_src
 ** prompt
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install eshell prompt...")
 
@@ -6725,7 +6725,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt eshell-prompt-function #'my/eshell-prompt)))
 #+end_src
 ** eshell-fringe-status
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ryuslash/eshell-fringe-status"))
 
@@ -6739,7 +6739,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'eshell-mode-hook #'eshell-fringe-status-mode)))
 #+end_src
 ** esh-help
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "tom-tan/esh-help"))
 
@@ -6752,7 +6752,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (setup-esh-help-eldoc))
 #+end_src
 ** eshell-multiple
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "takeokunn/eshell-multiple"))
 
@@ -6779,7 +6779,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key eshell-mode-map (kbd "C-l") #'eshell-multiple-clear-buffer)))
 #+end_src
 ** eshell-z
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "xuchunyang/eshell-z"))
 
@@ -6793,7 +6793,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key eshell-mode-map (kbd "C-c C-q") #'eshell-z)))
 #+end_src
 ** eshell-did-you-mean
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "xuchunyang/eshell-did-you-mean"))
 
@@ -6807,7 +6807,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'eshell-mode-hook #'eshell-did-you-mean-setup)))
 #+end_src
 ** eshell-syntax-highlight
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "akreisher/eshell-syntax-highlighting"))
 
@@ -6820,7 +6820,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (eshell-syntax-highlighting-global-mode))
 #+end_src
 ** emacs-fish-completion
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Ambrevar/emacs-fish-completion"))
 
@@ -6834,7 +6834,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (global-fish-completion-mode)))
 #+end_src
 ** eat
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :url "https://codeberg.org/akib/emacs-eat.git"
               :repo "emacs-eat"))
@@ -6845,7 +6845,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(eat) "eat" nil t))
 #+end_src
 ** mistty
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "szermatt/mistty"))
 
@@ -6857,7 +6857,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 * Org Mode
 ** Basic
 *** org
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-eval-after-load 'org
     ;; keybind
     (define-key org-mode-map (kbd "C-c ,") #'org-insert-structure-template)
@@ -6896,7 +6896,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt org-agenda-files my/org-agenda-files)))
 #+END_SRC
 *** org-clock
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-eval-after-load 'org-clock
     (add-hook 'org-mode-hook #'org-clock-load)
     (add-hook 'kill-emacs-hook #'org-clock-save)
@@ -6905,12 +6905,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (setopt org-clock-clocked-in-display 'mode-line))
 #+end_src
 *** org-list
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-eval-after-load 'org-list
     (setopt org-list-allow-alphabetical t))
 #+end_src
 *** org-keys
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-eval-after-load 'org-keys
     (setopt org-use-extra-keys t)
     (setopt org-use-speed-commands t)
@@ -6919,7 +6919,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'org-speed-commands '("j" call-interactively #'consult-org-heading)))
 #+end_src
 *** org-capture
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (autoload-if-found '(org-capture) "org-capture" nil t)
     (keymap-global-set "C-c c" #'org-capture)
@@ -6938,12 +6938,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                                      "* %U\n%?\n%i\n")))))
 #+end_src
 *** org-duration
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-eval-after-load 'org-duration
    (setopt org-duration-format (quote h:mm)))
 #+end_src
 *** org-id
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install org-id...")
 
@@ -6954,7 +6954,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt org-id-extra-files (append org-agenda-text-search-extra-files))))
 #+end_src
 *** org-crypt
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (autoload-if-found '(org-encrypt-entry org-decrypt-entry org-crypt-use-before-save-magic) "org-crypt" nil t)
 
@@ -6965,7 +6965,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt org-tags-exclude-from-inheritance '("crypt"))))
 #+end_src
 *** org-table
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (autoload-if-found '(orgtbl-mode org-table-begin org-table-end) "org-table" nil t)
 
@@ -6982,7 +6982,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (advice-add 'org-table-align :before #'my/org-table-align-markdown))
 #+end_src
 *** org-journal
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "bastibe/org-journal"))
 
@@ -6996,7 +6996,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt org-journal-prefix-key "C-c j")))
 #+end_src
 *** org-generate
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "conao3/org-generate.el"))
 
@@ -7007,7 +7007,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(org-generate) "org-generate" nil t))
 #+end_src
 *** org-pomodoro
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "marcinkoziej/org-pomodoro"))
 
@@ -7018,7 +7018,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(org-pomodoro) "org-pomodoro" nil t))
 #+end_src
 *** org-view-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "amno1/org-view-mode"))
 
@@ -7029,7 +7029,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(org-view-mode) "org-view-mode" nil t))
 #+end_src
 *** org-random-todo
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "unhammer/org-random-todo"))
 
@@ -7040,7 +7040,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(org-random-todo org-random-todo-goto-current) "org-random-todo" nil t))
 #+end_src
 *** org-projectile
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "IvanMalison/org-projectile"))
 
@@ -7058,7 +7058,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt org-agenda-files (append org-agenda-files (org-projectile-todo-files)))))
 #+end_src
 *** org-dashboard
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "bard/org-dashboard"))
 
@@ -7069,7 +7069,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(org-dashboard-display) "org-dashboard" nil t))
 #+end_src
 *** org-volume
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "akirak/org-volume"))
 
@@ -7080,7 +7080,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(org-volume-update-entry-from-dblock) "org-volume" nil t))
 #+end_src
 *** TODO org-ql
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "alphapapa/org-ql"))
 
@@ -7093,12 +7093,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Theme
 *** org-faces
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-eval-after-load 'org-faces
     (setopt org-link '(t (:foreground "#ebe087" :underline t))))
 #+end_src
 *** org-superstar
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "integral-dw/org-superstar-mode"))
 
@@ -7117,7 +7117,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Content
 *** toc-org
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "snosov1/toc-org"))
 
@@ -7133,7 +7133,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Presentation
 *** org-tree-slide
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "takaxp/org-tree-slide"))
 
@@ -7148,7 +7148,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Org Link
 *** org-link
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install ol...")
 
@@ -7160,7 +7160,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt org-link-file-path-type 'relative)))
 #+end_src
 *** org-link-beautify
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "emacsmirror/org-link-beautify"))
 
@@ -7175,7 +7175,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     )
 #+end_src
 *** orgit
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "magit/orgit"))
 
@@ -7190,7 +7190,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Org Agenda
 *** Basic
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install org-agenda...")
     (autoload-if-found '(org-agenda) "org-agenda" nil t)
@@ -7203,7 +7203,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt org-agenda-todo-ignore-with-date t)))
 #+end_src
 *** org-super-agenda
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "alphapapa/org-super-agenda"))
 
@@ -7228,7 +7228,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                                       (:name "SOMEDAY List..." :todo "SOMEDAY")))))
 #+end_src
 *** org-hyperscheduler
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "dmitrym0/org-hyperscheduler"))
 
@@ -7239,7 +7239,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (autoload-if-found '(org-hyperscheduler-open) "org-hyperscheduler" nil t))
 #+end_src
 *** org-timeblock
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ichernyshovvv/org-timeblock"))
 
@@ -7250,7 +7250,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Org External Tools
 *** org-redmine
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "gongo/org-redmine"))
 
@@ -7264,7 +7264,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt org-redmine-template-property '(("project_name" . "%p_n%")))))
 #+end_src
 *** org-ai
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "rksm/org-ai"))
 
@@ -7286,7 +7286,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Org Babel
 *** basic
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install ob-babel...")
     (autoload-if-found '(org-babel-do-load-languages) "org" nil t)
@@ -7324,7 +7324,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                                    (shell . t))))
 #+end_src
 *** ob-async
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "astahlman/ob-async"))
 
@@ -7338,7 +7338,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     )
 #+end_src
 *** ob-fish
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "takeokunn/ob-fish"))
 
@@ -7352,7 +7352,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'org-src-lang-modes '("fish" . fish))))
 #+end_src
 *** ob-rust
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "micanzhang/ob-rust"))
 
@@ -7366,7 +7366,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'org-src-lang-modes '("rust" . rust))))
 #+end_src
 *** ob-go
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "pope/ob-go"))
 
@@ -7380,7 +7380,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'org-src-lang-modes '("go" . go))))
 #+end_src
 *** ob-translate
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "krisajenkins/ob-translate"))
 
@@ -7397,7 +7397,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'org-src-lang-modes '("translate" . translate))))
 #+end_src
 *** ob-typescript
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "lurdan/ob-typescript"))
 
@@ -7411,7 +7411,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'org-src-lang-modes '("typescript" . typescript))))
 #+end_src
 *** ob-php
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "Sasanidas/ob-php"))
 
@@ -7425,7 +7425,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'org-src-lang-modes '("php" . php))))
 #+end_src
 *** ob-phpstan
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "takeokunn/ob-phpstan"))
 
@@ -7439,7 +7439,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'org-src-lang-modes '("phpstan" . phpstan))))
 #+end_src
 *** ob-http
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "zweifisch/ob-http"))
 
@@ -7454,7 +7454,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'org-src-lang-modes '("http" . ob-http))))
 #+end_src
 *** ob-mermaid
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "arnm/ob-mermaid"))
 
@@ -7468,7 +7468,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'org-src-lang-modes '("mermaid" . mermaid))))
 #+end_src
 *** ob-graphql
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "jdormit/ob-graphql"))
 
@@ -7481,7 +7481,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'org-src-lang-modes '("graphql" . graphql))))
 #+end_src
 *** ob-rust
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "micanzhang/ob-rust"))
 
@@ -7494,7 +7494,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'org-src-lang-modes '("rust" . rust))))
 #+end_src
 *** ob-swift
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "zweifisch/ob-swift"))
 
@@ -7507,7 +7507,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'org-src-lang-modes '("swift" . swift))))
 #+end_src
 *** ob-elixir
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "zweifisch/ob-elixir"))
 
@@ -7520,7 +7520,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'org-src-lang-modes '("elixir" . elixir))))
 #+end_src
 *** ob-dart
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "mzimmerm/ob-dart"))
 
@@ -7533,7 +7533,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'org-src-lang-modes '("dart" . dart))))
 #+end_src
 *** ob-fsharp
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "juergenhoetzel/ob-fsharp"))
 
@@ -7546,7 +7546,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'org-src-lang-modes '("fsharp" . fsharp))))
 #+end_src
 *** ob-treesitter
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "takeokunn/ob-treesitter"))
 
@@ -7563,7 +7563,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'org-src-lang-modes '("treesitter" . treesitter))))
 #+end_src
 *** ob-base64
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "KeyWeeUsr/ob-base64"))
 
@@ -7577,7 +7577,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-to-list 'org-src-lang-modes '("base64" . base64))))
 #+end_src
 *** org-nix-shell
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "AntonHakansson/org-nix-shell"))
 
@@ -7592,7 +7592,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Org Publish
 *** ox-html
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-eval-after-load 'ox-html
     (setopt org-html-head-include-default-style nil)
     (setopt org-html-head-include-scripts nil)
@@ -7600,7 +7600,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (setopt org-html-coding-system 'utf-8-unix))
 #+end_src
 *** ox-gfm
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "larstvei/ox-gfm"))
 
@@ -7614,7 +7614,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          org-gfm-publish-to-gfm) "ox-gfm" nil t))
 #+end_src
 *** ox-zenn
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "conao3/ox-zenn.el"))
 
@@ -7628,7 +7628,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          org-zenn-convert-region-to-md) "ox-zenn" nil t))
 #+end_src
 *** ox-hatena
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "zonkyy/ox-hatena"))
 
@@ -7641,7 +7641,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          org-hatena-export-to-hatena-and-open) "ox-hatena" nil t))
 #+end_src
 *** ox-qmd
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "0x60df/ox-qmd"))
 
@@ -7654,7 +7654,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                          org-qmd-export-to-markdown) "ox-qmd" nil t))
 #+end_src
 *** ox-hugo
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "kaushalmodi/ox-hugo"))
 
@@ -7672,13 +7672,13 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 ** Org Roam
 *** el-clone
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "org-roam/org-roam"
               :load-paths `(,(locate-user-emacs-file "el-clone/org-roam/extensions"))))
 #+end_src
 *** basic
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install org-roam...")
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/org-roam"))
@@ -7692,7 +7692,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                                          "/github.com/takeokunn/blog"))))
 #+end_src
 *** org-roam-mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install org-roam-mode...")
 
@@ -7701,7 +7701,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (keymap-global-set "C-c n l" #'org-roam-buffer-toggle))
 #+end_src
 *** org-roam-node
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install org-roam-node...")
     (autoload-if-found '(org-roam-node-find org-roam-node-insert) "org-roam-node" nil t)
@@ -7713,7 +7713,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt org-roam-completion-everywhere nil)))
 #+end_src
 *** org-roam-db
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install org-roam-db...")
     (autoload-if-found '(org-roam-db-autosync-enable) "org-roam-db" nil t)
@@ -7725,7 +7725,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setq org-roam-db-gc-threshold (* 4 gc-cons-threshold))))
 #+end_src
 *** org-roam-capture
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install org-roam-capture...")
     (autoload-if-found '(org-roam-capture) "org-roam-capture" nil t)
@@ -7756,7 +7756,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                                           :unnarrowed t)))))
 #+end_src
 *** org-roam-dailies
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install org-roam-dailies...")
     (autoload-if-found '(org-roam-dailies-map
@@ -7789,20 +7789,20 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key org-roam-dailies-map (kbd ".") #'org-roam-dailies-find-directory)))
 #+end_src
 *** org-roam-export
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install org-roam-export...")
     (autoload-if-found '(org-roam-export--org-html--reference) "org-roam-export" nil t)
     (advice-add 'org-html--reference :override #'org-roam-export--org-html--reference))
 #+end_src
 *** org-roam-graph
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install org-roam-graph...")
     (autoload-if-found '(org-roam-graph org-roam-graph--open) "org-roam-graph" nil t))
 #+end_src
 *** org-roam-overlay
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install org-roam-overlay...")
     (autoload-if-found '(org-roam-overlay-mode) "org-roam-overlay" nil t)
@@ -7810,7 +7810,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (add-hook 'org-roam-mode-hook #'org-roam-overlay-mode)))
 #+end_src
 *** org-roam-protocol
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (with-delayed-execution
     (message "Install org-roam-protocol...")
     (autoload-if-found '(org-roam-protocol-open-ref org-roam-protocol-open-node) "org-roam-protocol" nil t)
@@ -7823,7 +7823,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt org-roam-protocol-store-links t)))
 #+end_src
 *** consult-org-roam
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "jgru/consult-org-roam"))
 
@@ -7848,7 +7848,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt consult-org-roam-buffer-after-buffers t)))
 #+end_src
 *** org-roam-ui
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "org-roam/org-roam-ui"))
 
@@ -7868,7 +7868,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt org-roam-ui-open-on-start t)))
 #+end_src
 *** org-roam-timestamps
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "tefkah/org-roam-timestamps"))
 
@@ -7885,7 +7885,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt org-roam-timestamps-remember-timestamps nil)))
 #+end_src
 *** org-roam-search-node-insert
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "natask/org-roam-search"))
 
@@ -7894,7 +7894,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
     (add-to-list 'load-path (locate-user-emacs-file "el-clone/org-roam-search")))
 #+end_src
 *** TODO org-roam-ql
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ahmed-shariff/org-roam-ql"))
 
@@ -7915,12 +7915,12 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 
 * EXWM
 ** exwm
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ch11ng/exwm"))
 #+end_src
 ** exwm-edit
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "agzam/exwm-edit"))
 
@@ -7938,7 +7938,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   ;;       (setopt exwm-edit-bind-default-keys nil))))
 #+end_src
 ** exwm-modeline
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "SqrtMinusOne/exwm-modeline"))
 
@@ -7957,7 +7957,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 * AI
 ** copilot.el
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "zerolfx/copilot.el"))
 
@@ -7977,7 +7977,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (define-key copilot-mode-map (kbd "C-c # a") #'copilot-accept-completion)))
 #+end_src
 ** llm
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "ahyatt/llm"))
 
@@ -7991,7 +7991,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (setopt llm-warn-on-nonfree nil)))
 #+end_src
 ** ellama
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (eval-when-compile
     (el-clone :repo "s-kostyaev/ellama"))
 
@@ -8060,14 +8060,14 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 * MyFunc
 ** my/beginning-of-intendation
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defun my/beginning-of-intendation ()
     "move to beginning of line, or indentation"
     (interactive)
     (back-to-indentation))
 #+END_SRC
 ** my/copy-buffer
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defun my/copy-buffer ()
     (interactive)
     (save-excursion
@@ -8077,7 +8077,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (defalias 'copy-buffer 'my/copy-buffer)
 #+end_src
 ** my/ghq-get
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defun my/ghq-get ()
     (interactive)
     (let ((url (read-string "url > ")))
@@ -8090,7 +8090,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (defalias 'ghq-get 'my/ghq-get)
 #+end_src
 ** my/gh-browse
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defun my/gh-browse ()
     (interactive)
     (message
@@ -8102,7 +8102,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (defalias 'gh-browse 'my/gh-browse)
 #+end_src
 ** my/indent-all
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defun my/indent-buffer ()
     (interactive)
     (save-excursion
@@ -8113,7 +8113,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (defalias 'indent-buffer 'my/indent-buffer)
 #+end_src
 ** my/move-line
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defun my/move-line (arg)
     (interactive)
     (let ((col (current-column)))
@@ -8136,7 +8136,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (keymap-global-set "M-P" #'my/move-line-up)
 #+end_src
 ** my/reload-major-mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defun my/reload-major-mode ()
     "Reload current major mode."
     (interactive)
@@ -8146,7 +8146,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       current-mode))
 #+END_SRC
 ** my/toggle-kill-emacs
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defvar my/kill-emacs-keybind-p t)
 
   (defun my/toggle-kill-emacs ()
@@ -8162,7 +8162,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
         (keymap-global-set "C-x C-c" 'save-buffers-kill-emacs))))
 #+end_src
 ** my/get-class-name-by-file-name
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defun my/get-class-name-by-file-name ()
     (interactive)
     (insert
@@ -8171,13 +8171,13 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
                                     (buffer-name (current-buffer)))))))
 #+end_src
 ** my/insert-clipboard
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defun my/insert-clipboard (arg)
     (interactive "sstring: ")
     (kill-new arg))
 #+end_src
 ** my/actionlint
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defun my/actionlint ()
     (interactive)
     (shell-command-to-string "actionlint"))
@@ -8185,7 +8185,7 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   (defalias 'actionlint 'my/actionlint)
 #+end_src
 ** my/build-info
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defun my/build-info ()
     "Display build information in a buffer."
     (interactive)
@@ -8206,14 +8206,14 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       (view-mode)))
 #+end_src
 ** my/current-ip-address
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defun my/current-ip-address ()
     (interactive)
     (insert
      (shell-command-to-string "curl -s ifconfig.me")))
 #+end_src
 ** my/today
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (defun my/today ()
     (interactive)
     (insert
@@ -8223,16 +8223,16 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
 #+end_src
 * Footer
 ** byte-compileする
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   ;; (eval-when-compile
   ;;   (el-clone-byte-compile))
 #+end_src
 ** Magic File Name を有効にする
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (setq file-name-handler-alist my/saved-file-name-handler-alist)
 #+end_src
 ** profilerを終了する
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (when my/enable-profile
     (profiler-report)
     (profiler-stop))
