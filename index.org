@@ -7956,6 +7956,15 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
   ;;       (setopt exwm-modeline-short t))))
 #+end_src
 * AI
+** chatgpt-shell
+#+begin_src emacs-lisp :tangle yes
+  (eval-when-compile
+    (el-clone :repo "xenodium/chatgpt-shell"))
+
+  (with-delayed-execution
+    (message "Install chatgpt-shell...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/chatgpt-shell")))
+#+end_src
 ** copilot.el
 #+begin_src emacs-lisp :tangle yes
   (eval-when-compile
@@ -7975,6 +7984,19 @@ https://github.com/ch11ng/exwm/wiki#gpg-pinentry
       ;; keymap
       (define-key copilot-mode-map (kbd "C-c # i") #'copilot-complete)
       (define-key copilot-mode-map (kbd "C-c # a") #'copilot-accept-completion)))
+#+end_src
+** copilot-chat.el
+#+begin_src emacs-lisp :tangle yes
+  (eval-when-compile
+    (el-clone :repo "chep/copilot-chat.el"))
+
+  (with-delayed-execution
+    (message "Install copilot-chat...")
+    (add-to-list 'load-path (locate-user-emacs-file "el-clone/copilot-chat"))
+
+    (autoload-if-found '(copilot-chat-shell-maker-init) "copilot-chat-shell-maker" nil t)
+
+    (copilot-chat-shell-maker-init))
 #+end_src
 ** llm
 #+begin_src emacs-lisp :tangle yes
